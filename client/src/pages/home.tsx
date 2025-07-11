@@ -1,0 +1,124 @@
+import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import type { AffiliateLink } from "@shared/schema";
+import Header from "@/components/header";
+import StatsBar from "@/components/stats-bar";
+import CategoryFilter from "@/components/category-filter";
+import AffiliateCard from "@/components/affiliate-card";
+import AdminPanel from "@/components/admin-panel";
+import TrustIndicators from "@/components/trust-indicators";
+import { Button } from "@/components/ui/button";
+import { Settings } from "lucide-react";
+
+export default function Home() {
+  const [showAdmin, setShowAdmin] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("all");
+
+  const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
+    queryKey: ["/api/affiliate-links"],
+  });
+
+  const filteredLinks = affiliateLinks.filter(link => 
+    activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase())
+  );
+
+  const categories = [
+    { id: "all", label: "All Deals", emoji: "" },
+    { id: "hot", label: "Hot Deals", emoji: "🔥" },
+    { id: "tech", label: "Tech & Gadgets", emoji: "📱" },
+    { id: "fashion", label: "Fashion", emoji: "👔" },
+    { id: "health", label: "Health & Fitness", emoji: "💪" },
+    { id: "travel", label: "Travel", emoji: "✈️" },
+  ];
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Admin Toggle Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          onClick={() => setShowAdmin(true)}
+          className="bg-conversion-blue hover:bg-blue-700 text-white shadow-lg"
+        >
+          <Settings className="w-4 h-4 mr-2" />
+          Creator Mode
+        </Button>
+      </div>
+
+      <Header />
+      <StatsBar />
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <CategoryFilter 
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-lg p-6 animate-pulse">
+                <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
+                <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                <div className="h-12 bg-gray-200 rounded"></div>
+              </div>
+            ))}
+          </div>
+        ) : filteredLinks.length === 0 ? (
+          <div className="text-center py-16">
+            <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+              No deals available yet
+            </h3>
+            <p className="text-gray-600 mb-8">
+              Use Creator Mode to add your first affiliate link!
+            </p>
+            <Button 
+              onClick={() => setShowAdmin(true)}
+              className="bg-conversion-blue hover:bg-blue-700"
+            >
+              Add Your First Deal
+            </Button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredLinks.map((link) => (
+              <AffiliateCard key={link.id} link={link} />
+            ))}
+          </div>
+        )}
+
+        <TrustIndicators />
+      </main>
+
+      <AdminPanel 
+        isOpen={showAdmin}
+        onClose={() => setShowAdmin(false)}
+        onSuccess={() => {
+          refetch();
+          setShowAdmin(false);
+        }}
+      />
+
+      {/* Footer */}
+      <footer className="bg-gray-900 text-white mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <h3 className="text-2xl font-bold mb-4">Elite Deals Hub</h3>
+            <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
+              Your trusted source for the best affiliate deals and exclusive offers. 
+              We do the research so you get the savings.
+            </p>
+            <div className="flex justify-center space-x-6 text-gray-400">
+              <span className="text-sm">© 2024 Elite Deals Hub</span>
+              <span className="text-sm">•</span>
+              <span className="text-sm">Privacy Policy</span>
+              <span className="text-sm">•</span>
+              <span className="text-sm">Terms of Service</span>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
