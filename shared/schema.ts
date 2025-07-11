@@ -14,6 +14,7 @@ export const affiliateLinks = pgTable("affiliate_links", {
   url: text("url").notNull(),
   description: text("description").notNull(),
   category: text("category").notNull(),
+  imageUrl: text("image_url"),
   clicks: integer("clicks").notNull().default(0),
 });
 
@@ -25,6 +26,8 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit({
   id: true,
   clicks: true,
+}).extend({
+  imageUrl: z.string().url().optional().or(z.literal("")),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

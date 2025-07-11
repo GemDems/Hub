@@ -22,6 +22,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     url: "",
     description: "",
     category: "Hot Deals",
+    imageUrl: "",
   });
 
   const { toast } = useToast();
@@ -38,7 +39,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
         title: "Success!",
         description: "Affiliate link added successfully",
       });
-      setFormData({ title: "", url: "", description: "", category: "Hot Deals" });
+      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "" });
       onSuccess();
     },
     onError: () => {
@@ -72,6 +73,20 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
         variant: "destructive",
       });
       return;
+    }
+
+    // Image URL validation (if provided)
+    if (formData.imageUrl && formData.imageUrl.trim()) {
+      try {
+        new URL(formData.imageUrl);
+      } catch {
+        toast({
+          title: "Invalid Image URL",
+          description: "Please enter a valid image URL",
+          variant: "destructive",
+        });
+        return;
+      }
     }
 
     createLinkMutation.mutate(formData);
@@ -118,6 +133,21 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               rows={3}
               className="mt-1"
             />
+          </div>
+
+          <div>
+            <Label htmlFor="imageUrl">Product Image URL (Optional)</Label>
+            <Input
+              id="imageUrl"
+              type="url"
+              value={formData.imageUrl}
+              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+              placeholder="https://example.com/product-image.jpg"
+              className="mt-1"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Add a direct link to the product image for better visual appeal
+            </p>
           </div>
 
           <div>

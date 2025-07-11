@@ -54,7 +54,12 @@ export class MemStorage implements IStorage {
 
   async createAffiliateLink(insertLink: InsertAffiliateLink): Promise<AffiliateLink> {
     const id = this.currentLinkId++;
-    const link: AffiliateLink = { ...insertLink, id, clicks: 0 };
+    const link: AffiliateLink = { 
+      ...insertLink, 
+      id, 
+      clicks: 0,
+      imageUrl: insertLink.imageUrl || null
+    };
     this.affiliateLinks.set(id, link);
     return link;
   }

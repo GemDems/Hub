@@ -74,12 +74,37 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </span>
         </div>
         
-        {/* Gradient overlay for visual appeal */}
-        <div className="w-full h-48 bg-gradient-to-br from-conversion-blue to-purple-600 flex items-center justify-center">
-          <div className="text-white text-6xl opacity-80">
-            {getCategoryEmoji(link.category)}
+        {/* Product Image or Gradient overlay */}
+        {link.imageUrl ? (
+          <div className="w-full h-48 relative overflow-hidden">
+            <img 
+              src={link.imageUrl} 
+              alt={link.title}
+              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+              onError={(e) => {
+                // Fallback to gradient if image fails to load
+                const target = e.target as HTMLImageElement;
+                target.style.display = 'none';
+                const parent = target.parentElement;
+                if (parent) {
+                  parent.innerHTML = `
+                    <div class="w-full h-full bg-gradient-to-br from-conversion-blue to-purple-600 flex items-center justify-center">
+                      <div class="text-white text-6xl opacity-80">
+                        ${getCategoryEmoji(link.category)}
+                      </div>
+                    </div>
+                  `;
+                }
+              }}
+            />
           </div>
-        </div>
+        ) : (
+          <div className="w-full h-48 bg-gradient-to-br from-conversion-blue to-purple-600 flex items-center justify-center">
+            <div className="text-white text-6xl opacity-80">
+              {getCategoryEmoji(link.category)}
+            </div>
+          </div>
+        )}
       </div>
       
       <CardContent className="p-6">
