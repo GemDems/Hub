@@ -8,6 +8,18 @@ This is a full-stack affiliate link management platform built with React, Expres
 
 Preferred communication style: Simple, everyday language.
 
+## Recent Changes (January 2025)
+
+- **Password Protection**: Added secure Creator Mode access with password "9f$81r@V7#iwant"
+- **Enhanced Psychological Elements**: Added multiple neuro-marketing triggers including:
+  - Stock scarcity alerts ("ONLY X LEFT IN STOCK")
+  - Time-sensitive urgency ("Sale ends in X hours")
+  - Social proof indicators (buyers, ratings, trending)
+  - Trust badges and guarantees
+  - FOMO elements (flash sales, limited quantities)
+- **Product Images**: Optional image URL support for affiliate links with automatic fallback
+- **Advanced UI Psychology**: Enhanced cards with multiple conversion triggers and visual cues
+
 ## System Architecture
 
 ### Frontend Architecture

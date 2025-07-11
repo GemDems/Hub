@@ -37,7 +37,7 @@ export default function Home() {
       <div className="fixed top-4 right-4 z-50">
         <Button
           onClick={() => setShowAdmin(true)}
-          className="bg-conversion-blue hover:bg-blue-700 text-white shadow-lg"
+          className="hover:bg-blue-700 text-white shadow-lg bg-[#ffffff]"
         >
           <Settings className="w-4 h-4 mr-2" />
           Creator Mode

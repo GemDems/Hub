@@ -1,21 +1,29 @@
-import { Users, Shield, Zap } from "lucide-react";
+import { Users, Shield, Zap, TrendingUp, Award, DollarSign } from "lucide-react";
 
 export default function StatsBar() {
   return (
-    <div className="bg-gradient-to-r from-trust-green to-conversion-blue text-white py-3">
+    <div className="bg-gradient-to-r from-trust-green via-conversion-blue to-purple-600 text-white py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-center items-center space-x-8 text-sm font-medium">
-          <div className="flex items-center">
+          <div className="flex items-center animate-pulse">
             <Users className="w-4 h-4 mr-2" />
-            <span>{(Math.floor(Math.random() * 5000) + 10000).toLocaleString()} Happy Customers</span>
+            <span>💎 {(Math.floor(Math.random() * 5000) + 15000).toLocaleString()} VIP Members</span>
           </div>
           <div className="flex items-center">
             <Shield className="w-4 h-4 mr-2" />
-            <span>Verified Deals Only</span>
+            <span>🔒 100% Secure & Verified</span>
           </div>
           <div className="flex items-center">
-            <Zap className="w-4 h-4 mr-2" />
-            <span>Updated {Math.floor(Math.random() * 10) + 1} min ago</span>
+            <TrendingUp className="w-4 h-4 mr-2" />
+            <span>📈 {Math.floor(Math.random() * 200) + 500} deals sold today</span>
+          </div>
+          <div className="flex items-center">
+            <Award className="w-4 h-4 mr-2" />
+            <span>🏆 #1 Rated Deal Platform</span>
+          </div>
+          <div className="flex items-center animate-pulse">
+            <DollarSign className="w-4 h-4 mr-2" />
+            <span>💰 Avg. savings: ${Math.floor(Math.random() * 100) + 150}</span>
           </div>
         </div>
       </div>

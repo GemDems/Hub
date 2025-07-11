@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import { Lock, Shield, Eye, EyeOff } from "lucide-react";
 import type { InsertAffiliateLink } from "@shared/schema";
 
 interface AdminPanelProps {
@@ -17,6 +18,9 @@ interface AdminPanelProps {
 }
 
 export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelProps) {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState<InsertAffiliateLink>({
     title: "",
     url: "",
@@ -27,6 +31,34 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  
+  const ADMIN_PASSWORD = "9f$81r@V7#iwant";
+  
+  const handlePasswordSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (password === ADMIN_PASSWORD) {
+      setIsAuthenticated(true);
+      setPassword("");
+      toast({
+        title: "Access Granted",
+        description: "Welcome to Creator Mode",
+      });
+    } else {
+      toast({
+        title: "Access Denied",
+        description: "Incorrect password. Please try again.",
+        variant: "destructive",
+      });
+      setPassword("");
+    }
+  };
+  
+  const handleClose = () => {
+    setIsAuthenticated(false);
+    setPassword("");
+    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "" });
+    onClose();
+  };
 
   const createLinkMutation = useMutation({
     mutationFn: async (data: InsertAffiliateLink) => {
@@ -93,11 +125,66 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Add New Affiliate Link</DialogTitle>
+          <DialogTitle className="flex items-center gap-2">
+            <Shield className="w-5 h-5 text-conversion-blue" />
+            {isAuthenticated ? "Add New Affiliate Link" : "Creator Authentication Required"}
+          </DialogTitle>
         </DialogHeader>
+
+        {!isAuthenticated ? (
+          <form onSubmit={handlePasswordSubmit} className="space-y-4">
+            <div className="text-center py-4">
+              <Lock className="w-12 h-12 text-conversion-blue mx-auto mb-4" />
+              <p className="text-sm text-gray-600 mb-4">
+                Enter your creator password to access the admin panel
+              </p>
+            </div>
+            
+            <div className="relative">
+              <Label htmlFor="password">Creator Password</Label>
+              <div className="relative mt-1">
+                <Input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your secure password"
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-1 top-1 h-8 w-8 p-0"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex space-x-3 pt-4">
+              <Button 
+                type="submit" 
+                className="flex-1 bg-conversion-blue hover:bg-blue-700"
+              >
+                <Shield className="w-4 h-4 mr-2" />
+                Authenticate
+              </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={handleClose}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        ) : (
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
@@ -177,13 +264,14 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <Button 
               type="button" 
               variant="outline" 
-              onClick={onClose}
+              onClick={handleClose}
               className="flex-1"
             >
               Cancel
             </Button>
           </div>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );
