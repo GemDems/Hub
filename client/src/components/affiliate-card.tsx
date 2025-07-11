@@ -1,8 +1,13 @@
-import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { ExternalLink, ShoppingCart, Users, Star, Clock, Zap, TrendingUp, Award, AlertCircle } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ExternalLink, ShoppingCart, Users, Star, Clock, Zap, TrendingUp, Award, AlertCircle, Trash2, Eye, EyeOff } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { useToast } from "@/hooks/use-toast";
 import type { AffiliateLink } from "@shared/schema";
 
 interface AffiliateCardProps {
@@ -10,6 +15,12 @@ interface AffiliateCardProps {
 }
 
 export default function AffiliateCard({ link }: AffiliateCardProps) {
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  
   const trackClickMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest("POST", `/api/affiliate-links/${link.id}/click`);
@@ -20,6 +31,35 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       window.open(data.url, '_blank', 'noopener,noreferrer');
     },
   });
+
+  const deleteLinkMutation = useMutation({
+    mutationFn: async (password: string) => {
+      const response = await apiRequest("DELETE", `/api/affiliate-links/${link.id}`, { password });
+      return response.json();
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      toast({
+        title: "Success",
+        description: "Product deleted successfully",
+      });
+      setShowDeleteDialog(false);
+      setPassword("");
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to delete product",
+        variant: "destructive",
+      });
+      setPassword("");
+    },
+  });
+
+  const handleDelete = (e: React.FormEvent) => {
+    e.preventDefault();
+    deleteLinkMutation.mutate(password);
+  };
 
   const handleClick = () => {
     trackClickMutation.mutate();
@@ -60,12 +100,24 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const discount = getRandomDiscount();
 
   return (
-    <Card className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden group relative">
-      {/* Urgent Stock Alert */}
-      <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1 z-20 animate-pulse">
-        <AlertCircle className="w-3 h-3 inline mr-1" />
-        ONLY {stats.stockLeft} LEFT IN STOCK - HURRY!
-      </div>
+    <>
+      <Card className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden group relative">
+        {/* Invisible Delete Button */}
+        <div className="absolute top-2 right-2 z-30">
+          <Button
+            onClick={() => setShowDeleteDialog(true)}
+            className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none opacity-0"
+            title="Delete Product"
+          >
+            <Trash2 className="w-4 h-4 opacity-0" />
+          </Button>
+        </div>
+        
+        {/* Urgent Stock Alert */}
+        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1 z-20 animate-pulse">
+          <AlertCircle className="w-3 h-3 inline mr-1" />
+          ONLY {stats.stockLeft} LEFT IN STOCK - HURRY!
+        </div>
       
       <div className="relative mt-6">
         {/* Trending badge */}
@@ -231,5 +283,65 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         </div>
       </CardContent>
     </Card>
+
+    {/* Delete Confirmation Dialog */}
+    <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-urgency-red">Delete Product</DialogTitle>
+        </DialogHeader>
+        
+        <form onSubmit={handleDelete} className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Are you sure you want to permanently delete "{link.title}"? This action cannot be undone.
+          </p>
+          
+          <div className="relative">
+            <Label htmlFor="deletePassword">Enter Creator Password</Label>
+            <div className="relative mt-1">
+              <Input
+                id="deletePassword"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter password to confirm deletion"
+                className="pr-10"
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="absolute right-1 top-1 h-8 w-8 p-0"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+              </Button>
+            </div>
+          </div>
+
+          <div className="flex space-x-3 pt-4">
+            <Button 
+              type="submit" 
+              className="flex-1 bg-urgency-red hover:bg-red-700"
+              disabled={deleteLinkMutation.isPending}
+            >
+              {deleteLinkMutation.isPending ? "Deleting..." : "Delete Product"}
+            </Button>
+            <Button 
+              type="button" 
+              variant="outline" 
+              onClick={() => {
+                setShowDeleteDialog(false);
+                setPassword("");
+              }}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }

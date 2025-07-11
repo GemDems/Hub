@@ -7,15 +7,15 @@ export default function StatsBar() {
         <div className="flex justify-center items-center space-x-8 text-sm font-medium">
           <div className="flex items-center animate-pulse">
             <Users className="w-4 h-4 mr-2" />
-            <span>💎 {(Math.floor(Math.random() * 5000) + 15000).toLocaleString()} VIP Members</span>
+            <span className="text-[#3d445c]">💎 {(Math.floor(Math.random() * 5000) + 15000).toLocaleString()} VIP Members</span>
           </div>
           <div className="flex items-center">
             <Shield className="w-4 h-4 mr-2" />
-            <span>🔒 100% Secure & Verified</span>
+            <span className="text-[#4b5563]">🔒 100% Secure & Verified</span>
           </div>
           <div className="flex items-center">
             <TrendingUp className="w-4 h-4 mr-2" />
-            <span>📈 {Math.floor(Math.random() * 200) + 500} deals sold today</span>
+            <span className="text-[#4b5563]">📈 {Math.floor(Math.random() * 200) + 500} deals sold today</span>
           </div>
           <div className="flex items-center">
             <Award className="w-4 h-4 mr-2" />

@@ -1,4 +1,6 @@
 import { users, affiliateLinks, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   getUser(id: number): Promise<User | undefined>;
@@ -14,77 +16,72 @@ export interface IStorage {
   incrementLinkClicks(id: number): Promise<AffiliateLink | undefined>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<number, User>;
-  private affiliateLinks: Map<number, AffiliateLink>;
-  private currentUserId: number;
-  private currentLinkId: number;
-
-  constructor() {
-    this.users = new Map();
-    this.affiliateLinks = new Map();
-    this.currentUserId = 1;
-    this.currentLinkId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user || undefined;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username,
-    );
+    const [user] = await db.select().from(users).where(eq(users.username, username));
+    return user || undefined;
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
-    this.users.set(id, user);
+    const [user] = await db
+      .insert(users)
+      .values(insertUser)
+      .returning();
     return user;
   }
 
   async getAllAffiliateLinks(): Promise<AffiliateLink[]> {
-    return Array.from(this.affiliateLinks.values());
+    const links = await db.select().from(affiliateLinks);
+    return links;
   }
 
   async getAffiliateLinkById(id: number): Promise<AffiliateLink | undefined> {
-    return this.affiliateLinks.get(id);
+    const [link] = await db.select().from(affiliateLinks).where(eq(affiliateLinks.id, id));
+    return link || undefined;
   }
 
   async createAffiliateLink(insertLink: InsertAffiliateLink): Promise<AffiliateLink> {
-    const id = this.currentLinkId++;
-    const link: AffiliateLink = { 
-      ...insertLink, 
-      id, 
-      clicks: 0,
-      imageUrl: insertLink.imageUrl || null
-    };
-    this.affiliateLinks.set(id, link);
+    const [link] = await db
+      .insert(affiliateLinks)
+      .values({
+        ...insertLink,
+        imageUrl: insertLink.imageUrl || null,
+        clicks: 0
+      })
+      .returning();
     return link;
   }
 
   async updateAffiliateLink(id: number, updateData: Partial<AffiliateLink>): Promise<AffiliateLink | undefined> {
-    const existing = this.affiliateLinks.get(id);
-    if (!existing) return undefined;
-    
-    const updated = { ...existing, ...updateData };
-    this.affiliateLinks.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(affiliateLinks)
+      .set(updateData)
+      .where(eq(affiliateLinks.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   async deleteAffiliateLink(id: number): Promise<boolean> {
-    return this.affiliateLinks.delete(id);
+    const result = await db
+      .delete(affiliateLinks)
+      .where(eq(affiliateLinks.id, id))
+      .returning();
+    return result.length > 0;
   }
 
   async incrementLinkClicks(id: number): Promise<AffiliateLink | undefined> {
-    const link = this.affiliateLinks.get(id);
-    if (!link) return undefined;
-    
-    const updated = { ...link, clicks: link.clicks + 1 };
-    this.affiliateLinks.set(id, updated);
-    return updated;
+    const [updated] = await db
+      .update(affiliateLinks)
+      .set({ clicks: db.sql`${affiliateLinks.clicks} + 1` })
+      .where(eq(affiliateLinks.id, id))
+      .returning();
+    return updated || undefined;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

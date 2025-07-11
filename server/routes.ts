@@ -46,9 +46,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Delete affiliate link
+  // Delete affiliate link with password protection
   app.delete("/api/affiliate-links/:id", async (req, res) => {
     try {
+      const { password } = req.body;
+      const ADMIN_PASSWORD = "9f$81r@V7#iwant";
+      
+      if (password !== ADMIN_PASSWORD) {
+        return res.status(401).json({ message: "Incorrect password" });
+      }
+      
       const id = parseInt(req.params.id);
       const deleted = await storage.deleteAffiliateLink(id);
       
