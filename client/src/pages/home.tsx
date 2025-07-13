@@ -8,8 +8,7 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
-import FloatingTestimonials from "@/components/floating-testimonials";
-import LiveVisitorCounter from "@/components/live-visitor-counter";
+
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 
@@ -124,9 +123,7 @@ export default function Home() {
         <TrustIndicators />
       </main>
 
-      {/* Floating Psychological Elements */}
-      <FloatingTestimonials />
-      <LiveVisitorCounter />
+
 
       <AdminPanel 
         isOpen={showAdmin}

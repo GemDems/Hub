@@ -113,49 +113,26 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Multi-layered Urgency System */}
+        {/* Clean Urgency Alert */}
         <div className="absolute top-0 left-0 right-0 z-20">
-          {/* Primary Scarcity Alert */}
-          <div className="bg-gradient-to-r from-urgency-red via-red-600 to-urgency-red text-white text-xs font-bold text-center py-1 animate-pulse relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-ping"></div>
-            <span className="relative">
-              <AlertCircle className="w-3 h-3 inline mr-1" />
-              ONLY {stats.stockLeft} LEFT - {Math.floor(Math.random() * 30) + 20} PEOPLE WANT THIS!
-            </span>
-          </div>
-          
-          {/* Secondary Time Pressure */}
-          <div className="bg-gradient-to-r from-action-orange to-yellow-500 text-black text-xs font-bold text-center py-1">
-            ⏰ PRICE INCREASES IN {stats.timeLeft} HOURS - LOCK IN NOW!
+          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
+            <AlertCircle className="w-3 h-3 inline mr-1" />
+            ONLY {stats.stockLeft} LEFT IN STOCK
           </div>
         </div>
       
-      <div className="relative mt-10">
-        {/* Elite Badge Ecosystem */}
-        <div className="absolute top-3 left-3 z-10 space-y-2">
-          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse shadow-lg border border-red-300">
-            {getCategoryEmoji(link.category)} #1 BESTSELLER
-          </div>
-          <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full animate-bounce shadow-lg">
-            <Zap className="w-3 h-3 inline mr-1" />
-            FLASH DEAL
+      <div className="relative mt-6">
+        {/* Clean Badges */}
+        <div className="absolute top-3 left-3 z-10">
+          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+            {getCategoryEmoji(link.category)} BESTSELLER
           </div>
         </div>
         
-        <div className="absolute top-3 right-3 z-10 space-y-2">
+        <div className="absolute top-3 right-3 z-10">
           <div className="bg-gradient-to-r from-action-orange to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             <Clock className="w-3 h-3 mr-1 inline" />
             {stats.timeLeft}H LEFT
-          </div>
-          <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
-            💎 VIP ONLY
-          </div>
-        </div>
-        
-        {/* Mega Social Proof Badge */}
-        <div className="absolute bottom-3 left-3 z-10">
-          <div className="bg-gradient-to-r from-trust-green to-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border border-green-300">
-            ✅ {stats.buyers}+ SOLD
           </div>
         </div>
         

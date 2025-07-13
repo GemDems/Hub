@@ -15,30 +15,23 @@ export default function Header() {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden">
-      {/* Urgent Scarcity Alert Banner */}
-      <div className="bg-gradient-to-r from-urgency-red via-red-600 to-urgency-red text-white text-center py-2 font-bold text-sm animate-pulse relative">
-        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent animate-ping"></div>
-        <span className="relative">⚠️ FLASH SALE: 70% OFF ENDS IN 3 HOURS - ONLY 47 ITEMS LEFT! ⚠️</span>
+      {/* Clean Alert Banner */}
+      <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm">
+        <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
       </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
-          {/* Premium Branding */}
-          <div className="mb-3">
-            <div className="inline-flex items-center bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-4 py-1 rounded-full text-xs font-bold shadow-lg">
-              👑 PREMIUM MEMBER EXCLUSIVE ACCESS
-            </div>
-          </div>
+
           
           <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-gray-900 bg-clip-text text-transparent mb-3">
-            💎 Elite Deals Hub 💎
-            <span className="text-urgency-red animate-pulse ml-3">🔥</span>
+            Elite Deals Hub
           </h1>
           
           <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed">
-            🎯 <span className="font-bold text-trust-green">Handcrafted VIP deals</span> by industry experts. 
-            <span className="font-bold text-action-orange">Ultra-limited quantities</span> 
-            • <span className="font-bold text-urgency-red">Reserved for members only!</span>
+            <span className="font-bold text-trust-green">Curated deals</span> by industry experts. 
+            <span className="font-bold text-action-orange">Limited quantities</span> 
+            • <span className="font-bold text-urgency-red">Act fast!</span>
           </p>
           
           {/* Enhanced Trust Ecosystem */}
