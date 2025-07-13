@@ -3,24 +3,33 @@ import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
 import StatsBar from "@/components/stats-bar";
+import SearchBar from "@/components/search-bar";
 import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
+import FloatingTestimonials from "@/components/floating-testimonials";
+import LiveVisitorCounter from "@/components/live-visitor-counter";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 
 export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
   });
 
-  const filteredLinks = affiliateLinks.filter(link => 
-    activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase())
-  );
+  const filteredLinks = affiliateLinks.filter(link => {
+    const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
+    const matchesSearch = !searchQuery || 
+      link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const categories = [
     { id: "all", label: "All Deals", emoji: "" },
@@ -48,6 +57,11 @@ export default function Home() {
       <StatsBar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <SearchBar 
+          onSearch={setSearchQuery}
+          links={affiliateLinks}
+        />
+        
         <CategoryFilter 
           categories={categories}
           activeCategory={activeCategory}
@@ -67,18 +81,37 @@ export default function Home() {
           </div>
         ) : filteredLinks.length === 0 ? (
           <div className="text-center py-16">
-            <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-              No deals available yet
-            </h3>
-            <p className="text-gray-600 mb-8">
-              Use Creator Mode to add your first affiliate link!
-            </p>
-            <Button 
-              onClick={() => setShowAdmin(true)}
-              className="bg-conversion-blue hover:bg-blue-700"
-            >
-              Add Your First Deal
-            </Button>
+            {searchQuery ? (
+              <>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  No deals found for "{searchQuery}"
+                </h3>
+                <p className="text-gray-600 mb-8">
+                  Try a different search term or browse our categories below
+                </p>
+                <button 
+                  onClick={() => setSearchQuery("")}
+                  className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
+                >
+                  Clear Search
+                </button>
+              </>
+            ) : (
+              <>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  No deals available yet
+                </h3>
+                <p className="text-gray-600 mb-8">
+                  Use Creator Mode to add your first affiliate link!
+                </p>
+                <Button 
+                  onClick={() => setShowAdmin(true)}
+                  className="bg-conversion-blue hover:bg-blue-700"
+                >
+                  Add Your First Deal
+                </Button>
+              </>
+            )}
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -90,6 +123,10 @@ export default function Home() {
 
         <TrustIndicators />
       </main>
+
+      {/* Floating Psychological Elements */}
+      <FloatingTestimonials />
+      <LiveVisitorCounter />
 
       <AdminPanel 
         isOpen={showAdmin}

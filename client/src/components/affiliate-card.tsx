@@ -101,7 +101,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   return (
     <>
-      <Card className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1 border border-gray-100 overflow-hidden group relative">
+      <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
         {/* Invisible Delete Button */}
         <div className="absolute top-2 right-2 z-30">
           <Button
@@ -113,34 +113,50 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Urgent Stock Alert */}
-        <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1 z-20 animate-pulse">
-          <AlertCircle className="w-3 h-3 inline mr-1" />
-          ONLY {stats.stockLeft} LEFT IN STOCK - HURRY!
+        {/* Multi-layered Urgency System */}
+        <div className="absolute top-0 left-0 right-0 z-20">
+          {/* Primary Scarcity Alert */}
+          <div className="bg-gradient-to-r from-urgency-red via-red-600 to-urgency-red text-white text-xs font-bold text-center py-1 animate-pulse relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-ping"></div>
+            <span className="relative">
+              <AlertCircle className="w-3 h-3 inline mr-1" />
+              ONLY {stats.stockLeft} LEFT - {Math.floor(Math.random() * 30) + 20} PEOPLE WANT THIS!
+            </span>
+          </div>
+          
+          {/* Secondary Time Pressure */}
+          <div className="bg-gradient-to-r from-action-orange to-yellow-500 text-black text-xs font-bold text-center py-1">
+            ⏰ PRICE INCREASES IN {stats.timeLeft} HOURS - LOCK IN NOW!
+          </div>
         </div>
       
-      <div className="relative mt-6">
-        {/* Trending badge */}
-        <div className="absolute top-3 left-3 z-10">
-          <span className="bg-urgency-red text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse shadow-lg">
-            {getCategoryEmoji(link.category)} #1 TRENDING
-          </span>
+      <div className="relative mt-10">
+        {/* Elite Badge Ecosystem */}
+        <div className="absolute top-3 left-3 z-10 space-y-2">
+          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold px-3 py-1 rounded-full animate-pulse shadow-lg border border-red-300">
+            {getCategoryEmoji(link.category)} #1 BESTSELLER
+          </div>
+          <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full animate-bounce shadow-lg">
+            <Zap className="w-3 h-3 inline mr-1" />
+            FLASH DEAL
+          </div>
         </div>
         
-        {/* Limited time badge */}
-        <div className="absolute top-3 right-3 z-10">
-          <span className="bg-action-orange text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+        <div className="absolute top-3 right-3 z-10 space-y-2">
+          <div className="bg-gradient-to-r from-action-orange to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             <Clock className="w-3 h-3 mr-1 inline" />
             {stats.timeLeft}H LEFT
-          </span>
+          </div>
+          <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg">
+            💎 VIP ONLY
+          </div>
         </div>
         
-        {/* Flash Sale Badge */}
-        <div className="absolute top-12 left-3 z-10">
-          <span className="bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full animate-bounce">
-            <Zap className="w-3 h-3 inline mr-1" />
-            FLASH SALE
-          </span>
+        {/* Mega Social Proof Badge */}
+        <div className="absolute bottom-3 left-3 z-10">
+          <div className="bg-gradient-to-r from-trust-green to-green-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg border border-green-300">
+            ✅ {stats.buyers}+ SOLD
+          </div>
         </div>
         
         {/* Product Image or Gradient overlay */}
@@ -176,55 +192,72 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         )}
       </div>
       
-      <CardContent className="p-6">
-        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-conversion-blue transition-colors">
+      <CardContent className="p-6 space-y-4">
+        <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300">
           {link.title}
         </h3>
         
-        <p className="text-gray-600 mb-4 text-sm line-clamp-3">
+        <p className="text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed">
           {link.description}
         </p>
         
-        {/* Enhanced Social Proof */}
-        <div className="bg-gradient-to-r from-trust-green/10 to-blue-50 p-3 rounded-lg mb-4 border border-trust-green/20">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <Users className="w-4 h-4 text-trust-green mr-1" />
-              <span className="text-sm font-medium text-trust-green">{stats.buyers} bought this week</span>
+        {/* Ultra Social Proof Matrix */}
+        <div className="bg-gradient-to-br from-trust-green/5 via-blue-50 to-purple-50 p-4 rounded-xl border-2 border-trust-green/20 shadow-inner mb-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-white/70 rounded-lg p-2 border border-trust-green/30">
+              <div className="flex items-center">
+                <Users className="w-4 h-4 text-trust-green mr-1" />
+                <span className="text-xs font-bold text-trust-green">{stats.buyers} bought</span>
+              </div>
+              <div className="text-xs text-gray-600">this week</div>
             </div>
-            <div className="flex items-center">
-              <TrendingUp className="w-4 h-4 text-blue-500 mr-1" />
-              <span className="text-sm font-medium text-blue-500">+{Math.floor(Math.random() * 50) + 10}% demand</span>
+            <div className="bg-white/70 rounded-lg p-2 border border-blue-300">
+              <div className="flex items-center">
+                <TrendingUp className="w-4 h-4 text-blue-600 mr-1" />
+                <span className="text-xs font-bold text-blue-600">+{Math.floor(Math.random() * 50) + 30}%</span>
+              </div>
+              <div className="text-xs text-gray-600">demand ↗</div>
             </div>
-          </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <Star className="w-4 h-4 text-yellow-400 mr-1" />
-              <span className="text-sm font-medium">{stats.rating} ({stats.reviews} reviews)</span>
+            <div className="bg-white/70 rounded-lg p-2 border border-yellow-300">
+              <div className="flex items-center">
+                <Star className="w-4 h-4 text-yellow-500 mr-1" />
+                <span className="text-xs font-bold text-yellow-700">{stats.rating}/5</span>
+              </div>
+              <div className="text-xs text-gray-600">{stats.reviews} reviews</div>
             </div>
-            <div className="flex items-center">
-              <Award className="w-4 h-4 text-purple-500 mr-1" />
-              <span className="text-sm font-medium text-purple-500">Best Seller</span>
+            <div className="bg-white/70 rounded-lg p-2 border border-purple-300">
+              <div className="flex items-center">
+                <Award className="w-4 h-4 text-purple-600 mr-1" />
+                <span className="text-xs font-bold text-purple-600">#1 Choice</span>
+              </div>
+              <div className="text-xs text-gray-600">bestseller</div>
             </div>
           </div>
         </div>
         
-        {/* Urgency Timer */}
-        <div className="bg-urgency-red/10 border border-urgency-red/30 rounded-lg p-2 mb-4">
-          <div className="flex items-center justify-center">
-            <Clock className="w-4 h-4 text-urgency-red mr-2" />
-            <span className="text-sm font-bold text-urgency-red">
-              Sale ends in {stats.timeLeft} hours! Don't miss out!
-            </span>
+        {/* Triple Urgency Stack */}
+        <div className="space-y-2">
+          <div className="bg-gradient-to-r from-urgency-red/10 to-red-100 border-2 border-urgency-red/40 rounded-xl p-3">
+            <div className="flex items-center justify-center">
+              <Clock className="w-4 h-4 text-urgency-red mr-2 animate-pulse" />
+              <span className="text-sm font-bold text-urgency-red">
+                Price jumps ${Math.floor(Math.random() * 50) + 30} in {stats.timeLeft} hours!
+              </span>
+            </div>
           </div>
-        </div>
-        
-        {/* Savings Highlight */}
-        <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-2 mb-4">
-          <div className="text-center">
-            <span className="text-lg font-bold text-yellow-700">
-              💰 You Save ${stats.savedAmount} Today!
-            </span>
+          
+          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-xl p-3">
+            <div className="text-center">
+              <span className="text-lg font-bold text-yellow-800">
+                💰 EXCLUSIVE: Save ${stats.savedAmount} Today Only!
+              </span>
+            </div>
+          </div>
+          
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl p-2">
+            <div className="text-center text-sm font-bold text-orange-800">
+              🔥 {Math.floor(Math.random() * 15) + 5} people added to cart in last 10 minutes
+            </div>
           </div>
         </div>
         
@@ -242,43 +275,70 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         </div>
         
-        {/* Enhanced CTA Button */}
-        <Button
-          onClick={handleClick}
-          disabled={trackClickMutation.isPending}
-          className="w-full bg-gradient-to-r from-action-orange to-urgency-red hover:from-orange-600 hover:to-red-700 text-white font-bold py-4 px-6 rounded-lg transition-all duration-300 transform hover:scale-105 shadow-lg relative overflow-hidden animate-pulse-glow"
-        >
-          <div className="shimmer-effect absolute inset-0"></div>
-          <span className="relative z-10 flex items-center justify-center">
-            {trackClickMutation.isPending ? (
-              <>Loading...</>
-            ) : (
-              <>
-                <ShoppingCart className="w-5 h-5 mr-2" />
-                🚀 CLAIM YOUR DEAL NOW!
-                <ExternalLink className="w-5 h-5 ml-2" />
-              </>
-            )}
-          </span>
-        </Button>
-        
-        {/* Guarantee Badge */}
-        <div className="mt-3 text-center">
-          <div className="inline-flex items-center bg-trust-green/10 text-trust-green border border-trust-green/30 rounded-full px-3 py-1 text-xs font-medium">
-            <Award className="w-3 h-3 mr-1" />
-            30-Day Money Back Guarantee
+        {/* Ultimate CTA Experience */}
+        <div className="space-y-3">
+          <Button
+            onClick={handleClick}
+            disabled={trackClickMutation.isPending}
+            className="w-full bg-gradient-to-r from-action-orange via-red-500 to-urgency-red hover:from-orange-600 hover:via-red-600 hover:to-red-700 text-white font-bold py-5 px-6 rounded-2xl transition-all duration-500 transform hover:scale-105 hover:rotate-1 shadow-2xl relative overflow-hidden animate-pulse-glow border-2 border-white/20"
+          >
+            <div className="shimmer-effect absolute inset-0"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-ping"></div>
+            <span className="relative z-10 flex items-center justify-center text-lg">
+              {trackClickMutation.isPending ? (
+                <>🔄 Securing Your Deal...</>
+              ) : (
+                <>
+                  <ShoppingCart className="w-6 h-6 mr-3 animate-bounce" />
+                  🚀 CLAIM EXCLUSIVE DEAL NOW!
+                  <ExternalLink className="w-6 h-6 ml-3" />
+                </>
+              )}
+            </span>
+          </Button>
+          
+          {/* Security Trust Stack */}
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-gradient-to-r from-trust-green/10 to-green-50 border border-trust-green/30 rounded-xl px-3 py-2 text-center">
+              <div className="text-xs font-bold text-trust-green">✅ SSL Secured</div>
+            </div>
+            <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300 rounded-xl px-3 py-2 text-center">
+              <div className="text-xs font-bold text-blue-700">🔒 Encrypted</div>
+            </div>
+          </div>
+          
+          {/* Mega Guarantee */}
+          <div className="bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-50 border-2 border-yellow-300 rounded-xl p-3 text-center shadow-inner">
+            <div className="flex items-center justify-center mb-1">
+              <Award className="w-4 h-4 text-yellow-600 mr-2" />
+              <span className="font-bold text-yellow-800">TRIPLE GUARANTEE</span>
+            </div>
+            <div className="text-xs text-yellow-700 space-y-1">
+              <div>💰 30-Day Money Back</div>
+              <div>🚚 Free Returns</div>
+              <div>⚡ Instant Support</div>
+            </div>
           </div>
         </div>
         
-        {/* Enhanced Click counter with social proof */}
-        <div className="mt-3 text-center">
+        {/* Ultimate Social Validation */}
+        <div className="mt-4 space-y-2">
           {link.clicks > 0 && (
-            <div className="text-xs text-gray-500 mb-1">
-              🔥 {link.clicks} people grabbed this deal
+            <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-2 text-center">
+              <div className="text-sm font-bold text-purple-700">
+                🔥 {link.clicks} smart shoppers claimed this deal
+              </div>
             </div>
           )}
-          <div className="text-xs text-urgency-red font-medium animate-pulse">
-            ⚡ {Math.floor(Math.random() * 20) + 5} people viewing this right now
+          <div className="bg-gradient-to-r from-urgency-red/10 to-red-100 border border-urgency-red/40 rounded-lg p-2">
+            <div className="text-center">
+              <div className="text-sm font-bold text-urgency-red animate-pulse">
+                ⚡ {Math.floor(Math.random() * 20) + 15} people viewing RIGHT NOW
+              </div>
+              <div className="text-xs text-red-600">
+                🔴 Last purchase: {Math.floor(Math.random() * 5) + 1} minutes ago
+              </div>
+            </div>
           </div>
         </div>
       </CardContent>
@@ -286,13 +346,13 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
     {/* Delete Confirmation Dialog */}
     <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md" aria-describedby="delete-description">
         <DialogHeader>
           <DialogTitle className="text-urgency-red">Delete Product</DialogTitle>
         </DialogHeader>
         
         <form onSubmit={handleDelete} className="space-y-4">
-          <p className="text-sm text-gray-600">
+          <p id="delete-description" className="text-sm text-gray-600">
             Are you sure you want to permanently delete "{link.title}"? This action cannot be undone.
           </p>
           

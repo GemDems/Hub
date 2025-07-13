@@ -75,9 +75,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async incrementLinkClicks(id: number): Promise<AffiliateLink | undefined> {
+    const current = await this.getAffiliateLinkById(id);
+    if (!current) return undefined;
+    
     const [updated] = await db
       .update(affiliateLinks)
-      .set({ clicks: db.sql`${affiliateLinks.clicks} + 1` })
+      .set({ clicks: current.clicks + 1 })
       .where(eq(affiliateLinks.id, id))
       .returning();
     return updated || undefined;
