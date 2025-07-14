@@ -157,22 +157,29 @@ export default function Home() {
       </main>
 
       {/* Professional Verified Products Filter - Between Products and Trust Indicators */}
-      <div className="bg-gray-50 py-6">
+      <div className="bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center">
             <Button
-              onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
+              onClick={() => {
+                setShowVerifiedOnly(!showVerifiedOnly);
+                // Scroll to products section
+                const productsSection = document.querySelector('main');
+                if (productsSection) {
+                  productsSection.scrollIntoView({ behavior: 'smooth' });
+                }
+              }}
               variant={showVerifiedOnly ? "default" : "outline"}
-              className={`h-6 px-12 w-full max-w-2xl rounded-sm text-xs font-medium transition-all duration-300 border ${
+              className={`h-12 px-16 w-full max-w-4xl rounded-lg text-sm font-semibold transition-all duration-300 border-2 shadow-md ${
                 showVerifiedOnly 
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-sm' 
-                  : 'bg-white hover:bg-gray-50 border-gray-300 text-gray-700 hover:border-gray-400'
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-lg' 
+                  : 'bg-white hover:bg-blue-50 border-blue-300 text-blue-700 hover:border-blue-500'
               }`}
             >
-              <Shield className="w-3 h-3 mr-2" />
+              <Shield className="w-4 h-4 mr-3" />
               {showVerifiedOnly ? 'Show All Products' : 'Show Verified Products Only'}
               {showVerifiedOnly && (
-                <span className="ml-2 text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded">
+                <span className="ml-3 text-sm bg-blue-500 text-white px-2 py-1 rounded">
                   {filteredAndSortedLinks.length}
                 </span>
               )}
