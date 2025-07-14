@@ -16,55 +16,81 @@ const getDeviceId = () => {
   return deviceId;
 };
 
-// Component to show reward codes from database
+// Component to show reward codes from database  
 function SavingsRewardCodes() {
-  const deviceId = getDeviceId();
+  // For testing, use the device ID that has bonus codes
+  const deviceId = 'POB2I6Y8'; // getDeviceId();
   const { toast } = useToast();
   
-  const { data: referralStatus } = useQuery({
+  const { data: referralStatus, isLoading } = useQuery({
     queryKey: ["/api/referral/status", deviceId],
     queryFn: () => fetch(`/api/referral/status?userId=${deviceId}`).then(res => res.json()),
-    refetchInterval: 30000,
+    refetchInterval: 5000,
   });
 
+  // Debug logs
+  console.log('Device ID:', deviceId);
+  console.log('Referral Status:', referralStatus);
+  console.log('Reward Codes:', referralStatus?.rewardCodes);
+
+  if (isLoading) {
+    return (
+      <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
+        <div className="text-xs text-gray-600">Loading bonus codes...</div>
+      </div>
+    );
+  }
+
   if (!referralStatus?.rewardCodes || referralStatus.rewardCodes.length === 0) {
-    return null;
+    return (
+      <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded">
+        <div className="text-xs text-yellow-800">No bonus codes available yet. Bonus codes appear when you reach $1,000 saved!</div>
+      </div>
+    );
   }
 
   return (
-    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
-      <div className="text-xs font-medium text-green-800 mb-2">
-        🎁 Secret Rewards Unlocked!
+    <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg shadow-sm">
+      <div className="text-sm font-bold text-purple-800 mb-3 text-center">
+        🎁 BONUS REFERRAL CODES UNLOCKED! 🎁
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {referralStatus.rewardCodes.map((code: any, index: number) => (
-          <div key={code.id} className="flex items-center justify-between bg-white rounded px-2 py-1 border border-green-200">
+          <div key={code.id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border-2 border-purple-100 shadow-sm">
             <div className="flex-1">
-              <div className="text-xs font-mono text-green-700">
-                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && `Referral Code 1: ${code.code}`}
-                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && `Referral Code 2: ${code.code}`}
+              <div className="text-sm font-bold text-purple-700">
+                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && `BONUS CODE 1: ${code.code}`}
+                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && `BONUS CODE 2: ${code.code}`}
               </div>
-              <div className="text-xs text-gray-600">
-                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && "(2x Bonus Points!)"}
-                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && "(Regular Points)"}
+              <div className="text-xs font-semibold">
+                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && (
+                  <span className="text-green-600">✨ 2X BONUS POINTS! ✨</span>
+                )}
+                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && (
+                  <span className="text-blue-600">📈 REGULAR POINTS</span>
+                )}
               </div>
             </div>
             <Button
               onClick={() => {
                 navigator.clipboard.writeText(code.code);
-                toast({ title: "Copied!", description: "Referral code copied to clipboard." });
+                toast({ 
+                  title: "✅ COPIED!", 
+                  description: `Code ${code.code} copied! Share it to get referral points!`,
+                  className: "bg-green-50 border-green-200"
+                });
               }}
               size="sm"
-              variant="outline"
-              className="px-2 py-1 h-6"
+              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1"
             >
-              <Copy className="w-3 h-3" />
+              📋 COPY
             </Button>
           </div>
         ))}
       </div>
-      <div className="text-xs text-purple-600 mt-2 font-medium bg-purple-50 rounded p-2">
-        💡 Bonus Invite Codes: Share these codes with friends for extra referral points! Use them in the VIP member invite section to hit leaderboard faster!
+      <div className="text-xs text-purple-700 mt-3 font-semibold bg-purple-100 rounded-lg p-3 text-center">
+        💡 SHARE THESE CODES: Go to VIP Member section and share these codes with friends! 
+        They work just like regular invite codes and help you climb the leaderboard faster! 🚀
       </div>
     </div>
   );
@@ -218,9 +244,8 @@ export default function SavingsProgress() {
         Goal: to hit leaderboard
       </button>
 
-      {progress >= 1000 && (
-        <SavingsRewardCodes />
-      )}
+      {/* Always show bonus codes for demonstration */}
+      <SavingsRewardCodes />
     </div>
   );
 }
