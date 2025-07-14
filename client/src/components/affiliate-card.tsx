@@ -185,8 +185,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Cycling Alert Badge */}
-        {isElitePick && currentAlertText ? (
+        {/* Cycling Alert Badge - Temporarily Hidden */}
+        {false ? (
           <div className="absolute top-[0px] left-[0px] right-[0px] z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
               <Users className="w-3 h-3 inline mr-1" />
@@ -207,8 +207,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         )}
         
-        {/* Stock Countdown Alert */}
-        {stock > 0 ? (
+        {/* Stock Countdown Alert - Temporarily Hidden */}
+        {false ? (
           <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-10`}>
             <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
               <AlertCircle className="w-3 h-3 inline mr-1" />
@@ -221,7 +221,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         {/* Clean Badges */}
         <div className="absolute top-3 left-3 z-10">
           <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-            {getCategoryEmoji(link.category)} BESTSELLER
+            {getCategoryEmoji(link.category || '')} BESTSELLER
           </div>
         </div>
         
