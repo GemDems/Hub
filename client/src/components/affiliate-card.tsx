@@ -30,7 +30,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     "👥 Others Also Bought"
   ];
 
-  const [currentAlertText, setCurrentAlertText] = useState(alerts[0]);
+  const [currentAlertText, setCurrentAlertText] = useState(alerts[0] || "");
 
   // Cycle through alerts every 4 seconds for each product
   useEffect(() => {
@@ -184,14 +184,14 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         </div>
         
         {/* Cycling Alert Badge */}
-        {isElitePick && currentAlertText && (
+        {isElitePick && currentAlertText ? (
           <div className="absolute top-[0px] left-[0px] right-[0px] z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
               <Users className="w-3 h-3 inline mr-1" />
               {currentAlertText}
             </div>
           </div>
-        )}
+        ) : null}
         
         {/* Verified Source Badge */}
         {link.isVerified && (
