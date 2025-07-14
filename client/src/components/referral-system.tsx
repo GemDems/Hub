@@ -338,8 +338,8 @@ export default function ReferralSystem() {
         {referralStatus?.rewardCodes && referralStatus.rewardCodes.length > 0 && (
           <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 space-y-3">
             <div className="text-center">
-              <h4 className="font-bold text-sm text-yellow-800 mb-2">🎉 $1,000 Reward Codes Unlocked!</h4>
-              <p className="text-xs text-yellow-600">Share these special codes with friends</p>
+              <h4 className="font-bold text-sm text-yellow-800 mb-2">🎉 $1,000 Bonus Invite Codes Unlocked!</h4>
+              <p className="text-xs text-yellow-600">Share these bonus invite codes with friends</p>
             </div>
             
             <div className="space-y-2">
@@ -348,14 +348,14 @@ export default function ReferralSystem() {
                   <div>
                     <div className="font-mono text-sm font-bold text-gray-800">{code.code}</div>
                     <div className="text-xs text-gray-600">
-                      {code.codeType === "seinfeld" && "Level 1 Seinfeld Code"}
-                      {code.codeType === "double_points" && "Double Points Code (2x referrals)"}
+                      {code.codeType === "bonus_2x" && "Referral Code 1 (2x Bonus)"}
+                      {code.codeType === "bonus_regular" && "Referral Code 2 (Regular)"}
                     </div>
                   </div>
                   <Button
                     onClick={() => {
                       navigator.clipboard.writeText(code.code);
-                      toast({ title: "Copied!", description: "Reward code copied to clipboard." });
+                      toast({ title: "Copied!", description: "Bonus invite code copied to clipboard." });
                     }}
                     size="sm"
                     variant="outline"

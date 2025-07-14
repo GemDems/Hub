@@ -50,8 +50,10 @@ Preferred communication style: Simple, everyday language.
   - **Permanent Username System**: Username can only be set once for authenticity
   - **Money Saved Tracker**: Dark green rectangular design positioned between money saved and VIP leaderboards
   - **Click Tracking**: Every "Get Deal Now" click adds product price to progress bar
-  - **$1,000 Reward System**: Unlocks 2 bonus codes - Level 1 Seinfeld code + Double Points code (2x referral value)
-  - **Double Points System**: Special codes give 2 referral points instead of 1 when used by others
+  - **$1,000 Reward System**: Unlocks 2 bonus invite codes when reaching savings goal:
+    - Referral Code 1 (2x Bonus): Gives 2 invite points when used by others
+    - Referral Code 2 (Regular): Gives 1 invite point when used by others
+  - **Bonus Invite System**: Reward codes work exactly like regular invite codes in VIP member section
   - **Enhanced Live Feed**: 100% privacy blur on ALL purchased items for complete user protection
   - **Comprehensive Error Handling**: Clear device limitation messages for referral code system
   - **Subconscious Psychology**: Simple dark green design with reward urgency triggers and "increase this amount" messaging

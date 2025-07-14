@@ -353,33 +353,33 @@ export class DatabaseStorage implements IStorage {
 
   // Generate reward codes when user hits $1000 milestone
   private async generateRewardCodes(userId: string): Promise<void> {
-    // Generate Seinfeld Level 1 code (regular)
-    const seinfeldCode = Math.random().toString(36).substring(2, 8).toUpperCase() + 
-                        Math.random().toString(36).substring(2, 4).toUpperCase();
-    
-    // Generate Double Points code
-    const doubleCode = Math.random().toString(36).substring(2, 8).toUpperCase() + 
+    // Generate Bonus Invite Code 1 (2x Bonus) 
+    const bonusCode1 = Math.random().toString(36).substring(2, 8).toUpperCase() + 
                        Math.random().toString(36).substring(2, 4).toUpperCase();
     
-    // Insert both reward codes
+    // Generate Bonus Invite Code 2 (Regular)
+    const bonusCode2 = Math.random().toString(36).substring(2, 8).toUpperCase() + 
+                       Math.random().toString(36).substring(2, 4).toUpperCase();
+    
+    // Insert both reward codes as additional invite codes
     await db.insert(referralCodes).values([
       {
-        code: seinfeldCode,
-        userId,
-        usedCount: 0,
-        usedDevices: [],
-        isVip: 0,
-        isDoublePoints: 0,
-        codeType: "seinfeld"
-      },
-      {
-        code: doubleCode,
+        code: bonusCode1,
         userId,
         usedCount: 0,
         usedDevices: [],
         isVip: 0,
         isDoublePoints: 1,
-        codeType: "double_points"
+        codeType: "bonus_2x"
+      },
+      {
+        code: bonusCode2,
+        userId,
+        usedCount: 0,
+        usedDevices: [],
+        isVip: 0,
+        isDoublePoints: 0,
+        codeType: "bonus_regular"
       }
     ]);
   }
