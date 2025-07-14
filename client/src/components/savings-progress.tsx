@@ -67,14 +67,20 @@ export default function SavingsProgress() {
   return (
     <div className="text-center py-4">
       <div className="flex items-center justify-center space-x-3 mb-2">
-        <span className="text-sm text-gray-600 font-normal">Money Saved:</span>
-        <span className="text-base font-normal text-green-700">${progress.toLocaleString()}</span>
+        <span className="text-sm font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">Money Saved:</span>
+        <span className="text-base font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">${progress.toLocaleString()}</span>
       </div>
       
-      <Progress 
-        value={progressPercentage} 
-        className="h-2 bg-gray-100 mb-2" 
-      />
+      <div className="relative mb-2">
+        <Progress 
+          value={progressPercentage} 
+          className="h-2 bg-gray-100 shadow-sm" 
+        />
+        <div className="flex justify-between items-center mt-1">
+          <span className="text-xs font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">$0</span>
+          <span className="text-xs font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">$1,000</span>
+        </div>
+      </div>
       
       <div className="text-xs text-gray-500 mb-1 font-normal">
         👉 Every "Get Deal Now" increases your amount saved
