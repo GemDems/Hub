@@ -110,7 +110,9 @@ export class DatabaseStorage implements IStorage {
         userId,
         usedCount: 0,
         usedDevices: [],
-        isVip: 0
+        isVip: 0,
+        isDoublePoints: 0,
+        codeType: "regular"
       })
       .returning();
     return referralCode;
@@ -136,7 +138,7 @@ export class DatabaseStorage implements IStorage {
     // Determine points to add based on code type
     const pointsToAdd = referralCode.isDoublePoints ? 2 : 1;
     const newUsedDevices = [...referralCode.usedDevices, deviceId];
-    const newUsedCount = (referralCode.usedCount || 0) + pointsToAdd;
+    const newUsedCount = (referralCode.usedCount || 0) + 1;
     const vipUnlocked = newUsedCount >= 3 && !referralCode.isVip;
 
     // Update referral code
@@ -149,7 +151,10 @@ export class DatabaseStorage implements IStorage {
       })
       .where(eq(referralCodes.code, code));
 
-    // Update user stats if VIP unlocked
+    // Update user stats - add referral points (1 or 2 based on code type)
+    await this.updateUserReferralCount(referralCode.userId, pointsToAdd);
+    
+    // Update VIP status if needed
     if (vipUnlocked) {
       await this.updateUserVipStatus(referralCode.userId, true);
     }
@@ -158,7 +163,12 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string; totalCodesShared?: number; rewardCodes?: any[] }> {
-    const [referralCode] = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId));
+    // Get primary referral code (first regular code)
+    const [referralCode] = await db.select().from(referralCodes)
+      .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} = 'regular'`)
+      .orderBy(referralCodes.createdAt)
+      .limit(1);
+    
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
     // Get all user's codes including reward codes
@@ -167,15 +177,13 @@ export class DatabaseStorage implements IStorage {
     
     // Calculate total codes shared: sum of all codes usage
     const totalUsageCount = allUserCodes.reduce((sum, code) => sum + (code.usedCount || 0), 0);
-    const bonusCodesFromRewards = userStat?.hasSeinfeldCode ? 2 : 0; // +2 for $1000 reward codes (regular + double)
-    const totalCodesShared = totalUsageCount + bonusCodesFromRewards;
     
     return {
       myCode: referralCode?.code,
       usedCount: referralCode?.usedCount || 0,
       isVip: Boolean(userStat?.isVip || referralCode?.isVip),
       username: userStat?.username,
-      totalCodesShared,
+      totalCodesShared: totalUsageCount,
       rewardCodes
     };
   }
@@ -186,7 +194,10 @@ export class DatabaseStorage implements IStorage {
     if (existingStats) {
       await db
         .update(userStats)
-        .set({ isVip: isVip ? 1 : 0, referralCount: existingStats.referralCount + 1 })
+        .set({ 
+          isVip: isVip ? 1 : 0,
+          lastActive: new Date()
+        })
         .where(eq(userStats.userId, userId));
     } else {
       await db
@@ -194,8 +205,33 @@ export class DatabaseStorage implements IStorage {
         .values({
           userId,
           totalSavings: 0,
-          referralCount: 1,
+          referralCount: 0,
+          totalCodesShared: 0,
           isVip: isVip ? 1 : 0
+        });
+    }
+  }
+
+  private async updateUserReferralCount(userId: string, pointsToAdd: number): Promise<void> {
+    const [existingStats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    
+    if (existingStats) {
+      await db
+        .update(userStats)
+        .set({ 
+          referralCount: (existingStats.referralCount || 0) + pointsToAdd,
+          lastActive: new Date()
+        })
+        .where(eq(userStats.userId, userId));
+    } else {
+      await db
+        .insert(userStats)
+        .values({
+          userId,
+          referralCount: pointsToAdd,
+          totalSavings: 0,
+          totalCodesShared: 0,
+          isVip: 0
         });
     }
   }
