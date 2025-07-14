@@ -100,22 +100,7 @@ export default function Home() {
           onCategoryChange={setActiveCategory}
         />
         
-        {/* Mini Verified Filter Button - Left Side */}
-        <div className="flex justify-start mb-0">
-          <Button
-            onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
-            variant={showVerifiedOnly ? "default" : "outline"}
-            className={`h-6 w-6 p-0 rounded-full text-xs font-medium transition-all duration-300 ${
-              showVerifiedOnly 
-                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
-                : 'bg-white hover:bg-blue-50 border-2 border-blue-200 text-blue-600'
-            }`}
-          >
-            <div className="w-2 h-2 bg-blue-500 rounded-full flex items-center justify-center">
-              <div className="w-1 h-1 bg-white rounded-full"></div>
-            </div>
-          </Button>
-        </div>
+
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -172,6 +157,31 @@ export default function Home() {
       </main>
 
       <TrustIndicators />
+      
+      {/* Professional Verified Products Filter */}
+      <div className="bg-white py-8 border-t border-b border-gray-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-center">
+            <Button
+              onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
+              variant={showVerifiedOnly ? "default" : "outline"}
+              className={`h-8 px-8 w-full max-w-md rounded-sm text-sm font-medium transition-all duration-300 border-2 ${
+                showVerifiedOnly 
+                  ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-sm' 
+                  : 'bg-white hover:bg-gray-50 border-gray-300 text-gray-700 hover:border-gray-400'
+              }`}
+            >
+              <Shield className="w-4 h-4 mr-2" />
+              {showVerifiedOnly ? 'Show All Products' : 'Show Verified Products Only'}
+              {showVerifiedOnly && (
+                <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded">
+                  {filteredAndSortedLinks.length}
+                </span>
+              )}
+            </Button>
+          </div>
+        </div>
+      </div>
       
       {/* Leaderboard Section - At bottom */}
       <div className="bg-white py-16">
