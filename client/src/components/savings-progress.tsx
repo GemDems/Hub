@@ -124,7 +124,10 @@ export default function SavingsProgress() {
           <span className="text-xs font-medium text-gray-600">$400</span>
           <span className="text-xs font-medium text-gray-600">$600</span>
           <span className="text-xs font-medium text-gray-600">$800</span>
-          <span className={`text-xs font-semibold bg-gradient-to-r ${getProgressColor()} bg-clip-text text-transparent transition-all duration-500`}>$1,000</span>
+          <div className="flex items-center space-x-1">
+            <span className={`text-xs font-semibold bg-gradient-to-r ${getProgressColor()} bg-clip-text text-transparent transition-all duration-500`}>$1,000</span>
+            <span className={`text-sm transition-all duration-700 ${progress >= 1000 ? 'scale-110' : 'scale-100'} ${progress >= 900 ? 'opacity-100' : 'opacity-60'}`}>🎁</span>
+          </div>
         </div>
       </div>
       
