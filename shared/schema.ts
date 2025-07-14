@@ -30,6 +30,8 @@ export const referralCodes = pgTable("referral_codes", {
   usedCount: integer("used_count").default(0),
   usedDevices: text("used_devices").array().default([]),
   isVip: integer("is_vip").default(0), // Using integer for boolean compatibility
+  isDoublePoints: integer("is_double_points").default(0), // Double referral points code
+  codeType: text("code_type").default("regular"), // "regular", "seinfeld", "double_points"
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 

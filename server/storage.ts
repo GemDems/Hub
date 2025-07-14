@@ -133,8 +133,10 @@ export class DatabaseStorage implements IStorage {
       throw new Error('This device has already used a referral code');
     }
 
+    // Determine points to add based on code type
+    const pointsToAdd = referralCode.isDoublePoints ? 2 : 1;
     const newUsedDevices = [...referralCode.usedDevices, deviceId];
-    const newUsedCount = newUsedDevices.length;
+    const newUsedCount = (referralCode.usedCount || 0) + pointsToAdd;
     const vipUnlocked = newUsedCount >= 3 && !referralCode.isVip;
 
     // Update referral code
@@ -155,13 +157,17 @@ export class DatabaseStorage implements IStorage {
     return { vipUnlocked, usedCount: newUsedCount };
   }
 
-  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string; totalCodesShared?: number }> {
+  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string; totalCodesShared?: number; rewardCodes?: any[] }> {
     const [referralCode] = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId));
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
-    // Calculate total codes shared: how many times their code has been used + bonus codes from rewards
-    const totalUsageCount = referralCode?.usedCount || 0;
-    const bonusCodesFromRewards = userStat?.hasSeinfeldCode ? 1 : 0; // +1 for $1000 reward code
+    // Get all user's codes including reward codes
+    const allUserCodes = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId));
+    const rewardCodes = allUserCodes.filter(code => code.codeType !== "regular");
+    
+    // Calculate total codes shared: sum of all codes usage
+    const totalUsageCount = allUserCodes.reduce((sum, code) => sum + (code.usedCount || 0), 0);
+    const bonusCodesFromRewards = userStat?.hasSeinfeldCode ? 2 : 0; // +2 for $1000 reward codes (regular + double)
     const totalCodesShared = totalUsageCount + bonusCodesFromRewards;
     
     return {
@@ -169,7 +175,8 @@ export class DatabaseStorage implements IStorage {
       usedCount: referralCode?.usedCount || 0,
       isVip: Boolean(userStat?.isVip || referralCode?.isVip),
       username: userStat?.username,
-      totalCodesShared
+      totalCodesShared,
+      rewardCodes
     };
   }
 
@@ -221,6 +228,11 @@ export class DatabaseStorage implements IStorage {
     const currentProgress = existingStats?.savingsProgress || 0;
     const newProgress = currentProgress + amount;
     const hasReward = newProgress >= 1000 && currentProgress < 1000 && !existingStats?.hasSeinfeldCode;
+
+    // Generate reward codes when hitting $1000 milestone
+    if (hasReward) {
+      await this.generateRewardCodes(userId);
+    }
 
     if (existingStats) {
       await db
@@ -301,6 +313,39 @@ export class DatabaseStorage implements IStorage {
       .limit(10);
 
     return { topSavers, topReferrers };
+  }
+
+  // Generate reward codes when user hits $1000 milestone
+  private async generateRewardCodes(userId: string): Promise<void> {
+    // Generate Seinfeld Level 1 code (regular)
+    const seinfeldCode = Math.random().toString(36).substring(2, 8).toUpperCase() + 
+                        Math.random().toString(36).substring(2, 4).toUpperCase();
+    
+    // Generate Double Points code
+    const doubleCode = Math.random().toString(36).substring(2, 8).toUpperCase() + 
+                       Math.random().toString(36).substring(2, 4).toUpperCase();
+    
+    // Insert both reward codes
+    await db.insert(referralCodes).values([
+      {
+        code: seinfeldCode,
+        userId,
+        usedCount: 0,
+        usedDevices: [],
+        isVip: 0,
+        isDoublePoints: 0,
+        codeType: "seinfeld"
+      },
+      {
+        code: doubleCode,
+        userId,
+        usedCount: 0,
+        usedDevices: [],
+        isVip: 0,
+        isDoublePoints: 1,
+        codeType: "double_points"
+      }
+    ]);
   }
 }
 

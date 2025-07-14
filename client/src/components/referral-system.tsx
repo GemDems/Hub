@@ -334,6 +334,41 @@ export default function ReferralSystem() {
           </div>
         )}
 
+        {/* Reward Codes Display */}
+        {referralStatus?.rewardCodes && referralStatus.rewardCodes.length > 0 && (
+          <div className="bg-gradient-to-r from-yellow-50 to-orange-50 border border-yellow-200 rounded-lg p-4 space-y-3">
+            <div className="text-center">
+              <h4 className="font-bold text-sm text-yellow-800 mb-2">🎉 $1,000 Reward Codes Unlocked!</h4>
+              <p className="text-xs text-yellow-600">Share these special codes with friends</p>
+            </div>
+            
+            <div className="space-y-2">
+              {referralStatus.rewardCodes.map((code, index) => (
+                <div key={code.id} className="flex items-center justify-between bg-white rounded-lg p-2 border border-yellow-300">
+                  <div>
+                    <div className="font-mono text-sm font-bold text-gray-800">{code.code}</div>
+                    <div className="text-xs text-gray-600">
+                      {code.codeType === "seinfeld" && "Level 1 Seinfeld Code"}
+                      {code.codeType === "double_points" && "Double Points Code (2x referrals)"}
+                    </div>
+                  </div>
+                  <Button
+                    onClick={() => {
+                      navigator.clipboard.writeText(code.code);
+                      toast({ title: "Copied!", description: "Reward code copied to clipboard." });
+                    }}
+                    size="sm"
+                    variant="outline"
+                    className="px-2"
+                  >
+                    <Copy className="w-3 h-3" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Status Info */}
         <div className="bg-gray-50 rounded-lg p-3 text-center">
           <div className="flex items-center justify-center space-x-4 text-xs">
