@@ -209,13 +209,13 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   // Delete product mutation
   const deleteProductMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/affiliate-links/${id}`, {
+      return await apiRequest(`/api/admin/affiliate-links/${id}`, {
         method: "DELETE",
-        body: JSON.stringify({ password: "9f$81r@V7#iwant" }),
       });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
       queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
       toast({
         title: "Product Removed",

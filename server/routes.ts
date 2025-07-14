@@ -117,6 +117,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // DELETE route for removing products
+  app.delete("/api/admin/affiliate-links/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const deleted = await storage.deleteAffiliateLink(id);
+      if (deleted) {
+        res.json({ message: "Product deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Product not found" });
+      }
+    } catch (error) {
+      console.error("Error deleting affiliate link:", error);
+      res.status(500).json({ message: "Failed to delete product" });
+    }
+  });
+
   // Create new affiliate link
   app.post("/api/affiliate-links", async (req, res) => {
     try {

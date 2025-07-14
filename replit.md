@@ -8,8 +8,15 @@ This is a full-stack affiliate link management platform built with React, Expres
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (January 2025)
+## Recent Changes (July 2025)
 
+- **Latest Update**: Fixed draft system and added comprehensive scheduling features
+  - **Draft System Fix**: Products now properly save as drafts when "Save as Draft" is clicked
+  - **Bulk Publish**: Added "Publish All Drafts" button for one-click publishing of all drafts
+  - **Scheduled Publishing**: Added date/time picker for automatic draft publishing
+  - **Scheduled Deletion**: Added date/time picker for automatic product removal
+  - **Enhanced Admin Panel**: Added tabbed interface with Create, Drafts, and Manage sections
+  - **API Routes**: Added proper POST /api/affiliate-links and DELETE /api/admin/affiliate-links/:id endpoints
 - **Critical Bug Fix (July 2025)**: Resolved persistent "0" appearing in top-left corner of product cards
   - Root cause: `link.isVerified` field set to 0 instead of false caused React to render "0" literally
   - Solution: Changed `{link.isVerified && (` to `{link.isVerified ? ( : null}` pattern throughout
