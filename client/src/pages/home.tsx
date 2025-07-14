@@ -8,7 +8,7 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, Dice6 } from "lucide-react";
 
 import Leaderboard from "@/components/leaderboard";
 import ReferralSystem from "@/components/referral-system";
@@ -79,6 +79,41 @@ export default function Home() {
   const handleMyDealsClick = () => {
     const savingsSection = document.querySelector('[data-section="savings-progress"]');
     savingsSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleRandomLink = () => {
+    if (affiliateLinks.length === 0) return;
+    
+    // Get click counts for weighting
+    const linksWithClicks = affiliateLinks.map(link => ({
+      ...link,
+      clicks: link.clicks || 0
+    }));
+    
+    // Sort by clicks (most clicked first)
+    const sortedLinks = linksWithClicks.sort((a, b) => b.clicks - a.clicks);
+    
+    // Create weighted selection with 60% probability for most clicked products
+    const totalWeight = sortedLinks.reduce((sum, link, index) => {
+      // Higher weight for more clicked products (decreasing weight)
+      const weight = index < Math.ceil(sortedLinks.length * 0.6) ? 0.6 : 0.4;
+      return sum + weight;
+    }, 0);
+    
+    let random = Math.random() * totalWeight;
+    let selectedLink = sortedLinks[0]; // fallback
+    
+    for (let i = 0; i < sortedLinks.length; i++) {
+      const weight = i < Math.ceil(sortedLinks.length * 0.6) ? 0.6 : 0.4;
+      if (random <= weight) {
+        selectedLink = sortedLinks[i];
+        break;
+      }
+      random -= weight;
+    }
+    
+    // Open in new tab
+    window.open(selectedLink.url, '_blank');
   };
 
   const handleDropdownCategorySelect = (category: string) => {
@@ -191,7 +226,7 @@ export default function Home() {
         </Button>
       </div>
 
-      <Header />
+      <Header onRandomLink={handleRandomLink} />
       <StatsBar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
