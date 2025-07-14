@@ -156,25 +156,23 @@ export default function Home() {
         )}
       </main>
 
-      <TrustIndicators />
-      
-      {/* Professional Verified Products Filter */}
-      <div className="bg-white py-8 border-t border-b border-gray-200">
+      {/* Professional Verified Products Filter - Between Products and Trust Indicators */}
+      <div className="bg-gray-50 py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-center">
             <Button
               onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
               variant={showVerifiedOnly ? "default" : "outline"}
-              className={`h-8 px-8 w-full max-w-md rounded-sm text-sm font-medium transition-all duration-300 border-2 ${
+              className={`h-6 px-12 w-full max-w-2xl rounded-sm text-xs font-medium transition-all duration-300 border ${
                 showVerifiedOnly 
                   ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-sm' 
                   : 'bg-white hover:bg-gray-50 border-gray-300 text-gray-700 hover:border-gray-400'
               }`}
             >
-              <Shield className="w-4 h-4 mr-2" />
+              <Shield className="w-3 h-3 mr-2" />
               {showVerifiedOnly ? 'Show All Products' : 'Show Verified Products Only'}
               {showVerifiedOnly && (
-                <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded">
+                <span className="ml-2 text-xs bg-blue-500 text-white px-1.5 py-0.5 rounded">
                   {filteredAndSortedLinks.length}
                 </span>
               )}
@@ -182,6 +180,8 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      <TrustIndicators />
       
       {/* Leaderboard Section - At bottom */}
       <div className="bg-white py-16">
