@@ -206,14 +206,14 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         )}
         
         {/* Stock Countdown Alert */}
-        {stock > 0 && (
+        {stock > 0 ? (
           <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-10`}>
             <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
               <AlertCircle className="w-3 h-3 inline mr-1" />
               ONLY {stock} LEFT IN STOCK
             </div>
           </div>
-        )}
+        ) : null}
       
       <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
