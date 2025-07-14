@@ -31,16 +31,19 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   ];
 
   const [currentAlertText, setCurrentAlertText] = useState(alerts[0]);
+  const [alertIndex, setAlertIndex] = useState(0);
 
   // Cycle through alerts every 4 seconds for each product
   useEffect(() => {
-    let alertIndex = 0;
     const interval = setInterval(() => {
-      alertIndex = (alertIndex + 1) % alerts.length;
-      const nextAlert = alerts[alertIndex];
-      if (nextAlert && nextAlert.trim()) {
-        setCurrentAlertText(nextAlert);
-      }
+      setAlertIndex((prev) => {
+        const nextIndex = (prev + 1) % alerts.length;
+        const nextAlert = alerts[nextIndex];
+        if (nextAlert && nextAlert.trim()) {
+          setCurrentAlertText(nextAlert);
+        }
+        return nextIndex;
+      });
     }, 4000);
     return () => clearInterval(interval);
   }, []);
