@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -22,6 +22,23 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+  const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
+
+  const alerts = [
+    "🔔 Real-time Stock Drop",
+    "📉 Price Dropped Again!",
+    "🔥 Locked For You",
+    "⚠️ Deal Watchlist Alerts",
+    "👥 Others Also Bought"
+  ];
+
+  // Cycle through alerts every 3 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentAlertIndex((prev) => (prev + 1) % alerts.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [alerts.length]);
 
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
