@@ -220,9 +220,6 @@ export default function ReferralSystem() {
                 <p className="text-sm font-bold text-blue-700 text-center">
                   🏆 Leaderboard Invites Used: {referralStatus.invitesUsedCount || 0}
                 </p>
-                <p className="text-xs text-blue-600 text-center mt-1">
-                  Live tracking • Updates every 5 seconds
-                </p>
               </div>
             </div>
           )}
@@ -390,9 +387,7 @@ export default function ReferralSystem() {
                         You Earned: +{(code.usedCount || 0) * (code.isDoublePoints ? 2 : 1)} invites
                       </span>
                     </div>
-                    <p className="text-xs text-gray-600 mt-1 text-center">
-                      Live tracking • Updates every 5 seconds
-                    </p>
+
                   </div>
                 </div>
               ))}
