@@ -128,15 +128,15 @@ export default function Home() {
           </button>
           
           {showDropdown && (
-            <div className="absolute top-10 left-0 bg-white/80 backdrop-blur-md rounded-lg shadow-xl border border-white/40 py-2 min-w-48 z-50">
+            <div className="absolute top-10 left-0 bg-white/10 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 py-2 min-w-48 z-50">
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleDropdownCategorySelect(category.id)}
-                  className="w-full px-4 py-2 text-left hover:bg-white/50 flex items-center space-x-2 transition-all duration-200"
+                  className="w-full px-4 py-2 text-left hover:bg-white/20 flex items-center space-x-2 transition-all duration-200"
                 >
                   {category.emoji && <span>{category.emoji}</span>}
-                  <span className="text-sm font-medium text-gray-800">{category.label}</span>
+                  <span className="text-sm font-medium text-gray-900">{category.label}</span>
                 </button>
               ))}
             </div>
