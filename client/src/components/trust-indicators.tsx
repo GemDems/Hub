@@ -86,8 +86,13 @@ export default function TrustIndicators() {
 
         {/* Guarantee Section */}
         <div className="mb-8 text-center">
-          <div className="guarantee-text">
-            If the deal isn't real, I'll personally find you a better one — or send it to you free.
+          <div className="guarantee-container">
+            <div className="guarantee-line-1">
+              If the deal isn't real, I'll personally find you a better one —
+            </div>
+            <div className="guarantee-line-2">
+              or send it to you free.
+            </div>
           </div>
         </div>
 
