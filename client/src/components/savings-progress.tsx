@@ -157,7 +157,7 @@ export default function SavingsProgress() {
       
       <button 
         onClick={scrollToLeaderboard}
-        className="text-xs font-normal text-blue-600 hover:text-blue-800 underline cursor-pointer transition-colors"
+        className="text-xs font-normal text-gray-600 hover:text-gray-800 cursor-pointer transition-colors"
       >
         View leaderboard →
       </button>
