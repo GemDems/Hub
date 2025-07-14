@@ -63,13 +63,13 @@ export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit
   clicks: true,
   createdAt: true,
 }).extend({
-  imageUrl: z.string().url().optional().or(z.literal("")),
-  imageUrls: z.array(z.string().url()).optional(),
-  price: z.string().optional(),
+  imageUrl: z.string().url().optional().or(z.literal("")).or(z.null()).optional(),
+  imageUrls: z.array(z.string().url()).optional().or(z.null()).optional(),
+  price: z.string().optional().or(z.null()).optional(),
   isVerified: z.boolean().optional(),
   isDraft: z.boolean().optional(),
-  scheduledPublishAt: z.date().optional(),
-  scheduledDeleteAt: z.date().optional(),
+  scheduledPublishAt: z.date().optional().or(z.null()).optional(),
+  scheduledDeleteAt: z.date().optional().or(z.null()).optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
