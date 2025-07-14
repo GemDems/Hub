@@ -226,7 +226,7 @@ export default function Home() {
         </Button>
       </div>
 
-      <Header onRandomLink={handleRandomLink} />
+      <Header />
       <StatsBar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -353,7 +353,21 @@ export default function Home() {
         </div>
       </div>
       
-      {/* User Idea Submission - After Mini Navigation */}
+      {/* Random Deal Dice Button - Above Ideas Box */}
+      <div className="bg-gradient-to-b from-gray-800 to-gray-900 py-8">
+        <div className="text-center">
+          <button
+            onClick={handleRandomLink}
+            className="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 hover:scale-105 active:scale-95 mx-auto mb-4"
+            title="Random Deal"
+          >
+            <Dice6 className="w-8 h-8 text-white" />
+          </button>
+          <p className="text-white text-sm">Click for a random deal!</p>
+        </div>
+      </div>
+      
+      {/* User Idea Submission - After Dice Button */}
       <div className="bg-gradient-to-b from-gray-800 to-gray-900 py-12">
         <div className="max-w-md mx-auto px-4">
           <IdeaSubmission />
