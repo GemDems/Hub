@@ -166,7 +166,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Savings progress routes
-  app.post('/api/savings/progress', async (req, res) => {
+  app.post('/api/savings/update', async (req, res) => {
     try {
       const { userId, amount } = req.body;
       if (!userId || !amount) {
@@ -181,7 +181,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post('/api/user/username', async (req, res) => {
+  app.post('/api/username/update', async (req, res) => {
     try {
       const { userId, username } = req.body;
       if (!userId || !username) {
