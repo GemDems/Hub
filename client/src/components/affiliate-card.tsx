@@ -123,11 +123,10 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const price = getPrice();
   const discount = getRandomDiscount();
 
-  // Combine all available images for the carousel
-  const allImages = [
-    ...(link.imageUrls || []),
-    ...(link.imageUrl && link.imageUrl.trim() ? [link.imageUrl] : [])
-  ].filter(Boolean);
+  // Generate clean images array without duplication
+  const allImages = link.imageUrls && link.imageUrls.length > 0 ? 
+    link.imageUrls.filter(url => url && url.trim()) : 
+    (link.imageUrl && link.imageUrl.trim() ? [link.imageUrl] : []);
 
   return (
     <>

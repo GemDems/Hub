@@ -10,6 +10,8 @@ interface PhotoCarouselProps {
 
 export default function PhotoCarousel({ images, title, className = "" }: PhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
   // Filter out empty images
   const validImages = images.filter(img => img && img.trim());
@@ -26,6 +28,32 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
     );
   }
 
+  // For single image, just show the image without carousel controls
+  if (validImages.length === 1) {
+    return (
+      <div className={`relative ${className}`}>
+        <img
+          src={validImages[0]}
+          alt={title}
+          className="w-full h-full object-cover"
+          onError={(e) => {
+            // Fallback to gradient if image fails to load
+            e.currentTarget.style.display = 'none';
+            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+          }}
+        />
+        
+        {/* Fallback gradient (hidden by default) */}
+        <div className="hidden absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
+          <div className="text-center">
+            <div className="text-2xl mb-2">💎</div>
+            <div className="text-sm opacity-90">Premium Deal</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const nextImage = () => {
     setCurrentIndex((prev) => (prev + 1) % validImages.length);
   };
@@ -34,8 +62,35 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
     setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length);
   };
 
+  // Touch handlers for swipe functionality
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    if (distance > minSwipeDistance) {
+      nextImage(); // Swipe left - next image
+    } else if (distance < -minSwipeDistance) {
+      prevImage(); // Swipe right - previous image
+    }
+  };
+
   return (
-    <div className={`relative overflow-hidden group ${className}`}>
+    <div 
+      className={`relative overflow-hidden group ${className}`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Main Image */}
       <img
         src={validImages[currentIndex]}
