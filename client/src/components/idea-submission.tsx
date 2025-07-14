@@ -133,13 +133,32 @@ export default function IdeaSubmission() {
           
           {/* Guarantee Section */}
           <div className="text-center mt-6 pt-4 border-t border-green-200/30">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-              If the deal isn't real, I'll personally find you a better one — or send it to you free.
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2" style={{
+              textDecoration: 'underline',
+              textUnderlineOffset: '4px',
+              textDecorationColor: '#6b7280'
+            }}>
+              If the deal isn't real, I'll <span style={{
+                background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
+                borderRadius: '3px',
+                padding: '2px 4px'
+              }}>personally find you a better one</span> — or <span style={{
+                background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
+                borderRadius: '3px',
+                padding: '2px 4px'
+              }}>send it to you free</span>.
             </p>
             <p className="text-lg font-bold text-white tracking-wide" style={{ 
               fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
               textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-              letterSpacing: '0.1em'
+              letterSpacing: '0.1em',
+              textDecoration: 'underline',
+              textUnderlineOffset: '6px',
+              textDecorationColor: '#ffffff',
+              background: 'linear-gradient(to right, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.1))',
+              borderRadius: '6px',
+              padding: '6px 12px',
+              display: 'inline-block'
             }}>
               *GUARANTEE*
             </p>
@@ -255,16 +274,37 @@ export default function IdeaSubmission() {
         <p className="text-xs text-gray-500 text-center mt-3">
           One idea per device • 2 words max • 20 characters limit
         </p>
-        
-        {/* Guarantee Section */}
-        <div className="text-center mt-6 pt-4 border-t border-purple-200/30">
-          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-            If the deal isn't real, I'll personally find you a better one — or send it to you free.
+      </div>
+      
+      {/* Separate Guarantee Section */}
+      <div className="mt-8 bg-gradient-to-r from-gray-900 to-black rounded-lg p-6 shadow-2xl border border-gray-700">
+        <div className="text-center">
+          <p className="text-sm text-gray-300 mb-3 leading-relaxed" style={{
+            textDecoration: 'underline',
+            textUnderlineOffset: '4px',
+            textDecorationColor: '#6b7280'
+          }}>
+            If the deal isn't real, I'll <span style={{
+              background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
+              borderRadius: '3px',
+              padding: '2px 4px'
+            }}>personally find you a better one</span> — or <span style={{
+              background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
+              borderRadius: '3px',
+              padding: '2px 4px'
+            }}>send it to you free</span>.
           </p>
-          <p className="text-lg font-bold text-white tracking-wide" style={{ 
+          <p className="text-2xl font-bold text-white tracking-wide" style={{ 
             fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-            letterSpacing: '0.1em'
+            textShadow: '3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.3)',
+            letterSpacing: '0.15em',
+            textDecoration: 'underline',
+            textUnderlineOffset: '8px',
+            textDecorationColor: '#ffffff',
+            background: 'linear-gradient(to right, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.1))',
+            borderRadius: '8px',
+            padding: '8px 16px',
+            display: 'inline-block'
           }}>
             *GUARANTEE*
           </p>
