@@ -62,7 +62,8 @@ export class DatabaseStorage implements IStorage {
       .values({
         ...insertLink,
         imageUrl: insertLink.imageUrl || null,
-        clicks: 0
+        clicks: 0,
+        isVerified: insertLink.isVerified ? 1 : 0
       })
       .returning();
     return link;

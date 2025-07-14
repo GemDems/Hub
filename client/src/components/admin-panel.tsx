@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
@@ -21,7 +22,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<InsertAffiliateLink>({
+  const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean }>({
     title: "",
     url: "",
     description: "",
@@ -29,6 +30,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     imageUrl: "",
     imageUrls: [],
     price: "",
+    isVerified: false,
   });
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
 
@@ -132,7 +134,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const handleClose = () => {
     setIsAuthenticated(false);
     setPassword("");
-    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "" });
+    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "", isVerified: false });
     setAdditionalImages([]);
     onClose();
   };
@@ -148,7 +150,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
         title: "Success!",
         description: "Affiliate link added successfully",
       });
-      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "" });
+      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "", isVerified: false });
       setAdditionalImages([]);
       onSuccess();
     },
@@ -452,6 +454,18 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                 <SelectItem value="Travel">Travel</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Verified Source Badge Checkbox */}
+          <div className="flex items-center space-x-2 p-3 border rounded-lg bg-blue-50">
+            <Checkbox
+              id="verified-badge"
+              checked={formData.isVerified}
+              onCheckedChange={(checked) => setFormData({ ...formData, isVerified: Boolean(checked) })}
+            />
+            <Label htmlFor="verified-badge" className="text-sm font-medium cursor-pointer">
+              🔒 Verified Source Badge (Amazon/Walmart/etc)
+            </Label>
           </div>
 
           <div className="flex space-x-3 pt-4">

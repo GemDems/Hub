@@ -15,26 +15,36 @@ import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 
 import { Button } from "@/components/ui/button";
-import { Settings } from "lucide-react";
+import { Settings, Shield } from "lucide-react";
 
 export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
 
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
   });
 
-  const filteredAndSortedLinks = affiliateLinks.filter(link => {
-    const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
-    const matchesSearch = !searchQuery || 
-      link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.category.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredAndSortedLinks = affiliateLinks
+    .filter(link => {
+      const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
+      const matchesSearch = !searchQuery || 
+        link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        link.category.toLowerCase().includes(searchQuery.toLowerCase());
+      const matchesVerified = !showVerifiedOnly || link.isVerified;
+      return matchesCategory && matchesSearch && matchesVerified;
+    })
+    .sort((a, b) => {
+      // When verified filter is active, sort by most clicks
+      if (showVerifiedOnly) {
+        return b.clicks - a.clicks;
+      }
+      return 0; // Keep original order otherwise
+    });
 
   const categories = [
     { id: "all", label: "All Deals", emoji: "" },
@@ -72,6 +82,29 @@ export default function Home() {
           activeCategory={activeCategory}
           onCategoryChange={setActiveCategory}
         />
+        
+        {/* Verified Filter Button */}
+        <div className="flex justify-center mb-6">
+          <Button
+            onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
+            variant={showVerifiedOnly ? "default" : "outline"}
+            className={`h-12 px-6 rounded-full font-medium transition-all duration-300 ${
+              showVerifiedOnly 
+                ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
+                : 'bg-white hover:bg-blue-50 border-2 border-blue-200 text-blue-600'
+            }`}
+          >
+            <div className="w-4 h-4 bg-blue-500 rounded-full mr-2 flex items-center justify-center">
+              <div className="w-2 h-2 bg-white rounded-full"></div>
+            </div>
+            🔒 Verified Sources Only
+            {showVerifiedOnly && (
+              <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
+                {filteredAndSortedLinks.length}
+              </span>
+            )}
+          </Button>
+        </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

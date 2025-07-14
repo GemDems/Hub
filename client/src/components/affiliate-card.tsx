@@ -155,25 +155,37 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Elite Brain Pick Badge */}
+        {/* Others Also Bought Badge */}
         {isElitePick && (
           <div className="absolute top-0 left-0 right-0 z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
-              <Award className="w-3 h-3 inline mr-1" />
-              ELITE BRAIN PICK - Psychology: High conversion rate
+              <Users className="w-3 h-3 inline mr-1" />
+              👥 Others Also Bought
+            </div>
+          </div>
+        )}
+        
+        {/* Verified Source Badge */}
+        {link.isVerified && (
+          <div className={`absolute ${isElitePick ? 'top-6' : 'top-0'} left-0 right-0 z-25`}>
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold text-center py-1 flex items-center justify-center">
+              <div className="w-3 h-3 bg-white rounded-full mr-1 flex items-center justify-center">
+                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+              </div>
+              🔒 Verified Source Badge (Amazon/Walmart/etc)
             </div>
           </div>
         )}
         
         {/* Stock Countdown Alert */}
-        <div className={`absolute ${isElitePick ? 'top-6' : 'top-0'} left-0 right-0 z-20`}>
+        <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-0'} left-0 right-0 z-20`}>
           <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
             <AlertCircle className="w-3 h-3 inline mr-1" />
             ONLY {stock} LEFT IN STOCK
           </div>
         </div>
       
-      <div className="relative mt-6">
+      <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
         <div className="absolute top-3 left-3 z-10">
           <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
