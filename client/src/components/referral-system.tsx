@@ -28,10 +28,11 @@ export default function ReferralSystem() {
   const { toast } = useToast();
   const deviceId = getDeviceId();
 
-  // Get or generate user referral status
+  // Get or generate user referral status - refresh every 5 seconds for real-time updates
   const { data: referralStatus, refetch: refetchStatus } = useQuery({
     queryKey: ["/api/referral/status", deviceId],
-    queryFn: () => fetch(`/api/referral/status?userId=${deviceId}`).then(res => res.json())
+    queryFn: () => fetch(`/api/referral/status?userId=${deviceId}`).then(res => res.json()),
+    refetchInterval: 5000 // Auto-refresh every 5 seconds to show live updates
   });
 
   // Format username properly: "John W" format - only first letters capitalized
@@ -210,9 +211,14 @@ export default function ReferralSystem() {
               <p className="text-xs text-gray-500">
                 Uses: {referralStatus.usedCount}/3 for VIP
               </p>
-              <p className="text-xs text-blue-600 font-medium">
-                Leaderboard Invites Used: {referralStatus.invitesUsedCount || 0}
-              </p>
+              <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-2">
+                <p className="text-sm font-bold text-blue-700 text-center">
+                  🏆 Leaderboard Invites Used: {referralStatus.invitesUsedCount || 0}
+                </p>
+                <p className="text-xs text-blue-600 text-center mt-1">
+                  Updates automatically when your codes are shared
+                </p>
+              </div>
             </div>
           )}
         </div>
@@ -344,28 +350,45 @@ export default function ReferralSystem() {
             
             <div className="space-y-2">
               {referralStatus.rewardCodes.map((code, index) => (
-                <div key={code.id} className="flex items-center justify-between bg-white rounded-lg p-2 border border-yellow-300">
-                  <div>
-                    <div className="font-mono text-sm font-bold text-gray-800">{code.code}</div>
-                    <div className="text-xs text-gray-600">
-                      {code.codeType === "bonus_2x" && "Invite Code 1 (2x Bonus)"}
-                      {code.codeType === "bonus_regular" && "Invite Code 2 (Regular)"}
-                      {code.codeType === "seinfeld" && "Invite Code 1 (2x Bonus)"}
-                      {code.codeType === "double_points" && "Invite Code 2 (Regular)"}
-                      {!code.codeType && "Bonus Invite Code"}
+                <div key={code.id} className="bg-white rounded-lg p-3 border border-yellow-300 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <div className="font-mono text-sm font-bold text-gray-800">{code.code}</div>
+                      <div className="text-xs text-gray-600">
+                        {code.codeType === "bonus_2x" && "Invite Code 1 (2x Bonus)"}
+                        {code.codeType === "bonus_regular" && "Invite Code 2 (Regular)"}
+                        {code.codeType === "seinfeld" && "Invite Code 1 (2x Bonus)"}
+                        {code.codeType === "double_points" && "Invite Code 2 (Regular)"}
+                        {!code.codeType && "Bonus Invite Code"}
+                      </div>
                     </div>
+                    <Button
+                      onClick={() => {
+                        navigator.clipboard.writeText(code.code);
+                        toast({ title: "Copied!", description: "Bonus invite code copied to clipboard." });
+                      }}
+                      size="sm"
+                      variant="outline"
+                      className="px-2"
+                    >
+                      <Copy className="w-3 h-3" />
+                    </Button>
                   </div>
-                  <Button
-                    onClick={() => {
-                      navigator.clipboard.writeText(code.code);
-                      toast({ title: "Copied!", description: "Bonus invite code copied to clipboard." });
-                    }}
-                    size="sm"
-                    variant="outline"
-                    className="px-2"
-                  >
-                    <Copy className="w-3 h-3" />
-                  </Button>
+                  
+                  {/* Live Usage Tracking */}
+                  <div className="bg-gradient-to-r from-green-50 to-blue-50 border border-green-200 rounded-lg p-2">
+                    <div className="flex items-center justify-between text-xs">
+                      <span className="text-green-700 font-medium">
+                        Times Shared: {code.usedCount || 0}
+                      </span>
+                      <span className="text-blue-700 font-medium">
+                        You Earned: +{(code.usedCount || 0) * (code.isDoublePoints ? 2 : 1)} invites
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600 mt-1 text-center">
+                      Live tracking • Updates every 5 seconds
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
