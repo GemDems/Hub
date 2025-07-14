@@ -121,22 +121,22 @@ export default function Home() {
         <div className="relative dropdown-container">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center shadow-lg transition-colors duration-200"
+            className="w-8 h-8 bg-white/20 backdrop-blur-md hover:bg-white/30 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 border border-white/30"
             title="Categories"
           >
-            <ChevronDown className="w-4 h-4 text-white" />
+            <ChevronDown className="w-4 h-4 text-black" />
           </button>
           
           {showDropdown && (
-            <div className="absolute top-10 left-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48 z-50">
+            <div className="absolute top-10 left-0 bg-white/80 backdrop-blur-md rounded-lg shadow-xl border border-white/40 py-2 min-w-48 z-50">
               {categories.map((category) => (
                 <button
                   key={category.id}
                   onClick={() => handleDropdownCategorySelect(category.id)}
-                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 transition-colors duration-200"
+                  className="w-full px-4 py-2 text-left hover:bg-white/50 flex items-center space-x-2 transition-all duration-200"
                 >
                   {category.emoji && <span>{category.emoji}</span>}
-                  <span className="text-sm font-medium text-gray-700">{category.label}</span>
+                  <span className="text-sm font-medium text-gray-800">{category.label}</span>
                 </button>
               ))}
             </div>
