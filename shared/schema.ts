@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -15,8 +15,10 @@ export const affiliateLinks = pgTable("affiliate_links", {
   description: text("description").notNull(),
   category: text("category").notNull(),
   imageUrl: text("image_url"),
+  imageUrls: text("image_urls").array(),
   price: text("price"),
   clicks: integer("clicks").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -27,8 +29,10 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit({
   id: true,
   clicks: true,
+  createdAt: true,
 }).extend({
   imageUrl: z.string().url().optional().or(z.literal("")),
+  imageUrls: z.array(z.string().url()).optional(),
   price: z.string().optional(),
 });
 

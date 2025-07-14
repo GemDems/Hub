@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Lock, Shield, Eye, EyeOff } from "lucide-react";
+import { Lock, Shield, Eye, EyeOff, Plus, Trash2 } from "lucide-react";
 import type { InsertAffiliateLink } from "@shared/schema";
 
 interface AdminPanelProps {
@@ -27,8 +27,24 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     description: "",
     category: "Hot Deals",
     imageUrl: "",
+    imageUrls: [],
     price: "",
   });
+  const [additionalImages, setAdditionalImages] = useState<string[]>([]);
+
+  const addImageField = () => {
+    setAdditionalImages([...additionalImages, ""]);
+  };
+
+  const removeImageField = (index: number) => {
+    setAdditionalImages(additionalImages.filter((_, i) => i !== index));
+  };
+
+  const updateImageField = (index: number, value: string) => {
+    const updated = [...additionalImages];
+    updated[index] = value;
+    setAdditionalImages(updated);
+  };
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -57,7 +73,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const handleClose = () => {
     setIsAuthenticated(false);
     setPassword("");
-    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", price: "" });
+    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "" });
+    setAdditionalImages([]);
     onClose();
   };
 
@@ -72,7 +89,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
         title: "Success!",
         description: "Affiliate link added successfully",
       });
-      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", price: "" });
+      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "" });
+      setAdditionalImages([]);
       onSuccess();
     },
     onError: () => {
@@ -122,7 +140,13 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       }
     }
 
-    createLinkMutation.mutate(formData);
+    // Combine all images into imageUrls array for submission
+    const allImageUrls = [formData.imageUrl, ...additionalImages].filter(url => url && url.trim());
+    const submissionData = {
+      ...formData,
+      imageUrls: allImageUrls.length > 0 ? allImageUrls : undefined
+    };
+    createLinkMutation.mutate(submissionData);
   };
 
   return (
@@ -235,6 +259,48 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             />
             <p className="text-xs text-gray-500 mt-1">
               Add a direct link to the product image for better visual appeal
+            </p>
+          </div>
+
+          {/* Additional Images Section */}
+          <div>
+            <div className="flex items-center justify-between mb-2">
+              <Label>Additional Images (Optional)</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addImageField}
+                className="text-xs h-7"
+              >
+                <Plus className="w-3 h-3 mr-1" />
+                Add Image
+              </Button>
+            </div>
+            
+            {additionalImages.map((imageUrl, index) => (
+              <div key={index} className="flex gap-2 mb-2">
+                <Input
+                  type="url"
+                  value={imageUrl}
+                  onChange={(e) => updateImageField(index, e.target.value)}
+                  placeholder={`https://example.com/image-${index + 2}.jpg`}
+                  className="flex-1"
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => removeImageField(index)}
+                  className="px-2 h-9"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
+            ))}
+            
+            <p className="text-xs text-gray-500 mt-1">
+              Add multiple product images for users to scroll through
             </p>
           </div>
 

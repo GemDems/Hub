@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ExternalLink, ShoppingCart, Users, Star, Clock, Zap, TrendingUp, Award, AlertCircle, Trash2, Eye, EyeOff } from "lucide-react";
+import PhotoCarousel from "./photo-carousel";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import type { AffiliateLink } from "@shared/schema";
@@ -122,6 +123,12 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const price = getPrice();
   const discount = getRandomDiscount();
 
+  // Combine all available images for the carousel
+  const allImages = [
+    ...(link.imageUrls || []),
+    ...(link.imageUrl && link.imageUrl.trim() ? [link.imageUrl] : [])
+  ].filter(Boolean);
+
   return (
     <>
       <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
@@ -159,37 +166,12 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         </div>
         
-        {/* Product Image or Gradient overlay */}
-        {link.imageUrl ? (
-          <div className="w-full h-48 relative overflow-hidden">
-            <img 
-              src={link.imageUrl} 
-              alt={link.title}
-              className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-              onError={(e) => {
-                // Fallback to gradient if image fails to load
-                const target = e.target as HTMLImageElement;
-                target.style.display = 'none';
-                const parent = target.parentElement;
-                if (parent) {
-                  parent.innerHTML = `
-                    <div class="w-full h-full bg-gradient-to-br from-conversion-blue to-purple-600 flex items-center justify-center">
-                      <div class="text-white text-6xl opacity-80">
-                        ${getCategoryEmoji(link.category)}
-                      </div>
-                    </div>
-                  `;
-                }
-              }}
-            />
-          </div>
-        ) : (
-          <div className="w-full h-48 bg-gradient-to-br from-conversion-blue to-purple-600 flex items-center justify-center">
-            <div className="text-white text-6xl opacity-80">
-              {getCategoryEmoji(link.category)}
-            </div>
-          </div>
-        )}
+        {/* Photo Carousel */}
+        <PhotoCarousel 
+          images={allImages}
+          title={link.title}
+          className="w-full h-48"
+        />
       </div>
       
       <CardContent className="p-6 space-y-4">
