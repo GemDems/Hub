@@ -27,6 +27,8 @@ export default function Home() {
   const [sortByClicks, setSortByClicks] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
+  const [timerCount, setTimerCount] = useState(5);
+  const [isTimerActive, setIsTimerActive] = useState(false);
 
 
 
@@ -88,17 +90,41 @@ export default function Home() {
     const handleScroll = () => {
       const scrollY = window.scrollY;
       const shouldShow = scrollY > 2000; // Show after scrolling down 2000px (about 10 scrolls)
-      setShowScrollButton(shouldShow);
       
-      // Close dropdown if scrolling back to top
-      if (!shouldShow && showDropdown) {
+      // If button should show and wasn't showing before, start timer
+      if (shouldShow && !showScrollButton) {
+        setShowScrollButton(true);
+        setIsTimerActive(true);
+        setTimerCount(5);
+      }
+      
+      // If scrolling back to top, hide button and reset timer
+      if (!shouldShow && showScrollButton) {
+        setShowScrollButton(false);
+        setIsTimerActive(false);
+        setTimerCount(5);
         setShowDropdown(false);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [showDropdown]);
+  }, [showScrollButton, showDropdown]);
+
+  // Timer countdown effect
+  useEffect(() => {
+    if (isTimerActive && timerCount > 0) {
+      const timer = setTimeout(() => {
+        setTimerCount(prev => prev - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (isTimerActive && timerCount === 0) {
+      // Timer finished, hide button
+      setShowScrollButton(false);
+      setIsTimerActive(false);
+      setShowDropdown(false);
+    }
+  }, [isTimerActive, timerCount]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -119,6 +145,13 @@ export default function Home() {
       {/* Category Dropdown Menu - Top Left (Only shows on scroll) */}
       <div className={`fixed top-4 left-4 z-50 transition-all duration-1000 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
         <div className="relative dropdown-container">
+          {/* Timer indicator */}
+          {isTimerActive && (
+            <div className="absolute -top-2 -left-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold z-10">
+              {timerCount}
+            </div>
+          )}
+          
           <button
             onClick={() => setShowDropdown(!showDropdown)}
             className="w-8 h-8 bg-white/20 backdrop-blur-md hover:bg-white/30 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 border border-white/30"
