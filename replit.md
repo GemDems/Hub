@@ -10,6 +10,10 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (January 2025)
 
+- **Critical Bug Fix (July 2025)**: Resolved persistent "0" appearing in top-left corner of product cards
+  - Root cause: `link.isVerified` field set to 0 instead of false caused React to render "0" literally
+  - Solution: Changed `{link.isVerified && (` to `{link.isVerified ? ( : null}` pattern throughout
+  - Applied proper ternary operators to prevent React rendering falsy numeric values as text
 - **Password Protection**: Added secure Creator Mode access with password "9f$81r@V7#iwant"
 - **Database Persistence**: Switched to PostgreSQL for permanent product storage
 - **Invisible Controls**: Creator Mode button and delete buttons are completely invisible to users
