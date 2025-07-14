@@ -49,6 +49,29 @@
   animation: insane-pulse 3s ease-in-out infinite;
 }
 
+@keyframes colorful-bounce {
+  0% { 
+    transform: scale(0) translateY(0); 
+    opacity: 1; 
+  }
+  25% { 
+    transform: scale(1.2) translateY(-20px); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: scale(1) translateY(-30px); 
+    opacity: 0.6; 
+  }
+  75% { 
+    transform: scale(1.5) translateY(-20px); 
+    opacity: 0.4; 
+  }
+  100% { 
+    transform: scale(2) translateY(-40px); 
+    opacity: 0; 
+  }
+}
+
 :root {
   --background: hsl(0, 0%, 100%);
   --foreground: hsl(20, 14.3%, 4.1%);

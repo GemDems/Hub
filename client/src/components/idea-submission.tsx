@@ -9,6 +9,7 @@ export default function IdeaSubmission() {
   const [idea, setIdea] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const [clickOverlays, setClickOverlays] = useState<Array<{id: string, x: number, y: number, color: string}>>([]);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -90,6 +91,35 @@ export default function IdeaSubmission() {
     submitIdeaMutation.mutate(idea.trim());
   };
 
+  const handleClick = (e: React.MouseEvent) => {
+    // Don't trigger on form elements
+    const target = e.target as HTMLElement;
+    if (target.tagName === 'INPUT' || target.tagName === 'BUTTON' || target.closest('form')) {
+      return;
+    }
+    
+    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+    const randomColor = colors[Math.floor(Math.random() * colors.length)];
+    
+    const rect = e.currentTarget.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    
+    const newOverlay = {
+      id: Date.now().toString(),
+      x,
+      y,
+      color: randomColor
+    };
+    
+    setClickOverlays(prev => [...prev, newOverlay]);
+    
+    // Remove overlay after animation
+    setTimeout(() => {
+      setClickOverlays(prev => prev.filter(overlay => overlay.id !== newOverlay.id));
+    }, 1000);
+  };
+
   if (hasSubmitted) {
     return (
       <div className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
@@ -107,7 +137,31 @@ export default function IdeaSubmission() {
 
   return (
     <div className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-      <div className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-lg p-6">
+      <div 
+        className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-lg p-6 relative overflow-hidden cursor-pointer"
+        onClick={handleClick}
+      >
+        {/* Colorful click overlays */}
+        {clickOverlays.map(overlay => (
+          <div
+            key={overlay.id}
+            className="absolute pointer-events-none animate-bounce"
+            style={{
+              left: overlay.x - 10,
+              top: overlay.y - 10,
+              animation: 'colorful-bounce 1s ease-out forwards'
+            }}
+          >
+            <div 
+              className="w-5 h-5 rounded-full"
+              style={{ 
+                backgroundColor: overlay.color,
+                boxShadow: `0 0 20px ${overlay.color}`,
+                animation: 'pulse 1s ease-out forwards'
+              }}
+            />
+          </div>
+        ))}
         <div className="text-center mb-4">
           <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
             💡 Got a Product Idea?
@@ -115,22 +169,6 @@ export default function IdeaSubmission() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Share your 2-word product idea with our team
           </p>
-          <div className="mt-3 space-y-1">
-            <div className="rainbow-text font-bold text-sm insane-pulse">
-              cool ideas only*
-            </div>
-            <div className="flex items-center justify-center gap-2 text-xs">
-              <span className="text-red-600 font-bold crazy-bounce">
-                don't waste my time
-              </span>
-              <span className="text-orange-500 font-bold rainbow-text text-lg">
-                -I
-              </span>
-            </div>
-            <div className="text-xs text-purple-600 font-medium insane-pulse">
-              I don't need u energy unless u do crazy ideas
-            </div>
-          </div>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-3">
