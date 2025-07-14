@@ -29,6 +29,7 @@ export default function Home() {
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [timerCount, setTimerCount] = useState(5);
   const [isTimerActive, setIsTimerActive] = useState(false);
+  const [hasExpired, setHasExpired] = useState(false);
 
 
 
@@ -91,25 +92,26 @@ export default function Home() {
       const scrollY = window.scrollY;
       const shouldShow = scrollY > 2000; // Show after scrolling down 2000px (about 10 scrolls)
       
-      // If button should show and wasn't showing before, start timer
-      if (shouldShow && !showScrollButton) {
+      // If button should show and wasn't showing before, and hasn't expired, start timer
+      if (shouldShow && !showScrollButton && !hasExpired) {
         setShowScrollButton(true);
         setIsTimerActive(true);
         setTimerCount(5);
       }
       
-      // If scrolling back to top, hide button and reset timer
-      if (!shouldShow && showScrollButton) {
+      // If scrolling back to top, reset everything
+      if (scrollY < 100) { // Reset when scrolled near top
         setShowScrollButton(false);
         setIsTimerActive(false);
         setTimerCount(5);
+        setHasExpired(false);
         setShowDropdown(false);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [showScrollButton, showDropdown]);
+  }, [showScrollButton, hasExpired]);
 
   // Timer countdown effect
   useEffect(() => {
@@ -119,10 +121,11 @@ export default function Home() {
       }, 1000);
       return () => clearTimeout(timer);
     } else if (isTimerActive && timerCount === 0) {
-      // Timer finished, hide button
+      // Timer finished, hide button permanently until user scrolls to top
       setShowScrollButton(false);
       setIsTimerActive(false);
       setShowDropdown(false);
+      setHasExpired(true);
     }
   }, [isTimerActive, timerCount]);
 
