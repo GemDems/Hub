@@ -149,7 +149,8 @@ export class DatabaseStorage implements IStorage {
     // Update user stats - add referral points (1 or 2 based on code type)
     await this.updateUserReferralCount(referralCode.userId, pointsToAdd);
     
-    // Update the code owner's leaderboard invites used count (increase by points earned)
+    // CRITICAL: When bonus codes are used, increment the ORIGINAL code owner's leaderboard invites
+    // This ensures that $1000 reward codes properly boost the owner's leaderboard ranking
     await this.incrementCodeOwnerLeaderboardInvites(referralCode.userId, pointsToAdd);
     
     // Update the user's invite usage count (increment by 1 for each different code used)
@@ -477,9 +478,10 @@ export class DatabaseStorage implements IStorage {
   }
 
   private async autoPromoteQualifyingUsers(): Promise<void> {
-    // Get current 10th place threshold from leaderboard
+    // Get current leaderboard (top 10 VIP users)
     const currentTopReferrers = await db
       .select({
+        userId: userStats.userId,
         username: userStats.username,
         referralCount: userStats.invitesUsedCount,
         isVip: userStats.isVip
@@ -489,29 +491,53 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(userStats.invitesUsedCount))
       .limit(10);
 
-    // Find the minimum invite count to qualify (10th place or default to 17)
+    // Find the minimum invite count to qualify for leaderboard
     const minQualifyingInvites = currentTopReferrers.length === 10 
       ? currentTopReferrers[9].referralCount 
-      : 17;
+      : 3; // Default to 3 invites minimum
 
-    // Find users who qualify but aren't VIP yet
-    const qualifyingUsers = await db
+    // Find users with usernames and 3+ invites who could qualify
+    const potentialQualifiers = await db
       .select()
       .from(userStats)
-      .where(sql`${userStats.invitesUsedCount} > ${minQualifyingInvites} AND ${userStats.isVip} = 0 AND ${userStats.username} IS NOT NULL`);
+      .where(sql`${userStats.invitesUsedCount} >= 3 AND ${userStats.username} IS NOT NULL`);
 
-    // Auto-promote qualifying users to VIP
-    for (const user of qualifyingUsers) {
-      await db
-        .update(userStats)
-        .set({ 
-          isVip: 1,
-          lastActive: new Date()
-        })
-        .where(eq(userStats.userId, user.userId));
+    // Process each potential qualifier
+    for (const user of potentialQualifiers) {
+      const userInvites = user.invitesUsedCount || 0;
+      
+      // If user has more invites than minimum threshold
+      if (userInvites > minQualifyingInvites) {
+        
+        // Check if user is already VIP
+        if (!user.isVip) {
+          // Promote to VIP
+          await db
+            .update(userStats)
+            .set({ 
+              isVip: 1,
+              lastActive: new Date()
+            })
+            .where(eq(userStats.userId, user.userId));
+        }
+
+        // If leaderboard is full (10 members), demote the lowest member
+        if (currentTopReferrers.length === 10 && userInvites > currentTopReferrers[9].referralCount) {
+          const lowestMember = currentTopReferrers[9];
+          
+          // Demote the lowest member from VIP status
+          await db
+            .update(userStats)
+            .set({ 
+              isVip: 0,
+              lastActive: new Date()
+            })
+            .where(eq(userStats.userId, lowestMember.userId));
+        }
+      }
     }
 
-    // Also ensure any device with username has basic stats entry
+    // Ensure all devices with usernames have stats entries
     await this.ensureStatsForUsernameDevices();
   }
 

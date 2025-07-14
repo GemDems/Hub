@@ -57,6 +57,13 @@ Preferred communication style: Simple, everyday language.
   - **Enhanced Live Feed**: 100% privacy blur on ALL purchased items for complete user protection
   - **Comprehensive Error Handling**: Clear device limitation messages for referral code system
   - **Subconscious Psychology**: Simple dark green design with reward urgency triggers and "increase this amount" messaging
+- **Dynamic Leaderboard System** (Latest): Advanced merit-based ranking with auto-promotion:
+  - **Auto-Promotion Logic**: Users with 3+ invites + usernames automatically qualify for VIP leaderboard
+  - **Position Swapping**: Real-time ranking updates based on "Leaderboard Invites Used" counts
+  - **Bonus Code Integration**: $1000 reward codes (2x and regular) properly increment owner's invite count when used
+  - **Dynamic Threshold**: System adapts to current 10th place threshold for qualification
+  - **Smart Demotion**: Lowest members automatically demoted when leaderboard is full (10 spots)
+  - **Real-time Updates**: Leaderboard reflects current standings with proper sorting by invite count
 - **Removed Features**: 
   - Eliminated sorting toolbar per user request for cleaner interface
   - Removed instruction section for ultra-clean minimalist approach
