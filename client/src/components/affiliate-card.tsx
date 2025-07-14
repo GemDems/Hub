@@ -22,31 +22,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const alerts = [
-    "🔔 Real-time Stock Drop",
-    "📉 Price Dropped Again!",
-    "🔥 Locked For You",
-    "⚠️ Deal Watchlist Alerts",
-    "👥 Others Also Bought"
-  ];
-
-  const [currentAlertText, setCurrentAlertText] = useState(alerts[0]);
-  const [alertIndex, setAlertIndex] = useState(1);
-
-  // Cycle through alerts every 4 seconds for each product
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setAlertIndex((prev) => {
-        const nextIndex = (prev + 1) % alerts.length;
-        const nextAlert = alerts[nextIndex];
-        if (nextAlert && nextAlert.trim()) {
-          setCurrentAlertText(nextAlert);
-        }
-        return nextIndex;
-      });
-    }, 4000);
-    return () => clearInterval(interval);
-  }, []);
+  // Removed cycling alerts to debug the "0" issue
+  const currentAlertText = "🔔 Real-time Stock Drop";
   
   const trackClickMutation = useMutation({
     mutationFn: async () => {
