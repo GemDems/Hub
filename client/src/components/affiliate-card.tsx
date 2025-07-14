@@ -257,11 +257,20 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         <div className="flex items-center justify-between mb-4">
           <div>
             <span className="text-2xl font-bold text-trust-green">{price}</span>
-            {price.startsWith('$') && price.slice(1).match(/^\d+/) && (
-              <span className="text-lg text-gray-400 line-through ml-2">
-                ${parseInt(price.slice(1)) * 2}
-              </span>
-            )}
+            <span className="text-lg text-gray-400 line-through ml-2">
+              {(() => {
+                // Extract number from price for calculation
+                const priceMatch = price.match(/[\d.]+/);
+                if (priceMatch) {
+                  const numericPrice = parseFloat(priceMatch[0]);
+                  const originalPrice = Math.round(numericPrice * 2.2); // 2.2x for better savings perception
+                  // Keep the same currency symbol/format as the actual price
+                  return price.replace(/[\d.]+/, originalPrice.toString());
+                }
+                // Fallback for non-standard price formats
+                return price.startsWith('$') ? `$${parseInt(price.slice(1) || '50') * 2}` : '$99';
+              })()}
+            </span>
           </div>
           <div className="text-right">
             <div className="text-sm text-urgency-red font-semibold">Save {discount}</div>
