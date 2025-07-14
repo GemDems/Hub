@@ -100,26 +100,20 @@ export default function Home() {
           onCategoryChange={setActiveCategory}
         />
         
-        {/* Verified Filter Button */}
-        <div className="flex justify-center mb-6">
+        {/* Mini Verified Filter Button - Left Side */}
+        <div className="flex justify-start mb-0">
           <Button
             onClick={() => setShowVerifiedOnly(!showVerifiedOnly)}
             variant={showVerifiedOnly ? "default" : "outline"}
-            className={`h-12 px-6 rounded-full font-medium transition-all duration-300 ${
+            className={`h-6 w-6 p-0 rounded-full text-xs font-medium transition-all duration-300 ${
               showVerifiedOnly 
                 ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg' 
                 : 'bg-white hover:bg-blue-50 border-2 border-blue-200 text-blue-600'
             }`}
           >
-            <div className="w-4 h-4 bg-blue-500 rounded-full mr-2 flex items-center justify-center">
-              <div className="w-2 h-2 bg-white rounded-full"></div>
+            <div className="w-2 h-2 bg-blue-500 rounded-full flex items-center justify-center">
+              <div className="w-1 h-1 bg-white rounded-full"></div>
             </div>
-            🔒 Verified Sources Only
-            {showVerifiedOnly && (
-              <span className="ml-2 text-xs bg-blue-500 text-white px-2 py-1 rounded-full">
-                {filteredAndSortedLinks.length}
-              </span>
-            )}
           </Button>
         </div>
 

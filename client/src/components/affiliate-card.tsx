@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -19,8 +19,25 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const alerts = [
+    "🔔 Real-time Stock Drop",
+    "📉 Price Dropped Again!",
+    "🔥 Locked For You",
+    "⚠️ Deal Watchlist Alerts",
+    "👥 Others Also Bought"
+  ];
+
+  // Cycle through alerts every 4 seconds for each product
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentAlertIndex((prev) => (prev + 1) % alerts.length);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, [alerts.length]);
   
   const trackClickMutation = useMutation({
     mutationFn: async () => {
@@ -155,12 +172,12 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Others Also Bought Badge */}
+        {/* Cycling Alert Badge */}
         {isElitePick && (
           <div className="absolute top-0 left-0 right-0 z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
               <Users className="w-3 h-3 inline mr-1" />
-              👥 Others Also Bought
+              {alerts[currentAlertIndex]}
             </div>
           </div>
         )}
