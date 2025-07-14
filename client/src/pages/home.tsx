@@ -15,13 +15,13 @@ import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 
 import { Button } from "@/components/ui/button";
-import { Settings, Shield } from "lucide-react";
+import { Settings } from "lucide-react";
 
 export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [showVerifiedOnly, setShowVerifiedOnly] = useState(false);
+
   const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
 
   const alerts = [
@@ -52,15 +52,7 @@ export default function Home() {
         link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         link.category.toLowerCase().includes(searchQuery.toLowerCase());
-      const matchesVerified = !showVerifiedOnly || link.isVerified;
-      return matchesCategory && matchesSearch && matchesVerified;
-    })
-    .sort((a, b) => {
-      // When verified filter is active, sort by most clicks
-      if (showVerifiedOnly) {
-        return b.clicks - a.clicks;
-      }
-      return 0; // Keep original order otherwise
+      return matchesCategory && matchesSearch;
     });
 
   const categories = [
@@ -156,37 +148,7 @@ export default function Home() {
         )}
       </main>
 
-      {/* Professional Verified Products Filter - Between Products and Trust Indicators */}
-      <div className="bg-gray-50 py-8">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-center">
-            <Button
-              onClick={() => {
-                setShowVerifiedOnly(!showVerifiedOnly);
-                // Scroll to products section
-                const productsSection = document.querySelector('main');
-                if (productsSection) {
-                  productsSection.scrollIntoView({ behavior: 'smooth' });
-                }
-              }}
-              variant={showVerifiedOnly ? "default" : "outline"}
-              className={`h-12 px-16 w-full max-w-4xl rounded-lg text-sm font-semibold transition-all duration-300 border-2 shadow-md ${
-                showVerifiedOnly 
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white border-blue-600 shadow-lg' 
-                  : 'bg-white hover:bg-blue-50 border-blue-300 text-blue-700 hover:border-blue-500'
-              }`}
-            >
-              <Shield className="w-4 h-4 mr-3" />
-              {showVerifiedOnly ? 'Show All Products' : 'Show ✓ Products'}
-              {showVerifiedOnly && (
-                <span className="ml-3 text-sm bg-blue-500 text-white px-2 py-1 rounded">
-                  {filteredAndSortedLinks.length}
-                </span>
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
+
 
       <TrustIndicators />
       
