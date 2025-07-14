@@ -27,7 +27,7 @@ const STATIC_LEADERBOARD_DATA = {
     { name: "Ashley D.", referrals: 24, earnings: 720, location: "Colorado" },
     { name: "Kevin H.", referrals: 21, earnings: 630, location: "Washington" },
     { name: "Nicole F.", referrals: 19, earnings: 570, location: "Oregon" },
-    { name: "Brandon C.", referrals: 17, earnings: 510, location: "Virginia" }
+    { name: "Jackson H.", referrals: 17, earnings: 510, location: "Tennessee" }
   ]
 };
 
@@ -76,7 +76,7 @@ export default function Leaderboard() {
               name: realUser.username,
               referrals: realUser.referralCount,
               earnings: realUser.referralCount * 30, // $30 per referral
-              location: "VIP Member"
+              location: "Elite VIP"
             };
             
             // Find the member with lowest invites and replace them
@@ -106,8 +106,8 @@ export default function Leaderboard() {
       })));
 
       setTopReferrers(prev => prev.map(referrer => {
-        // Only update static members (those with locations other than "VIP Member")
-        if (referrer.location === "VIP Member") return referrer;
+        // Only update static members (those with locations other than "Elite VIP")
+        if (referrer.location === "Elite VIP") return referrer;
         
         const newReferrals = Math.random() < 0.3 ? 1 : 0; // 30% chance of +1 referral
         return {
