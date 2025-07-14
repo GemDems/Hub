@@ -151,7 +151,7 @@ export default function SavingsProgress() {
         onClick={scrollToLeaderboard}
         className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
       >
-        Goal: to hit leaderboard
+        Goal: To hit leaderboard
       </button>
 
       {hasSeinfeldCode && (
