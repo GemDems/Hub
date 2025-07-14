@@ -139,13 +139,6 @@ export default function Home() {
         </div>
         <Leaderboard />
       </div>
-
-      {/* Exclusive Savings Progress Section - Between Leaderboards */}
-      <div className="bg-gradient-to-r from-black via-gray-900 to-black py-12">
-        <div className="max-w-lg mx-auto px-4">
-          <SavingsProgress />
-        </div>
-      </div>
       
       {/* Hidden Referral System - Bottom section, hard to find */}
       <div className="bg-gray-100 py-8 border-t">

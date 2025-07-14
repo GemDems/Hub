@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Trophy, Star, Crown, TrendingUp } from "lucide-react";
+import SavingsProgress from "./savings-progress";
 
 // Realistic static leaderboard data that persists
 const STATIC_LEADERBOARD_DATA = {
@@ -153,6 +154,20 @@ export default function Leaderboard() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      {/* Elite Progress Tracker - Between VIP and Money Saved Leaderboards */}
+      <div className="bg-gradient-to-r from-black via-gray-900 to-black py-12 mt-8">
+        <div className="max-w-lg mx-auto px-4">
+          <div className="text-center mb-4">
+            <p className="text-gray-400 text-sm leading-relaxed">
+              Every time you click "Get Deal Now", that product's price is added to your exclusive progress bar. 
+              Reach the target to unlock a <span className="text-yellow-400 font-medium">secret reward</span> available 
+              only on this device.
+            </p>
+          </div>
+          <SavingsProgress />
         </div>
       </div>
     </div>
