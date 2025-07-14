@@ -127,7 +127,7 @@ export class DatabaseStorage implements IStorage {
     const existingUsage = await db
       .select()
       .from(referralCodes)
-      .where(sql`${referralCodes.usedDevices} @> ${JSON.stringify([deviceId])}`);
+      .where(sql`${deviceId} = ANY(${referralCodes.usedDevices})`);
     
     if (existingUsage.length > 0) {
       throw new Error('This device has already used a referral code');
