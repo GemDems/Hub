@@ -29,7 +29,7 @@ export default function LiveFeed() {
       action: actions[Math.floor(Math.random() * actions.length)],
       product: products[Math.floor(Math.random() * products.length)],
       timeAgo: `${Math.floor(Math.random() * 59) + 1} mins ago`,
-      blurProduct: Math.random() < 0.3 // 30% chance to blur for privacy
+      blurProduct: true // Always blur products for privacy protection
     });
 
     // Initialize with some activities
