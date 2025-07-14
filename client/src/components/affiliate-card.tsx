@@ -94,7 +94,11 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     return '💎';
   };
 
-  const getRandomPrice = () => {
+  const getPrice = () => {
+    // Use actual price from database if available, otherwise generate random price
+    if (link.price && link.price.trim()) {
+      return link.price;
+    }
     const prices = ['$49', '$79', '$129', '$199', '$299', '$399'];
     return prices[Math.floor(Math.random() * prices.length)];
   };
@@ -115,7 +119,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   };
 
   const stats = getRandomStats();
-  const price = getRandomPrice();
+  const price = getPrice();
   const discount = getRandomDiscount();
 
   return (
@@ -253,9 +257,11 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         <div className="flex items-center justify-between mb-4">
           <div>
             <span className="text-2xl font-bold text-trust-green">{price}</span>
-            <span className="text-lg text-gray-400 line-through ml-2">
-              ${parseInt(price.slice(1)) * 2}
-            </span>
+            {price.startsWith('$') && price.slice(1).match(/^\d+/) && (
+              <span className="text-lg text-gray-400 line-through ml-2">
+                ${parseInt(price.slice(1)) * 2}
+              </span>
+            )}
           </div>
           <div className="text-right">
             <div className="text-sm text-urgency-red font-semibold">Save {discount}</div>

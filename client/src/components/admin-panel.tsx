@@ -27,6 +27,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     description: "",
     category: "Hot Deals",
     imageUrl: "",
+    price: "",
   });
 
   const { toast } = useToast();
@@ -56,7 +57,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const handleClose = () => {
     setIsAuthenticated(false);
     setPassword("");
-    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "" });
+    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", price: "" });
     onClose();
   };
 
@@ -71,7 +72,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
         title: "Success!",
         description: "Affiliate link added successfully",
       });
-      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "" });
+      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", price: "" });
       onSuccess();
     },
     onError: () => {
@@ -234,6 +235,20 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             />
             <p className="text-xs text-gray-500 mt-1">
               Add a direct link to the product image for better visual appeal
+            </p>
+          </div>
+
+          <div>
+            <Label htmlFor="price">Product Price (Optional)</Label>
+            <Input
+              id="price"
+              value={formData.price || ""}
+              onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+              placeholder="$29.99"
+              className="mt-1"
+            />
+            <p className="text-xs text-gray-500 mt-1">
+              Enter the product price (e.g., $29.99, €45, ¥1000)
             </p>
           </div>
 

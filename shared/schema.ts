@@ -15,6 +15,7 @@ export const affiliateLinks = pgTable("affiliate_links", {
   description: text("description").notNull(),
   category: text("category").notNull(),
   imageUrl: text("image_url"),
+  price: text("price"),
   clicks: integer("clicks").notNull().default(0),
 });
 
@@ -28,6 +29,7 @@ export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit
   clicks: true,
 }).extend({
   imageUrl: z.string().url().optional().or(z.literal("")),
+  price: z.string().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;
