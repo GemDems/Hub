@@ -34,7 +34,7 @@ export default function ReferralSystem() {
     queryFn: () => fetch(`/api/referral/status?userId=${deviceId}`).then(res => res.json())
   });
 
-  // Format username properly: "John W" format
+  // Format username properly: "John W" format - only first letters capitalized
   const formatUsername = (firstName: string, lastInitial: string) => {
     const formattedFirst = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
     const formattedLast = lastInitial.charAt(0).toUpperCase();
@@ -269,9 +269,14 @@ export default function ReferralSystem() {
                   </Button>
                 )}
                 {hasUsername && (
-                  <p className="text-xs text-purple-600 font-medium">
-                    Leaderboard Name: {referralStatus.username}
-                  </p>
+                  <div className="space-y-1">
+                    <p className="text-sm font-bold text-blue-900">
+                      {referralStatus.username}
+                    </p>
+                    <p className="text-xs text-gray-600">
+                      Total Codes Shared: {referralStatus.totalCodesShared || 0}
+                    </p>
+                  </div>
                 )}
               </div>
             )}

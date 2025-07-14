@@ -39,6 +39,7 @@ export const userStats = pgTable("user_stats", {
   username: text("username"), // Display name for leaderboard (Name/F format)
   totalSavings: integer("total_savings").default(0),
   referralCount: integer("referral_count").default(0),
+  totalCodesShared: integer("total_codes_shared").default(0), // Total referral codes shared in lifetime
   isVip: integer("is_vip").default(0), // Using integer for boolean compatibility
   savingsProgress: integer("savings_progress").default(0), // Tracks click savings progress toward $1000
   hasSeinfeldCode: integer("has_seinfeld_code").default(0), // Level 1 reward unlock

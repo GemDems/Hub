@@ -103,6 +103,9 @@ export class DatabaseStorage implements IStorage {
     const code = Math.random().toString(36).substring(2, 8).toUpperCase() + 
                  Math.random().toString(36).substring(2, 4).toUpperCase();
     
+    // Increment total codes shared counter
+    await this.incrementCodesShared(userId);
+    
     const [referralCode] = await db
       .insert(referralCodes)
       .values({
@@ -155,7 +158,7 @@ export class DatabaseStorage implements IStorage {
     return { vipUnlocked, usedCount: newUsedCount };
   }
 
-  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string }> {
+  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string; totalCodesShared?: number }> {
     const [referralCode] = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId));
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
@@ -163,7 +166,8 @@ export class DatabaseStorage implements IStorage {
       myCode: referralCode?.code,
       usedCount: referralCode?.usedCount || 0,
       isVip: Boolean(userStat?.isVip || referralCode?.isVip),
-      username: userStat?.username
+      username: userStat?.username,
+      totalCodesShared: userStat?.totalCodesShared || 0
     };
   }
 
@@ -216,6 +220,11 @@ export class DatabaseStorage implements IStorage {
     const newProgress = currentProgress + amount;
     const hasReward = newProgress >= 1000 && currentProgress < 1000 && !existingStats?.hasSeinfeldCode;
 
+    // If reward unlocked, increment codes shared for bonus Seinfeld code
+    if (hasReward) {
+      await this.incrementCodesShared(userId);
+    }
+
     if (existingStats) {
       await db
         .update(userStats)
@@ -234,6 +243,7 @@ export class DatabaseStorage implements IStorage {
           hasSeinfeldCode: hasReward ? 1 : 0,
           totalSavings: 0,
           referralCount: 0,
+          totalCodesShared: hasReward ? 1 : 0,
           isVip: 0
         });
     }
@@ -258,6 +268,31 @@ export class DatabaseStorage implements IStorage {
         .values({
           userId,
           username,
+          totalSavings: 0,
+          referralCount: 0,
+          totalCodesShared: 0,
+          isVip: 0
+        });
+    }
+  }
+
+  private async incrementCodesShared(userId: string): Promise<void> {
+    const [existingStats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    
+    if (existingStats) {
+      await db
+        .update(userStats)
+        .set({ 
+          totalCodesShared: (existingStats.totalCodesShared || 0) + 1,
+          lastActive: new Date()
+        })
+        .where(eq(userStats.userId, userId));
+    } else {
+      await db
+        .insert(userStats)
+        .values({
+          userId,
+          totalCodesShared: 1,
           totalSavings: 0,
           referralCount: 0,
           isVip: 0

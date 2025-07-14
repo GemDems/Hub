@@ -93,7 +93,7 @@ export default function Leaderboard() {
                   
                   <div>
                     <div className="flex items-center">
-                      <span className="font-semibold text-gray-900">{saver.name}</span>
+                      <span className="font-bold text-blue-900">{saver.name}</span>
                       {saver.isVip && <Crown className="w-4 h-4 text-yellow-500 ml-2" />}
                     </div>
                     <div className="text-sm text-gray-500">{saver.location}</div>
@@ -143,7 +143,7 @@ export default function Leaderboard() {
                   
                   <div>
                     <div className="flex items-center">
-                      <span className="font-semibold text-gray-900">{referrer.name}</span>
+                      <span className="font-bold text-blue-900">{referrer.name}</span>
                       <Crown className="w-4 h-4 text-yellow-500 ml-2" />
                     </div>
                     <div className="text-sm text-gray-500">{referrer.location}</div>
