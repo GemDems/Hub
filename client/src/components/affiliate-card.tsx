@@ -159,219 +159,116 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   return (
     <>
-      <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
+      <div className="group relative h-80 w-full">
+        {/* Glassmorphic Card Base */}
+        <Card className="absolute inset-0 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+          {/* Background Blur Layer with Gradient */}
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-pink-50/30"></div>
 
+          
+          {/* Floating Product Image - Upper Half */}
+          <div className="absolute top-4 left-4 right-4 h-40 z-20">
+            <div className="relative h-full rounded-xl overflow-hidden">
+              <PhotoCarousel 
+                images={allImages}
+                title={link.title}
+                className="h-full object-cover"
+              />
+              {/* Image fade-out blur at bottom */}
+              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/60 to-transparent backdrop-blur-sm"></div>
+            </div>
+          </div>
+
+          {/* Invisible Delete Button */}
+          <div className="absolute top-2 right-2 z-50" style={{ opacity: 0, visibility: 'hidden' }}>
+            <Button
+              onClick={() => setShowDeleteDialog(true)}
+              className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none"
+              title="Delete Product"
+              style={{ opacity: 0, visibility: 'hidden' }}
+            >
+              <Trash2 className="w-4 h-4" style={{ opacity: 0, visibility: 'hidden' }} />
+            </Button>
+          </div>
         
-        {/* Invisible Delete Button */}
-        <div className="absolute top-2 right-2 z-30" style={{ opacity: 0, visibility: 'hidden' }}>
-          <Button
-            onClick={() => setShowDeleteDialog(true)}
-            className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none"
-            title="Delete Product"
-            style={{ opacity: 0, visibility: 'hidden' }}
-          >
-            <Trash2 className="w-4 h-4" style={{ opacity: 0, visibility: 'hidden' }} />
-          </Button>
-        </div>
-        
-        {/* Cycling Alert Badge */}
-        {isElitePick && currentAlertText ? (
-          <div className="absolute top-[0px] left-[0px] right-[0px] z-30">
-            <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
+          {/* Cycling Alert Badge */}
+          {isElitePick && currentAlertText ? (
+            <div className="absolute top-3 left-3 z-40 bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
               <Users className="w-3 h-3 inline mr-1" />
               {currentAlertText}
             </div>
-          </div>
-        ) : null}
-        
-        {/* Verified Source Badge */}
-        {link.isVerified ? (
-          <div className={`absolute ${isElitePick ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-20`}>
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold text-center py-1 flex items-center justify-center">
+          ) : null}
+          
+          {/* Verified Source Badge */}
+          {link.isVerified ? (
+            <div className="absolute top-3 right-3 z-40 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
               <div className="w-3 h-3 bg-white rounded-full mr-1 flex items-center justify-center">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
               </div>
-              🔒 Verified Source Badge (Amazon/Walmart/etc)
-            </div>
-          </div>
-        ) : null}
-        
-        {/* Stock Countdown Alert */}
-        {stock > 0 ? (
-          <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-10`}>
-            <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
-              <AlertCircle className="w-3 h-3 inline mr-1" />
-              ONLY {stock} LEFT IN STOCK
-            </div>
-          </div>
-        ) : null}
-      
-      <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
-        {/* Clean Badges */}
-        <div className="absolute top-3 left-3 z-10">
-          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-            {getCategoryEmoji(link.category || '')} BESTSELLER
-          </div>
-        </div>
-        
-        <div className="absolute top-3 right-3 z-10">
-          <div className="bg-gradient-to-r from-action-orange to-orange-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-            <Clock className="w-3 h-3 mr-1 inline" />
-            {stats.timeLeft}H LEFT
-          </div>
-        </div>
-        
-        {/* Photo Carousel */}
-        <PhotoCarousel 
-          images={allImages}
-          title={link.title}
-          className="w-full h-48"
-        />
-      </div>
-      
-      <CardContent className="p-6 space-y-4">
-        <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300">
-          {link.title}
-        </h3>
-        
-        <p className="text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed">
-          {link.description}
-        </p>
-        
-        {/* Ultra Social Proof Matrix */}
-        <div className="bg-gradient-to-br from-trust-green/5 via-blue-50 to-purple-50 p-4 rounded-xl border-2 border-trust-green/20 shadow-inner mb-4">
-          <div className="grid grid-cols-2 gap-3">
-            <div className="bg-green-50 rounded-lg p-2 border border-green-200">
-              <div className="flex items-center">
-                <Users className="w-4 h-4 text-green-700 mr-1" />
-                <span className="text-xs font-bold text-green-800">{stats.buyers} bought</span>
-              </div>
-              <div className="text-xs text-gray-700">this week</div>
-            </div>
-            <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
-              <div className="flex items-center">
-                <TrendingUp className="w-4 h-4 text-blue-700 mr-1" />
-                <span className="text-xs font-bold text-blue-800">+{Math.floor(Math.random() * 50) + 30}%</span>
-              </div>
-              <div className="text-xs text-gray-700">demand ↗</div>
-            </div>
-            <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
-              <div className="flex items-center">
-                <Star className="w-4 h-4 text-yellow-600 mr-1" />
-                <span className="text-xs font-bold text-yellow-800">{stats.rating}/5</span>
-              </div>
-              <div className="text-xs text-gray-700">{stats.reviews} reviews</div>
-            </div>
-            <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
-              <div className="flex items-center">
-                <Award className="w-4 h-4 text-purple-700 mr-1" />
-                <span className="text-xs font-bold text-purple-800">#1 Choice</span>
-              </div>
-              <div className="text-xs text-gray-700">bestseller</div>
-            </div>
-          </div>
-        </div>
-        
-        {/* Clean Psychological Triggers */}
-        <div className="space-y-3">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-            <div className="flex items-center justify-center">
-              <Clock className="w-4 h-4 text-red-600 mr-2" />
-              <span className="text-sm font-semibold text-red-700">
-                Limited time: Save ${stats.savedAmount} today
-              </span>
-            </div>
-          </div>
-          
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
-            <div className="text-center text-sm font-medium text-blue-700">
-              {Math.floor(Math.random() * 15) + 5} people viewing this deal
-            </div>
-          </div>
-        </div>
-        
-        {/* Pricing */}
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <span className="text-2xl font-bold text-trust-green">{price}</span>
-            <span className="text-lg text-gray-400 line-through ml-2">
-              {(() => {
-                // Extract number from price for calculation
-                const priceMatch = price.match(/[\d.]+/);
-                if (priceMatch) {
-                  const numericPrice = parseFloat(priceMatch[0]);
-                  const originalPrice = Math.round(numericPrice * 2.2); // 2.2x for better savings perception
-                  // Keep the same currency symbol/format as the actual price
-                  return price.replace(/[\d.]+/, originalPrice.toString());
-                }
-                // Fallback for non-standard price formats
-                return price.startsWith('$') ? `$${parseInt(price.slice(1) || '50') * 2}` : '$99';
-              })()}
-            </span>
-          </div>
-          <div className="text-right">
-            <div className="text-sm text-urgency-red font-semibold">Save {discount}</div>
-            <div className="text-xs text-gray-500">{discount} OFF</div>
-          </div>
-        </div>
-        
-        {/* Ultimate CTA Experience */}
-        <div className="space-y-3">
-          <Button
-            onClick={handleClick}
-            disabled={trackClickMutation.isPending}
-            className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg relative overflow-hidden ${
-              link.isVerified ? 'verified-glow-button' : ''
-            }`}
-          >
-            <span className="relative z-10 flex items-center justify-center text-lg">
-              {trackClickMutation.isPending ? (
-                <>Processing...</>
-              ) : (
-                <>
-                  <ShoppingCart className="w-5 h-5 mr-2" />
-                  Get Deal Now
-                  <ExternalLink className="w-5 h-5 ml-2" />
-                </>
-              )}
-            </span>
-          </Button>
-          
-          {/* Trust Indicators */}
-          <div className="grid grid-cols-2 gap-2">
-            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center">
-              <div className="text-xs font-medium text-green-700">SSL Secured</div>
-            </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-center">
-              <div className="text-xs font-medium text-blue-700">Encrypted</div>
-            </div>
-          </div>
-          
-
-        </div>
-        
-        {/* Social Proof */}
-        <div className="mt-4 space-y-2">
-          {link.clicks > 0 ? (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 text-center">
-              <div className="text-sm font-medium text-blue-700">
-                {link.clicks} people claimed this deal
-              </div>
+              Verified
             </div>
           ) : null}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
-            <div className="text-center">
-              <div className="text-sm font-medium text-gray-700">
-                {Math.floor(Math.random() * 20) + 15} people viewing
+          
+          {/* Card Content - Bottom Half */}
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-white/70 backdrop-blur-sm border-t border-white/30 rounded-b-2xl p-4">
+            {/* Stock Alert */}
+            {stock > 0 ? (
+              <div className="absolute top-2 right-2 bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
+                <AlertCircle className="w-3 h-3 inline mr-1" />
+                ONLY {stock} LEFT
               </div>
-              <div className="text-xs text-gray-500">
-                Updated {Math.floor(Math.random() * 5) + 1} minutes ago
+            ) : null}
+            
+            <h3 className="text-lg font-bold text-gray-900 mb-2 truncate">
+              {link.title}
+            </h3>
+            
+            <p className="text-gray-700 text-sm line-clamp-2 mb-3">
+              {link.description}
+            </p>
+            
+            {/* Pricing and CTA */}
+            <div className="flex items-center justify-between mb-3">
+              <div>
+                <span className="text-xl font-bold text-green-600">{price}</span>
+                <span className="text-sm text-gray-400 line-through ml-2">
+                  {(() => {
+                    const priceMatch = price.match(/[\d.]+/);
+                    if (priceMatch) {
+                      const numericPrice = parseFloat(priceMatch[0]);
+                      const originalPrice = Math.round(numericPrice * 2.2);
+                      return price.replace(/[\d.]+/, originalPrice.toString());
+                    }
+                    return '$99';
+                  })()}
+                </span>
+              </div>
+              <div className="text-xs text-red-600 font-bold">
+                Save {discount}
               </div>
             </div>
+            
+            <Button
+              onClick={handleClick}
+              disabled={trackClickMutation.isPending}
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-xl transition-all duration-300"
+            >
+              <span className="flex items-center justify-center">
+                {trackClickMutation.isPending ? (
+                  <>Processing...</>
+                ) : (
+                  <>
+                    <ShoppingCart className="w-4 h-4 mr-2" />
+                    Get Deal Now
+                    <ExternalLink className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </span>
+            </Button>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </Card>
+      </div>
+
 
     {/* Delete Confirmation Dialog */}
     <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
