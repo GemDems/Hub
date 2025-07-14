@@ -50,47 +50,38 @@ function SavingsRewardCodes() {
   }
 
   return (
-    <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-blue-50 border-2 border-purple-200 rounded-lg shadow-sm">
-      <div className="text-sm font-bold text-purple-800 mb-3 text-center">
-        🎁 BONUS REFERRAL CODES UNLOCKED! 🎁
+    <div className="mt-2 p-2 bg-purple-50 border border-purple-200 rounded">
+      <div className="text-xs font-medium text-purple-700 mb-1 text-center">
+        🎁 Bonus Codes Unlocked
       </div>
-      <div className="space-y-3">
+      <div className="space-y-1">
         {referralStatus.rewardCodes.map((code: any, index: number) => (
-          <div key={code.id} className="flex items-center justify-between bg-white rounded-lg px-3 py-2 border-2 border-purple-100 shadow-sm">
+          <div key={code.id} className="flex items-center justify-between bg-white rounded px-2 py-1 border border-purple-100">
             <div className="flex-1">
-              <div className="text-sm font-bold text-purple-700">
-                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && `BONUS CODE 1: ${code.code}`}
-                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && `BONUS CODE 2: ${code.code}`}
-              </div>
-              <div className="text-xs font-semibold">
-                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && (
-                  <span className="text-green-600">✨ 2X BONUS POINTS! ✨</span>
-                )}
-                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && (
-                  <span className="text-blue-600">📈 REGULAR POINTS</span>
-                )}
+              <div className="text-xs font-mono text-purple-600">
+                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && `${code.code} (2x)`}
+                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && `${code.code}`}
               </div>
             </div>
             <Button
               onClick={() => {
                 navigator.clipboard.writeText(code.code);
                 toast({ 
-                  title: "✅ COPIED!", 
-                  description: `Code ${code.code} copied! Share it to get referral points!`,
-                  className: "bg-green-50 border-green-200"
+                  title: "Copied!", 
+                  description: `${code.code} copied to clipboard`
                 });
               }}
               size="sm"
-              className="bg-purple-600 hover:bg-purple-700 text-white px-3 py-1"
+              variant="outline"
+              className="px-1 py-0 h-5 text-xs"
             >
-              📋 COPY
+              Copy
             </Button>
           </div>
         ))}
       </div>
-      <div className="text-xs text-purple-700 mt-3 font-semibold bg-purple-100 rounded-lg p-3 text-center">
-        💡 SHARE THESE CODES: Go to VIP Member section and share these codes with friends! 
-        They work just like regular invite codes and help you climb the leaderboard faster! 🚀
+      <div className="text-xs text-purple-600 mt-1 text-center">
+        Use in VIP section for referral points
       </div>
     </div>
   );
