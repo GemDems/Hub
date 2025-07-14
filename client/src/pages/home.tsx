@@ -87,7 +87,7 @@ export default function Home() {
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const shouldShow = scrollY > 300; // Show after scrolling down 300px
+      const shouldShow = scrollY > 2000; // Show after scrolling down 2000px (about 10 scrolls)
       setShowScrollButton(shouldShow);
       
       // Close dropdown if scrolling back to top
