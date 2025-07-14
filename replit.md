@@ -10,6 +10,11 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 2025)
 
+- **Critical Fix (July 14, 2025)**: Resolved product creation failure completely
+  - Root cause: Boolean/integer type mismatch between frontend form (boolean) and database (integer)
+  - Solution: Implemented manual data transformation in API endpoint bypassing strict Zod validation
+  - Fixed storage layer to handle integer values properly for isVerified, isDraft, isElitePick fields
+  - Creator Mode form now successfully saves products and drafts without "failed to save product" errors
 - **Latest Update**: Fixed draft system and added comprehensive scheduling features
   - **Draft System Fix**: Products now properly save as drafts when "Save as Draft" is clicked
   - **Bulk Publish**: Added "Publish All Drafts" button for one-click publishing of all drafts

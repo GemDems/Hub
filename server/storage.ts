@@ -70,15 +70,22 @@ export class DatabaseStorage implements IStorage {
     return link || undefined;
   }
 
-  async createAffiliateLink(insertLink: InsertAffiliateLink): Promise<AffiliateLink> {
+  async createAffiliateLink(insertLink: any): Promise<AffiliateLink> {
     const [link] = await db
       .insert(affiliateLinks)
       .values({
-        ...insertLink,
+        title: insertLink.title,
+        url: insertLink.url,
+        description: insertLink.description,
+        category: insertLink.category,
         imageUrl: insertLink.imageUrl || null,
+        imageUrls: insertLink.imageUrls || null,
+        price: insertLink.price || null,
         clicks: 0,
-        isVerified: insertLink.isVerified ? 1 : 0,
-        isDraft: insertLink.isDraft ? 1 : 0,
+        stock: insertLink.stock || 0,
+        isElitePick: insertLink.isElitePick || 0,
+        isVerified: insertLink.isVerified || 0,
+        isDraft: insertLink.isDraft || 0,
         scheduledPublishAt: insertLink.scheduledPublishAt || null,
         scheduledDeleteAt: insertLink.scheduledDeleteAt || null
       })

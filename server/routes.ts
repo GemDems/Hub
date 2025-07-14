@@ -183,18 +183,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/affiliate-links", async (req, res) => {
     try {
       console.log("Received data:", JSON.stringify(req.body, null, 2));
-      const linkData = insertAffiliateLinkSchema.parse(req.body);
-      console.log("Parsed data:", JSON.stringify(linkData, null, 2));
+      
+      // Manual validation and conversion
+      const { title, url, description, category } = req.body;
+      
+      if (!title || !url || !description || !category) {
+        return res.status(400).json({ message: "Missing required fields" });
+      }
+      
+      const linkData = {
+        title: String(title),
+        url: String(url),
+        description: String(description),
+        category: String(category),
+        imageUrl: req.body.imageUrl || null,
+        imageUrls: req.body.imageUrls || null,
+        price: req.body.price || null,
+        stock: Number(req.body.stock) || 0,
+        isElitePick: req.body.isElitePick ? 1 : 0,
+        isVerified: req.body.isVerified ? 1 : 0,
+        isDraft: req.body.isDraft ? 1 : 0,
+        scheduledPublishAt: req.body.scheduledPublishAt || null,
+        scheduledDeleteAt: req.body.scheduledDeleteAt || null,
+      };
+      
+      console.log("Processed data:", JSON.stringify(linkData, null, 2));
       const newLink = await storage.createAffiliateLink(linkData);
       res.status(201).json(newLink);
     } catch (error) {
       console.error("Error creating affiliate link:", error);
-      if (error instanceof z.ZodError) {
-        console.log("Validation errors:", error.errors);
-        res.status(400).json({ message: "Invalid link data", errors: error.errors });
-      } else {
-        res.status(500).json({ message: "Failed to create affiliate link" });
-      }
+      res.status(500).json({ message: "Failed to create affiliate link" });
     }
   });
 

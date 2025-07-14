@@ -67,9 +67,9 @@ export const insertAffiliateLinkSchema = z.object({
   imageUrls: z.array(z.string()).optional().or(z.null()),
   price: z.string().optional().or(z.null()),
   stock: z.number().optional().default(0),
-  isElitePick: z.boolean().optional().default(false),
-  isVerified: z.boolean().optional().default(false),
-  isDraft: z.boolean().optional().default(false),
+  isElitePick: z.number().optional().default(0),
+  isVerified: z.number().optional().default(0),
+  isDraft: z.number().optional().default(0),
   scheduledPublishAt: z.date().optional().or(z.null()),
   scheduledDeleteAt: z.date().optional().or(z.null()),
 });
