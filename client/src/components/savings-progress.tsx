@@ -66,7 +66,7 @@ export default function SavingsProgress() {
     <div className="text-center py-4">
       <div className="flex items-center justify-center space-x-3 mb-2">
         <span className="text-sm text-gray-600 font-normal">Money Saved:</span>
-        <span className="text-lg font-medium text-green-700">${progress.toLocaleString()}</span>
+        <span className="text-base font-normal text-green-700">${progress.toLocaleString()}</span>
       </div>
       
       <Progress 
@@ -87,7 +87,7 @@ export default function SavingsProgress() {
 
       {hasSeinfeldCode && (
         <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded">
-          <div className="text-xs font-medium text-green-800 mb-1">
+          <div className="text-xs font-normal text-green-800 mb-1">
             Reward Unlocked!
           </div>
           <div className="text-xs font-mono bg-green-100 rounded px-2 py-1 text-green-700">
