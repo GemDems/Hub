@@ -12,6 +12,7 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
   const [currentIndex, setCurrentIndex] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Filter out empty images
   const validImages = images.filter(img => img && img.trim());
@@ -55,16 +56,21 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
   }
 
   const nextImage = () => {
+    setIsTransitioning(true);
     setCurrentIndex((prev) => (prev + 1) % validImages.length);
+    setTimeout(() => setIsTransitioning(false), 500);
   };
 
   const prevImage = () => {
+    setIsTransitioning(true);
     setCurrentIndex((prev) => (prev - 1 + validImages.length) % validImages.length);
+    setTimeout(() => setIsTransitioning(false), 500);
   };
 
   // Touch handlers for swipe functionality
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
+    setTouchEnd(0); // Reset touch end
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -82,20 +88,39 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
     } else if (distance < -minSwipeDistance) {
       prevImage(); // Swipe right - previous image
     }
+    
+    // Reset touch values
+    setTouchStart(0);
+    setTouchEnd(0);
   };
 
   return (
     <div 
-      className={`relative overflow-hidden group ${className}`}
+      className={`relative overflow-hidden group ${className} ${
+        isTransitioning ? 'ring-2 ring-blue-400/50 ring-offset-2' : ''
+      }`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={{
+        background: isTransitioning ? 
+          'linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))' : 
+          'transparent',
+      }}
     >
       {/* Main Image */}
       <img
         src={validImages[currentIndex]}
         alt={`${title} - Image ${currentIndex + 1}`}
-        className="w-full h-full object-cover transition-all duration-300"
+        className={`w-full h-full object-cover transition-all duration-500 ease-out transform ${
+          isTransitioning ? 'scale-105' : 'scale-100'
+        }`}
+        style={{
+          transform: touchEnd && touchStart ? 
+            `translateX(${(touchStart - touchEnd) * 0.3}px) ${isTransitioning ? 'scale(1.05)' : 'scale(1)'}` : 
+            isTransitioning ? 'scale(1.05)' : 'scale(1)',
+          filter: touchEnd && Math.abs(touchStart - touchEnd) > 20 ? 'brightness(1.1)' : 'brightness(1)',
+        }}
         onError={(e) => {
           // Fallback to gradient if image fails to load
           e.currentTarget.style.display = 'none';
@@ -117,11 +142,14 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
           <Button
             variant="ghost"
             size="sm"
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white p-1 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-1 h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 backdrop-blur-sm z-10"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               prevImage();
             }}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
@@ -129,27 +157,33 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
           <Button
             variant="ghost"
             size="sm"
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/20 hover:bg-black/40 text-white p-1 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-1 h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 backdrop-blur-sm z-10"
             onClick={(e) => {
+              e.preventDefault();
               e.stopPropagation();
               nextImage();
             }}
+            onTouchStart={(e) => e.stopPropagation()}
+            onTouchEnd={(e) => e.stopPropagation()}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
 
           {/* Image Indicators */}
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
             {validImages.map((_, index) => (
               <button
                 key={index}
-                className={`w-2 h-2 rounded-full transition-colors ${
-                  index === currentIndex ? 'bg-white' : 'bg-white/50'
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 hover:scale-125 ${
+                  index === currentIndex ? 'bg-white shadow-lg' : 'bg-white/60 hover:bg-white/80'
                 }`}
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
                   setCurrentIndex(index);
                 }}
+                onTouchStart={(e) => e.stopPropagation()}
+                onTouchEnd={(e) => e.stopPropagation()}
               />
             ))}
           </div>
