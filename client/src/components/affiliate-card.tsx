@@ -31,19 +31,16 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   ];
 
   const [currentAlertText, setCurrentAlertText] = useState(alerts[0]);
-  const [alertIndex, setAlertIndex] = useState(1);
 
   // Cycle through alerts every 4 seconds for each product
   useEffect(() => {
+    let currentIndex = 0;
     const interval = setInterval(() => {
-      setAlertIndex((prev) => {
-        const nextIndex = (prev + 1) % alerts.length;
-        const nextAlert = alerts[nextIndex];
-        if (nextAlert && nextAlert.trim()) {
-          setCurrentAlertText(nextAlert);
-        }
-        return nextIndex;
-      });
+      currentIndex = (currentIndex + 1) % alerts.length;
+      const nextAlert = alerts[currentIndex];
+      if (nextAlert && nextAlert.trim()) {
+        setCurrentAlertText(nextAlert);
+      }
     }, 4000);
     return () => clearInterval(interval);
   }, []);
@@ -162,8 +159,14 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     return randomStock;
   });
   
+  // Debug: Log stock value
+  console.log('stock value:', stock);
+  
   // Elite pick logic (simulated - would be based on database flag)
   const isElitePick = Math.random() < 0.2; // 20% chance for demo
+  
+  // Debug: Log to see if this is causing the issue
+  console.log('isElitePick:', isElitePick, 'currentAlertText:', currentAlertText);
 
   // Generate clean images array without duplication
   const allImages = link.imageUrls && link.imageUrls.length > 0 ? 

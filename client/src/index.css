@@ -114,6 +114,16 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+
+  /* Hide potential stray "0" characters by making them invisible */
+  .group > *:first-child:only-child {
+    color: transparent !important;
+    font-size: 0px !important;
+    line-height: 0 !important;
+    overflow: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
 }
 
 @keyframes shimmer {
