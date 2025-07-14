@@ -173,10 +173,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   return (
     <>
       <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
-        {/* Hidden alertIndex to prevent rendering */}
-        <div className="absolute top-0 left-0 text-white opacity-0 pointer-events-none" style={{ color: 'white', fontSize: '0px' }}>
-          {alertIndex}
-        </div>
+
         
         {/* Invisible Delete Button */}
         <div className="absolute top-2 right-2 z-30">
