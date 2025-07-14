@@ -14,6 +14,7 @@ import ReferralSystem from "@/components/referral-system";
 import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
+import MiniNavigation from "@/components/mini-navigation";
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -22,6 +23,7 @@ export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortByClicks, setSortByClicks] = useState(false);
 
 
 
@@ -38,6 +40,12 @@ export default function Home() {
         link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         link.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      if (sortByClicks) {
+        return (b.clicks || 0) - (a.clicks || 0); // Most clicked first
+      }
+      return 0; // Keep original order when not sorting by clicks
     });
 
   const categories = [
@@ -48,6 +56,24 @@ export default function Home() {
     { id: "health", label: "Health & Fitness", emoji: "💪" },
     { id: "travel", label: "Travel", emoji: "✈️" },
   ];
+
+  const handleNewDropsClick = () => {
+    setSortByClicks(true);
+    setActiveCategory("all");
+    setSearchQuery("");
+    // Scroll to top of products
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleLeaderboardClick = () => {
+    const leaderboardSection = document.querySelector('[data-section="leaderboard"]');
+    leaderboardSection?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  const handleMyDealsClick = () => {
+    const savingsSection = document.querySelector('[data-section="savings-progress"]');
+    savingsSection?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -138,7 +164,7 @@ export default function Home() {
       <TrustIndicators />
       
       {/* Leaderboard Section - At bottom */}
-      <div className="bg-white py-16">
+      <div className="bg-white py-16" data-section="leaderboard">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-800 mb-2">
             Elite Leaderboard - <span className="text-blue-600">This Month</span>
@@ -149,7 +175,7 @@ export default function Home() {
       </div>
       
       {/* Hidden Referral System - Bottom section, hard to find */}
-      <div className="bg-gray-100 py-8 border-t">
+      <div className="bg-gray-100 py-8 border-t" data-section="savings-progress">
         <div className="max-w-md mx-auto">
           <h2 className="text-center text-gray-500 text-xs mb-4 uppercase tracking-wider">
             Elite Access
@@ -163,8 +189,17 @@ export default function Home() {
         <LiveFeed />
       </div>
       
-      {/* User Idea Submission - After Live Feed */}
-      <div className="bg-gradient-to-b from-gray-900 to-gray-800 py-12">
+      {/* Mini Navigation - Between Live Feed and Ideas */}
+      <div className="bg-gradient-to-b from-gray-900 to-gray-800 py-8">
+        <MiniNavigation 
+          onNewDropsClick={handleNewDropsClick}
+          onLeaderboardClick={handleLeaderboardClick}
+          onMyDealsClick={handleMyDealsClick}
+        />
+      </div>
+      
+      {/* User Idea Submission - After Mini Navigation */}
+      <div className="bg-gradient-to-b from-gray-800 to-gray-900 py-12">
         <div className="max-w-md mx-auto px-4">
           <IdeaSubmission />
         </div>
