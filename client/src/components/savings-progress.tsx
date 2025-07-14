@@ -37,15 +37,17 @@ export default function SavingsProgress() {
       setHasSeinfeldCode(true);
       localStorage.setItem('has_seinfeld_code', 'true');
       
-      // Generate Seinfeld code
+      // Generate Seinfeld code and bonus referral code
       const seinfeldCode = `SEIN${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
+      const bonusCode = `BONUS${Math.random().toString(36).substr(2, 3).toUpperCase()}`;
       localStorage.setItem('seinfeld_code', seinfeldCode);
+      localStorage.setItem('bonus_referral_code', bonusCode);
       
       toast({
         title: "🏆 SECRET PRIZE UNLOCKED!",
-        description: `Level 1 Seinfeld Code: ${seinfeldCode} (Double referral points!)`,
+        description: `Level 1 Seinfeld Code: ${seinfeldCode} + Bonus Referral Code: ${bonusCode}`,
         className: "bg-purple-50 border-purple-200",
-        duration: 8000,
+        duration: 10000,
       });
     }
   };
@@ -86,12 +88,20 @@ export default function SavingsProgress() {
       </button>
 
       {hasSeinfeldCode && (
-        <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded">
-          <div className="text-xs font-normal text-green-800 mb-1">
-            Reward Unlocked!
+        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
+          <div className="text-xs font-medium text-green-800 mb-2">
+            🎁 Secret Rewards Unlocked!
           </div>
-          <div className="text-xs font-mono bg-green-100 rounded px-2 py-1 text-green-700">
-            {localStorage.getItem('seinfeld_code')}
+          <div className="space-y-2">
+            <div className="text-xs font-mono bg-green-100 rounded px-2 py-1 text-green-700">
+              Seinfeld: {localStorage.getItem('seinfeld_code')}
+            </div>
+            <div className="text-xs font-mono bg-purple-100 rounded px-2 py-1 text-purple-700">
+              Bonus: {localStorage.getItem('bonus_referral_code')}
+            </div>
+          </div>
+          <div className="text-xs text-green-600 mt-1 font-medium">
+            Double referral points + Extra code
           </div>
         </div>
       )}
