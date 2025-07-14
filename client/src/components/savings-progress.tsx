@@ -25,6 +25,27 @@ export default function SavingsProgress() {
 
   const progressPercentage = Math.min((progress / 1000) * 100, 100);
   const remainingAmount = Math.max(1000 - progress, 0);
+  
+  // Dynamic color based on progress
+  const getProgressColor = () => {
+    if (progress >= 800) return "from-emerald-600 to-green-500"; // Final push - bright green
+    if (progress >= 600) return "from-blue-600 to-emerald-500"; // Getting close - blue to green
+    if (progress >= 400) return "from-indigo-600 to-blue-500"; // Halfway - deeper blue
+    if (progress >= 200) return "from-purple-600 to-indigo-500"; // Early progress - purple to blue
+    return "from-slate-600 to-purple-500"; // Starting out - slate to purple
+  };
+  
+  // Milestone markers
+  const milestones = [200, 400, 600, 800];
+  const getMilestoneStyle = (milestone: number) => {
+    const isReached = progress >= milestone;
+    return {
+      left: `${(milestone / 1000) * 100}%`,
+      className: isReached 
+        ? "w-2 h-2 bg-emerald-500 rounded-full border-2 border-white shadow-md" 
+        : "w-2 h-2 bg-gray-300 rounded-full border-2 border-white shadow-sm"
+    };
+  };
 
   // Update savings progress when user clicks "Get Deal Now"
   const updateProgress = (amount: number) => {
@@ -66,19 +87,44 @@ export default function SavingsProgress() {
 
   return (
     <div className="text-center py-4">
-      <div className="flex items-center justify-center space-x-3 mb-2">
-        <span className="text-sm font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">Money Saved:</span>
-        <span className="text-base font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">${progress.toLocaleString()}</span>
+      <div className="flex items-center justify-center space-x-3 mb-3">
+        <span className={`text-sm font-semibold bg-gradient-to-r ${getProgressColor()} bg-clip-text text-transparent drop-shadow-sm transition-all duration-500`}>Money Saved:</span>
+        <span className={`text-base font-semibold bg-gradient-to-r ${getProgressColor()} bg-clip-text text-transparent drop-shadow-sm transition-all duration-500`}>${progress.toLocaleString()}</span>
       </div>
       
-      <div className="relative mb-2">
-        <Progress 
-          value={progressPercentage} 
-          className="h-2 bg-gray-100 shadow-sm" 
-        />
-        <div className="flex justify-between items-center mt-1">
-          <span className="text-xs font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">$0</span>
-          <span className="text-xs font-black bg-gradient-to-r from-blue-900 to-green-600 bg-clip-text text-transparent drop-shadow-sm">$1,000</span>
+      <div className="relative mb-4">
+        <div className="relative">
+          <Progress 
+            value={progressPercentage} 
+            className="h-3 bg-gray-100 shadow-inner rounded-full overflow-hidden" 
+            style={{
+              background: `linear-gradient(to right, rgb(${progress >= 800 ? '16, 185, 129' : progress >= 600 ? '37, 99, 235' : progress >= 400 ? '79, 70, 229' : progress >= 200 ? '124, 58, 237' : '71, 85, 105'}) ${progressPercentage}%, rgb(243, 244, 246) ${progressPercentage}%)`
+            }}
+          />
+          
+          {/* Milestone markers */}
+          <div className="absolute top-0 left-0 w-full h-full">
+            {milestones.map((milestone) => {
+              const style = getMilestoneStyle(milestone);
+              return (
+                <div
+                  key={milestone}
+                  className={`absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 ${style.className} transition-all duration-300`}
+                  style={{ left: style.left }}
+                />
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Progress labels with milestones */}
+        <div className="flex justify-between items-center mt-2">
+          <span className={`text-xs font-semibold bg-gradient-to-r ${getProgressColor()} bg-clip-text text-transparent transition-all duration-500`}>$0</span>
+          <span className="text-xs font-medium text-gray-600">$200</span>
+          <span className="text-xs font-medium text-gray-600">$400</span>
+          <span className="text-xs font-medium text-gray-600">$600</span>
+          <span className="text-xs font-medium text-gray-600">$800</span>
+          <span className={`text-xs font-semibold bg-gradient-to-r ${getProgressColor()} bg-clip-text text-transparent transition-all duration-500`}>$1,000</span>
         </div>
       </div>
       
