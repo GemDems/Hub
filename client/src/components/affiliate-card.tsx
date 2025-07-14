@@ -52,11 +52,9 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     },
     onSuccess: (data) => {
       console.log('Click tracked successfully:', data);
-      // Do NOT redirect here - let handleClick control the redirect
     },
     onError: (error) => {
       console.error('Click tracking failed (but continuing with redirect):', error);
-      // Do NOT redirect here - let handleClick control the redirect  
     }
   });
 
@@ -97,10 +95,10 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       (window as any).updateSavingsProgress(amount);
     }
     
-    // Start tracking in background (but don't wait for it)
+    // Start tracking in background
     trackClickMutation.mutate();
     
-    // IMMEDIATE REDIRECT TO ENTERED URL - PERIOD.
+    // Redirect to URL
     window.location.href = link.url;
   };
 
@@ -151,11 +149,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   
   // Elite pick logic (simulated - would be based on database flag)
   const isElitePick = Math.random() < 0.2; // 20% chance for demo
-
-  // Generate clean images array without duplication
-  const allImages = link.imageUrls && link.imageUrls.length > 0 ? 
-    link.imageUrls.filter(url => url && url.trim()) : 
-    (link.imageUrl && link.imageUrl.trim() ? [link.imageUrl] : []);
 
   const remainingStock = Math.floor(Math.random() * 15) + 3;
 
