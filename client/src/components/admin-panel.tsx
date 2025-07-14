@@ -134,9 +134,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   // Publish draft mutation
   const publishDraftMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/admin/publish/${id}`, {
-        method: "POST",
-      });
+      return await apiRequest("POST", `/api/admin/publish/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
@@ -159,9 +157,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   // Publish all drafts mutation
   const publishAllDraftsMutation = useMutation({
     mutationFn: async () => {
-      return await apiRequest("/api/admin/publish-all", {
-        method: "POST",
-      });
+      return await apiRequest("POST", "/api/admin/publish-all");
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
@@ -184,10 +180,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   // Schedule deletion mutation
   const scheduleDeleteMutation = useMutation({
     mutationFn: async ({ id, scheduledDeleteAt }: { id: number; scheduledDeleteAt: Date | null }) => {
-      return await apiRequest(`/api/admin/schedule-delete/${id}`, {
-        method: "PUT",
-        body: JSON.stringify({ scheduledDeleteAt }),
-      });
+      return await apiRequest("PUT", `/api/admin/schedule-delete/${id}`, { scheduledDeleteAt });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
@@ -209,9 +202,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   // Delete product mutation
   const deleteProductMutation = useMutation({
     mutationFn: async (id: number) => {
-      return await apiRequest(`/api/admin/affiliate-links/${id}`, {
-        method: "DELETE",
-      });
+      return await apiRequest("DELETE", `/api/admin/affiliate-links/${id}`);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
@@ -262,10 +253,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
 
   const createLinkMutation = useMutation({
     mutationFn: async (data: InsertAffiliateLink) => {
-      return await apiRequest("/api/affiliate-links", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
+      return await apiRequest("POST", "/api/affiliate-links", data);
     },
     onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
