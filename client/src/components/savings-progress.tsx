@@ -99,25 +99,25 @@ export default function SavingsProgress() {
   };
 
   return (
-    <div className="text-center py-4 bg-gradient-to-r from-green-50 to-blue-50 rounded-lg shadow-sm">
-      <div className="flex items-center justify-center space-x-2 mb-3">
-        <span className="text-lg font-bold text-green-700">${progress.toLocaleString()}</span>
-        <span className="text-sm text-gray-600">/ $1,000</span>
+    <div className="text-center py-3">
+      <div className="flex items-center justify-center space-x-2 mb-2">
+        <span className="text-base font-medium text-gray-800">${progress.toLocaleString()}</span>
+        <span className="text-sm text-gray-500">/ $1,000</span>
         {showPercentage && (
-          <span className="text-sm font-bold text-blue-600 animate-pulse">
-            {Math.round(progressPercentage)}% Complete!
+          <span className="text-sm font-medium text-green-600">
+            {Math.round(progressPercentage)}% done
           </span>
         )}
       </div>
       
-      <div className="relative mb-3 px-4">
-        <div className="relative bg-gray-200 rounded-full h-4 shadow-inner">
+      <div className="relative mb-2 px-2">
+        <div className="relative bg-gray-200 rounded-full h-3">
           <div 
-            className={`h-full rounded-full transition-all duration-1000 ease-out bg-gradient-to-r ${getProgressColor()} shadow-sm`}
+            className={`h-full rounded-full transition-all duration-700 ease-out bg-gradient-to-r ${getProgressColor()}`}
             style={{ width: `${progressPercentage}%` }}
           />
           
-          {/* Easy milestone markers */}
+          {/* Simple milestone dots */}
           <div className="absolute top-0 left-0 w-full h-full">
             {milestones.map((milestone) => {
               const style = getMilestoneStyle(milestone);
@@ -127,37 +127,29 @@ export default function SavingsProgress() {
                   onClick={() => handleMilestoneClick(milestone)}
                   className={`absolute top-1/2 transform -translate-y-1/2 -translate-x-1/2 ${style.className}`}
                   style={{ left: style.left }}
-                  title={`Click to see progress to $${milestone}`}
                 />
               );
             })}
           </div>
           
-          {/* Goal celebration */}
-          <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-2">
-            <span className={`text-lg transition-all duration-700 ${progress >= 1000 ? 'scale-125 animate-bounce' : 'scale-100'} ${progress >= 900 ? 'opacity-100' : 'opacity-70'}`}>🎁</span>
+          {/* Goal indicator */}
+          <div className="absolute top-1/2 right-0 transform -translate-y-1/2 translate-x-1">
+            <span className={`text-sm transition-all duration-500 ${progress >= 1000 ? 'scale-110' : 'scale-100'} ${progress >= 900 ? 'opacity-100' : 'opacity-60'}`}>🎁</span>
           </div>
         </div>
-        
-        {/* Simple progress labels */}
-        <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
-          <span>Start</span>
-          <span className="font-medium text-green-600">Almost there!</span>
-          <span className="font-bold text-blue-600">REWARD</span>
-        </div>
       </div>
       
-      <div className="text-xs text-green-600 mb-1 font-medium">
-        🚀 Click any checkpoint • Every purchase counts!
+      <div className="text-xs text-gray-600 mb-1">
+        Every purchase counts toward your goal
       </div>
       
-      <div className="text-xs text-purple-600 mb-2 font-medium animate-pulse">
-        🎁 Secret surprise reward waiting at $1,000! 
+      <div className="text-xs text-purple-600 mb-2 font-medium">
+        Secret reward at $1,000
       </div>
       
       <button 
         onClick={scrollToLeaderboard}
-        className="text-xs font-normal text-gray-600 hover:text-gray-800 cursor-pointer transition-colors"
+        className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
       >
         View leaderboard →
       </button>
