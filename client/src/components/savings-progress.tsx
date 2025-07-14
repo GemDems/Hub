@@ -56,47 +56,47 @@ export default function SavingsProgress() {
   }, [progress, hasSeinfeldCode]);
 
   return (
-    <Card className="bg-black border border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
-      <CardHeader className="pb-2 text-center">
-        <CardTitle className="flex items-center justify-center text-sm font-bold text-yellow-400">
-          <TrendingUp className="w-4 h-4 mr-2" />
-          ELITE PROGRESS TRACKER
-        </CardTitle>
-      </CardHeader>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center">
+        <span className="text-lg font-semibold text-gray-700">Progress to $1,000</span>
+        <span className="text-2xl font-bold text-yellow-600">${progress.toLocaleString()}</span>
+      </div>
       
-      <CardContent className="space-y-3">
-        <div className="space-y-2">
-          <div className="flex justify-between text-xs">
-            <span className="text-gray-400">LEVEL 1 TARGET</span>
-            <span className="text-yellow-400 font-bold">${progress.toLocaleString()}</span>
+      <div className="relative">
+        <Progress 
+          value={progressPercentage} 
+          className="h-4 bg-gray-200" 
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/30 to-amber-500/30 rounded-full pointer-events-none"></div>
+      </div>
+      
+      <div className="flex justify-between text-sm text-gray-600">
+        <span>$0</span>
+        <span className="font-medium">
+          {remainingAmount > 0 
+            ? `$${remainingAmount.toLocaleString()} remaining`
+            : "Goal achieved! 🎉"
+          }
+        </span>
+        <span>$1,000</span>
+      </div>
+
+      {hasSeinfeldCode && (
+        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4">
+          <div className="flex items-center justify-center mb-2">
+            <Gift className="w-5 h-5 text-purple-600 mr-2" />
+            <span className="text-lg font-bold text-purple-800">Surprise Reward Unlocked!</span>
           </div>
-          <div className="relative">
-            <Progress 
-              value={progressPercentage} 
-              className="h-2 bg-gray-800 border border-yellow-500/30" 
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 rounded-full"></div>
-          </div>
-          <div className="text-xs text-gray-500 text-center">
-            {remainingAmount > 0 
-              ? `${remainingAmount.toLocaleString()} TO UNLOCK`
-              : "LEVEL 1 ACHIEVED"
-            }
+          <div className="text-center">
+            <div className="text-sm font-mono bg-purple-100 border border-purple-300 rounded px-3 py-2 inline-block">
+              Special Code: {localStorage.getItem('seinfeld_code')}
+            </div>
+            <div className="text-xs text-purple-600 mt-2">
+              🎁 This exclusive code gives double referral points when shared!
+            </div>
           </div>
         </div>
-
-        {hasSeinfeldCode && (
-          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded p-2">
-            <div className="flex items-center justify-center mb-1">
-              <Gift className="w-3 h-3 text-yellow-500 mr-1" />
-              <span className="text-xs font-bold text-yellow-400">LEVEL 1 ACTIVE</span>
-            </div>
-            <div className="text-xs text-center text-yellow-300">
-              CODE: {localStorage.getItem('seinfeld_code')}
-            </div>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      )}
+    </div>
   );
 }
