@@ -140,7 +140,7 @@ export default function SavingsProgress() {
       </div>
       
       <div className="text-xs text-gray-600 mb-1">
-        Every "Get Deal Now" button counts toward your goal
+        Every "Get Deal Now" counts towards $money saved + your 1st tier goal
       </div>
       
       <div className="text-xs text-purple-600 mb-2 font-medium">
