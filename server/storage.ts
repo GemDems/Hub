@@ -149,6 +149,9 @@ export class DatabaseStorage implements IStorage {
     // Update user stats - add referral points (1 or 2 based on code type)
     await this.updateUserReferralCount(referralCode.userId, pointsToAdd);
     
+    // Update the code owner's leaderboard invites used count (increase by points earned)
+    await this.incrementCodeOwnerLeaderboardInvites(referralCode.userId, pointsToAdd);
+    
     // Update the user's invite usage count (increment by 1 for each different code used)
     await this.incrementUserInviteUsageCount(deviceId);
     
@@ -442,6 +445,31 @@ export class DatabaseStorage implements IStorage {
       
       // Generate fresh bonus codes
       await this.generateRewardCodes(userId);
+    }
+  }
+
+  private async incrementCodeOwnerLeaderboardInvites(userId: string, pointsToAdd: number): Promise<void> {
+    const [existingStats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    
+    if (existingStats) {
+      await db
+        .update(userStats)
+        .set({ 
+          invitesUsedCount: (existingStats.invitesUsedCount || 0) + pointsToAdd,
+          lastActive: new Date()
+        })
+        .where(eq(userStats.userId, userId));
+    } else {
+      await db
+        .insert(userStats)
+        .values({
+          userId,
+          totalSavings: 0,
+          referralCount: 0,
+          totalCodesShared: 0,
+          invitesUsedCount: pointsToAdd,
+          isVip: 0
+        });
     }
   }
 }
