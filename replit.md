@@ -15,7 +15,13 @@ Preferred communication style: Simple, everyday language.
   - Solution: Implemented manual data transformation in API endpoint bypassing strict Zod validation
   - Fixed storage layer to handle integer values properly for isVerified, isDraft, isElitePick fields
   - Creator Mode form now successfully saves products and drafts without "failed to save product" errors
-- **Latest Update**: Fixed draft system and added comprehensive scheduling features
+- **Latest Update**: Added interactive scroll/click bonus system with gold popups
+  - **Gold Popup System**: Click or scroll in Trust Indicators section triggers +$1 gold popup
+  - **Automatic Savings**: Each popup adds $1 to user's savings progress bar
+  - **Enhanced Blue Underline**: Curved design with 60-70% opacity covering half the guarantee text
+  - **Mobile/Desktop Support**: Works on both iPhone and laptop devices
+  - **Real-time Integration**: Connects to existing savings API for persistent progress
+- **Previous Update**: Fixed draft system and added comprehensive scheduling features
   - **Draft System Fix**: Products now properly save as drafts when "Save as Draft" is clicked
   - **Bulk Publish**: Added "Publish All Drafts" button for one-click publishing of all drafts
   - **Scheduled Publishing**: Added date/time picker for automatic draft publishing
