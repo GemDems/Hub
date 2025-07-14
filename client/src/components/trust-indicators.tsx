@@ -55,7 +55,7 @@ export default function TrustIndicators() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        deviceId: deviceId,
+        userId: deviceId,
         amount: 1
       })
     }).catch(err => console.error('Failed to update savings:', err));
@@ -66,18 +66,6 @@ export default function TrustIndicators() {
     }, 2000);
   };
 
-  const handleScroll = (event: React.UIEvent) => {
-    // Convert scroll event to mouse event for popup positioning
-    const target = event.target as HTMLElement;
-    const rect = target.getBoundingClientRect();
-    const fakeEvent = {
-      clientX: rect.left + rect.width / 2,
-      clientY: rect.top + rect.height / 2
-    } as React.MouseEvent;
-    
-    addGoldPopup(fakeEvent);
-  };
-
   return (
     <>
       <div 
@@ -85,8 +73,6 @@ export default function TrustIndicators() {
         className="mt-16 bg-white rounded-xl shadow-lg p-8"
         onClick={addGoldPopup}
         onTouchStart={addGoldPopup}
-        onScroll={handleScroll}
-        style={{ maxHeight: '600px', overflowY: 'auto' }}
       >
         {/* Nike-style Bold Text Section */}
         <div className="mb-8 overflow-hidden text-center">
