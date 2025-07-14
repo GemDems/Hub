@@ -27,9 +27,19 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       return response.json();
     },
     onSuccess: (data) => {
-      // Open affiliate link in new tab
-      window.open(data.url, '_blank', 'noopener,noreferrer');
+      console.log('Redirect data:', data); // Debug log
+      // Immediately redirect to affiliate link
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        console.error('No URL received from API');
+      }
     },
+    onError: (error) => {
+      console.error('Click tracking failed:', error);
+      // Fallback: redirect to the original link URL
+      window.location.href = link.url;
+    }
   });
 
   const deleteLinkMutation = useMutation({
@@ -62,7 +72,16 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   };
 
   const handleClick = () => {
+    // Immediate redirect as backup
+    const redirectUrl = link.url;
+    
+    // Track the click (but don't wait for response)
     trackClickMutation.mutate();
+    
+    // Small delay to allow tracking, then redirect
+    setTimeout(() => {
+      window.location.href = redirectUrl;
+    }, 100);
   };
 
   const getCategoryEmoji = (category: string) => {
