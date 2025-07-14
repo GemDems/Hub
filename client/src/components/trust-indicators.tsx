@@ -37,39 +37,10 @@ export default function TrustIndicators() {
         </div>
       </div>
 
-      {/* Star Rating Section */}
-      <div className="mb-8 text-center bg-gray-50 rounded-lg p-6">
-        <div className="flex justify-center items-center mb-2">
-          {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
-          ))}
-          <span className="ml-2 text-2xl font-bold text-gray-900">4.9/5</span>
-        </div>
-        <div className="text-gray-600 mb-4">Based on 50,000+ verified reviews</div>
-        
-        {/* Live Review Updates */}
-        <div className="relative h-8 overflow-hidden">
-          <div 
-            className={`transition-all duration-500 ${
-              currentReview.visible 
-                ? 'opacity-100 transform translate-y-0' 
-                : 'opacity-0 transform translate-y-4'
-            }`}
-          >
-            {currentReview.user && (
-              <div className="flex items-center justify-center text-sm">
-                <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center">
-                  <div className="flex mr-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                    ))}
-                  </div>
-                  <span className="font-medium blur-sm">{currentReview.user}</span>
-                  <span className="ml-2">just rated 5 stars!</span>
-                </div>
-              </div>
-            )}
-          </div>
+      {/* Guarantee Section */}
+      <div className="mb-8 text-center">
+        <div className="guarantee-text">
+          If the deal isn't real, I'll personally find you a better one — or send it to you free.
         </div>
       </div>
 
