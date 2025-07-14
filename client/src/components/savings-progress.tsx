@@ -56,59 +56,46 @@ export default function SavingsProgress() {
   }, [progress, hasSeinfeldCode]);
 
   return (
-    <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-      <CardHeader className="pb-3">
-        <CardTitle className="flex items-center text-lg font-bold text-green-800">
-          <TrendingUp className="w-5 h-5 mr-2" />
-          Your Savings Progress
+    <Card className="bg-black border border-yellow-500/50 shadow-2xl shadow-yellow-500/20">
+      <CardHeader className="pb-2 text-center">
+        <CardTitle className="flex items-center justify-center text-sm font-bold text-yellow-400">
+          <TrendingUp className="w-4 h-4 mr-2" />
+          ELITE PROGRESS TRACKER
         </CardTitle>
-        <p className="text-sm text-green-700">
-          Click "Get Deal Now" on products to track your savings journey
-        </p>
       </CardHeader>
       
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-3">
         <div className="space-y-2">
-          <div className="flex justify-between text-sm">
-            <span className="text-green-700 font-medium">Progress to $1,000</span>
-            <span className="text-green-800 font-bold">${progress.toLocaleString()}</span>
+          <div className="flex justify-between text-xs">
+            <span className="text-gray-400">LEVEL 1 TARGET</span>
+            <span className="text-yellow-400 font-bold">${progress.toLocaleString()}</span>
           </div>
-          <Progress value={progressPercentage} className="h-3" />
-          <div className="text-xs text-green-600 text-center">
+          <div className="relative">
+            <Progress 
+              value={progressPercentage} 
+              className="h-2 bg-gray-800 border border-yellow-500/30" 
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/20 to-yellow-600/20 rounded-full"></div>
+          </div>
+          <div className="text-xs text-gray-500 text-center">
             {remainingAmount > 0 
-              ? `$${remainingAmount.toLocaleString()} remaining to unlock secret reward`
-              : "🎉 Goal achieved! Secret reward unlocked!"
+              ? `${remainingAmount.toLocaleString()} TO UNLOCK`
+              : "LEVEL 1 ACHIEVED"
             }
           </div>
         </div>
 
         {hasSeinfeldCode && (
-          <div className="bg-purple-100 border border-purple-300 rounded-lg p-3">
-            <div className="flex items-center mb-2">
-              <Gift className="w-4 h-4 text-purple-600 mr-2" />
-              <span className="text-sm font-bold text-purple-800">Level 1 Unlocked!</span>
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded p-2">
+            <div className="flex items-center justify-center mb-1">
+              <Gift className="w-3 h-3 text-yellow-500 mr-1" />
+              <span className="text-xs font-bold text-yellow-400">LEVEL 1 ACTIVE</span>
             </div>
-            <div className="text-xs text-purple-700">
-              <strong>Seinfeld Code:</strong> {localStorage.getItem('seinfeld_code')}
-            </div>
-            <div className="text-xs text-purple-600 mt-1">
-              💎 This special code gives double referral points when shared!
+            <div className="text-xs text-center text-yellow-300">
+              CODE: {localStorage.getItem('seinfeld_code')}
             </div>
           </div>
         )}
-
-        <div className="bg-white/60 rounded-lg p-3 border border-green-300">
-          <div className="flex items-center justify-center space-x-6 text-xs">
-            <div className="flex items-center">
-              <Zap className="w-3 h-3 mr-1 text-green-600" />
-              <span className="text-green-700">Click deals to save</span>
-            </div>
-            <div className="flex items-center">
-              <Gift className="w-3 h-3 mr-1 text-purple-600" />
-              <span className="text-green-700">Reach $1K for reward</span>
-            </div>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );

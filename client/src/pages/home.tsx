@@ -129,28 +129,6 @@ export default function Home() {
 
       <TrustIndicators />
       
-      {/* Savings Progress Section */}
-      <div className="bg-gradient-to-br from-green-50 to-emerald-50 py-12">
-        <div className="max-w-2xl mx-auto px-4">
-          <SavingsProgress />
-        </div>
-      </div>
-
-      {/* Instructions Section */}
-      <div className="bg-blue-50 py-8">
-        <div className="max-w-2xl mx-auto px-4">
-          <div className="bg-blue-100 border border-blue-200 rounded-lg p-6">
-            <h3 className="font-bold text-blue-800 mb-3 text-lg">📊 How to Get on the Elite Leaderboard</h3>
-            <p className="text-sm text-blue-700 leading-relaxed">
-              Click "Get Deal Now" on any product to add its price to your savings progress. 
-              Reach <strong>$1,000 in tracked savings</strong> to unlock your Level 1 Seinfeld referral code 
-              with <strong>double referral points</strong>! When you hit 3 referrals and become VIP, you can add your 
-              username to compete on the Elite Leaderboard below.
-            </p>
-          </div>
-        </div>
-      </div>
-      
       {/* Leaderboard Section - At bottom */}
       <div className="bg-white py-16">
         <div className="text-center mb-8">
@@ -160,6 +138,13 @@ export default function Home() {
           <p className="text-gray-600">Top 10 Savers This Month</p>
         </div>
         <Leaderboard />
+      </div>
+
+      {/* Exclusive Savings Progress Section - Between Leaderboards */}
+      <div className="bg-gradient-to-r from-black via-gray-900 to-black py-12">
+        <div className="max-w-lg mx-auto px-4">
+          <SavingsProgress />
+        </div>
       </div>
       
       {/* Hidden Referral System - Bottom section, hard to find */}
