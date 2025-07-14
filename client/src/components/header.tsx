@@ -16,12 +16,15 @@ export default function Header() {
 
   const fetchLiveStats = async () => {
     try {
-      const response = await apiRequest("/api/live-stats");
+      const response = await fetch("/api/live-stats");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const stats = await response.json();
       
-      // Only update if the new values are higher or equal (never go down)
+      // Update with server values, ensuring hourly buyers only increase
       setLiveStats(prev => ({
-        viewers: Math.max(prev.viewers, stats.viewers),
+        viewers: stats.viewers,
         hourlyBuyers: Math.max(prev.hourlyBuyers, stats.hourlyBuyers),
         timestamp: stats.timestamp
       }));

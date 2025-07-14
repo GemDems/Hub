@@ -29,11 +29,11 @@ setInterval(() => {
   // Viewers can fluctuate slightly
   liveStats.viewers = Math.max(150, liveStats.viewers + Math.floor(Math.random() * 10) - 3);
   
-  // Hourly buyers only go up (occasionally)
-  if (Math.random() < 0.3) { // 30% chance every interval
-    liveStats.hourlyBuyers += Math.floor(Math.random() * 2) + 1; // Add 1-2
+  // Hourly buyers constantly go up (75% chance every interval)
+  if (Math.random() < 0.75) { // 75% chance every interval
+    liveStats.hourlyBuyers += Math.floor(Math.random() * 3) + 1; // Add 1-3
   }
-}, 5000); // Update every 5 seconds
+}, 3000); // Update every 3 seconds for more frequent increases
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Get live statistics
