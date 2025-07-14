@@ -78,10 +78,10 @@ export default function SavingsProgress() {
       localStorage.setItem('bonus_referral_code', bonusCode);
       
       toast({
-        title: "🏆 SECRET PRIZE UNLOCKED!",
-        description: `Level 1 Seinfeld Code: ${seinfeldCode} + Bonus Referral Code: ${bonusCode}`,
+        title: "🎉 SURPRISE REWARDS UNLOCKED!",
+        description: `Seinfeld Code: ${seinfeldCode} (Double Points!) + Secret Device Code: ${bonusCode} - Share with same people for DOUBLE referral points!`,
         className: "bg-purple-50 border-purple-200",
-        duration: 10000,
+        duration: 12000,
       });
     }
   };
@@ -147,8 +147,12 @@ export default function SavingsProgress() {
         </div>
       </div>
       
-      <div className="text-xs text-green-600 mb-2 font-medium">
+      <div className="text-xs text-green-600 mb-1 font-medium">
         🚀 Click any checkpoint • Every purchase counts!
+      </div>
+      
+      <div className="text-xs text-purple-600 mb-2 font-medium animate-pulse">
+        🎁 Secret surprise reward waiting at $1,000! 
       </div>
       
       <button 
@@ -165,14 +169,14 @@ export default function SavingsProgress() {
           </div>
           <div className="space-y-2">
             <div className="text-xs font-mono bg-green-100 rounded px-2 py-1 text-green-700">
-              Seinfeld: {localStorage.getItem('seinfeld_code')}
+              Seinfeld: {localStorage.getItem('seinfeld_code')} (Double Points!)
             </div>
             <div className="text-xs font-mono bg-purple-100 rounded px-2 py-1 text-purple-700">
-              Bonus: {localStorage.getItem('bonus_referral_code')}
+              Device Code: {localStorage.getItem('bonus_referral_code')}
             </div>
           </div>
-          <div className="text-xs text-green-600 mt-1 font-medium">
-            Double referral points + Extra code
+          <div className="text-xs text-purple-600 mt-2 font-medium bg-purple-50 rounded p-2">
+            💡 Your Device Code: Share with same people for DOUBLE referral points! Use only on this device to hit leaderboard faster!
           </div>
         </div>
       )}
