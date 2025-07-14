@@ -8,6 +8,7 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
+import { ChevronDown } from "lucide-react";
 
 import Leaderboard from "@/components/leaderboard";
 import ReferralSystem from "@/components/referral-system";
@@ -24,6 +25,7 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [sortByClicks, setSortByClicks] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
 
 
 
@@ -75,8 +77,55 @@ export default function Home() {
     savingsSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleDropdownCategorySelect = (category: string) => {
+    setActiveCategory(category);
+    setShowDropdown(false);
+  };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (showDropdown && !(event.target as Element).closest('.dropdown-container')) {
+        setShowDropdown(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown]);
+
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Category Dropdown Menu - Top Left */}
+      <div className="fixed top-4 left-4 z-50">
+        <div className="relative dropdown-container">
+          <button
+            onClick={() => setShowDropdown(!showDropdown)}
+            className="w-8 h-8 bg-blue-600 hover:bg-blue-700 rounded-full flex items-center justify-center shadow-lg transition-colors duration-200"
+            title="Categories"
+          >
+            <ChevronDown className="w-4 h-4 text-white" />
+          </button>
+          
+          {showDropdown && (
+            <div className="absolute top-10 left-0 bg-white rounded-lg shadow-xl border border-gray-200 py-2 min-w-48 z-50">
+              {categories.map((category) => (
+                <button
+                  key={category.id}
+                  onClick={() => handleDropdownCategorySelect(category.id)}
+                  className="w-full px-4 py-2 text-left hover:bg-gray-50 flex items-center space-x-2 transition-colors duration-200"
+                >
+                  {category.emoji && <span>{category.emoji}</span>}
+                  <span className="text-sm font-medium text-gray-700">{category.label}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
       {/* Invisible Admin Toggle Button */}
       <div className="fixed top-4 right-4 z-50">
         <Button
