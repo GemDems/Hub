@@ -14,7 +14,7 @@ import ReferralSystem from "@/components/referral-system";
 import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
-import MiniNavigation from "@/components/mini-navigation";
+
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -189,13 +189,30 @@ export default function Home() {
         <LiveFeed />
       </div>
       
-      {/* Mini Navigation - Between Live Feed and Ideas */}
-      <div className="bg-gradient-to-b from-gray-900 to-gray-800 py-8">
-        <MiniNavigation 
-          onNewDropsClick={handleNewDropsClick}
-          onLeaderboardClick={handleLeaderboardClick}
-          onMyDealsClick={handleMyDealsClick}
-        />
+      {/* Mini Navigation - Simple thin links */}
+      <div className="bg-gray-900 py-4">
+        <div className="text-center">
+          <button
+            onClick={handleNewDropsClick}
+            className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline"
+          >
+            🔥 New Drops
+          </button>
+          <span className="text-gray-500">|</span>
+          <button
+            onClick={handleLeaderboardClick}
+            className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline"
+          >
+            🎁 View Leaderboard
+          </button>
+          <span className="text-gray-500">|</span>
+          <button
+            onClick={handleMyDealsClick}
+            className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline"
+          >
+            🛍️ My Deals
+          </button>
+        </div>
       </div>
       
       {/* User Idea Submission - After Mini Navigation */}
