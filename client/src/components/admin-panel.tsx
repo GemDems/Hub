@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Lock, Shield, Eye, EyeOff, Plus, Trash2 } from "lucide-react";
+import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image } from "lucide-react";
 import type { InsertAffiliateLink } from "@shared/schema";
 
 interface AdminPanelProps {
@@ -44,6 +44,65 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     const updated = [...additionalImages];
     updated[index] = value;
     setAdditionalImages(updated);
+  };
+
+  const convertFileToDataURL = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleMainImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File too large",
+          description: "Please select an image under 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      try {
+        const dataURL = await convertFileToDataURL(file);
+        setFormData({ ...formData, imageUrl: dataURL });
+      } catch (error) {
+        toast({
+          title: "Upload failed",
+          description: "Failed to process the image",
+          variant: "destructive",
+        });
+      }
+    }
+  };
+
+  const handleAdditionalImageUpload = async (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) { // 5MB limit
+        toast({
+          title: "File too large",
+          description: "Please select an image under 5MB",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      try {
+        const dataURL = await convertFileToDataURL(file);
+        updateImageField(index, dataURL);
+      } catch (error) {
+        toast({
+          title: "Upload failed",
+          description: "Failed to process the image",
+          variant: "destructive",
+        });
+      }
+    }
   };
 
   const { toast } = useToast();
@@ -126,8 +185,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       return;
     }
 
-    // Image URL validation (if provided)
-    if (formData.imageUrl && formData.imageUrl.trim()) {
+    // Image URL validation (if provided) - skip validation for data URLs (uploaded images)
+    if (formData.imageUrl && formData.imageUrl.trim() && !formData.imageUrl.startsWith('data:')) {
       try {
         new URL(formData.imageUrl);
       } catch {
@@ -137,6 +196,23 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
           variant: "destructive",
         });
         return;
+      }
+    }
+
+    // Additional images validation
+    for (let i = 0; i < additionalImages.length; i++) {
+      const imageUrl = additionalImages[i];
+      if (imageUrl && imageUrl.trim() && !imageUrl.startsWith('data:')) {
+        try {
+          new URL(imageUrl);
+        } catch {
+          toast({
+            title: "Invalid Image URL",
+            description: `Please enter a valid URL for additional image ${i + 1}`,
+            variant: "destructive",
+          });
+          return;
+        }
       }
     }
 
@@ -248,17 +324,40 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
           </div>
 
           <div>
-            <Label htmlFor="imageUrl">Product Image URL (Optional)</Label>
-            <Input
-              id="imageUrl"
-              type="url"
-              value={formData.imageUrl}
-              onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-              placeholder="https://example.com/product-image.jpg"
-              className="mt-1"
-            />
+            <Label htmlFor="imageUrl">Product Image (Optional)</Label>
+            <div className="space-y-2 mt-1">
+              <div className="flex gap-2">
+                <Input
+                  id="imageUrl"
+                  type="url"
+                  value={formData.imageUrl && !formData.imageUrl.startsWith('data:') ? formData.imageUrl : ''}
+                  onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  placeholder="https://example.com/product-image.jpg"
+                  className="flex-1"
+                />
+                <div className="relative">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleMainImageUpload}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    id="main-image-upload"
+                  />
+                  <Button type="button" variant="outline" size="sm" className="h-9 px-3">
+                    <Upload className="w-4 h-4 mr-1" />
+                    Upload
+                  </Button>
+                </div>
+              </div>
+              {formData.imageUrl && formData.imageUrl.startsWith('data:') && (
+                <div className="flex items-center text-xs text-green-600">
+                  <Image className="w-3 h-3 mr-1" />
+                  Image uploaded successfully
+                </div>
+              )}
+            </div>
             <p className="text-xs text-gray-500 mt-1">
-              Add a direct link to the product image for better visual appeal
+              Add a URL link or upload from your camera roll/files
             </p>
           </div>
 
@@ -279,28 +378,49 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             </div>
             
             {additionalImages.map((imageUrl, index) => (
-              <div key={index} className="flex gap-2 mb-2">
-                <Input
-                  type="url"
-                  value={imageUrl}
-                  onChange={(e) => updateImageField(index, e.target.value)}
-                  placeholder={`https://example.com/image-${index + 2}.jpg`}
-                  className="flex-1"
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => removeImageField(index)}
-                  className="px-2 h-9"
-                >
-                  <Trash2 className="w-3 h-3" />
-                </Button>
+              <div key={index} className="space-y-2 mb-3">
+                <div className="flex gap-2">
+                  <Input
+                    type="url"
+                    value={imageUrl && !imageUrl.startsWith('data:') ? imageUrl : ''}
+                    onChange={(e) => updateImageField(index, e.target.value)}
+                    placeholder={`https://example.com/image-${index + 2}.jpg`}
+                    className="flex-1"
+                  />
+                  <div className="relative">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleAdditionalImageUpload(index, e)}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      id={`additional-image-upload-${index}`}
+                    />
+                    <Button type="button" variant="outline" size="sm" className="h-9 px-3">
+                      <Upload className="w-4 h-4 mr-1" />
+                      Upload
+                    </Button>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => removeImageField(index)}
+                    className="px-2 h-9"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </Button>
+                </div>
+                {imageUrl && imageUrl.startsWith('data:') && (
+                  <div className="flex items-center text-xs text-green-600">
+                    <Image className="w-3 h-3 mr-1" />
+                    Image uploaded successfully
+                  </div>
+                )}
               </div>
             ))}
             
             <p className="text-xs text-gray-500 mt-1">
-              Add multiple product images for users to scroll through
+              Add multiple images with URL links or upload from your camera roll/files
             </p>
           </div>
 

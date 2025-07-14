@@ -25,7 +25,14 @@ Preferred communication style: Simple, everyday language.
   - Trust-building color palette
   - Professional guarantee sections
 - **Search-Focused UX**: Large, prominent search bar without distracting popular searches
-- **Product Images**: Optional image URL support with automatic fallback to gradient backgrounds
+- **Photo Carousel System**: Multiple image support with scrollable carousel:
+  - Image upload from camera roll/files (5MB limit)
+  - URL input support maintained
+  - Smooth navigation arrows on hover
+  - Dot indicators for multiple images
+  - Smart fallback to gradient backgrounds
+- **Custom Pricing**: Optional price field with automatic "original price" psychology (2.2x markup)
+- **Enhanced Creator UX**: Scrollable dialog, file upload buttons, success indicators
 
 ## System Architecture
 
