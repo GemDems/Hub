@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { TrendingUp, Gift, Zap } from "lucide-react";
+import { TrendingUp, Gift, Zap, Copy } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useQuery } from "@tanstack/react-query";
+import { Button } from "@/components/ui/button";
 
 // Generate persistent device ID
 const getDeviceId = () => {
@@ -12,6 +14,60 @@ const getDeviceId = () => {
     localStorage.setItem('elite_device_id', deviceId);
   }
   return deviceId;
+};
+
+// Component to show reward codes from database
+function SavingsRewardCodes() {
+  const deviceId = getDeviceId();
+  const { toast } = useToast();
+  
+  const { data: referralStatus } = useQuery({
+    queryKey: ["/api/referral/status", deviceId],
+    queryFn: () => fetch(`/api/referral/status?userId=${deviceId}`).then(res => res.json()),
+    refetchInterval: 30000,
+  });
+
+  if (!referralStatus?.rewardCodes || referralStatus.rewardCodes.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
+      <div className="text-xs font-medium text-green-800 mb-2">
+        🎁 Secret Rewards Unlocked!
+      </div>
+      <div className="space-y-2">
+        {referralStatus.rewardCodes.map((code: any, index: number) => (
+          <div key={code.id} className="flex items-center justify-between bg-white rounded px-2 py-1 border border-green-200">
+            <div className="flex-1">
+              <div className="text-xs font-mono text-green-700">
+                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && `Referral Code 1: ${code.code}`}
+                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && `Referral Code 2: ${code.code}`}
+              </div>
+              <div className="text-xs text-gray-600">
+                {(code.codeType === "bonus_2x" || code.codeType === "seinfeld") && "(2x Bonus Points!)"}
+                {(code.codeType === "bonus_regular" || code.codeType === "double_points") && "(Regular Points)"}
+              </div>
+            </div>
+            <Button
+              onClick={() => {
+                navigator.clipboard.writeText(code.code);
+                toast({ title: "Copied!", description: "Referral code copied to clipboard." });
+              }}
+              size="sm"
+              variant="outline"
+              className="px-2 py-1 h-6"
+            >
+              <Copy className="w-3 h-3" />
+            </Button>
+          </div>
+        ))}
+      </div>
+      <div className="text-xs text-purple-600 mt-2 font-medium bg-purple-50 rounded p-2">
+        💡 Bonus Invite Codes: Share these codes with friends for extra referral points! Use them in the VIP member invite section to hit leaderboard faster!
+      </div>
+    </div>
+  );
 };
 
 export default function SavingsProgress() {
@@ -61,7 +117,7 @@ export default function SavingsProgress() {
   };
 
   // Update savings progress when user clicks "Get Deal Now"
-  const updateProgress = (amount: number) => {
+  const updateProgress = async (amount: number) => {
     const newProgress = progress + amount;
     setProgress(newProgress);
     localStorage.setItem('savings_progress', newProgress.toString());
@@ -71,18 +127,26 @@ export default function SavingsProgress() {
       setHasSeinfeldCode(true);
       localStorage.setItem('has_seinfeld_code', 'true');
       
-      // Generate Seinfeld code and bonus referral code
-      const seinfeldCode = `SEIN${Math.random().toString(36).substr(2, 4).toUpperCase()}`;
-      const bonusCode = `BONUS${Math.random().toString(36).substr(2, 3).toUpperCase()}`;
-      localStorage.setItem('seinfeld_code', seinfeldCode);
-      localStorage.setItem('bonus_referral_code', bonusCode);
-      
-      toast({
-        title: "🎉 SURPRISE REWARDS UNLOCKED!",
-        description: `Seinfeld Code: ${seinfeldCode} (Double Points!) + Secret Device Code: ${bonusCode} - Share with same people for DOUBLE referral points!`,
-        className: "bg-purple-50 border-purple-200",
-        duration: 12000,
-      });
+      try {
+        // Trigger database reward generation
+        const deviceId = getDeviceId();
+        const response = await fetch('/api/test/savings', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: deviceId, amount: 1000 })
+        });
+        
+        if (response.ok) {
+          toast({
+            title: "🎉 SURPRISE REWARDS UNLOCKED!",
+            description: "Check below for your bonus invite codes! Use them to get extra referral points and hit the leaderboard faster!",
+            className: "bg-purple-50 border-purple-200",
+            duration: 8000,
+          });
+        }
+      } catch (error) {
+        console.error('Error generating reward codes:', error);
+      }
     }
   };
 
@@ -154,23 +218,8 @@ export default function SavingsProgress() {
         Goal: to hit leaderboard
       </button>
 
-      {hasSeinfeldCode && (
-        <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
-          <div className="text-xs font-medium text-green-800 mb-2">
-            🎁 Secret Rewards Unlocked!
-          </div>
-          <div className="space-y-2">
-            <div className="text-xs font-mono bg-green-100 rounded px-2 py-1 text-green-700">
-              Seinfeld: {localStorage.getItem('seinfeld_code')} (Double Points!)
-            </div>
-            <div className="text-xs font-mono bg-purple-100 rounded px-2 py-1 text-purple-700">
-              Device Code: {localStorage.getItem('bonus_referral_code')}
-            </div>
-          </div>
-          <div className="text-xs text-purple-600 mt-2 font-medium bg-purple-50 rounded p-2">
-            💡 Your Device Code: Share with same people for DOUBLE referral points! Use only on this device to hit leaderboard faster!
-          </div>
-        </div>
+      {progress >= 1000 && (
+        <SavingsRewardCodes />
       )}
     </div>
   );
