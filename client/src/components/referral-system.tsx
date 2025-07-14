@@ -211,7 +211,7 @@ export default function ReferralSystem() {
                 Uses: {referralStatus.usedCount}/3 for VIP
               </p>
               <p className="text-xs text-blue-600 font-medium">
-                All-Time Invites Used: {referralStatus.totalCodesShared || 0}
+                All-Time Invites Used: {referralStatus.invitesUsedCount || 0}
               </p>
             </div>
           )}
@@ -279,7 +279,7 @@ export default function ReferralSystem() {
                       {referralStatus.username}
                     </p>
                     <p className="text-xs text-gray-600">
-                      All-Time Invites Used: {referralStatus.totalCodesShared || 0}
+                      All-Time Invites Used: {referralStatus.invitesUsedCount || 0}
                     </p>
                   </div>
                 )}

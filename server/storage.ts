@@ -149,6 +149,9 @@ export class DatabaseStorage implements IStorage {
     // Update user stats - add referral points (1 or 2 based on code type)
     await this.updateUserReferralCount(referralCode.userId, pointsToAdd);
     
+    // Update the user's invite usage count (increment by 1 for each different code used)
+    await this.incrementUserInviteUsageCount(deviceId);
+    
     // Update VIP status if needed
     if (vipUnlocked) {
       await this.updateUserVipStatus(referralCode.userId, true);
@@ -157,7 +160,7 @@ export class DatabaseStorage implements IStorage {
     return { vipUnlocked, usedCount: newUsedCount };
   }
 
-  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string; totalCodesShared?: number; rewardCodes?: any[] }> {
+  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string; totalCodesShared?: number; invitesUsedCount?: number; rewardCodes?: any[] }> {
     // Get primary referral code (first regular code)
     const [referralCode] = await db.select().from(referralCodes)
       .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} = 'regular'`)
@@ -179,6 +182,7 @@ export class DatabaseStorage implements IStorage {
       isVip: Boolean(userStat?.isVip || referralCode?.isVip),
       username: userStat?.username,
       totalCodesShared: totalUsageCount,
+      invitesUsedCount: userStat?.invitesUsedCount || 0,
       rewardCodes
     };
   }
@@ -226,6 +230,32 @@ export class DatabaseStorage implements IStorage {
           referralCount: pointsToAdd,
           totalSavings: 0,
           totalCodesShared: 0,
+          invitesUsedCount: 0,
+          isVip: 0
+        });
+    }
+  }
+
+  private async incrementUserInviteUsageCount(deviceId: string): Promise<void> {
+    const [existingStats] = await db.select().from(userStats).where(eq(userStats.userId, deviceId));
+    
+    if (existingStats) {
+      await db
+        .update(userStats)
+        .set({ 
+          invitesUsedCount: (existingStats.invitesUsedCount || 0) + 1,
+          lastActive: new Date()
+        })
+        .where(eq(userStats.userId, deviceId));
+    } else {
+      await db
+        .insert(userStats)
+        .values({
+          userId: deviceId,
+          referralCount: 0,
+          totalSavings: 0,
+          totalCodesShared: 0,
+          invitesUsedCount: 1,
           isVip: 0
         });
     }
@@ -284,6 +314,7 @@ export class DatabaseStorage implements IStorage {
           totalSavings: 0,
           referralCount: 0,
           totalCodesShared: 0,
+          invitesUsedCount: 0,
           isVip: 0
         });
     }
@@ -311,6 +342,7 @@ export class DatabaseStorage implements IStorage {
           totalSavings: 0,
           referralCount: 0,
           totalCodesShared: 0,
+          invitesUsedCount: 0,
           isVip: 0
         });
     }
@@ -331,16 +363,16 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(userStats.savingsProgress))
       .limit(10);
 
-    // Top referrers: Only VIP users with usernames and 3+ referrals
+    // Top referrers: Only VIP users with usernames and 3+ invites used
     const topReferrers = await db
       .select({
         username: userStats.username,
-        referralCount: userStats.referralCount,
+        referralCount: userStats.invitesUsedCount,
         isVip: userStats.isVip
       })
       .from(userStats)
-      .where(sql`${userStats.referralCount} >= 3 AND ${userStats.isVip} = 1 AND ${userStats.username} IS NOT NULL`)
-      .orderBy(desc(userStats.referralCount))
+      .where(sql`${userStats.invitesUsedCount} >= 3 AND ${userStats.isVip} = 1 AND ${userStats.username} IS NOT NULL`)
+      .orderBy(desc(userStats.invitesUsedCount))
       .limit(10);
 
     return { topSavers, topReferrers };

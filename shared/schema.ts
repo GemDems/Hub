@@ -45,6 +45,7 @@ export const userStats = pgTable("user_stats", {
   isVip: integer("is_vip").default(0), // Using integer for boolean compatibility
   savingsProgress: integer("savings_progress").default(0), // Tracks click savings progress toward $1000
   hasSeinfeldCode: integer("has_seinfeld_code").default(0), // Level 1 reward unlock
+  invitesUsedCount: integer("invites_used_count").default(0), // How many different invite codes this user has used
   lastActive: timestamp("last_active").defaultNow().notNull(),
 });
 
