@@ -41,12 +41,15 @@ Preferred communication style: Simple, everyday language.
   - VIP status unlocked after 3 referral uses
   - Hidden referral section at bottom to avoid main UI distraction
 - **Comprehensive Gamification System** (Latest):
-  - **Username System**: Name/First Letter format required for VIP leaderboard entry
+  - **Advanced Invite Tracking**: Real-time invite counter (X/3) with VIP leaderboard qualification
+  - **Username System**: "John W" format with proper capitalization (first letter only) for leaderboard display
+  - **VIP Leaderboard Eligibility**: Requires 3+ invites + username to appear on leaderboards
+  - **Smart Username Form**: Automatic prompt when users hit 3 invites with proper formatting validation
   - **Money Saved Tracker**: Dark green rectangular design positioned between money saved and VIP leaderboards
   - **Click Tracking**: Every "Get Deal Now" click adds product price to progress bar
   - **$1,000 Reward System**: Unlocks Level 1 Seinfeld referral codes with double points
-  - **Enhanced Live Feed**: 30% privacy blur on purchased items for user protection
-  - **VIP Username Modal**: Automatic prompt when users achieve 3 referrals
+  - **Enhanced Live Feed**: 100% privacy blur on ALL purchased items for complete user protection
+  - **Comprehensive Error Handling**: Clear device limitation messages for referral code system
   - **Subconscious Psychology**: Simple dark green design with reward urgency triggers and "increase this amount" messaging
 - **Removed Features**: 
   - Eliminated sorting toolbar per user request for cleaner interface

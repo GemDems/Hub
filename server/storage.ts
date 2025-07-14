@@ -155,14 +155,15 @@ export class DatabaseStorage implements IStorage {
     return { vipUnlocked, usedCount: newUsedCount };
   }
 
-  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean }> {
+  async getReferralStatus(userId: string): Promise<{ myCode?: string; usedCount: number; isVip: boolean; username?: string }> {
     const [referralCode] = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId));
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
     return {
       myCode: referralCode?.code,
       usedCount: referralCode?.usedCount || 0,
-      isVip: Boolean(userStat?.isVip || referralCode?.isVip)
+      isVip: Boolean(userStat?.isVip || referralCode?.isVip),
+      username: userStat?.username
     };
   }
 
@@ -265,24 +266,27 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getLeaderboard(): Promise<{ topSavers: any[]; topReferrers: any[] }> {
+    // Top savers: Only VIP users with usernames and savings progress > 0
     const topSavers = await db
       .select({
-        userId: userStats.userId,
-        totalSavings: userStats.totalSavings,
+        username: userStats.username,
+        totalSavings: userStats.savingsProgress,
         isVip: userStats.isVip
       })
       .from(userStats)
-      .orderBy(desc(userStats.totalSavings))
+      .where(sql`${userStats.savingsProgress} > 0 AND ${userStats.isVip} = 1 AND ${userStats.username} IS NOT NULL`)
+      .orderBy(desc(userStats.savingsProgress))
       .limit(10);
 
+    // Top referrers: Only VIP users with usernames and 3+ referrals
     const topReferrers = await db
       .select({
-        userId: userStats.userId,
+        username: userStats.username,
         referralCount: userStats.referralCount,
         isVip: userStats.isVip
       })
       .from(userStats)
-      .where(sql`${userStats.isVip} = 1`)
+      .where(sql`${userStats.referralCount} >= 3 AND ${userStats.isVip} = 1 AND ${userStats.username} IS NOT NULL`)
       .orderBy(desc(userStats.referralCount))
       .limit(10);
 

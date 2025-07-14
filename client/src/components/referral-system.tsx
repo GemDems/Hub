@@ -3,7 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Crown, Users, Gift, Copy, Check } from "lucide-react";
+import { Crown, Users, Gift, Copy, Check, Trophy, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import UsernameModal from "./username-modal";
@@ -22,6 +22,9 @@ export default function ReferralSystem() {
   const [inputCode, setInputCode] = useState("");
   const [copied, setCopied] = useState(false);
   const [showUsernameModal, setShowUsernameModal] = useState(false);
+  const [username, setUsername] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [showUsernameForm, setShowUsernameForm] = useState(false);
   const { toast } = useToast();
   const deviceId = getDeviceId();
 
@@ -30,6 +33,13 @@ export default function ReferralSystem() {
     queryKey: ["/api/referral/status", deviceId],
     queryFn: () => fetch(`/api/referral/status?userId=${deviceId}`).then(res => res.json())
   });
+
+  // Format username properly: "John W" format
+  const formatUsername = (firstName: string, lastInitial: string) => {
+    const formattedFirst = firstName.charAt(0).toUpperCase() + firstName.slice(1).toLowerCase();
+    const formattedLast = lastInitial.charAt(0).toUpperCase();
+    return `${formattedFirst} ${formattedLast}`;
+  };
 
   // Generate referral code mutation
   const generateCodeMutation = useMutation({
@@ -86,6 +96,38 @@ export default function ReferralSystem() {
     }
   });
 
+  // Save username mutation
+  const saveUsernameMutation = useMutation({
+    mutationFn: async () => {
+      if (!username.trim() || !lastName.trim()) {
+        throw new Error("Please enter both first name and last initial");
+      }
+      const formattedUsername = formatUsername(username.trim(), lastName.trim());
+      const response = await apiRequest("POST", "/api/user/username", { 
+        userId: deviceId, 
+        username: formattedUsername 
+      });
+      return response.json();
+    },
+    onSuccess: () => {
+      refetchStatus();
+      setShowUsernameForm(false);
+      setUsername("");
+      setLastName("");
+      toast({
+        title: "Username Saved!",
+        description: "You're now eligible for the VIP leaderboard.",
+      });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save username.",
+        variant: "destructive",
+      });
+    }
+  });
+
   const handleCopyCode = () => {
     if (referralStatus?.myCode) {
       navigator.clipboard.writeText(referralStatus.myCode);
@@ -107,6 +149,16 @@ export default function ReferralSystem() {
   const handleGenerateCode = () => {
     generateCodeMutation.mutate();
   };
+
+  const handleSaveUsername = () => {
+    saveUsernameMutation.mutate();
+  };
+
+  // Calculate invite progress
+  const inviteCount = referralStatus?.usedCount || 0;
+  const isVipEligible = inviteCount >= 3;
+  const hasUsername = referralStatus?.username;
+  const invitesNeeded = Math.max(0, 3 - inviteCount);
 
   return (
     <>
@@ -184,6 +236,94 @@ export default function ReferralSystem() {
           </div>
         </div>
 
+        {/* Invite Progress Section */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-4 border border-blue-200">
+          <div className="text-center space-y-3">
+            <div className="flex items-center justify-center space-x-2">
+              <Trophy className="w-4 h-4 text-yellow-500" />
+              <span className="font-bold text-sm text-gray-800">Invite Progress</span>
+            </div>
+            
+            <div className="text-2xl font-bold text-blue-600">
+              {inviteCount}/3 
+              <span className="text-sm font-normal text-gray-600 ml-2">invites</span>
+            </div>
+            
+            {invitesNeeded > 0 ? (
+              <p className="text-xs text-gray-600">
+                {invitesNeeded} more invite{invitesNeeded > 1 ? 's' : ''} needed for VIP leaderboard access
+              </p>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-xs text-green-600 font-medium">
+                  ✅ VIP Leaderboard Qualified!
+                </p>
+                {!hasUsername && (
+                  <Button 
+                    onClick={() => setShowUsernameForm(true)}
+                    size="sm"
+                    className="bg-yellow-500 hover:bg-yellow-600 text-white"
+                  >
+                    <Star className="w-3 h-3 mr-1" />
+                    Set Leaderboard Name
+                  </Button>
+                )}
+                {hasUsername && (
+                  <p className="text-xs text-purple-600 font-medium">
+                    Leaderboard Name: {referralStatus.username}
+                  </p>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Username Form */}
+        {showUsernameForm && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 space-y-3">
+            <div className="text-center">
+              <h4 className="font-bold text-sm text-gray-800 mb-2">Set Your Leaderboard Name</h4>
+              <p className="text-xs text-gray-600 mb-3">Format: "John W" (First name + Last initial)</p>
+            </div>
+            
+            <div className="space-y-2">
+              <Input
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="First Name"
+                className="text-center"
+                maxLength={15}
+              />
+              <Input
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
+                placeholder="Last Initial"
+                className="text-center"
+                maxLength={1}
+              />
+            </div>
+            
+            <div className="flex space-x-2">
+              <Button
+                onClick={handleSaveUsername}
+                disabled={!username.trim() || !lastName.trim() || saveUsernameMutation.isPending}
+                className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                size="sm"
+              >
+                {saveUsernameMutation.isPending ? "Saving..." : "Save Name"}
+              </Button>
+              <Button
+                onClick={() => setShowUsernameForm(false)}
+                variant="outline"
+                size="sm"
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        )}
+
         {/* Status Info */}
         <div className="bg-gray-50 rounded-lg p-3 text-center">
           <div className="flex items-center justify-center space-x-4 text-xs">
@@ -192,8 +332,8 @@ export default function ReferralSystem() {
               <span className="text-gray-600">Invite 3 friends</span>
             </div>
             <div className="flex items-center">
-              <Gift className="w-3 h-3 mr-1 text-purple-500" />
-              <span className="text-gray-600">Get VIP access</span>
+              <Trophy className="w-3 h-3 mr-1 text-yellow-500" />
+              <span className="text-gray-600">Join leaderboard</span>
             </div>
           </div>
         </div>
