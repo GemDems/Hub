@@ -1,8 +1,78 @@
-import { Shield, Clock, Percent } from "lucide-react";
+import { Shield, Clock, Percent, Star } from "lucide-react";
+import { useState, useEffect } from "react";
 
 export default function TrustIndicators() {
+  const [currentReview, setCurrentReview] = useState({ user: "", visible: false });
+  
+  const reviewUsers = [
+    "Sarah M", "David K", "Emma R", "James L", "Maya P", "Alex C", "Nina S", "Ryan T",
+    "Lisa W", "Mike B", "Zoe H", "Sam D", "Aria F", "Josh N", "Chloe V", "Tyler G"
+  ];
+  
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const randomUser = reviewUsers[Math.floor(Math.random() * reviewUsers.length)];
+      setCurrentReview({ user: randomUser, visible: true });
+      
+      setTimeout(() => {
+        setCurrentReview(prev => ({ ...prev, visible: false }));
+      }, 3000);
+    }, 5000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="mt-16 bg-white rounded-xl shadow-lg p-8">
+      {/* Nike-style Bold Text Section */}
+      <div className="mb-8 overflow-hidden text-center">
+        <div className="nike-steroids-text">
+          LIKE STEROIDS*
+        </div>
+        <div className="nike-finds-text">
+          FOR FINDS
+        </div>
+        <div className="text-gray-500 text-sm mt-2 italic">
+          *but it's 100% safe (pinky promise)
+        </div>
+      </div>
+
+      {/* Star Rating Section */}
+      <div className="mb-8 text-center bg-gray-50 rounded-lg p-6">
+        <div className="flex justify-center items-center mb-2">
+          {[...Array(5)].map((_, i) => (
+            <Star key={i} className="w-6 h-6 fill-yellow-400 text-yellow-400" />
+          ))}
+          <span className="ml-2 text-2xl font-bold text-gray-900">4.9/5</span>
+        </div>
+        <div className="text-gray-600 mb-4">Based on 50,000+ verified reviews</div>
+        
+        {/* Live Review Updates */}
+        <div className="relative h-8 overflow-hidden">
+          <div 
+            className={`transition-all duration-500 ${
+              currentReview.visible 
+                ? 'opacity-100 transform translate-y-0' 
+                : 'opacity-0 transform translate-y-4'
+            }`}
+          >
+            {currentReview.user && (
+              <div className="flex items-center justify-center text-sm">
+                <div className="bg-green-100 text-green-800 px-3 py-1 rounded-full flex items-center">
+                  <div className="flex mr-2">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                    ))}
+                  </div>
+                  <span className="font-medium blur-sm">{currentReview.user}</span>
+                  <span className="ml-2">just rated 5 stars!</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       <h3 className="text-2xl font-bold text-center text-gray-900 mb-8">Why Choose Elite Deals Hub?</h3>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="text-center">

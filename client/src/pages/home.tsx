@@ -103,15 +103,7 @@ export default function Home() {
           onCategoryChange={setActiveCategory}
         />
         
-        {/* Nike-style Bold Text Section */}
-        <div className="mb-8 overflow-hidden">
-          <div className="nike-steroids-text text-left ml-4">
-            LIKE STEROIDS*
-          </div>
-          <div className="nike-finds-text text-left">
-            FOR FINDS
-          </div>
-        </div>
+
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
