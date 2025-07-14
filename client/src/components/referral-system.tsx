@@ -28,11 +28,16 @@ export default function ReferralSystem() {
   const { toast } = useToast();
   const deviceId = getDeviceId();
 
-  // Get or generate user referral status - refresh every 5 seconds for real-time updates
+  // Get or generate user referral status - refresh every 5 seconds for live updates
   const { data: referralStatus, refetch: refetchStatus } = useQuery({
     queryKey: ["/api/referral/status", deviceId],
-    queryFn: () => fetch(`/api/referral/status?userId=${deviceId}`).then(res => res.json()),
-    refetchInterval: 5000 // Auto-refresh every 5 seconds to show live updates
+    queryFn: async () => {
+      const response = await fetch(`/api/referral/status?userId=${deviceId}&t=${Date.now()}`);
+      return response.json();
+    },
+    refetchInterval: 5000, // Auto-refresh every 5 seconds for live updates
+    staleTime: 0, // Always consider data stale to force fresh fetches
+    cacheTime: 1000 // Short cache for performance
   });
 
   // Format username properly: "John W" format - only first letters capitalized
@@ -216,7 +221,7 @@ export default function ReferralSystem() {
                   🏆 Leaderboard Invites Used: {referralStatus.invitesUsedCount || 0}
                 </p>
                 <p className="text-xs text-blue-600 text-center mt-1">
-                  Updates automatically when your codes are shared
+                  Live tracking • Updates every 5 seconds
                 </p>
               </div>
             </div>
