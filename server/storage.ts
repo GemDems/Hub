@@ -173,7 +173,7 @@ export class DatabaseStorage implements IStorage {
     
     // Get all user's codes including reward codes
     const allUserCodes = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId));
-    const rewardCodes = allUserCodes.filter(code => code.codeType !== "regular");
+    const rewardCodes = allUserCodes.filter(code => code.codeType && code.codeType !== "regular");
     
     // Calculate total codes shared: sum of all codes usage
     const totalUsageCount = allUserCodes.reduce((sum, code) => sum + (code.usedCount || 0), 0);

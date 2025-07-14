@@ -348,8 +348,11 @@ export default function ReferralSystem() {
                   <div>
                     <div className="font-mono text-sm font-bold text-gray-800">{code.code}</div>
                     <div className="text-xs text-gray-600">
-                      {code.codeType === "bonus_2x" && "Referral Code 1 (2x Bonus)"}
-                      {code.codeType === "bonus_regular" && "Referral Code 2 (Regular)"}
+                      {code.codeType === "bonus_2x" && "Invite Code 1 (2x Bonus)"}
+                      {code.codeType === "bonus_regular" && "Invite Code 2 (Regular)"}
+                      {code.codeType === "seinfeld" && "Invite Code 1 (2x Bonus)"}
+                      {code.codeType === "double_points" && "Invite Code 2 (Regular)"}
+                      {!code.codeType && "Bonus Invite Code"}
                     </div>
                   </div>
                   <Button
