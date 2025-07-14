@@ -45,26 +45,26 @@ export default function SearchBar({ onSearch, links }: SearchBarProps) {
   };
 
   return (
-    <div className="relative max-w-5xl mx-auto mb-8">
-      {/* Clean Search Interface */}
-      <div className="bg-white rounded-2xl shadow-2xl border-2 border-gray-100 p-8 backdrop-blur-sm">
+    <div className="relative max-w-5xl mx-auto mb-12">
+      {/* Minimal Search Interface */}
+      <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-6">
         <div className="relative">
           <div className="flex items-center space-x-3">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
                 type="text"
-                placeholder="Search deals... (Try: 'electronics', 'gaming', 'fitness')"
+                placeholder="Search for deals..."
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch(query)}
-                className="pl-12 pr-4 py-5 text-xl rounded-xl border-2 border-gray-200 focus:border-conversion-blue focus:ring-2 focus:ring-conversion-blue/20 transition-all duration-300"
+                className="pl-12 pr-4 py-5 text-xl rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
               />
             </div>
             
             <Button
               onClick={() => handleSearch(query)}
-              className="bg-gradient-to-r from-conversion-blue to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-10 py-5 rounded-xl font-bold text-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+              className="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-10 py-5 rounded-xl font-semibold text-xl shadow-lg transition-all duration-300"
             >
               Search
             </Button>
@@ -82,8 +82,8 @@ export default function SearchBar({ onSearch, links }: SearchBarProps) {
                   <div className="flex items-center">
                     <Search className="w-4 h-4 text-gray-400 mr-3" />
                     <span className="font-medium text-gray-900">{suggestion}</span>
-                    <span className="ml-auto text-xs text-trust-green font-bold">
-                      💎 PREMIUM
+                    <span className="ml-auto text-xs text-blue-600 font-medium">
+                      Verified
                     </span>
                   </div>
                 </button>
@@ -92,24 +92,7 @@ export default function SearchBar({ onSearch, links }: SearchBarProps) {
           )}
         </div>
 
-        {/* Trending Searches */}
-        <div className="mt-6 pt-4 border-t border-gray-200">
-          <div className="mb-3">
-            <span className="text-sm font-bold text-gray-700">Popular Searches:</span>
-          </div>
-          
-          <div className="flex flex-wrap gap-3">
-            {trendingSearches.map((trend, index) => (
-              <button
-                key={index}
-                onClick={() => handleSearch(trend.replace(/[🔥💎⚡🏆🎯]\s/, ''))}
-                className="bg-gradient-to-r from-gray-100 to-gray-200 hover:from-conversion-blue hover:to-blue-600 hover:text-white text-gray-700 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 shadow-sm"
-              >
-                {trend.replace(/[🔥💎⚡🏆🎯]\s/, '')}
-              </button>
-            ))}
-          </div>
-        </div>
+
 
 
       </div>

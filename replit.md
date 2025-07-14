@@ -13,17 +13,19 @@ Preferred communication style: Simple, everyday language.
 - **Password Protection**: Added secure Creator Mode access with password "9f$81r@V7#iwant"
 - **Database Persistence**: Switched to PostgreSQL for permanent product storage
 - **Invisible Controls**: Creator Mode button and delete buttons are completely invisible to users
-- **Apple-Level Design**: Professional gradient cards, animations, and micro-interactions
-- **Advanced Psychological Triggers**: Implemented 100+ conversion tactics including:
-  - Multi-layered urgency systems (stock scarcity, time pressure, price increases)
-  - Rotating trust indicators and social proof
-  - Live activity monitors and visitor counters
-  - Floating testimonial carousel
-  - Triple guarantee systems and security badges
-  - Elite branding with VIP positioning
-  - Real-time engagement metrics
+- **Minimalist Design**: Simplified to clean, trustworthy interface with:
+  - Dark blue gradient title for trust and security
+  - Isolated search bar as main focal point
+  - Removed distracting floating elements and excessive animations
+  - Clean psychological triggers without overwhelming design
+  - Professional blue color scheme throughout
+- **Subliminal Psychology**: Maintained conversion elements while appearing minimalist:
+  - Subtle scarcity indicators
+  - Clean social proof displays  
+  - Trust-building color palette
+  - Professional guarantee sections
+- **Search-Focused UX**: Large, prominent search bar without distracting popular searches
 - **Product Images**: Optional image URL support with automatic fallback to gradient backgrounds
-- **Professional UI**: Apple-inspired design with premium gradients, shadows, and animations
 
 ## System Architecture
 

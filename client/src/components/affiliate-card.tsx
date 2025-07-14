@@ -212,28 +212,20 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         </div>
         
-        {/* Triple Urgency Stack */}
-        <div className="space-y-2">
-          <div className="bg-gradient-to-r from-urgency-red/10 to-red-100 border-2 border-urgency-red/40 rounded-xl p-3">
+        {/* Clean Psychological Triggers */}
+        <div className="space-y-3">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
             <div className="flex items-center justify-center">
-              <Clock className="w-4 h-4 text-urgency-red mr-2 animate-pulse" />
-              <span className="text-sm font-bold text-urgency-red">
-                Price jumps ${Math.floor(Math.random() * 50) + 30} in {stats.timeLeft} hours!
+              <Clock className="w-4 h-4 text-red-600 mr-2" />
+              <span className="text-sm font-semibold text-red-700">
+                Limited time: Save ${stats.savedAmount} today
               </span>
             </div>
           </div>
           
-          <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-xl p-3">
-            <div className="text-center">
-              <span className="text-lg font-bold text-yellow-800">
-                💰 EXCLUSIVE: Save ${stats.savedAmount} Today Only!
-              </span>
-            </div>
-          </div>
-          
-          <div className="bg-gradient-to-r from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl p-2">
-            <div className="text-center text-sm font-bold text-orange-800">
-              🔥 {Math.floor(Math.random() * 15) + 5} people added to cart in last 10 minutes
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+            <div className="text-center text-sm font-medium text-blue-700">
+              {Math.floor(Math.random() * 15) + 5} people viewing this deal
             </div>
           </div>
         </div>
@@ -257,63 +249,59 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           <Button
             onClick={handleClick}
             disabled={trackClickMutation.isPending}
-            className="w-full bg-gradient-to-r from-action-orange via-red-500 to-urgency-red hover:from-orange-600 hover:via-red-600 hover:to-red-700 text-white font-bold py-5 px-6 rounded-2xl transition-all duration-500 transform hover:scale-105 hover:rotate-1 shadow-2xl relative overflow-hidden animate-pulse-glow border-2 border-white/20"
+            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg relative overflow-hidden"
           >
-            <div className="shimmer-effect absolute inset-0"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent animate-ping"></div>
             <span className="relative z-10 flex items-center justify-center text-lg">
               {trackClickMutation.isPending ? (
-                <>🔄 Securing Your Deal...</>
+                <>Processing...</>
               ) : (
                 <>
-                  <ShoppingCart className="w-6 h-6 mr-3 animate-bounce" />
-                  🚀 CLAIM EXCLUSIVE DEAL NOW!
-                  <ExternalLink className="w-6 h-6 ml-3" />
+                  <ShoppingCart className="w-5 h-5 mr-2" />
+                  Get Deal Now
+                  <ExternalLink className="w-5 h-5 ml-2" />
                 </>
               )}
             </span>
           </Button>
           
-          {/* Security Trust Stack */}
+          {/* Trust Indicators */}
           <div className="grid grid-cols-2 gap-2">
-            <div className="bg-gradient-to-r from-trust-green/10 to-green-50 border border-trust-green/30 rounded-xl px-3 py-2 text-center">
-              <div className="text-xs font-bold text-trust-green">✅ SSL Secured</div>
+            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center">
+              <div className="text-xs font-medium text-green-700">SSL Secured</div>
             </div>
-            <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-300 rounded-xl px-3 py-2 text-center">
-              <div className="text-xs font-bold text-blue-700">🔒 Encrypted</div>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-center">
+              <div className="text-xs font-medium text-blue-700">Encrypted</div>
             </div>
           </div>
           
-          {/* Mega Guarantee */}
-          <div className="bg-gradient-to-br from-yellow-50 via-yellow-100 to-yellow-50 border-2 border-yellow-300 rounded-xl p-3 text-center shadow-inner">
+          {/* Clean Guarantee */}
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
             <div className="flex items-center justify-center mb-1">
-              <Award className="w-4 h-4 text-yellow-600 mr-2" />
-              <span className="font-bold text-yellow-800">TRIPLE GUARANTEE</span>
+              <Award className="w-4 h-4 text-gray-600 mr-2" />
+              <span className="font-medium text-gray-800">Money Back Guarantee</span>
             </div>
-            <div className="text-xs text-yellow-700 space-y-1">
-              <div>💰 30-Day Money Back</div>
-              <div>🚚 Free Returns</div>
-              <div>⚡ Instant Support</div>
+            <div className="text-xs text-gray-600 space-y-1">
+              <div>30-Day Returns • Free Support</div>
             </div>
           </div>
         </div>
         
-        {/* Ultimate Social Validation */}
+        {/* Social Proof */}
         <div className="mt-4 space-y-2">
           {link.clicks > 0 && (
-            <div className="bg-gradient-to-r from-purple-50 to-purple-100 border border-purple-200 rounded-lg p-2 text-center">
-              <div className="text-sm font-bold text-purple-700">
-                🔥 {link.clicks} smart shoppers claimed this deal
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 text-center">
+              <div className="text-sm font-medium text-blue-700">
+                {link.clicks} people claimed this deal
               </div>
             </div>
           )}
-          <div className="bg-gradient-to-r from-urgency-red/10 to-red-100 border border-urgency-red/40 rounded-lg p-2">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
             <div className="text-center">
-              <div className="text-sm font-bold text-urgency-red animate-pulse">
-                ⚡ {Math.floor(Math.random() * 20) + 15} people viewing RIGHT NOW
+              <div className="text-sm font-medium text-gray-700">
+                {Math.floor(Math.random() * 20) + 15} people viewing
               </div>
-              <div className="text-xs text-red-600">
-                🔴 Last purchase: {Math.floor(Math.random() * 5) + 1} minutes ago
+              <div className="text-xs text-gray-500">
+                Updated {Math.floor(Math.random() * 5) + 1} minutes ago
               </div>
             </div>
           </div>

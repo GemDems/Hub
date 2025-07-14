@@ -24,7 +24,7 @@ export default function Header() {
         <div className="text-center">
 
           
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-gray-900 via-purple-800 to-gray-900 bg-clip-text text-transparent mb-3">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3">
             Elite Deals Hub
           </h1>
           
@@ -68,10 +68,10 @@ export default function Header() {
             </div>
           </div>
           
-          {/* Social Proof Mega Counter */}
-          <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl px-6 py-3 max-w-xl mx-auto">
+          {/* Clean Social Proof */}
+          <div className="bg-white rounded-xl px-6 py-3 max-w-xl mx-auto shadow-sm border border-gray-200">
             <div className="text-gray-800 font-bold text-lg">
-              💰 Members Saved $4.7M This Month
+              Members Saved $4.7M This Month
             </div>
             <div className="text-sm text-gray-600">
               Average savings: $247 per member
