@@ -9,7 +9,7 @@ interface PhotoCarouselProps {
 }
 
 export default function PhotoCarousel({ images, title, className = "" }: PhotoCarouselProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);

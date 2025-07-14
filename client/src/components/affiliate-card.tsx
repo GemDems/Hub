@@ -19,7 +19,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [currentAlertText, setCurrentAlertText] = useState("🔔 Real-time Stock Drop");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -31,15 +30,20 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     "👥 Others Also Bought"
   ];
 
+  const [currentAlertText, setCurrentAlertText] = useState(alerts[0]);
+
   // Cycle through alerts every 4 seconds for each product
   useEffect(() => {
     let alertIndex = 0;
     const interval = setInterval(() => {
       alertIndex = (alertIndex + 1) % alerts.length;
-      setCurrentAlertText(alerts[alertIndex]);
+      const nextAlert = alerts[alertIndex];
+      if (nextAlert && nextAlert.trim()) {
+        setCurrentAlertText(nextAlert);
+      }
     }, 4000);
     return () => clearInterval(interval);
-  }, [alerts]);
+  }, []);
   
   const trackClickMutation = useMutation({
     mutationFn: async () => {
@@ -150,7 +154,10 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const discount = getRandomDiscount();
   
   // Stock countdown (simulated for demo)
-  const [stock, setStock] = useState(() => Math.floor(Math.random() * 8) + 1);
+  const [stock, setStock] = useState(() => {
+    const randomStock = Math.floor(Math.random() * 8) + 1;
+    return randomStock;
+  });
   
   // Elite pick logic (simulated - would be based on database flag)
   const isElitePick = Math.random() < 0.2; // 20% chance for demo
@@ -174,8 +181,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Cycling Alert Badge - TEMPORARILY DISABLED FOR DEBUGGING */}
-        {false && isElitePick && currentAlertText && (
+        {/* Cycling Alert Badge */}
+        {isElitePick && currentAlertText && (
           <div className="absolute top-0 left-0 right-0 z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
               <Users className="w-3 h-3 inline mr-1" />
@@ -196,15 +203,13 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         )}
         
-        {/* Stock Countdown Alert - TEMPORARILY DISABLED FOR DEBUGGING */}
-        {false && (
-          <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-0'} left-0 right-0 z-10`}>
-            <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
-              <AlertCircle className="w-3 h-3 inline mr-1" />
-              ONLY {stock} LEFT IN STOCK
-            </div>
+        {/* Stock Countdown Alert */}
+        <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-0'} left-0 right-0 z-10`}>
+          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
+            <AlertCircle className="w-3 h-3 inline mr-1" />
+            ONLY {stock} LEFT IN STOCK
           </div>
-        )}
+        </div>
       
       <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
@@ -221,22 +226,12 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         </div>
         
-        {/* Photo Carousel - TEMPORARILY DISABLED FOR DEBUGGING */}
-        {false && (
-          <PhotoCarousel 
-            images={allImages}
-            title={link.title}
-            className="w-full h-48"
-          />
-        )}
-        
-        {/* Temporary placeholder */}
-        <div className="w-full h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
-          <div className="text-center px-4">
-            <div className="text-2xl mb-2">💎</div>
-            <div className="text-sm opacity-90">Premium Deal</div>
-          </div>
-        </div>
+        {/* Photo Carousel */}
+        <PhotoCarousel 
+          images={allImages}
+          title={link.title}
+          className="w-full h-48"
+        />
       </div>
       
       <CardContent className="p-6 space-y-4">
