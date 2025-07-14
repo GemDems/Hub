@@ -144,7 +144,7 @@ export default function SavingsProgress() {
       </div>
       
       <div className="text-xs text-purple-600 mb-2 font-medium">
-        Secret reward at $1,000
+        ✔️ Secret reward ✔️
       </div>
       
       <button 
