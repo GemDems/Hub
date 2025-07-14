@@ -585,7 +585,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               type="url"
               value={formData.url}
               onChange={(e) => setFormData({ ...formData, url: e.target.value })}
-              placeholder="https://affiliate-link.com"
+              placeholder="https://amazon.com/product-link"
               className="mt-1"
             />
           </div>
@@ -611,7 +611,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                   type="url"
                   value={formData.imageUrl && !formData.imageUrl.startsWith('data:') ? formData.imageUrl : ''}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
-                  placeholder="https://example.com/product-image.jpg"
+                  placeholder="https://images.unsplash.com/product-image.jpg"
                   className="flex-1"
                 />
                 <div className="relative">
@@ -663,7 +663,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     type="url"
                     value={imageUrl && !imageUrl.startsWith('data:') ? imageUrl : ''}
                     onChange={(e) => updateImageField(index, e.target.value)}
-                    placeholder={`https://example.com/image-${index + 2}.jpg`}
+                    placeholder={`https://images.unsplash.com/image-${index + 2}.jpg`}
                     className="flex-1"
                   />
                   <div className="relative">

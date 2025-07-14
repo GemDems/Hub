@@ -90,23 +90,17 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   };
 
   const handleClick = () => {
-    // Extract price and update savings progress
+    // Update savings progress
     const priceMatch = price.match(/\$?(\d+(?:,\d{3})*(?:\.\d{2})?)/);
-    if (priceMatch) {
+    if (priceMatch && (window as any).updateSavingsProgress) {
       const amount = parseInt(priceMatch[1].replace(/,/g, ''));
-      // Update savings progress globally
-      if ((window as any).updateSavingsProgress) {
-        (window as any).updateSavingsProgress(amount);
-      }
+      (window as any).updateSavingsProgress(amount);
     }
     
-    // ALWAYS redirect to the exact URL entered in the database - no exceptions
-    console.log('Redirecting to entered URL:', link.url);
-    
-    // Track the click in background (non-blocking)
+    // Start tracking in background (but don't wait for it)
     trackClickMutation.mutate();
     
-    // Immediately redirect to the actual entered URL
+    // IMMEDIATE REDIRECT TO ENTERED URL - PERIOD.
     window.location.href = link.url;
   };
 
