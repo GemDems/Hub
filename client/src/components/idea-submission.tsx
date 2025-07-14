@@ -130,6 +130,20 @@ export default function IdeaSubmission() {
           <p className="text-sm text-gray-500 mt-1">
             One idea per device - yours has been received!
           </p>
+          
+          {/* Guarantee Section */}
+          <div className="text-center mt-6 pt-4 border-t border-green-200/30">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+              If the deal isn't real, I'll personally find you a better one — or send it to you free.
+            </p>
+            <p className="text-lg font-bold text-white tracking-wide" style={{ 
+              fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+              letterSpacing: '0.1em'
+            }}>
+              *GUARANTEE*
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -241,6 +255,20 @@ export default function IdeaSubmission() {
         <p className="text-xs text-gray-500 text-center mt-3">
           One idea per device • 2 words max • 20 characters limit
         </p>
+        
+        {/* Guarantee Section */}
+        <div className="text-center mt-6 pt-4 border-t border-purple-200/30">
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+            If the deal isn't real, I'll personally find you a better one — or send it to you free.
+          </p>
+          <p className="text-lg font-bold text-white tracking-wide" style={{ 
+            fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+            textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
+            letterSpacing: '0.1em'
+          }}>
+            *GUARANTEE*
+          </p>
+        </div>
       </div>
     </div>
   );
