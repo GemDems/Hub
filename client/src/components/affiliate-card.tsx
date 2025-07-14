@@ -181,33 +181,33 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         {/* Ultra Social Proof Matrix */}
         <div className="bg-gradient-to-br from-trust-green/5 via-blue-50 to-purple-50 p-4 rounded-xl border-2 border-trust-green/20 shadow-inner mb-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-white/70 rounded-lg p-2 border border-trust-green/30">
+            <div className="bg-green-50 rounded-lg p-2 border border-green-200">
               <div className="flex items-center">
-                <Users className="w-4 h-4 text-trust-green mr-1" />
-                <span className="text-xs font-bold text-trust-green">{stats.buyers} bought</span>
+                <Users className="w-4 h-4 text-green-700 mr-1" />
+                <span className="text-xs font-bold text-green-800">{stats.buyers} bought</span>
               </div>
-              <div className="text-xs text-gray-600">this week</div>
+              <div className="text-xs text-gray-700">this week</div>
             </div>
-            <div className="bg-white/70 rounded-lg p-2 border border-blue-300">
+            <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
               <div className="flex items-center">
-                <TrendingUp className="w-4 h-4 text-blue-600 mr-1" />
-                <span className="text-xs font-bold text-blue-600">+{Math.floor(Math.random() * 50) + 30}%</span>
+                <TrendingUp className="w-4 h-4 text-blue-700 mr-1" />
+                <span className="text-xs font-bold text-blue-800">+{Math.floor(Math.random() * 50) + 30}%</span>
               </div>
-              <div className="text-xs text-gray-600">demand ↗</div>
+              <div className="text-xs text-gray-700">demand ↗</div>
             </div>
-            <div className="bg-white/70 rounded-lg p-2 border border-yellow-300">
+            <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
               <div className="flex items-center">
-                <Star className="w-4 h-4 text-yellow-500 mr-1" />
-                <span className="text-xs font-bold text-yellow-700">{stats.rating}/5</span>
+                <Star className="w-4 h-4 text-yellow-600 mr-1" />
+                <span className="text-xs font-bold text-yellow-800">{stats.rating}/5</span>
               </div>
-              <div className="text-xs text-gray-600">{stats.reviews} reviews</div>
+              <div className="text-xs text-gray-700">{stats.reviews} reviews</div>
             </div>
-            <div className="bg-white/70 rounded-lg p-2 border border-purple-300">
+            <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
               <div className="flex items-center">
-                <Award className="w-4 h-4 text-purple-600 mr-1" />
-                <span className="text-xs font-bold text-purple-600">#1 Choice</span>
+                <Award className="w-4 h-4 text-purple-700 mr-1" />
+                <span className="text-xs font-bold text-purple-800">#1 Choice</span>
               </div>
-              <div className="text-xs text-gray-600">bestseller</div>
+              <div className="text-xs text-gray-700">bestseller</div>
             </div>
           </div>
         </div>
