@@ -331,7 +331,9 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           <Button
             onClick={handleClick}
             disabled={trackClickMutation.isPending}
-            className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg relative overflow-hidden"
+            className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg relative overflow-hidden ${
+              link.isVerified ? 'verified-glow-button' : ''
+            }`}
           >
             <span className="relative z-10 flex items-center justify-center text-lg">
               {trackClickMutation.isPending ? (

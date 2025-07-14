@@ -73,6 +73,65 @@
     background-color: var(--conversion-blue);
   }
   
+  /* Verified Source Badge Glowing Animation */
+  .verified-glow-button {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .verified-glow-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.4), 
+      rgba(255, 255, 255, 0.6), 
+      rgba(255, 255, 255, 0.4), 
+      transparent
+    );
+    animation: glowing-sweep 2s infinite;
+    z-index: 1;
+  }
+  
+  .verified-glow-button::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+      transparent, 
+      rgba(255, 255, 255, 0.8), 
+      transparent
+    );
+    animation: glowing-sweep 2s infinite 0.5s;
+    z-index: 1;
+  }
+  
+  @keyframes glowing-sweep {
+    0% {
+      left: -100%;
+    }
+    100% {
+      left: 100%;
+    }
+  }
+  
+  .verified-glow-button:hover::before,
+  .verified-glow-button:hover::after {
+    animation-duration: 1s;
+  }
+  
+  /* Ensure text content appears above the glowing animation */
+  .verified-glow-button .relative {
+    z-index: 10;
+  }
+  
   .urgency-red {
     color: var(--urgency-red);
   }
