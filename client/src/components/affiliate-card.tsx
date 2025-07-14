@@ -184,7 +184,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         
         {/* Verified Source Badge */}
         {link.isVerified && (
-          <div className={`absolute ${isElitePick ? 'top-6' : 'top-0'} left-0 right-0 z-25`}>
+          <div className={`absolute ${isElitePick ? 'top-6' : 'top-0'} left-0 right-0 z-[25]`}>
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold text-center py-1 flex items-center justify-center">
               <div className="w-3 h-3 bg-white rounded-full mr-1 flex items-center justify-center">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
