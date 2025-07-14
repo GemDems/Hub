@@ -75,9 +75,12 @@ export default function ReferralSystem() {
       setInputCode("");
     },
     onError: (error: any) => {
+      const isDeviceUsed = error.message?.includes("already used a referral code");
       toast({
-        title: "Invalid Code",
-        description: error.message || "This code is invalid or already used on this device.",
+        title: isDeviceUsed ? "Device Already Used" : "Invalid Code",
+        description: isDeviceUsed 
+          ? "This device has already used a referral code. Each device can only use one code." 
+          : error.message || "This code is invalid.",
         variant: "destructive",
       });
     }
