@@ -55,15 +55,15 @@ export default function Header() {
           </div>
           
           {/* Live Activity Monitor */}
-          <div className="bg-gradient-to-r from-urgency-red to-red-600 rounded-2xl px-8 py-4 text-white shadow-2xl max-w-2xl mx-auto mb-4">
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
             <div className="flex items-center justify-center space-x-6">
               <div className="flex items-center">
-                <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold">🔴 LIVE: {liveViewers} viewing</span>
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                <span className="font-bold text-gray-800">LIVE: {liveViewers} viewing</span>
               </div>
               <div className="flex items-center">
-                <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold">⚡ {hourlyBuyers} bought this hour</span>
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
+                <span className="font-bold text-gray-800">{hourlyBuyers} bought this hour</span>
               </div>
             </div>
           </div>
