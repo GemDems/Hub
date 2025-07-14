@@ -41,7 +41,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   });
 
   const [schedulingProduct, setSchedulingProduct] = useState<{ id: number; title: string; type: 'publish' | 'delete' } | null>(null);
-  const [deleteDate, setDeleteDate] = useState<string>("");
+  const [scheduleDate, setScheduleDate] = useState<string>("");
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   
   const queryClient = useQueryClient();
@@ -185,6 +185,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
       queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      setSchedulingProduct(null);
+      setScheduleDate("");
       toast({
         title: "Deletion Scheduled",
         description: "Product will be automatically deleted at the scheduled time",
@@ -208,13 +210,14 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
       queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
       setSchedulingProduct(null);
-      setScheduleTime(null);
+      setScheduleDate("");
       toast({
         title: "Publishing Scheduled",
         description: "Draft will be automatically published at the scheduled time",
       });
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Schedule publish error:", error);
       toast({
         title: "Error",
         description: "Failed to schedule publishing",
@@ -863,8 +866,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <Input
               id="scheduleDateTime"
               type="datetime-local"
-              value={deleteDate}
-              onChange={(e) => setDeleteDate(e.target.value)}
+              value={scheduleDate}
+              onChange={(e) => setScheduleDate(e.target.value)}
               className="mt-1"
             />
           </div>
@@ -872,23 +875,21 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
           <div className="flex gap-2">
             <Button
               onClick={() => {
-                if (schedulingProduct && deleteDate) {
+                if (schedulingProduct && scheduleDate) {
                   if (schedulingProduct.type === 'publish') {
                     schedulePublishMutation.mutate({
                       id: schedulingProduct.id,
-                      scheduledPublishAt: new Date(deleteDate),
+                      scheduledPublishAt: new Date(scheduleDate),
                     });
                   } else {
                     scheduleDeleteMutation.mutate({
                       id: schedulingProduct.id,
-                      scheduledDeleteAt: new Date(deleteDate),
+                      scheduledDeleteAt: new Date(scheduleDate),
                     });
                   }
-                  setSchedulingProduct(null);
-                  setDeleteDate("");
                 }
               }}
-              disabled={!deleteDate || scheduleDeleteMutation.isPending || schedulePublishMutation.isPending}
+              disabled={!scheduleDate || scheduleDeleteMutation.isPending || schedulePublishMutation.isPending}
               className="flex-1"
             >
               {schedulingProduct?.type === 'publish' ? 'Schedule Publishing' : 'Schedule Deletion'}
@@ -897,7 +898,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               variant="outline"
               onClick={() => {
                 setSchedulingProduct(null);
-                setDeleteDate("");
+                setScheduleDate("");
               }}
               className="flex-1"
             >
