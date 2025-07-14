@@ -8,7 +8,7 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
-import SortToolbar from "@/components/sort-toolbar";
+
 import Leaderboard from "@/components/leaderboard";
 import ReferralSystem from "@/components/referral-system";
 import LiveFeed from "@/components/live-feed";
@@ -20,45 +20,20 @@ export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [sortType, setSortType] = useState("newest");
+
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
   });
 
-  const filteredAndSortedLinks = affiliateLinks
-    .filter(link => {
-      const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
-      const matchesSearch = !searchQuery || 
-        link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        link.category.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    })
-    .sort((a, b) => {
-      switch (sortType) {
-        case 'newest':
-          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-        case 'price_low':
-          const priceA = parseFloat(a.price?.replace(/[^0-9.]/g, '') || '0');
-          const priceB = parseFloat(b.price?.replace(/[^0-9.]/g, '') || '0');
-          return priceA - priceB;
-        case 'price_high':
-          const priceA2 = parseFloat(a.price?.replace(/[^0-9.]/g, '') || '0');
-          const priceB2 = parseFloat(b.price?.replace(/[^0-9.]/g, '') || '0');
-          return priceB2 - priceA2;
-        case 'popular':
-          return (b.clicks || 0) - (a.clicks || 0);
-        case 'ending_soon':
-          // Random sort for demo purposes (would be based on actual end times)
-          return Math.random() - 0.5;
-        case 'top_rated':
-          // Random sort for demo purposes (would be based on ratings)
-          return Math.random() - 0.5;
-        default:
-          return 0;
-      }
-    });
+  const filteredAndSortedLinks = affiliateLinks.filter(link => {
+    const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
+    const matchesSearch = !searchQuery || 
+      link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      link.category.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const categories = [
     { id: "all", label: "All Deals", emoji: "" },
@@ -143,19 +118,10 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="space-y-6">
-            {/* Sort Toolbar */}
-            <SortToolbar 
-              onSort={setSortType}
-              currentSort={sortType}
-            />
-            
-            {/* Products Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAndSortedLinks.map((link) => (
-                <AffiliateCard key={link.id} link={link} />
-              ))}
-            </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAndSortedLinks.map((link) => (
+              <AffiliateCard key={link.id} link={link} />
+            ))}
           </div>
         )}
       </main>

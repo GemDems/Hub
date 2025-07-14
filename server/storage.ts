@@ -121,9 +121,14 @@ export class DatabaseStorage implements IStorage {
       throw new Error('Invalid referral code');
     }
 
-    // Check if device already used this code
-    if (referralCode.usedDevices.includes(deviceId)) {
-      throw new Error('Code already used on this device');
+    // Check if device already used ANY code (one code per device limit)
+    const existingUsage = await db
+      .select()
+      .from(referralCodes)
+      .where(sql`${referralCodes.usedDevices} @> ${JSON.stringify([deviceId])}`);
+    
+    if (existingUsage.length > 0) {
+      throw new Error('This device has already used a referral code');
     }
 
     const newUsedDevices = [...referralCode.usedDevices, deviceId];

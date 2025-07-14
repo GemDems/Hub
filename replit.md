@@ -33,6 +33,14 @@ Preferred communication style: Simple, everyday language.
   - Smart fallback to gradient backgrounds
 - **Custom Pricing**: Optional price field with automatic "original price" psychology (2.2x markup)
 - **Enhanced Creator UX**: Scrollable dialog, file upload buttons, success indicators
+- **Elite Features**: Advanced conversion optimization with:
+  - Elite Brain Pick labels (20% of products) with psychology explanations
+  - Real-time stock countdown "ONLY X LEFT" panic triggers
+  - Persistent leaderboard with realistic data that updates gradually
+  - Device-based referral system (one code per device, no spam)
+  - VIP status unlocked after 3 referral uses
+  - Hidden referral section at bottom to avoid main UI distraction
+- **Removed Features**: Eliminated sorting toolbar per user request for cleaner interface
 
 ## System Architecture
 
