@@ -206,9 +206,14 @@ export default function ReferralSystem() {
             </Button>
           )}
           {referralStatus?.myCode && (
-            <p className="text-xs text-gray-500">
-              Uses: {referralStatus.usedCount}/3 for VIP
-            </p>
+            <div className="space-y-1">
+              <p className="text-xs text-gray-500">
+                Uses: {referralStatus.usedCount}/3 for VIP
+              </p>
+              <p className="text-xs text-blue-600 font-medium">
+                All-Time Invites Used: {referralStatus.totalCodesShared || 0}
+              </p>
+            </div>
           )}
         </div>
 
@@ -274,7 +279,7 @@ export default function ReferralSystem() {
                       {referralStatus.username}
                     </p>
                     <p className="text-xs text-gray-600">
-                      Total Codes Shared: {referralStatus.totalCodesShared || 0}
+                      All-Time Invites Used: {referralStatus.totalCodesShared || 0}
                     </p>
                   </div>
                 )}

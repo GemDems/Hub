@@ -45,7 +45,7 @@ Preferred communication style: Simple, everyday language.
   - **Username System**: "John W" format with proper capitalization (first letter only) for leaderboard display
   - **VIP Leaderboard Eligibility**: Requires 3+ invites + username to appear on leaderboards
   - **Smart Username Form**: Automatic prompt when users hit 3 invites with proper formatting validation
-  - **Total Codes Shared Tracker**: Lifetime counter tracking all referral codes shared (original + bonus codes)
+  - **Total Codes Shared Tracker**: Lifetime counter tracking how many times user's invite codes have been used by others (original + bonus codes)
   - **Enhanced Username Display**: Dark blue-black bold styling for subconscious trust building
   - **Permanent Username System**: Username can only be set once for authenticity
   - **Money Saved Tracker**: Dark green rectangular design positioned between money saved and VIP leaderboards
