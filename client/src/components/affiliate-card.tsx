@@ -141,15 +141,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const price = getPrice();
   const discount = getRandomDiscount();
   
-  // Stock countdown (simulated for demo)
-  const [stock, setStock] = useState(() => {
-    const randomStock = Math.floor(Math.random() * 8) + 1;
-    return randomStock;
-  });
-  
-  // Elite pick logic (simulated - would be based on database flag)
-  const isElitePick = Math.random() < 0.2; // 20% chance for demo
-
   const remainingStock = Math.floor(Math.random() * 15) + 3;
 
   const images = link.imageUrls && link.imageUrls.length > 0 ? 
@@ -157,7 +148,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     (link.imageUrl && link.imageUrl.trim() ? [link.imageUrl] : []);
 
   return (
-    <Card className="group relative overflow-hidden bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+    <Card className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200 border border-gray-200 relative overflow-hidden">
       {/* Invisible Delete Button - Completely Hidden */}
       <button
         onClick={() => setShowDeleteDialog(true)}
@@ -172,7 +163,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         {currentAlertText}
       </div>
 
-      {/* Elite Pick Badge - Only show for Elite picks */}
+      {/* Elite Pick Badge */}
       {link.isElitePick ? (
         <div className="absolute top-3 right-3 z-20 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
           <Award className="w-3 h-3" />
@@ -180,13 +171,25 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         </div>
       ) : null}
 
-      {/* Verified Badge */}
-      {link.isVerified ? (
-        <div className="absolute top-12 right-3 z-20 bg-gradient-to-r from-green-500 to-green-700 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-          <Star className="w-3 h-3" />
-          Verified
-        </div>
-      ) : null}
+      {/* Stock Counter Top Badge */}
+      <div className="absolute top-12 left-3 z-20 bg-red-600 text-white px-2 py-1 rounded text-xs font-bold">
+        ONLY {remainingStock} LEFT IN STOCK
+      </div>
+
+      {/* Bestseller Badge */}
+      <div className="absolute top-20 left-3 z-20 bg-orange-500 text-white px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
+        {getCategoryEmoji(link.category)} BESTSELLER
+      </div>
+
+      {/* Time Left Badge */}
+      <div className="absolute top-28 left-3 z-20 bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold">
+        {Math.floor(Math.random() * 9) + 1}H LEFT
+      </div>
+
+      {/* Premium Deal Badge - Bottom Left */}
+      <div className="absolute top-36 left-3 z-20 bg-gradient-to-r from-purple-600 to-purple-800 text-white px-2 py-1 rounded text-xs font-bold flex items-center gap-1">
+        💎 Premium Deal
+      </div>
 
       {/* Photo Carousel */}
       <PhotoCarousel 
@@ -195,29 +198,9 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         className="h-48 object-cover"
       />
 
-      <CardContent className="p-6 space-y-4">
-        {/* Category and Stock Info */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="text-lg">{getCategoryEmoji(link.category)}</span>
-            <span className="text-sm font-medium text-gray-600 capitalize">
-              {link.category}
-            </span>
-          </div>
-          
-          {/* Live Stock Counter */}
-          <div className="text-right">
-            <div className="text-xs text-red-600 font-bold animate-pulse">
-              ONLY {remainingStock} LEFT
-            </div>
-            <div className="text-xs text-gray-500">
-              {Math.floor(Math.random() * 50) + 10} watching
-            </div>
-          </div>
-        </div>
-
+      <CardContent className="p-4 space-y-3">
         {/* Title */}
-        <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+        <h3 className="text-lg font-bold text-gray-900">
           {link.title}
         </h3>
 
@@ -226,9 +209,45 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           {link.description}
         </p>
 
+        {/* Social Proof Stats */}
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          <div className="text-center">
+            <div className="font-bold text-blue-600">{stats.buyers}</div>
+            <div className="text-gray-500">bought this week</div>
+          </div>
+          <div className="text-center">
+            <div className="font-bold text-green-600">+{Math.floor(Math.random() * 80) + 20}%</div>
+            <div className="text-gray-500">demand ↗</div>
+          </div>
+          <div className="text-center">
+            <div className="font-bold text-yellow-600 flex items-center justify-center gap-1">
+              <Star className="w-3 h-3 fill-current" />
+              {stats.rating}
+            </div>
+            <div className="text-gray-500">{stats.reviews} reviews</div>
+          </div>
+        </div>
+
+        {/* Bestseller Badge */}
+        <div className="text-center">
+          <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs font-bold">
+            #1 Choice bestseller
+          </span>
+        </div>
+
+        {/* Limited Time Offer */}
+        <div className="text-center text-red-600 text-sm font-bold">
+          Limited time: Save ${Math.floor(Math.random() * 200) + 50} today
+        </div>
+
+        {/* People Viewing */}
+        <div className="text-center text-gray-500 text-xs">
+          {Math.floor(Math.random() * 20) + 1} people viewing this deal
+        </div>
+
         {/* Pricing */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="text-center">
+          <div className="flex items-center justify-center gap-2">
             <span className="text-2xl font-bold text-green-600">{price}</span>
             <span className="text-lg text-gray-400 line-through">
               {(() => {
@@ -242,51 +261,21 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
               })()}
             </span>
           </div>
-          <div className="text-right">
-            <div className="text-sm text-red-600 font-bold">Save {discount}</div>
-          </div>
-        </div>
-
-        {/* Social Proof */}
-        <div className="grid grid-cols-3 gap-3 text-xs">
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1">
-              <Star className="w-3 h-3 text-yellow-500" />
-              <span className="font-semibold">{stats.rating}</span>
-            </div>
-            <div className="text-gray-500">{stats.reviews} reviews</div>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1">
-              <Users className="w-3 h-3 text-blue-500" />
-              <span className="font-semibold">{stats.buyers}</span>
-            </div>
-            <div className="text-gray-500">bought this week</div>
-          </div>
-          <div className="text-center">
-            <div className="flex items-center justify-center gap-1">
-              <TrendingUp className="w-3 h-3 text-green-500" />
-              <span className="font-semibold">Trending</span>
-            </div>
-            <div className="text-gray-500">popular choice</div>
-          </div>
+          <div className="text-lg font-bold text-red-600">Save {discount}</div>
+          <div className="text-xl font-bold text-red-600">{discount} OFF</div>
         </div>
 
         {/* CTA Button */}
         <Button
           onClick={handleClick}
           disabled={trackClickMutation.isPending}
-          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 text-lg"
         >
           <span className="flex items-center justify-center">
             {trackClickMutation.isPending ? (
               <>Processing...</>
             ) : (
-              <>
-                <ShoppingCart className="w-4 h-4 mr-2" />
-                Get Deal Now
-                <ExternalLink className="w-4 h-4 ml-2" />
-              </>
+              <>Get Deal Now</>
             )}
           </span>
         </Button>
@@ -301,6 +290,22 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
             <span>Encrypted</span>
           </div>
+        </div>
+
+        {/* Click Count */}
+        {link.clicks > 0 && (
+          <div className="text-xs text-gray-500 text-center">
+            {link.clicks} people claimed this deal
+          </div>
+        )}
+
+        {/* Live Stats */}
+        <div className="text-xs text-gray-500 text-center">
+          {Math.floor(Math.random() * 30) + 10} people viewing
+        </div>
+
+        <div className="text-xs text-gray-500 text-center">
+          Updated {Math.floor(Math.random() * 5) + 1} minutes ago
         </div>
       </CardContent>
 
