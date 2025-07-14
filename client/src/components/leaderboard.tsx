@@ -112,31 +112,9 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      {/* Elite Progress Tracker - Between Money Saved and VIP Leaderboards */}
-      <div className="max-w-3xl mx-auto px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
-          <div className="bg-gradient-to-r from-yellow-500 to-amber-600 text-white p-6">
-            <div className="flex items-center">
-              <TrendingUp className="w-8 h-8 mr-3" />
-              <div>
-                <h3 className="text-2xl font-bold">Your Savings Progress</h3>
-                <p className="text-yellow-100">Track your way to the leaderboard</p>
-              </div>
-            </div>
-          </div>
-          
-          <div className="p-6">
-            <div className="text-center mb-4">
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Every time you click "Get Deal Now", that product's price is added to your savings progress. 
-                Reach <span className="text-yellow-600 font-medium">$1,000 saved</span> to unlock your first 
-                <span className="text-purple-600 font-medium"> surprise reward</span>. Save enough to make the 
-                leaderboard and your name will appear above!
-              </p>
-            </div>
-            <SavingsProgress />
-          </div>
-        </div>
+      {/* Money Saved Tracker - Simple Rectangle */}
+      <div className="max-w-xl mx-auto px-4 py-6">
+        <SavingsProgress />
       </div>
 
       <div className="grid md:grid-cols-1 gap-8 max-w-3xl mx-auto px-4">

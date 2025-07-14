@@ -42,12 +42,12 @@ Preferred communication style: Simple, everyday language.
   - Hidden referral section at bottom to avoid main UI distraction
 - **Comprehensive Gamification System** (Latest):
   - **Username System**: Name/First Letter format required for VIP leaderboard entry
-  - **Savings Progress Tracker**: Black/gold exclusive design positioned between leaderboards
+  - **Money Saved Tracker**: Dark green rectangular design positioned between money saved and VIP leaderboards
   - **Click Tracking**: Every "Get Deal Now" click adds product price to progress bar
   - **$1,000 Reward System**: Unlocks Level 1 Seinfeld referral codes with double points
   - **Enhanced Live Feed**: 30% privacy blur on purchased items for user protection
   - **VIP Username Modal**: Automatic prompt when users achieve 3 referrals
-  - **Elite Progress Design**: Rare, exclusive appearance with gold accents and minimalist dark theme
+  - **Subconscious Psychology**: Simple dark green design with reward urgency triggers and "increase this amount" messaging
 - **Removed Features**: 
   - Eliminated sorting toolbar per user request for cleaner interface
   - Removed instruction section for ultra-clean minimalist approach

@@ -56,44 +56,33 @@ export default function SavingsProgress() {
   }, [progress, hasSeinfeldCode]);
 
   return (
-    <div className="space-y-4">
-      <div className="flex justify-between items-center">
-        <span className="text-lg font-semibold text-gray-700">Progress to $1,000</span>
-        <span className="text-2xl font-bold text-yellow-600">${progress.toLocaleString()}</span>
+    <div className="bg-green-800 rounded-lg p-6 text-center">
+      <div className="mb-3">
+        <h3 className="text-xl font-bold text-white mb-1">MONEY SAVED</h3>
+        <div className="text-3xl font-black text-green-300">${progress.toLocaleString()}</div>
       </div>
       
-      <div className="relative">
+      <div className="bg-green-900/50 rounded p-3 mb-3">
         <Progress 
           value={progressPercentage} 
-          className="h-4 bg-gray-200" 
+          className="h-2 bg-green-900" 
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-yellow-500/30 to-amber-500/30 rounded-full pointer-events-none"></div>
+        <div className="text-xs text-green-200 mt-1 font-medium">
+          REWARD AT $1,000 SAVED
+        </div>
       </div>
-      
-      <div className="flex justify-between text-sm text-gray-600">
-        <span>$0</span>
-        <span className="font-medium">
-          {remainingAmount > 0 
-            ? `$${remainingAmount.toLocaleString()} remaining`
-            : "Goal achieved! 🎉"
-          }
-        </span>
-        <span>$1,000</span>
+
+      <div className="text-xs text-green-200 font-medium">
+        Every time you "Get Deal Now" you increase this amount
       </div>
 
       {hasSeinfeldCode && (
-        <div className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4">
-          <div className="flex items-center justify-center mb-2">
-            <Gift className="w-5 h-5 text-purple-600 mr-2" />
-            <span className="text-lg font-bold text-purple-800">Surprise Reward Unlocked!</span>
+        <div className="mt-4 bg-green-700 border border-green-600 rounded p-3">
+          <div className="text-sm font-bold text-green-100 mb-1">
+            REWARD UNLOCKED!
           </div>
-          <div className="text-center">
-            <div className="text-sm font-mono bg-purple-100 border border-purple-300 rounded px-3 py-2 inline-block">
-              Special Code: {localStorage.getItem('seinfeld_code')}
-            </div>
-            <div className="text-xs text-purple-600 mt-2">
-              🎁 This exclusive code gives double referral points when shared!
-            </div>
+          <div className="text-xs font-mono bg-green-600 rounded px-2 py-1 text-white">
+            {localStorage.getItem('seinfeld_code')}
           </div>
         </div>
       )}
