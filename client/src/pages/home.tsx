@@ -177,7 +177,7 @@ export default function Home() {
               }`}
             >
               <Shield className="w-4 h-4 mr-3" />
-              {showVerifiedOnly ? 'Show All Products' : 'Show ✓ Only'}
+              {showVerifiedOnly ? 'Show All Products' : 'Show ✓ Products'}
               {showVerifiedOnly && (
                 <span className="ml-3 text-sm bg-blue-500 text-white px-2 py-1 rounded">
                   {filteredAndSortedLinks.length}
