@@ -169,12 +169,12 @@ export class DatabaseStorage implements IStorage {
     
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
-    // Check if user has $1000+ saved and ensure they have bonus codes
+    // Always ensure users with $1000+ saved have bonus codes available
     if (userStat && userStat.savingsProgress >= 1000) {
       const existingBonusCodes = await db.select().from(referralCodes)
         .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
       
-      // If no bonus codes exist, generate them
+      // Always generate bonus codes if none exist
       if (existingBonusCodes.length === 0) {
         await this.generateRewardCodes(userId);
       }
@@ -301,9 +301,19 @@ export class DatabaseStorage implements IStorage {
     const newProgress = currentProgress + amount;
     const hasReward = newProgress >= 1000 && currentProgress < 1000 && !existingStats?.hasSeinfeldCode;
 
-    // Generate reward codes when hitting $1000 milestone
+    // Generate reward codes when hitting $1000 milestone for first time
     if (hasReward) {
       await this.generateRewardCodes(userId);
+    }
+
+    // Also ensure bonus codes exist for anyone above $1000
+    if (newProgress >= 1000) {
+      const existingBonusCodes = await db.select().from(referralCodes)
+        .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
+      
+      if (existingBonusCodes.length === 0) {
+        await this.generateRewardCodes(userId);
+      }
     }
 
     if (existingStats) {
