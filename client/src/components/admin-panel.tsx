@@ -280,6 +280,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
 
   const createLinkMutation = useMutation({
     mutationFn: async (data: InsertAffiliateLink) => {
+      console.log("Sending data to API:", JSON.stringify(data, null, 2));
       return await apiRequest("POST", "/api/affiliate-links", data);
     },
     onSuccess: (data, variables) => {
@@ -298,7 +299,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
         onSuccess();
       }
     },
-    onError: () => {
+    onError: (error) => {
+      console.error("Create link error:", error);
       toast({
         title: "Error",
         description: "Failed to save product",

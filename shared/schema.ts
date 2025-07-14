@@ -58,18 +58,20 @@ export const insertUserSchema = createInsertSchema(users).pick({
   password: true,
 });
 
-export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit({
-  id: true,
-  clicks: true,
-  createdAt: true,
-}).extend({
-  imageUrl: z.string().url().optional().or(z.literal("")).or(z.null()).optional(),
-  imageUrls: z.array(z.string().url()).optional().or(z.null()).optional(),
-  price: z.string().optional().or(z.null()).optional(),
-  isVerified: z.boolean().optional(),
-  isDraft: z.boolean().optional(),
-  scheduledPublishAt: z.date().optional().or(z.null()).optional(),
-  scheduledDeleteAt: z.date().optional().or(z.null()).optional(),
+export const insertAffiliateLinkSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+  url: z.string().url("Valid URL is required"),
+  description: z.string().min(1, "Description is required"),
+  category: z.string().min(1, "Category is required"),
+  imageUrl: z.string().optional().or(z.null()),
+  imageUrls: z.array(z.string()).optional().or(z.null()),
+  price: z.string().optional().or(z.null()),
+  stock: z.number().optional().default(0),
+  isElitePick: z.boolean().optional().default(false),
+  isVerified: z.boolean().optional().default(false),
+  isDraft: z.boolean().optional().default(false),
+  scheduledPublishAt: z.date().optional().or(z.null()),
+  scheduledDeleteAt: z.date().optional().or(z.null()),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

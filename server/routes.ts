@@ -182,11 +182,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Create new affiliate link
   app.post("/api/affiliate-links", async (req, res) => {
     try {
+      console.log("Received data:", JSON.stringify(req.body, null, 2));
       const linkData = insertAffiliateLinkSchema.parse(req.body);
+      console.log("Parsed data:", JSON.stringify(linkData, null, 2));
       const newLink = await storage.createAffiliateLink(linkData);
       res.status(201).json(newLink);
     } catch (error) {
+      console.error("Error creating affiliate link:", error);
       if (error instanceof z.ZodError) {
+        console.log("Validation errors:", error.errors);
         res.status(400).json({ message: "Invalid link data", errors: error.errors });
       } else {
         res.status(500).json({ message: "Failed to create affiliate link" });
