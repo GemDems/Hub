@@ -36,9 +36,12 @@ export const referralCodes = pgTable("referral_codes", {
 export const userStats = pgTable("user_stats", {
   id: serial("id").primaryKey(),
   userId: text("user_id").unique().notNull(),
+  username: text("username"), // Display name for leaderboard (Name/F format)
   totalSavings: integer("total_savings").default(0),
   referralCount: integer("referral_count").default(0),
   isVip: integer("is_vip").default(0), // Using integer for boolean compatibility
+  savingsProgress: integer("savings_progress").default(0), // Tracks click savings progress toward $1000
+  hasSeinfeldCode: integer("has_seinfeld_code").default(0), // Level 1 reward unlock
   lastActive: timestamp("last_active").defaultNow().notNull(),
 });
 

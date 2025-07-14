@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Crown, Users, Gift, Copy, Check } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
+import UsernameModal from "./username-modal";
 
 // Generate persistent device ID
 const getDeviceId = () => {
@@ -20,6 +21,7 @@ const getDeviceId = () => {
 export default function ReferralSystem() {
   const [inputCode, setInputCode] = useState("");
   const [copied, setCopied] = useState(false);
+  const [showUsernameModal, setShowUsernameModal] = useState(false);
   const { toast } = useToast();
   const deviceId = getDeviceId();
 
@@ -63,11 +65,7 @@ export default function ReferralSystem() {
     onSuccess: (data) => {
       refetchStatus();
       if (data.vipUnlocked) {
-        toast({
-          title: "🎉 VIP STATUS UNLOCKED!",
-          description: "You're now part of the Elite Club! Check the leaderboard.",
-          className: "bg-yellow-50 border-yellow-200",
-        });
+        setShowUsernameModal(true);
       } else {
         toast({
           title: "Code Applied!",
@@ -108,7 +106,8 @@ export default function ReferralSystem() {
   };
 
   return (
-    <Card className="bg-white/95 backdrop-blur-sm border-gray-200 shadow-lg">
+    <>
+      <Card className="bg-white/95 backdrop-blur-sm border-gray-200 shadow-lg">
       <CardHeader className="text-center pb-4">
         <CardTitle className="flex items-center justify-center text-lg font-bold text-gray-800">
           <Crown className={`w-5 h-5 mr-2 ${referralStatus?.isVip ? 'text-yellow-500' : 'text-gray-400'}`} />
@@ -197,5 +196,13 @@ export default function ReferralSystem() {
         </div>
       </CardContent>
     </Card>
+
+    <UsernameModal
+      isOpen={showUsernameModal}
+      onClose={() => setShowUsernameModal(false)}
+      userId={deviceId}
+      onSuccess={() => refetchStatus()}
+    />
+    </>
   );
 }

@@ -73,15 +73,22 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   };
 
   const handleClick = () => {
-    // Immediate redirect as backup
-    const redirectUrl = link.url;
+    // Extract price and update savings progress
+    const priceMatch = price.match(/\$?(\d+(?:,\d{3})*(?:\.\d{2})?)/);
+    if (priceMatch) {
+      const amount = parseInt(priceMatch[1].replace(/,/g, ''));
+      // Update savings progress globally
+      if ((window as any).updateSavingsProgress) {
+        (window as any).updateSavingsProgress(amount);
+      }
+    }
     
     // Track the click (but don't wait for response)
     trackClickMutation.mutate();
     
     // Small delay to allow tracking, then redirect
     setTimeout(() => {
-      window.location.href = redirectUrl;
+      window.location.href = link.url;
     }, 100);
   };
 

@@ -22,6 +22,8 @@ export interface IStorage {
   
   // User Stats & Leaderboard
   updateUserStats(userId: string, savings: number): Promise<void>;
+  updateSavingsProgress(userId: string, amount: number): Promise<{ hasReward: boolean; newProgress: number }>;
+  updateUsername(userId: string, username: string): Promise<void>;
   getLeaderboard(): Promise<{ topSavers: any[]; topReferrers: any[] }>;
 }
 
@@ -201,6 +203,61 @@ export class DatabaseStorage implements IStorage {
         .values({
           userId,
           totalSavings: savings,
+          referralCount: 0,
+          isVip: 0
+        });
+    }
+  }
+
+  async updateSavingsProgress(userId: string, amount: number): Promise<{ hasReward: boolean; newProgress: number }> {
+    const [existingStats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    const currentProgress = existingStats?.savingsProgress || 0;
+    const newProgress = currentProgress + amount;
+    const hasReward = newProgress >= 1000 && currentProgress < 1000 && !existingStats?.hasSeinfeldCode;
+
+    if (existingStats) {
+      await db
+        .update(userStats)
+        .set({
+          savingsProgress: newProgress,
+          hasSeinfeldCode: hasReward ? 1 : existingStats.hasSeinfeldCode,
+          lastActive: new Date()
+        })
+        .where(eq(userStats.userId, userId));
+    } else {
+      await db
+        .insert(userStats)
+        .values({
+          userId,
+          savingsProgress: newProgress,
+          hasSeinfeldCode: hasReward ? 1 : 0,
+          totalSavings: 0,
+          referralCount: 0,
+          isVip: 0
+        });
+    }
+
+    return { hasReward, newProgress };
+  }
+
+  async updateUsername(userId: string, username: string): Promise<void> {
+    const [existingStats] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    
+    if (existingStats) {
+      await db
+        .update(userStats)
+        .set({ 
+          username,
+          lastActive: new Date()
+        })
+        .where(eq(userStats.userId, userId));
+    } else {
+      await db
+        .insert(userStats)
+        .values({
+          userId,
+          username,
+          totalSavings: 0,
           referralCount: 0,
           isVip: 0
         });

@@ -9,6 +9,7 @@ interface LiveActivity {
   action: string;
   product: string;
   timeAgo: string;
+  blurProduct?: boolean;
 }
 
 export default function LiveFeed() {
@@ -27,7 +28,8 @@ export default function LiveFeed() {
       location: locations[Math.floor(Math.random() * locations.length)],
       action: actions[Math.floor(Math.random() * actions.length)],
       product: products[Math.floor(Math.random() * products.length)],
-      timeAgo: `${Math.floor(Math.random() * 59) + 1} mins ago`
+      timeAgo: `${Math.floor(Math.random() * 59) + 1} mins ago`,
+      blurProduct: Math.random() < 0.3 // 30% chance to blur for privacy
     });
 
     // Initialize with some activities
@@ -78,7 +80,9 @@ export default function LiveFeed() {
                   </span>
                   {' '}{activity.action}
                 </p>
-                <p className="text-xs text-gray-600 truncate">{activity.product}</p>
+                <p className={`text-xs text-gray-600 truncate ${activity.blurProduct ? 'blur-sm' : ''}`}>
+                  {activity.product}
+                </p>
               </div>
               <div className="flex-shrink-0 text-right">
                 <div className="flex items-center gap-1 text-xs text-gray-500">

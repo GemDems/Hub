@@ -165,6 +165,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Savings progress routes
+  app.post('/api/savings/progress', async (req, res) => {
+    try {
+      const { userId, amount } = req.body;
+      if (!userId || !amount) {
+        return res.status(400).json({ message: 'User ID and amount required' });
+      }
+      
+      const result = await storage.updateSavingsProgress(userId, amount);
+      res.json(result);
+    } catch (error) {
+      console.error('Error updating savings progress:', error);
+      res.status(500).json({ message: 'Failed to update savings progress' });
+    }
+  });
+
+  app.post('/api/user/username', async (req, res) => {
+    try {
+      const { userId, username } = req.body;
+      if (!userId || !username) {
+        return res.status(400).json({ message: 'User ID and username required' });
+      }
+      
+      await storage.updateUsername(userId, username);
+      res.json({ success: true });
+    } catch (error) {
+      console.error('Error updating username:', error);
+      res.status(500).json({ message: 'Failed to update username' });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
