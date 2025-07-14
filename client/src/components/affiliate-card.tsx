@@ -22,8 +22,31 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Removed cycling alerts to debug the "0" issue
-  const currentAlertText = "🔔 Real-time Stock Drop";
+  const alerts = [
+    "🔔 Real-time Stock Drop",
+    "📉 Price Dropped Again!",
+    "🔥 Locked For You",
+    "⚠️ Deal Watchlist Alerts",
+    "👥 Others Also Bought"
+  ];
+
+  const [currentAlertText, setCurrentAlertText] = useState(alerts[0]);
+  const [alertIndex, setAlertIndex] = useState(1);
+
+  // Cycle through alerts every 4 seconds for each product
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setAlertIndex((prev) => {
+        const nextIndex = (prev + 1) % alerts.length;
+        const nextAlert = alerts[nextIndex];
+        if (nextAlert && nextAlert.trim()) {
+          setCurrentAlertText(nextAlert);
+        }
+        return nextIndex;
+      });
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
   
   const trackClickMutation = useMutation({
     mutationFn: async () => {
@@ -337,13 +360,13 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         
         {/* Social Proof */}
         <div className="mt-4 space-y-2">
-          {link.clicks > 0 && (
+          {link.clicks > 0 ? (
             <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 text-center">
               <div className="text-sm font-medium text-blue-700">
                 {link.clicks} people claimed this deal
               </div>
             </div>
-          )}
+          ) : null}
           <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
             <div className="text-center">
               <div className="text-sm font-medium text-gray-700">
