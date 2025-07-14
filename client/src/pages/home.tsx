@@ -117,7 +117,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Category Dropdown Menu - Top Left (Only shows on scroll) */}
-      <div className={`fixed top-4 left-4 z-50 transition-all duration-300 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
+      <div className={`fixed top-4 left-4 z-50 transition-all duration-1000 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
         <div className="relative dropdown-container">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
