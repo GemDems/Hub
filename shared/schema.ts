@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -18,7 +18,28 @@ export const affiliateLinks = pgTable("affiliate_links", {
   imageUrls: text("image_urls").array(),
   price: text("price"),
   clicks: integer("clicks").notNull().default(0),
+  stock: integer("stock").default(0),
+  isElitePick: integer("is_elite_pick").default(0), // Using integer for boolean compatibility
   createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const referralCodes = pgTable("referral_codes", {
+  id: serial("id").primaryKey(),
+  code: text("code").unique().notNull(),
+  userId: text("user_id").notNull(),
+  usedCount: integer("used_count").default(0),
+  usedDevices: text("used_devices").array().default([]),
+  isVip: integer("is_vip").default(0), // Using integer for boolean compatibility
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+export const userStats = pgTable("user_stats", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").unique().notNull(),
+  totalSavings: integer("total_savings").default(0),
+  referralCount: integer("referral_count").default(0),
+  isVip: integer("is_vip").default(0), // Using integer for boolean compatibility
+  lastActive: timestamp("last_active").defaultNow().notNull(),
 });
 
 export const insertUserSchema = createInsertSchema(users).pick({
@@ -40,3 +61,5 @@ export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type AffiliateLink = typeof affiliateLinks.$inferSelect;
 export type InsertAffiliateLink = z.infer<typeof insertAffiliateLinkSchema>;
+export type ReferralCode = typeof referralCodes.$inferSelect;
+export type UserStats = typeof userStats.$inferSelect;

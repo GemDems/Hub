@@ -110,6 +110,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Referral system routes
+  app.post("/api/referral/generate", async (req, res) => {
+    try {
+      // Generate a device-based user ID if not provided
+      const userId = req.body.userId || `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const referralCode = await storage.generateReferralCode(userId);
+      res.json(referralCode);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to generate referral code" });
+    }
+  });
+
+  app.post("/api/referral/use", async (req, res) => {
+    try {
+      const { code } = req.body;
+      const deviceId = req.body.deviceId || `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      
+      const result = await storage.useReferralCode(code, deviceId);
+      res.json(result);
+    } catch (error: any) {
+      res.status(400).json({ message: error.message || "Failed to use referral code" });
+    }
+  });
+
+  app.get("/api/referral/status", async (req, res) => {
+    try {
+      const userId = req.query.userId as string || `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const status = await storage.getReferralStatus(userId);
+      res.json(status);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get referral status" });
+    }
+  });
+
+  // Leaderboard route
+  app.get("/api/leaderboard", async (req, res) => {
+    try {
+      const leaderboard = await storage.getLeaderboard();
+      res.json(leaderboard);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to get leaderboard" });
+    }
+  });
+
+  // Update user stats (for tracking savings)
+  app.post("/api/user-stats", async (req, res) => {
+    try {
+      const { userId, savings } = req.body;
+      await storage.updateUserStats(userId, savings);
+      res.json({ message: "Stats updated successfully" });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to update user stats" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

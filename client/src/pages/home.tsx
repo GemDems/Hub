@@ -8,6 +8,10 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
+import SortToolbar from "@/components/sort-toolbar";
+import Leaderboard from "@/components/leaderboard";
+import ReferralSystem from "@/components/referral-system";
+import LiveFeed from "@/components/live-feed";
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -16,19 +20,45 @@ export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortType, setSortType] = useState("newest");
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
   });
 
-  const filteredLinks = affiliateLinks.filter(link => {
-    const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
-    const matchesSearch = !searchQuery || 
-      link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      link.category.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
-  });
+  const filteredAndSortedLinks = affiliateLinks
+    .filter(link => {
+      const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
+      const matchesSearch = !searchQuery || 
+        link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        link.category.toLowerCase().includes(searchQuery.toLowerCase());
+      return matchesCategory && matchesSearch;
+    })
+    .sort((a, b) => {
+      switch (sortType) {
+        case 'newest':
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        case 'price_low':
+          const priceA = parseFloat(a.price?.replace(/[^0-9.]/g, '') || '0');
+          const priceB = parseFloat(b.price?.replace(/[^0-9.]/g, '') || '0');
+          return priceA - priceB;
+        case 'price_high':
+          const priceA2 = parseFloat(a.price?.replace(/[^0-9.]/g, '') || '0');
+          const priceB2 = parseFloat(b.price?.replace(/[^0-9.]/g, '') || '0');
+          return priceB2 - priceA2;
+        case 'popular':
+          return (b.clicks || 0) - (a.clicks || 0);
+        case 'ending_soon':
+          // Random sort for demo purposes (would be based on actual end times)
+          return Math.random() - 0.5;
+        case 'top_rated':
+          // Random sort for demo purposes (would be based on ratings)
+          return Math.random() - 0.5;
+        default:
+          return 0;
+      }
+    });
 
   const categories = [
     { id: "all", label: "All Deals", emoji: "" },
@@ -78,7 +108,7 @@ export default function Home() {
               </div>
             ))}
           </div>
-        ) : filteredLinks.length === 0 ? (
+        ) : filteredAndSortedLinks.length === 0 ? (
           <div className="text-center py-16">
             {searchQuery ? (
               <>
@@ -113,17 +143,44 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredLinks.map((link) => (
-              <AffiliateCard key={link.id} link={link} />
-            ))}
+          <div className="space-y-6">
+            {/* Sort Toolbar */}
+            <SortToolbar 
+              onSort={setSortType}
+              currentSort={sortType}
+            />
+            
+            {/* Products Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredAndSortedLinks.map((link) => (
+                <AffiliateCard key={link.id} link={link} />
+              ))}
+            </div>
           </div>
         )}
-
-        <TrustIndicators />
       </main>
 
-
+      <TrustIndicators />
+      
+      {/* Leaderboard Section - At bottom */}
+      <div className="bg-white py-16">
+        <Leaderboard />
+      </div>
+      
+      {/* Hidden Referral System - Bottom section, hard to find */}
+      <div className="bg-gray-100 py-8 border-t">
+        <div className="max-w-md mx-auto">
+          <h2 className="text-center text-gray-500 text-xs mb-4 uppercase tracking-wider">
+            Elite Access
+          </h2>
+          <ReferralSystem />
+        </div>
+      </div>
+      
+      {/* Live Feed - At very bottom, requires scroll */}
+      <div className="bg-gray-900 py-16">
+        <LiveFeed />
+      </div>
 
       <AdminPanel 
         isOpen={showAdmin}
@@ -133,26 +190,6 @@ export default function Home() {
           setShowAdmin(false);
         }}
       />
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white mt-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-4">Elite Deals Hub</h3>
-            <p className="text-gray-400 mb-6 max-w-2xl mx-auto">
-              Your trusted source for the best affiliate deals and exclusive offers. 
-              We do the research so you get the savings.
-            </p>
-            <div className="flex justify-center space-x-6 text-gray-400">
-              <span className="text-sm">© 2024 Elite Deals Hub</span>
-              <span className="text-sm">•</span>
-              <span className="text-sm">Privacy Policy</span>
-              <span className="text-sm">•</span>
-              <span className="text-sm">Terms of Service</span>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -122,6 +122,12 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const stats = getRandomStats();
   const price = getPrice();
   const discount = getRandomDiscount();
+  
+  // Stock countdown (simulated for demo)
+  const [stock, setStock] = useState(() => Math.floor(Math.random() * 8) + 1);
+  
+  // Elite pick logic (simulated - would be based on database flag)
+  const isElitePick = Math.random() < 0.2; // 20% chance for demo
 
   // Generate clean images array without duplication
   const allImages = link.imageUrls && link.imageUrls.length > 0 ? 
@@ -142,11 +148,21 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Clean Urgency Alert */}
-        <div className="absolute top-0 left-0 right-0 z-20">
+        {/* Elite Brain Pick Badge */}
+        {isElitePick && (
+          <div className="absolute top-0 left-0 right-0 z-30">
+            <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
+              <Award className="w-3 h-3 inline mr-1" />
+              ELITE BRAIN PICK - Psychology: High conversion rate
+            </div>
+          </div>
+        )}
+        
+        {/* Stock Countdown Alert */}
+        <div className={`absolute ${isElitePick ? 'top-6' : 'top-0'} left-0 right-0 z-20`}>
           <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
             <AlertCircle className="w-3 h-3 inline mr-1" />
-            ONLY {stats.stockLeft} LEFT IN STOCK
+            ONLY {stock} LEFT IN STOCK
           </div>
         </div>
       
