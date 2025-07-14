@@ -116,6 +116,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   };
 
   const getCategoryEmoji = (category: string) => {
+    if (!category) return '💎';
     const lowercaseCategory = category.toLowerCase();
     if (lowercaseCategory.includes('hot')) return '🔥';
     if (lowercaseCategory.includes('tech')) return '📱';
@@ -173,13 +174,14 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
         
         {/* Invisible Delete Button */}
-        <div className="absolute top-2 right-2 z-30">
+        <div className="absolute top-2 right-2 z-30" style={{ opacity: 0, visibility: 'hidden' }}>
           <Button
             onClick={() => setShowDeleteDialog(true)}
-            className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none opacity-0"
+            className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none"
             title="Delete Product"
+            style={{ opacity: 0, visibility: 'hidden' }}
           >
-            <Trash2 className="w-4 h-4 opacity-0" />
+            <Trash2 className="w-4 h-4" style={{ opacity: 0, visibility: 'hidden' }} />
           </Button>
         </div>
         
