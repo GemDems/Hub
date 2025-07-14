@@ -51,18 +51,12 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       return response.json();
     },
     onSuccess: (data) => {
-      console.log('Redirect data:', data); // Debug log
-      // Immediately redirect to affiliate link
-      if (data.url) {
-        window.location.href = data.url;
-      } else {
-        console.error('No URL received from API');
-      }
+      console.log('Click tracked successfully:', data);
+      // Do NOT redirect here - let handleClick control the redirect
     },
     onError: (error) => {
-      console.error('Click tracking failed:', error);
-      // Fallback: redirect to the original link URL
-      window.location.href = link.url;
+      console.error('Click tracking failed (but continuing with redirect):', error);
+      // Do NOT redirect here - let handleClick control the redirect  
     }
   });
 
@@ -106,13 +100,14 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       }
     }
     
-    // Track the click (but don't wait for response)
+    // ALWAYS redirect to the exact URL entered in the database - no exceptions
+    console.log('Redirecting to entered URL:', link.url);
+    
+    // Track the click in background (non-blocking)
     trackClickMutation.mutate();
     
-    // Small delay to allow tracking, then redirect
-    setTimeout(() => {
-      window.location.href = link.url;
-    }, 100);
+    // Immediately redirect to the actual entered URL
+    window.location.href = link.url;
   };
 
   const getCategoryEmoji = (category: string) => {
