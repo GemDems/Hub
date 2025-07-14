@@ -56,32 +56,31 @@ export default function SavingsProgress() {
   }, [progress, hasSeinfeldCode]);
 
   return (
-    <div className="bg-green-800 rounded-lg p-6 text-center">
-      <div className="mb-3">
-        <h3 className="text-xl font-bold text-white mb-1">MONEY SAVED</h3>
-        <div className="text-3xl font-black text-green-300">${progress.toLocaleString()}</div>
+    <div className="text-center py-4">
+      <div className="flex items-center justify-center space-x-3 mb-2">
+        <span className="text-sm text-gray-600">Money Saved:</span>
+        <span className="text-lg font-semibold text-green-700">${progress.toLocaleString()}</span>
       </div>
       
-      <div className="bg-green-900/50 rounded p-3 mb-3">
-        <Progress 
-          value={progressPercentage} 
-          className="h-2 bg-green-900" 
-        />
-        <div className="text-xs text-green-200 mt-1 font-medium">
-          REWARD AT $1,000 SAVED
-        </div>
+      <Progress 
+        value={progressPercentage} 
+        className="h-2 bg-gray-100 mb-2" 
+      />
+      
+      <div className="text-xs text-gray-500 mb-1">
+        Every "Get Deal Now" click increases this amount
       </div>
-
-      <div className="text-xs text-green-200 font-medium">
-        Every time you "Get Deal Now" you increase this amount
+      
+      <div className="text-xs font-medium text-gray-700">
+        Goal: Hit the leaderboard
       </div>
 
       {hasSeinfeldCode && (
-        <div className="mt-4 bg-green-700 border border-green-600 rounded p-3">
-          <div className="text-sm font-bold text-green-100 mb-1">
-            REWARD UNLOCKED!
+        <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded">
+          <div className="text-xs font-medium text-green-800 mb-1">
+            Reward Unlocked!
           </div>
-          <div className="text-xs font-mono bg-green-600 rounded px-2 py-1 text-white">
+          <div className="text-xs font-mono bg-green-100 rounded px-2 py-1 text-green-700">
             {localStorage.getItem('seinfeld_code')}
           </div>
         </div>

@@ -112,8 +112,8 @@ export default function Leaderboard() {
         </div>
       </div>
 
-      {/* Money Saved Tracker - Simple Rectangle */}
-      <div className="max-w-xl mx-auto px-4 py-6">
+      {/* Money Saved Tracker - Minimal Design */}
+      <div className="max-w-md mx-auto px-4 py-2">
         <SavingsProgress />
       </div>
 
