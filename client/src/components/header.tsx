@@ -1,15 +1,42 @@
 import { useState, useEffect } from "react";
+import { apiRequest } from "@/lib/queryClient";
+
+interface LiveStats {
+  viewers: number;
+  hourlyBuyers: number;
+  timestamp: number;
+}
 
 export default function Header() {
-  const [liveViewers, setLiveViewers] = useState(Math.floor(Math.random() * 300) + 200);
-  const [hourlyBuyers, setHourlyBuyers] = useState(Math.floor(Math.random() * 50) + 30);
+  const [liveStats, setLiveStats] = useState<LiveStats>({
+    viewers: 200,
+    hourlyBuyers: 15,
+    timestamp: Date.now()
+  });
+
+  const fetchLiveStats = async () => {
+    try {
+      const response = await apiRequest("/api/live-stats");
+      const stats = await response.json();
+      
+      // Only update if the new values are higher or equal (never go down)
+      setLiveStats(prev => ({
+        viewers: Math.max(prev.viewers, stats.viewers),
+        hourlyBuyers: Math.max(prev.hourlyBuyers, stats.hourlyBuyers),
+        timestamp: stats.timestamp
+      }));
+    } catch (error) {
+      console.error('Failed to fetch live stats:', error);
+    }
+  };
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setLiveViewers(prev => prev + Math.floor(Math.random() * 10) - 5);
-      setHourlyBuyers(prev => prev + Math.floor(Math.random() * 3) - 1);
-    }, 3000);
-
+    // Initial fetch
+    fetchLiveStats();
+    
+    // Update every 8 seconds
+    const interval = setInterval(fetchLiveStats, 8000);
+    
     return () => clearInterval(interval);
   }, []);
 
@@ -59,11 +86,11 @@ export default function Header() {
             <div className="flex items-center justify-center space-x-6">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">LIVE: {liveViewers} viewing</span>
+                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">{hourlyBuyers} bought this hour</span>
+                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
               </div>
             </div>
           </div>

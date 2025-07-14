@@ -4,7 +4,48 @@ import { storage } from "./storage";
 import { insertAffiliateLinkSchema } from "@shared/schema";
 import { z } from "zod";
 
+// Global live stats that persist across sessions
+let liveStats = {
+  viewers: Math.floor(Math.random() * 300) + 200,
+  hourlyBuyers: Math.floor(Math.random() * 20) + 15,
+  lastHourlyReset: Date.now()
+};
+
+// Function to check if we need to reset hourly counter
+function checkHourlyReset() {
+  const now = Date.now();
+  const oneHour = 60 * 60 * 1000; // 1 hour in milliseconds
+  
+  if (now - liveStats.lastHourlyReset >= oneHour) {
+    liveStats.hourlyBuyers = Math.floor(Math.random() * 20) + 15;
+    liveStats.lastHourlyReset = now;
+  }
+}
+
+// Periodically update counters
+setInterval(() => {
+  checkHourlyReset();
+  
+  // Viewers can fluctuate slightly
+  liveStats.viewers = Math.max(150, liveStats.viewers + Math.floor(Math.random() * 10) - 3);
+  
+  // Hourly buyers only go up (occasionally)
+  if (Math.random() < 0.3) { // 30% chance every interval
+    liveStats.hourlyBuyers += Math.floor(Math.random() * 2) + 1; // Add 1-2
+  }
+}, 5000); // Update every 5 seconds
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Get live statistics
+  app.get("/api/live-stats", (req, res) => {
+    checkHourlyReset();
+    res.json({
+      viewers: liveStats.viewers,
+      hourlyBuyers: liveStats.hourlyBuyers,
+      timestamp: Date.now()
+    });
+  });
+
   // Get all affiliate links
   app.get("/api/affiliate-links", async (req, res) => {
     try {
