@@ -35,68 +35,7 @@ export default function Leaderboard() {
   const [topSavers, setTopSavers] = useState(STATIC_LEADERBOARD_DATA.topSavers);
   const [topReferrers, setTopReferrers] = useState(STATIC_LEADERBOARD_DATA.topReferrers);
 
-  // Fetch real VIP users with 3+ invites and usernames
-  const { data: realVipUsers } = useQuery({
-    queryKey: ["/api/leaderboard"],
-    refetchInterval: 10000, // Check every 10 seconds for new VIP members
-  });
-
-  // Merge real VIP users into static leaderboard when they qualify
-  useEffect(() => {
-    if (realVipUsers?.topReferrers) {
-      setTopReferrers(prev => {
-        // Get the minimum invite count from current leaderboard (17 is the lowest)
-        const minInvites = Math.min(...prev.map(r => r.referrals));
-        
-        // Filter real users who qualify (more than minimum invites)
-        const qualifyingUsers = realVipUsers.topReferrers.filter(user => 
-          user.referralCount > minInvites && user.username
-        );
-
-        if (qualifyingUsers.length === 0) return prev;
-
-        // Create updated leaderboard
-        let updatedBoard = [...prev];
-        
-        qualifyingUsers.forEach(realUser => {
-          // Check if user already exists in leaderboard
-          const existingIndex = updatedBoard.findIndex(member => 
-            member.name === realUser.username
-          );
-          
-          if (existingIndex >= 0) {
-            // Update existing user's invite count
-            updatedBoard[existingIndex] = {
-              ...updatedBoard[existingIndex],
-              referrals: realUser.referralCount
-            };
-          } else {
-            // Add new qualifying user, replace lowest member
-            const newMember = {
-              name: realUser.username,
-              referrals: realUser.referralCount,
-              earnings: realUser.referralCount * 30, // $30 per referral
-              location: "Elite VIP"
-            };
-            
-            // Find the member with lowest invites and replace them
-            const lowestIndex = updatedBoard.findIndex(member => 
-              member.referrals === Math.min(...updatedBoard.map(r => r.referrals))
-            );
-            
-            if (lowestIndex >= 0) {
-              updatedBoard[lowestIndex] = newMember;
-            }
-          }
-        });
-
-        // Sort by referral count (highest first)
-        return updatedBoard.sort((a, b) => b.referrals - a.referrals);
-      });
-    }
-  }, [realVipUsers]);
-
-  // Simulate realistic updates every 2-3 minutes for static members only
+  // Simulate realistic updates every 2-3 minutes
   useEffect(() => {
     const interval = setInterval(() => {
       // Small realistic increases to existing data
@@ -106,9 +45,6 @@ export default function Leaderboard() {
       })));
 
       setTopReferrers(prev => prev.map(referrer => {
-        // Only update static members (those with locations other than "Elite VIP")
-        if (referrer.location === "Elite VIP") return referrer;
-        
         const newReferrals = Math.random() < 0.3 ? 1 : 0; // 30% chance of +1 referral
         return {
           ...referrer,
