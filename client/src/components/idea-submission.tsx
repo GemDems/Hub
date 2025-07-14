@@ -5,6 +5,54 @@ import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
 
+// Separate Guarantee Component
+function GuaranteeSection() {
+  return (
+    <div className="mt-8 bg-gradient-to-r from-gray-900 to-black rounded-lg p-6 shadow-2xl border border-gray-700">
+      <div className="text-center">
+        <p className="text-sm text-gray-300 mb-3 leading-relaxed" style={{
+          textDecoration: 'underline',
+          textUnderlineOffset: '4px',
+          textDecorationColor: '#6b7280'
+        }}>
+          If the deal isn't real, I'll <span style={{
+            background: 'linear-gradient(to right, rgba(59, 130, 246, 0.4), rgba(59, 130, 246, 0.2))',
+            borderRadius: '3px',
+            padding: '2px 4px'
+          }}>personally find you a better one</span> — or <span style={{
+            background: 'linear-gradient(to right, rgba(59, 130, 246, 0.4), rgba(59, 130, 246, 0.2))',
+            borderRadius: '3px',
+            padding: '2px 4px'
+          }}>send it to you free</span>.
+        </p>
+        <p 
+          className="text-2xl font-bold text-white tracking-wide cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95 select-none" 
+          style={{ 
+            fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+            textShadow: '3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.3)',
+            letterSpacing: '0.15em',
+            textDecoration: 'underline',
+            textUnderlineOffset: '8px',
+            textDecorationColor: '#ffffff',
+            background: 'linear-gradient(to right, rgba(59, 130, 246, 0.3), rgba(59, 130, 246, 0.1))',
+            borderRadius: '8px',
+            padding: '8px 16px',
+            display: 'inline-block'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.filter = 'drop-shadow(0 25px 25px rgba(0, 0, 0, 0.6)) blur(0.5px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.filter = 'none';
+          }}
+        >
+          *GUARANTEE*
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export default function IdeaSubmission() {
   const [idea, setIdea] = useState("");
   const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -122,194 +170,135 @@ export default function IdeaSubmission() {
 
   if (hasSubmitted) {
     return (
-      <div className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-        <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-4 text-center">
-          <p className="text-green-600 dark:text-green-400 font-medium">
-            ✅ Thank you! Your idea has been submitted to our team.
-          </p>
-          <p className="text-sm text-gray-500 mt-1">
-            One idea per device - yours has been received!
-          </p>
-          
-          {/* Guarantee Section */}
-          <div className="text-center mt-6 pt-4 border-t border-green-200/30">
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2" style={{
-              textDecoration: 'underline',
-              textUnderlineOffset: '4px',
-              textDecorationColor: '#6b7280'
-            }}>
-              If the deal isn't real, I'll <span style={{
-                background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
-                borderRadius: '3px',
-                padding: '2px 4px'
-              }}>personally find you a better one</span> — or <span style={{
-                background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
-                borderRadius: '3px',
-                padding: '2px 4px'
-              }}>send it to you free</span>.
+      <>
+        <div className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+          <div className="bg-gradient-to-r from-green-500/10 to-blue-500/10 border border-green-500/20 rounded-lg p-4 text-center">
+            <p className="text-green-600 dark:text-green-400 font-medium">
+              ✅ Thank you! Your idea has been submitted to our team.
             </p>
-            <p className="text-lg font-bold text-white tracking-wide" style={{ 
-              fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-              textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)',
-              letterSpacing: '0.1em',
-              textDecoration: 'underline',
-              textUnderlineOffset: '6px',
-              textDecorationColor: '#ffffff',
-              background: 'linear-gradient(to right, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.1))',
-              borderRadius: '6px',
-              padding: '6px 12px',
-              display: 'inline-block'
-            }}>
-              *GUARANTEE*
+            <p className="text-sm text-gray-500 mt-1">
+              One idea per device - yours has been received!
             </p>
           </div>
         </div>
-      </div>
+        <GuaranteeSection />
+      </>
     );
   }
 
   return (
-    <div className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-      <div 
-        className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-lg p-6 relative overflow-hidden cursor-pointer"
-        onClick={handleClick}
-      >
-        {/* Colorful click overlays */}
-        {clickOverlays.map(overlay => (
-          <div
-            key={overlay.id}
-            className="absolute pointer-events-none"
-            style={{
-              left: overlay.x - 15,
-              top: overlay.y - 15,
-              color: overlay.color,
-              animation: 'colorful-bounce 1.5s ease-out forwards'
-            }}
-          >
-            <div 
-              className="w-8 h-8 rounded-full relative"
-              style={{ 
-                backgroundColor: overlay.color,
-                animation: 'glow-pulse 1.5s ease-out forwards'
+    <>
+      <div className={`transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+        <div 
+          className="bg-gradient-to-r from-purple-500/10 to-pink-500/10 border border-purple-500/20 rounded-lg p-6 relative overflow-hidden cursor-pointer"
+          onClick={handleClick}
+        >
+          {/* Colorful click overlays */}
+          {clickOverlays.map(overlay => (
+            <div
+              key={overlay.id}
+              className="absolute pointer-events-none"
+              style={{
+                left: overlay.x - 15,
+                top: overlay.y - 15,
+                color: overlay.color,
+                animation: 'colorful-bounce 1.5s ease-out forwards'
               }}
             >
-              {/* Outer glow ring */}
               <div 
-                className="absolute -inset-4 rounded-full animate-ping"
+                className="w-8 h-8 rounded-full relative"
                 style={{ 
                   backgroundColor: overlay.color,
-                  opacity: 0.3,
-                  filter: 'blur(4px)'
+                  animation: 'glow-pulse 1.5s ease-out forwards'
                 }}
-              />
-              {/* Middle glow ring */}
-              <div 
-                className="absolute -inset-2 rounded-full animate-pulse"
-                style={{ 
-                  backgroundColor: overlay.color,
-                  opacity: 0.5,
-                  filter: 'blur(2px)'
-                }}
-              />
-              {/* Inner bright core */}
-              <div 
-                className="absolute inset-1 rounded-full"
-                style={{ 
-                  backgroundColor: overlay.color,
-                  boxShadow: `0 0 40px ${overlay.color}, 0 0 80px ${overlay.color}`,
-                  filter: 'brightness(2) saturate(1.5)'
-                }}
-              />
-              {/* Ultra bright center dot */}
-              <div 
-                className="absolute inset-3 rounded-full"
-                style={{ 
-                  backgroundColor: 'white',
-                  filter: 'brightness(3)',
-                  boxShadow: `0 0 20px ${overlay.color}`
-                }}
-              />
+              >
+                {/* Outer glow ring */}
+                <div 
+                  className="absolute -inset-4 rounded-full animate-ping"
+                  style={{ 
+                    backgroundColor: overlay.color,
+                    opacity: 0.3,
+                    filter: 'blur(4px)'
+                  }}
+                />
+                {/* Middle glow ring */}
+                <div 
+                  className="absolute -inset-2 rounded-full animate-pulse"
+                  style={{ 
+                    backgroundColor: overlay.color,
+                    opacity: 0.5,
+                    filter: 'blur(2px)'
+                  }}
+                />
+                {/* Inner bright core */}
+                <div 
+                  className="absolute inset-1 rounded-full"
+                  style={{ 
+                    backgroundColor: overlay.color,
+                    boxShadow: `0 0 40px ${overlay.color}, 0 0 80px ${overlay.color}`,
+                    filter: 'brightness(2) saturate(1.5)'
+                  }}
+                />
+                {/* Ultra bright center dot */}
+                <div 
+                  className="absolute inset-3 rounded-full"
+                  style={{ 
+                    backgroundColor: 'white',
+                    filter: 'brightness(3)',
+                    boxShadow: `0 0 20px ${overlay.color}`
+                  }}
+                />
+              </div>
             </div>
-          </div>
-        ))}
-        <div className="text-center mb-4">
-          <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-            💡 Got a Product Idea?
-          </h3>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Share your 2-word product idea with our team
-          </p>
-        </div>
-        
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <div className="relative">
-            <Input
-              value={idea}
-              onChange={(e) => setIdea(e.target.value)}
-              placeholder="Smart Watch, Eco Bottle, etc."
-              maxLength={20}
-              className="text-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-purple-500/30 focus:border-purple-500 transition-all duration-300"
-            />
-            <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
-              {idea.length}/20
-            </div>
+          ))}
+          <div className="text-center mb-4">
+            <h3 className="text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              💡 Got a Product Idea?
+            </h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+              Share your 2-word product idea with our team
+            </p>
           </div>
           
-          <Button 
-            type="submit" 
-            disabled={submitIdeaMutation.isPending}
-            className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
-          >
-            {submitIdeaMutation.isPending ? (
-              <div className="flex items-center gap-2">
-                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                Submitting...
+          <form onSubmit={handleSubmit} className="space-y-3">
+            <div className="relative">
+              <Input
+                value={idea}
+                onChange={(e) => setIdea(e.target.value)}
+                placeholder="Smart Watch, Eco Bottle, etc."
+                maxLength={20}
+                className="text-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm border-purple-500/30 focus:border-purple-500 transition-all duration-300"
+              />
+              <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs text-gray-400">
+                {idea.length}/20
               </div>
-            ) : (
-              "Submit Idea ✨"
-            )}
-          </Button>
-        </form>
-        
-        <p className="text-xs text-gray-500 text-center mt-3">
-          One idea per device • 2 words max • 20 characters limit
-        </p>
-      </div>
-      
-      {/* Separate Guarantee Section */}
-      <div className="mt-8 bg-gradient-to-r from-gray-900 to-black rounded-lg p-6 shadow-2xl border border-gray-700">
-        <div className="text-center">
-          <p className="text-sm text-gray-300 mb-3 leading-relaxed" style={{
-            textDecoration: 'underline',
-            textUnderlineOffset: '4px',
-            textDecorationColor: '#6b7280'
-          }}>
-            If the deal isn't real, I'll <span style={{
-              background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
-              borderRadius: '3px',
-              padding: '2px 4px'
-            }}>personally find you a better one</span> — or <span style={{
-              background: 'linear-gradient(to right, rgba(34, 197, 94, 0.4), rgba(34, 197, 94, 0.2))',
-              borderRadius: '3px',
-              padding: '2px 4px'
-            }}>send it to you free</span>.
-          </p>
-          <p className="text-2xl font-bold text-white tracking-wide" style={{ 
-            fontFamily: 'ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
-            textShadow: '3px 3px 6px rgba(0, 0, 0, 0.9), 0 0 20px rgba(255, 255, 255, 0.3)',
-            letterSpacing: '0.15em',
-            textDecoration: 'underline',
-            textUnderlineOffset: '8px',
-            textDecorationColor: '#ffffff',
-            background: 'linear-gradient(to right, rgba(34, 197, 94, 0.3), rgba(34, 197, 94, 0.1))',
-            borderRadius: '8px',
-            padding: '8px 16px',
-            display: 'inline-block'
-          }}>
-            *GUARANTEE*
+            </div>
+            
+            <Button 
+              type="submit" 
+              disabled={submitIdeaMutation.isPending}
+              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              {submitIdeaMutation.isPending ? (
+                <div className="flex items-center gap-2">
+                  <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                  Submitting...
+                </div>
+              ) : (
+                "Submit Idea ✨"
+              )}
+            </Button>
+          </form>
+          
+          <p className="text-xs text-gray-500 text-center mt-3">
+            One idea per device • 2 words max • 20 characters limit
           </p>
         </div>
       </div>
-    </div>
+      <GuaranteeSection />
+    </>
   );
 }
+
+// Export both components
+export { GuaranteeSection };
