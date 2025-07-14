@@ -19,7 +19,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [currentAlertIndex, setCurrentAlertIndex] = useState(0);
+  const [currentAlertText, setCurrentAlertText] = useState("🔔 Real-time Stock Drop");
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -31,19 +31,15 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     "👥 Others Also Bought"
   ];
 
-  // Get current alert text safely - ensure no number is ever rendered
-  const currentAlert = alerts[currentAlertIndex] || alerts[0] || "";
-
   // Cycle through alerts every 4 seconds for each product
   useEffect(() => {
+    let alertIndex = 0;
     const interval = setInterval(() => {
-      setCurrentAlertIndex((prev) => {
-        const nextIndex = (prev + 1) % alerts.length;
-        return nextIndex;
-      });
+      alertIndex = (alertIndex + 1) % alerts.length;
+      setCurrentAlertText(alerts[alertIndex]);
     }, 4000);
     return () => clearInterval(interval);
-  }, [alerts.length]);
+  }, [alerts]);
   
   const trackClickMutation = useMutation({
     mutationFn: async () => {
@@ -179,11 +175,11 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         </div>
         
         {/* Cycling Alert Badge */}
-        {isElitePick && currentAlert && (
+        {isElitePick && currentAlertText && (
           <div className="absolute top-0 left-0 right-0 z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
               <Users className="w-3 h-3 inline mr-1" />
-              {currentAlert}
+              {currentAlertText}
             </div>
           </div>
         )}
