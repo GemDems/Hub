@@ -55,11 +55,18 @@ export default function SavingsProgress() {
     (window as any).updateSavingsProgress = updateProgress;
   }, [progress, hasSeinfeldCode]);
 
+  const scrollToLeaderboard = () => {
+    const leaderboardElement = document.querySelector('[data-leaderboard]');
+    if (leaderboardElement) {
+      leaderboardElement.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <div className="text-center py-4">
       <div className="flex items-center justify-center space-x-3 mb-2">
-        <span className="text-sm text-gray-600">Money Saved:</span>
-        <span className="text-lg font-semibold text-green-700">${progress.toLocaleString()}</span>
+        <span className="text-sm text-gray-600 font-normal">Money Saved:</span>
+        <span className="text-lg font-medium text-green-700">${progress.toLocaleString()}</span>
       </div>
       
       <Progress 
@@ -67,13 +74,16 @@ export default function SavingsProgress() {
         className="h-2 bg-gray-100 mb-2" 
       />
       
-      <div className="text-xs text-gray-500 mb-1">
+      <div className="text-xs text-gray-500 mb-1 font-normal">
         👉 Every "Get Deal Now" increases your amount saved
       </div>
       
-      <div className="text-xs font-medium text-gray-700">
+      <button 
+        onClick={scrollToLeaderboard}
+        className="text-xs font-normal text-gray-700 hover:text-blue-600 underline cursor-pointer transition-colors"
+      >
         Goal: Hit the leaderboard
-      </div>
+      </button>
 
       {hasSeinfeldCode && (
         <div className="mt-3 p-2 bg-green-50 border border-green-200 rounded">

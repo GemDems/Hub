@@ -57,7 +57,7 @@ export default function Leaderboard() {
   }, []);
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-12">
+    <div className="max-w-6xl mx-auto px-4 py-12" data-leaderboard>
       <div className="text-center mb-12">
         <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 bg-clip-text text-transparent mb-4">
           Elite Performance Leaderboard
