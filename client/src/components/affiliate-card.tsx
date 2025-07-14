@@ -174,8 +174,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </Button>
         </div>
         
-        {/* Cycling Alert Badge */}
-        {isElitePick && currentAlertText && (
+        {/* Cycling Alert Badge - TEMPORARILY DISABLED FOR DEBUGGING */}
+        {false && isElitePick && currentAlertText && (
           <div className="absolute top-0 left-0 right-0 z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
               <Users className="w-3 h-3 inline mr-1" />
@@ -196,13 +196,15 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         )}
         
-        {/* Stock Countdown Alert */}
-        <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-0'} left-0 right-0 z-10`}>
-          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
-            <AlertCircle className="w-3 h-3 inline mr-1" />
-            ONLY {stock} LEFT IN STOCK
+        {/* Stock Countdown Alert - TEMPORARILY DISABLED FOR DEBUGGING */}
+        {false && (
+          <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-0'} left-0 right-0 z-10`}>
+            <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
+              <AlertCircle className="w-3 h-3 inline mr-1" />
+              ONLY {stock} LEFT IN STOCK
+            </div>
           </div>
-        </div>
+        )}
       
       <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
@@ -219,12 +221,22 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         </div>
         
-        {/* Photo Carousel */}
-        <PhotoCarousel 
-          images={allImages}
-          title={link.title}
-          className="w-full h-48"
-        />
+        {/* Photo Carousel - TEMPORARILY DISABLED FOR DEBUGGING */}
+        {false && (
+          <PhotoCarousel 
+            images={allImages}
+            title={link.title}
+            className="w-full h-48"
+          />
+        )}
+        
+        {/* Temporary placeholder */}
+        <div className="w-full h-48 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl">
+          <div className="text-center px-4">
+            <div className="text-2xl mb-2">💎</div>
+            <div className="text-sm opacity-90">Premium Deal</div>
+          </div>
+        </div>
       </div>
       
       <CardContent className="p-6 space-y-4">
