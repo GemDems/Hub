@@ -115,6 +115,22 @@ export default function IdeaSubmission() {
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
             Share your 2-word product idea with our team
           </p>
+          <div className="mt-3 space-y-1">
+            <div className="rainbow-text font-bold text-sm insane-pulse">
+              cool ideas only*
+            </div>
+            <div className="flex items-center justify-center gap-2 text-xs">
+              <span className="text-red-600 font-bold crazy-bounce">
+                don't waste my time
+              </span>
+              <span className="text-orange-500 font-bold rainbow-text text-lg">
+                -I
+              </span>
+            </div>
+            <div className="text-xs text-purple-600 font-medium insane-pulse">
+              I don't need u energy unless u do crazy ideas
+            </div>
+          </div>
         </div>
         
         <form onSubmit={handleSubmit} className="space-y-3">
