@@ -9,10 +9,13 @@ export interface IStorage {
   
   // Affiliate Links
   getAllAffiliateLinks(): Promise<AffiliateLink[]>;
+  getPublishedAffiliateLinks(): Promise<AffiliateLink[]>;
+  getDraftAffiliateLinks(): Promise<AffiliateLink[]>;
   getAffiliateLinkById(id: number): Promise<AffiliateLink | undefined>;
   createAffiliateLink(link: InsertAffiliateLink): Promise<AffiliateLink>;
   updateAffiliateLink(id: number, link: Partial<AffiliateLink>): Promise<AffiliateLink | undefined>;
   deleteAffiliateLink(id: number): Promise<boolean>;
+  publishDraft(id: number): Promise<AffiliateLink | undefined>;
   incrementLinkClicks(id: number): Promise<AffiliateLink | undefined>;
   
   // Referral System
@@ -51,6 +54,16 @@ export class DatabaseStorage implements IStorage {
     return links;
   }
 
+  async getPublishedAffiliateLinks(): Promise<AffiliateLink[]> {
+    const links = await db.select().from(affiliateLinks).where(eq(affiliateLinks.isDraft, 0));
+    return links;
+  }
+
+  async getDraftAffiliateLinks(): Promise<AffiliateLink[]> {
+    const links = await db.select().from(affiliateLinks).where(eq(affiliateLinks.isDraft, 1));
+    return links;
+  }
+
   async getAffiliateLinkById(id: number): Promise<AffiliateLink | undefined> {
     const [link] = await db.select().from(affiliateLinks).where(eq(affiliateLinks.id, id));
     return link || undefined;
@@ -63,10 +76,20 @@ export class DatabaseStorage implements IStorage {
         ...insertLink,
         imageUrl: insertLink.imageUrl || null,
         clicks: 0,
-        isVerified: insertLink.isVerified ? 1 : 0
+        isVerified: insertLink.isVerified ? 1 : 0,
+        isDraft: insertLink.isDraft ? 1 : 0
       })
       .returning();
     return link;
+  }
+
+  async publishDraft(id: number): Promise<AffiliateLink | undefined> {
+    const [updated] = await db
+      .update(affiliateLinks)
+      .set({ isDraft: 0 })
+      .where(eq(affiliateLinks.id, id))
+      .returning();
+    return updated || undefined;
   }
 
   async updateAffiliateLink(id: number, updateData: Partial<AffiliateLink>): Promise<AffiliateLink | undefined> {

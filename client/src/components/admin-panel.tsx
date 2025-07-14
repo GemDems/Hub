@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -7,10 +7,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image } from "lucide-react";
-import type { InsertAffiliateLink } from "@shared/schema";
+import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink } from "lucide-react";
+import type { InsertAffiliateLink, AffiliateLink } from "@shared/schema";
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -22,7 +25,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean }>({
+  const [activeTab, setActiveTab] = useState("create");
+  const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean; isDraft?: boolean }>({
     title: "",
     url: "",
     description: "",
@@ -31,8 +35,23 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     imageUrls: [],
     price: "",
     isVerified: false,
+    isDraft: false,
   });
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
+  
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  // Fetch all products and drafts for management
+  const { data: allProducts = [] } = useQuery({
+    queryKey: ["/api/admin/affiliate-links"],
+    enabled: isAuthenticated,
+  });
+
+  const { data: drafts = [] } = useQuery({
+    queryKey: ["/api/admin/drafts"],
+    enabled: isAuthenticated,
+  });
 
   const addImageField = () => {
     setAdditionalImages([...additionalImages, ""]);
@@ -107,8 +126,55 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     }
   };
 
-  const { toast } = useToast();
-  const queryClient = useQueryClient();
+  // Publish draft mutation
+  const publishDraftMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/admin/publish/${id}`, {
+        method: "POST",
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      toast({
+        title: "Draft Published",
+        description: "Product is now live on the site",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to publish draft",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Delete product mutation
+  const deleteProductMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest(`/api/affiliate-links/${id}`, {
+        method: "DELETE",
+        body: JSON.stringify({ password: "9f$81r@V7#iwant" }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      toast({
+        title: "Product Removed",
+        description: "Product has been permanently deleted",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to remove product",
+        variant: "destructive",
+      });
+    },
+  });
   
   const ADMIN_PASSWORD = "9f$81r@V7#iwant";
   
@@ -134,8 +200,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const handleClose = () => {
     setIsAuthenticated(false);
     setPassword("");
-    setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "", isVerified: false });
-    setAdditionalImages([]);
+    setActiveTab("create");
+    resetForm();
     onClose();
   };
 
@@ -163,7 +229,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     },
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent, isDraft = false) => {
     e.preventDefault();
     
     if (!formData.title || !formData.url || !formData.description) {
@@ -222,18 +288,90 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     const allImageUrls = [formData.imageUrl, ...additionalImages].filter(url => url && url.trim());
     const submissionData = {
       ...formData,
-      imageUrls: allImageUrls.length > 0 ? allImageUrls : undefined
+      imageUrls: allImageUrls.length > 0 ? allImageUrls : undefined,
+      isDraft: isDraft
     };
     createLinkMutation.mutate(submissionData);
   };
 
+  const resetForm = () => {
+    setFormData({
+      title: "",
+      url: "",
+      description: "",
+      category: "Hot Deals",
+      imageUrl: "",
+      imageUrls: [],
+      price: "",
+      isVerified: false,
+      isDraft: false,
+    });
+    setAdditionalImages([]);
+  };
+
+
+
+  const renderProductCard = (product: AffiliateLink, isDraft = false) => (
+    <Card key={product.id} className="mb-4">
+      <CardHeader>
+        <div className="flex justify-between items-start">
+          <div>
+            <CardTitle className="text-lg">{product.title}</CardTitle>
+            <CardDescription>{product.category}</CardDescription>
+          </div>
+          <div className="flex gap-2">
+            {isDraft && (
+              <Button
+                size="sm"
+                onClick={() => publishDraftMutation.mutate(product.id)}
+                disabled={publishDraftMutation.isPending}
+              >
+                <Globe className="w-4 h-4 mr-1" />
+                Publish
+              </Button>
+            )}
+            <Button
+              size="sm"
+              variant="destructive"
+              onClick={() => deleteProductMutation.mutate(product.id)}
+              disabled={deleteProductMutation.isPending}
+            >
+              <Trash2 className="w-4 h-4 mr-1" />
+              Remove
+            </Button>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className="space-y-2">
+          <p className="text-sm text-gray-600">{product.description}</p>
+          <div className="flex gap-2">
+            {product.price && (
+              <Badge variant="outline">{product.price}</Badge>
+            )}
+            {product.isVerified ? (
+              <Badge variant="secondary">Verified</Badge>
+            ) : null}
+            {product.clicks > 0 && (
+              <Badge variant="outline">{product.clicks} clicks</Badge>
+            )}
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <Calendar className="w-4 h-4" />
+            Created: {new Date(product.createdAt).toLocaleDateString()}
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Shield className="w-5 h-5 text-conversion-blue" />
-            {isAuthenticated ? "Add New Affiliate Link" : "Creator Authentication Required"}
+            {isAuthenticated ? "Creator Mode Dashboard" : "Creator Authentication Required"}
           </DialogTitle>
         </DialogHeader>
 
@@ -288,8 +426,21 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             </div>
           </form>
         ) : (
-
-        <form onSubmit={handleSubmit} className="space-y-4">
+          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="create">Create Product</TabsTrigger>
+              <TabsTrigger value="drafts">Drafts ({drafts.length})</TabsTrigger>
+              <TabsTrigger value="manage">Manage All</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="create">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Create New Product</CardTitle>
+                  <CardDescription>Add a new affiliate link to your site</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-4">
           <div>
             <Label htmlFor="title">Link Title *</Label>
             <Input
@@ -468,24 +619,74 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             </Label>
           </div>
 
-          <div className="flex space-x-3 pt-4">
-            <Button 
-              type="submit" 
-              className="flex-1 bg-conversion-blue hover:bg-blue-700"
-              disabled={createLinkMutation.isPending}
-            >
-              {createLinkMutation.isPending ? "Adding..." : "Add Link"}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={handleClose}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
-          </div>
-        </form>
+                    <div className="flex gap-2">
+                      <Button 
+                        type="submit" 
+                        className="flex-1 bg-conversion-blue hover:bg-blue-700"
+                        disabled={createLinkMutation.isPending}
+                      >
+                        {createLinkMutation.isPending ? "Publishing..." : "Publish Now"}
+                      </Button>
+                      <Button 
+                        type="button"
+                        variant="outline"
+                        className="flex-1"
+                        onClick={(e) => handleSubmit(e, true)}
+                        disabled={createLinkMutation.isPending}
+                      >
+                        <FileText className="w-4 h-4 mr-2" />
+                        Save as Draft
+                      </Button>
+                    </div>
+                  </form>
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="drafts">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Draft Products ({drafts.length})</CardTitle>
+                  <CardDescription>Manage your unpublished products</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {drafts.length === 0 ? (
+                    <div className="text-center py-8">
+                      <FileText className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-500">No drafts yet</p>
+                      <p className="text-sm text-gray-400">Create a product and save it as a draft to see it here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {drafts.map((draft) => renderProductCard(draft, true))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="manage">
+              <Card>
+                <CardHeader>
+                  <CardTitle>All Products ({allProducts.length})</CardTitle>
+                  <CardDescription>Manage all your affiliate links</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {allProducts.length === 0 ? (
+                    <div className="text-center py-8">
+                      <Globe className="w-16 h-16 mx-auto text-gray-400 mb-4" />
+                      <p className="text-gray-500">No products yet</p>
+                      <p className="text-sm text-gray-400">Create your first product to get started</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {allProducts.map((product) => renderProductCard(product, false))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         )}
       </DialogContent>
     </Dialog>

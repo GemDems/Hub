@@ -21,6 +21,7 @@ export const affiliateLinks = pgTable("affiliate_links", {
   stock: integer("stock").default(0),
   isElitePick: integer("is_elite_pick").default(0), // Using integer for boolean compatibility
   isVerified: integer("is_verified").default(0), // Verified source badge (Amazon/Walmart/etc)
+  isDraft: integer("is_draft").default(0), // Draft status - 0 = published, 1 = draft
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -64,6 +65,7 @@ export const insertAffiliateLinkSchema = createInsertSchema(affiliateLinks).omit
   imageUrls: z.array(z.string().url()).optional(),
   price: z.string().optional(),
   isVerified: z.boolean().optional(),
+  isDraft: z.boolean().optional(),
 });
 
 export type InsertUser = z.infer<typeof insertUserSchema>;

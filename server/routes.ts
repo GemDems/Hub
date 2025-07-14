@@ -46,13 +46,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
-  // Get all affiliate links
+  // Get published affiliate links (public)
   app.get("/api/affiliate-links", async (req, res) => {
+    try {
+      const links = await storage.getPublishedAffiliateLinks();
+      res.json(links);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch affiliate links" });
+    }
+  });
+
+  // Admin routes for Creator Mode
+  app.get("/api/admin/affiliate-links", async (req, res) => {
     try {
       const links = await storage.getAllAffiliateLinks();
       res.json(links);
     } catch (error) {
-      res.status(500).json({ message: "Failed to fetch affiliate links" });
+      res.status(500).json({ message: "Failed to fetch all affiliate links" });
+    }
+  });
+
+  app.get("/api/admin/drafts", async (req, res) => {
+    try {
+      const drafts = await storage.getDraftAffiliateLinks();
+      res.json(drafts);
+    } catch (error) {
+      res.status(500).json({ message: "Failed to fetch drafts" });
+    }
+  });
+
+  app.post("/api/admin/publish/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const published = await storage.publishDraft(id);
+      if (published) {
+        res.json(published);
+      } else {
+        res.status(404).json({ message: "Draft not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to publish draft" });
     }
   });
 
