@@ -157,177 +157,216 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     link.imageUrls.filter(url => url && url.trim()) : 
     (link.imageUrl && link.imageUrl.trim() ? [link.imageUrl] : []);
 
+  const remainingStock = Math.floor(Math.random() * 15) + 3;
+
+  const images = link.imageUrls && link.imageUrls.length > 0 ? 
+    link.imageUrls.filter(url => url && url.trim()) : 
+    (link.imageUrl && link.imageUrl.trim() ? [link.imageUrl] : []);
+
   return (
-    <>
-      <div className="group relative h-80 w-full">
-        {/* Glassmorphic Card Base */}
-        <Card className="absolute inset-0 bg-white/80 backdrop-blur-md rounded-2xl shadow-xl border border-white/20 overflow-hidden">
-          {/* Background Blur Layer with Gradient */}
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-purple-50/20 to-pink-50/30"></div>
+    <Card className="group relative overflow-hidden bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-200">
+      {/* Invisible Delete Button - Completely Hidden */}
+      <button
+        onClick={() => setShowDeleteDialog(true)}
+        className="absolute top-2 right-2 z-50 w-6 h-6 bg-transparent hover:bg-transparent border-0 shadow-none opacity-0 transition-opacity duration-300"
+        title="Delete Product"
+      >
+        <Trash2 className="w-3 h-3 opacity-0" />
+      </button>
 
-          
-          {/* Floating Product Image - Upper Half */}
-          <div className="absolute top-4 left-4 right-4 h-40 z-20">
-            <div className="relative h-full rounded-xl overflow-hidden">
-              <PhotoCarousel 
-                images={allImages}
-                title={link.title}
-                className="h-full object-cover"
-              />
-              {/* Image fade-out blur at bottom */}
-              <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-white/60 to-transparent backdrop-blur-sm"></div>
-            </div>
-          </div>
-
-          {/* Invisible Delete Button */}
-          <div className="absolute top-2 right-2 z-50" style={{ opacity: 0, visibility: 'hidden' }}>
-            <Button
-              onClick={() => setShowDeleteDialog(true)}
-              className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none"
-              title="Delete Product"
-              style={{ opacity: 0, visibility: 'hidden' }}
-            >
-              <Trash2 className="w-4 h-4" style={{ opacity: 0, visibility: 'hidden' }} />
-            </Button>
-          </div>
-        
-          {/* Cycling Alert Badge */}
-          {isElitePick && currentAlertText ? (
-            <div className="absolute top-3 left-3 z-40 bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold px-2 py-1 rounded-full">
-              <Users className="w-3 h-3 inline mr-1" />
-              {currentAlertText}
-            </div>
-          ) : null}
-          
-          {/* Verified Source Badge */}
-          {link.isVerified ? (
-            <div className="absolute top-3 right-3 z-40 bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center">
-              <div className="w-3 h-3 bg-white rounded-full mr-1 flex items-center justify-center">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              </div>
-              Verified
-            </div>
-          ) : null}
-          
-          {/* Card Content - Bottom Half */}
-          <div className="absolute bottom-0 left-0 right-0 h-40 bg-white/70 backdrop-blur-sm border-t border-white/30 rounded-b-2xl p-4">
-            {/* Stock Alert */}
-            {stock > 0 ? (
-              <div className="absolute top-2 right-2 bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold px-2 py-1 rounded-full">
-                <AlertCircle className="w-3 h-3 inline mr-1" />
-                ONLY {stock} LEFT
-              </div>
-            ) : null}
-            
-            <h3 className="text-lg font-bold text-gray-900 mb-2 truncate">
-              {link.title}
-            </h3>
-            
-            <p className="text-gray-700 text-sm line-clamp-2 mb-3">
-              {link.description}
-            </p>
-            
-            {/* Pricing and CTA */}
-            <div className="flex items-center justify-between mb-3">
-              <div>
-                <span className="text-xl font-bold text-green-600">{price}</span>
-                <span className="text-sm text-gray-400 line-through ml-2">
-                  {(() => {
-                    const priceMatch = price.match(/[\d.]+/);
-                    if (priceMatch) {
-                      const numericPrice = parseFloat(priceMatch[0]);
-                      const originalPrice = Math.round(numericPrice * 2.2);
-                      return price.replace(/[\d.]+/, originalPrice.toString());
-                    }
-                    return '$99';
-                  })()}
-                </span>
-              </div>
-              <div className="text-xs text-red-600 font-bold">
-                Save {discount}
-              </div>
-            </div>
-            
-            <Button
-              onClick={handleClick}
-              disabled={trackClickMutation.isPending}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-xl transition-all duration-300"
-            >
-              <span className="flex items-center justify-center">
-                {trackClickMutation.isPending ? (
-                  <>Processing...</>
-                ) : (
-                  <>
-                    <ShoppingCart className="w-4 h-4 mr-2" />
-                    Get Deal Now
-                    <ExternalLink className="w-4 h-4 ml-2" />
-                  </>
-                )}
-              </span>
-            </Button>
-          </div>
-        </Card>
+      {/* Alert Badge */}
+      <div className="absolute top-3 left-3 z-20 bg-gradient-to-r from-red-500 to-orange-500 text-white px-2 py-1 rounded-full text-xs font-bold animate-pulse">
+        {currentAlertText}
       </div>
 
+      {/* Elite Pick Badge - Only show for Elite picks */}
+      {link.isElitePick ? (
+        <div className="absolute top-3 right-3 z-20 bg-gradient-to-r from-yellow-400 to-yellow-600 text-black px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+          <Award className="w-3 h-3" />
+          Elite Pick
+        </div>
+      ) : null}
 
-    {/* Delete Confirmation Dialog */}
-    <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-      <DialogContent className="max-w-md" aria-describedby="delete-description">
-        <DialogHeader>
-          <DialogTitle className="text-urgency-red">Delete Product</DialogTitle>
-        </DialogHeader>
-        
-        <form onSubmit={handleDelete} className="space-y-4">
-          <p id="delete-description" className="text-sm text-gray-600">
-            Are you sure you want to permanently delete "{link.title}"? This action cannot be undone.
-          </p>
+      {/* Verified Badge */}
+      {link.isVerified ? (
+        <div className="absolute top-12 right-3 z-20 bg-gradient-to-r from-green-500 to-green-700 text-white px-2 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+          <Star className="w-3 h-3" />
+          Verified
+        </div>
+      ) : null}
+
+      {/* Photo Carousel */}
+      <PhotoCarousel 
+        images={images} 
+        title={link.title}
+        className="h-48 object-cover"
+      />
+
+      <CardContent className="p-6 space-y-4">
+        {/* Category and Stock Info */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-lg">{getCategoryEmoji(link.category)}</span>
+            <span className="text-sm font-medium text-gray-600 capitalize">
+              {link.category}
+            </span>
+          </div>
           
-          <div className="relative">
-            <Label htmlFor="deletePassword">Enter Creator Password</Label>
-            <div className="relative mt-1">
-              <Input
-                id="deletePassword"
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter password to confirm deletion"
-                className="pr-10"
-              />
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                className="absolute right-1 top-1 h-8 w-8 p-0"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </Button>
+          {/* Live Stock Counter */}
+          <div className="text-right">
+            <div className="text-xs text-red-600 font-bold animate-pulse">
+              ONLY {remainingStock} LEFT
+            </div>
+            <div className="text-xs text-gray-500">
+              {Math.floor(Math.random() * 50) + 10} watching
             </div>
           </div>
+        </div>
 
-          <div className="flex space-x-3 pt-4">
-            <Button 
-              type="submit" 
-              className="flex-1 bg-urgency-red hover:bg-red-700"
-              disabled={deleteLinkMutation.isPending}
-            >
-              {deleteLinkMutation.isPending ? "Deleting..." : "Delete Product"}
-            </Button>
-            <Button 
-              type="button" 
-              variant="outline" 
-              onClick={() => {
-                setShowDeleteDialog(false);
-                setPassword("");
-              }}
-              className="flex-1"
-            >
-              Cancel
-            </Button>
+        {/* Title */}
+        <h3 className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors">
+          {link.title}
+        </h3>
+
+        {/* Description */}
+        <p className="text-gray-600 text-sm line-clamp-2">
+          {link.description}
+        </p>
+
+        {/* Pricing */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className="text-2xl font-bold text-green-600">{price}</span>
+            <span className="text-lg text-gray-400 line-through">
+              {(() => {
+                const priceMatch = price.match(/[\d.]+/);
+                if (priceMatch) {
+                  const numericPrice = parseFloat(priceMatch[0]);
+                  const originalPrice = Math.round(numericPrice * 2.2);
+                  return price.replace(/[\d.]+/, originalPrice.toString());
+                }
+                return '$99';
+              })()}
+            </span>
           </div>
-        </form>
-      </DialogContent>
-    </Dialog>
-    </>
+          <div className="text-right">
+            <div className="text-sm text-red-600 font-bold">Save {discount}</div>
+          </div>
+        </div>
+
+        {/* Social Proof */}
+        <div className="grid grid-cols-3 gap-3 text-xs">
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1">
+              <Star className="w-3 h-3 text-yellow-500" />
+              <span className="font-semibold">{stats.rating}</span>
+            </div>
+            <div className="text-gray-500">{stats.reviews} reviews</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1">
+              <Users className="w-3 h-3 text-blue-500" />
+              <span className="font-semibold">{stats.buyers}</span>
+            </div>
+            <div className="text-gray-500">bought this week</div>
+          </div>
+          <div className="text-center">
+            <div className="flex items-center justify-center gap-1">
+              <TrendingUp className="w-3 h-3 text-green-500" />
+              <span className="font-semibold">Trending</span>
+            </div>
+            <div className="text-gray-500">popular choice</div>
+          </div>
+        </div>
+
+        {/* CTA Button */}
+        <Button
+          onClick={handleClick}
+          disabled={trackClickMutation.isPending}
+          className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-3 rounded-lg transition-all duration-300 transform hover:scale-105"
+        >
+          <span className="flex items-center justify-center">
+            {trackClickMutation.isPending ? (
+              <>Processing...</>
+            ) : (
+              <>
+                <ShoppingCart className="w-4 h-4 mr-2" />
+                Get Deal Now
+                <ExternalLink className="w-4 h-4 ml-2" />
+              </>
+            )}
+          </span>
+        </Button>
+
+        {/* Trust Indicators */}
+        <div className="flex items-center justify-center gap-4 text-xs text-gray-500">
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+            <span>SSL Secured</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+            <span>Encrypted</span>
+          </div>
+        </div>
+      </CardContent>
+
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent className="max-w-md" aria-describedby="delete-description">
+          <DialogHeader>
+            <DialogTitle className="text-red-600">Delete Product</DialogTitle>
+          </DialogHeader>
+          
+          <form onSubmit={handleDelete} className="space-y-4">
+            <p id="delete-description" className="text-sm text-gray-600">
+              Are you sure you want to permanently delete "{link.title}"? This action cannot be undone.
+            </p>
+            
+            <div className="relative">
+              <Label htmlFor="deletePassword">Enter Creator Password</Label>
+              <div className="relative mt-1">
+                <Input
+                  id="deletePassword"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter password to confirm deletion"
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="absolute right-1 top-1 h-8 w-8 p-0"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setShowDeleteDialog(false)}
+                className="flex-1"
+              >
+                Cancel
+              </Button>
+              <Button
+                type="submit"
+                variant="destructive"
+                disabled={deleteLinkMutation.isPending || !password.trim()}
+                className="flex-1"
+              >
+                {deleteLinkMutation.isPending ? "Deleting..." : "Delete Product"}
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
+    </Card>
   );
 }
