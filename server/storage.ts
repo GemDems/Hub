@@ -16,6 +16,7 @@ export interface IStorage {
   updateAffiliateLink(id: number, link: Partial<AffiliateLink>): Promise<AffiliateLink | undefined>;
   deleteAffiliateLink(id: number): Promise<boolean>;
   publishDraft(id: number): Promise<AffiliateLink | undefined>;
+  publishAllDrafts(): Promise<AffiliateLink[]>;
   incrementLinkClicks(id: number): Promise<AffiliateLink | undefined>;
   
   // Referral System
@@ -77,7 +78,9 @@ export class DatabaseStorage implements IStorage {
         imageUrl: insertLink.imageUrl || null,
         clicks: 0,
         isVerified: insertLink.isVerified ? 1 : 0,
-        isDraft: insertLink.isDraft ? 1 : 0
+        isDraft: insertLink.isDraft ? 1 : 0,
+        scheduledPublishAt: insertLink.scheduledPublishAt || null,
+        scheduledDeleteAt: insertLink.scheduledDeleteAt || null
       })
       .returning();
     return link;
@@ -92,10 +95,22 @@ export class DatabaseStorage implements IStorage {
     return updated || undefined;
   }
 
+  async publishAllDrafts(): Promise<AffiliateLink[]> {
+    const updated = await db
+      .update(affiliateLinks)
+      .set({ isDraft: 0 })
+      .where(eq(affiliateLinks.isDraft, 1))
+      .returning();
+    return updated;
+  }
+
   async updateAffiliateLink(id: number, updateData: Partial<AffiliateLink>): Promise<AffiliateLink | undefined> {
     const [updated] = await db
       .update(affiliateLinks)
-      .set(updateData)
+      .set({
+        ...updateData,
+        scheduledDeleteAt: updateData.scheduledDeleteAt || null,
+      })
       .where(eq(affiliateLinks.id, id))
       .returning();
     return updated || undefined;

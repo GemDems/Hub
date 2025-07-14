@@ -89,6 +89,34 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/admin/publish-all", async (req, res) => {
+    try {
+      const published = await storage.publishAllDrafts();
+      res.json({ published: published.length, products: published });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to publish all drafts" });
+    }
+  });
+
+  app.put("/api/admin/schedule-delete/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { scheduledDeleteAt } = req.body;
+      
+      const updated = await storage.updateAffiliateLink(id, { 
+        scheduledDeleteAt: scheduledDeleteAt ? new Date(scheduledDeleteAt) : null 
+      });
+      
+      if (updated) {
+        res.json(updated);
+      } else {
+        res.status(404).json({ message: "Product not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to schedule deletion" });
+    }
+  });
+
   // Create new affiliate link
   app.post("/api/affiliate-links", async (req, res) => {
     try {

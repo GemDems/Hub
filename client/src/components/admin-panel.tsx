@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink } from "lucide-react";
+import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock } from "lucide-react";
 import type { InsertAffiliateLink, AffiliateLink } from "@shared/schema";
 
 interface AdminPanelProps {
@@ -26,7 +26,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState("create");
-  const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean; isDraft?: boolean }>({
+  const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean; isDraft?: boolean; scheduledPublishAt?: Date; scheduledDeleteAt?: Date }>({
     title: "",
     url: "",
     description: "",
@@ -36,7 +36,12 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     price: "",
     isVerified: false,
     isDraft: false,
+    scheduledPublishAt: undefined,
+    scheduledDeleteAt: undefined,
   });
+
+  const [schedulingProduct, setSchedulingProduct] = useState<{ id: number; title: string } | null>(null);
+  const [deleteDate, setDeleteDate] = useState<string>("");
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   
   const queryClient = useQueryClient();
@@ -151,6 +156,56 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     },
   });
 
+  // Publish all drafts mutation
+  const publishAllDraftsMutation = useMutation({
+    mutationFn: async () => {
+      return await apiRequest("/api/admin/publish-all", {
+        method: "POST",
+      });
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      toast({
+        title: "All Drafts Published",
+        description: `${data.published} products are now live on the site`,
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to publish all drafts",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Schedule deletion mutation
+  const scheduleDeleteMutation = useMutation({
+    mutationFn: async ({ id, scheduledDeleteAt }: { id: number; scheduledDeleteAt: Date | null }) => {
+      return await apiRequest(`/api/admin/schedule-delete/${id}`, {
+        method: "PUT",
+        body: JSON.stringify({ scheduledDeleteAt }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      toast({
+        title: "Deletion Scheduled",
+        description: "Product will be automatically deleted at the scheduled time",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to schedule deletion",
+        variant: "destructive",
+      });
+    },
+  });
+
   // Delete product mutation
   const deleteProductMutation = useMutation({
     mutationFn: async (id: number) => {
@@ -207,23 +262,31 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
 
   const createLinkMutation = useMutation({
     mutationFn: async (data: InsertAffiliateLink) => {
-      const response = await apiRequest("POST", "/api/affiliate-links", data);
-      return response.json();
+      return await apiRequest("/api/affiliate-links", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
+      
+      const isDraft = variables.isDraft;
       toast({
         title: "Success!",
-        description: "Affiliate link added successfully",
+        description: isDraft ? "Draft saved successfully" : "Product published successfully",
       });
-      setFormData({ title: "", url: "", description: "", category: "Hot Deals", imageUrl: "", imageUrls: [], price: "", isVerified: false });
-      setAdditionalImages([]);
-      onSuccess();
+      
+      resetForm();
+      if (!isDraft) {
+        onSuccess();
+      }
     },
     onError: () => {
       toast({
         title: "Error",
-        description: "Failed to add affiliate link",
+        description: "Failed to save product",
         variant: "destructive",
       });
     },
@@ -305,6 +368,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       price: "",
       isVerified: false,
       isDraft: false,
+      scheduledPublishAt: undefined,
+      scheduledDeleteAt: undefined,
     });
     setAdditionalImages([]);
   };
@@ -328,6 +393,16 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               >
                 <Globe className="w-4 h-4 mr-1" />
                 Publish
+              </Button>
+            )}
+            {!isDraft && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setSchedulingProduct({ id: product.id, title: product.title })}
+              >
+                <Clock className="w-4 h-4 mr-1" />
+                Schedule Delete
               </Button>
             )}
             <Button
@@ -360,20 +435,27 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <Calendar className="w-4 h-4" />
             Created: {new Date(product.createdAt).toLocaleDateString()}
           </div>
+          {product.scheduledDeleteAt && (
+            <div className="flex items-center gap-2 text-sm text-red-600">
+              <Clock className="w-4 h-4" />
+              Scheduled for deletion: {new Date(product.scheduledDeleteAt).toLocaleDateString()} at {new Date(product.scheduledDeleteAt).toLocaleTimeString()}
+            </div>
+          )}
         </div>
       </CardContent>
     </Card>
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Shield className="w-5 h-5 text-conversion-blue" />
-            {isAuthenticated ? "Creator Mode Dashboard" : "Creator Authentication Required"}
-          </DialogTitle>
-        </DialogHeader>
+    <>
+      <Dialog open={isOpen} onOpenChange={handleClose}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Shield className="w-5 h-5 text-conversion-blue" />
+              {isAuthenticated ? "Creator Mode Dashboard" : "Creator Authentication Required"}
+            </DialogTitle>
+          </DialogHeader>
 
         {!isAuthenticated ? (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
@@ -619,6 +701,34 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             </Label>
           </div>
 
+          <div className="space-y-4 border-t pt-4">
+            <h3 className="font-medium text-sm text-gray-700">Scheduling Options</h3>
+            
+            <div>
+              <Label htmlFor="scheduledPublish">Schedule Publish (Optional)</Label>
+              <Input
+                id="scheduledPublish"
+                type="datetime-local"
+                value={formData.scheduledPublishAt ? new Date(formData.scheduledPublishAt.getTime() - formData.scheduledPublishAt.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
+                onChange={(e) => setFormData({ ...formData, scheduledPublishAt: e.target.value ? new Date(e.target.value) : undefined })}
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">Set when this product should automatically go live</p>
+            </div>
+
+            <div>
+              <Label htmlFor="scheduledDelete">Schedule Deletion (Optional)</Label>
+              <Input
+                id="scheduledDelete"
+                type="datetime-local"
+                value={formData.scheduledDeleteAt ? new Date(formData.scheduledDeleteAt.getTime() - formData.scheduledDeleteAt.getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ""}
+                onChange={(e) => setFormData({ ...formData, scheduledDeleteAt: e.target.value ? new Date(e.target.value) : undefined })}
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">Set when this product should automatically be removed</p>
+            </div>
+          </div>
+
                     <div className="flex gap-2">
                       <Button 
                         type="submit" 
@@ -646,8 +756,22 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <TabsContent value="drafts">
               <Card>
                 <CardHeader>
-                  <CardTitle>Draft Products ({drafts.length})</CardTitle>
-                  <CardDescription>Manage your unpublished products</CardDescription>
+                  <div className="flex justify-between items-center">
+                    <div>
+                      <CardTitle>Draft Products ({drafts.length})</CardTitle>
+                      <CardDescription>Manage your unpublished products</CardDescription>
+                    </div>
+                    {drafts.length > 0 && (
+                      <Button
+                        onClick={() => publishAllDraftsMutation.mutate()}
+                        disabled={publishAllDraftsMutation.isPending}
+                        className="bg-green-600 hover:bg-green-700"
+                      >
+                        <Globe className="w-4 h-4 mr-2" />
+                        Publish All Drafts
+                      </Button>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {drafts.length === 0 ? (
@@ -690,5 +814,60 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
         )}
       </DialogContent>
     </Dialog>
+
+    {/* Schedule Deletion Dialog */}
+    <Dialog open={!!schedulingProduct} onOpenChange={() => setSchedulingProduct(null)}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>Schedule Product Deletion</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <p className="text-sm text-gray-600">
+            Schedule automatic deletion for: <strong>{schedulingProduct?.title}</strong>
+          </p>
+          
+          <div>
+            <Label htmlFor="deleteDateTime">Delete Date & Time</Label>
+            <Input
+              id="deleteDateTime"
+              type="datetime-local"
+              value={deleteDate}
+              onChange={(e) => setDeleteDate(e.target.value)}
+              className="mt-1"
+            />
+          </div>
+
+          <div className="flex gap-2">
+            <Button
+              onClick={() => {
+                if (schedulingProduct && deleteDate) {
+                  scheduleDeleteMutation.mutate({
+                    id: schedulingProduct.id,
+                    scheduledDeleteAt: new Date(deleteDate),
+                  });
+                  setSchedulingProduct(null);
+                  setDeleteDate("");
+                }
+              }}
+              disabled={!deleteDate || scheduleDeleteMutation.isPending}
+              className="flex-1"
+            >
+              Schedule Deletion
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => {
+                setSchedulingProduct(null);
+                setDeleteDate("");
+              }}
+              className="flex-1"
+            >
+              Cancel
+            </Button>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+    </>
   );
 }
