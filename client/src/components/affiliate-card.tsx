@@ -143,13 +143,13 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       <div className="relative mt-6">
         {/* Clean Badges */}
         <div className="absolute top-3 left-3 z-10">
-          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             {getCategoryEmoji(link.category)} BESTSELLER
           </div>
         </div>
         
         <div className="absolute top-3 right-3 z-10">
-          <div className="bg-gradient-to-r from-action-orange to-orange-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+          <div className="bg-gradient-to-r from-action-orange to-orange-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             <Clock className="w-3 h-3 mr-1 inline" />
             {stats.timeLeft}H LEFT
           </div>
