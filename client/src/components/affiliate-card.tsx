@@ -293,16 +293,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             </div>
           </div>
           
-          {/* Clean Guarantee */}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-            <div className="flex items-center justify-center mb-1">
-              <Award className="w-4 h-4 text-gray-600 mr-2" />
-              <span className="font-medium text-gray-800">Money Back Guarantee</span>
-            </div>
-            <div className="text-xs text-gray-600 space-y-1">
-              <div>30-Day Returns • Free Support</div>
-            </div>
-          </div>
+
         </div>
         
         {/* Social Proof */}
