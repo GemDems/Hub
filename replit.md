@@ -17,6 +17,9 @@ Preferred communication style: Simple, everyday language.
   - **Scheduled Deletion**: Added date/time picker for automatic product removal
   - **Enhanced Admin Panel**: Added tabbed interface with Create, Drafts, and Manage sections
   - **API Routes**: Added proper POST /api/affiliate-links and DELETE /api/admin/affiliate-links/:id endpoints
+  - **Advanced Scheduling**: Added individual product scheduling with "Schedule Publish" and "Schedule Delete" buttons
+  - **Automated Processing**: Backend automatically processes scheduled operations every 3 seconds
+  - **Visual Indicators**: Products show scheduled publish/delete times with color-coded timestamps
 - **Critical Bug Fix (July 2025)**: Resolved persistent "0" appearing in top-left corner of product cards
   - Root cause: `link.isVerified` field set to 0 instead of false caused React to render "0" literally
   - Solution: Changed `{link.isVerified && (` to `{link.isVerified ? ( : null}` pattern throughout

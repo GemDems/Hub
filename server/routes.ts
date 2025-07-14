@@ -22,9 +22,35 @@ function checkHourlyReset() {
   }
 }
 
-// Periodically update counters
+// Function to check and process scheduled operations
+async function processScheduledOperations() {
+  try {
+    const now = new Date();
+    
+    // Check for scheduled publishes
+    const allLinks = await storage.getAllAffiliateLinks();
+    for (const link of allLinks) {
+      // Auto-publish drafts that are scheduled for now
+      if (link.isDraft && link.scheduledPublishAt && now >= link.scheduledPublishAt) {
+        await storage.publishDraft(link.id);
+        console.log(`Auto-published draft: ${link.title}`);
+      }
+      
+      // Auto-delete products scheduled for deletion
+      if (link.scheduledDeleteAt && now >= link.scheduledDeleteAt) {
+        await storage.deleteAffiliateLink(link.id);
+        console.log(`Auto-deleted product: ${link.title}`);
+      }
+    }
+  } catch (error) {
+    console.error("Error processing scheduled operations:", error);
+  }
+}
+
+// Periodically update counters and process scheduled operations
 setInterval(() => {
   checkHourlyReset();
+  processScheduledOperations();
   
   // Viewers can fluctuate slightly
   liveStats.viewers = Math.max(150, liveStats.viewers + Math.floor(Math.random() * 10) - 3);
@@ -114,6 +140,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
     } catch (error) {
       res.status(500).json({ message: "Failed to schedule deletion" });
+    }
+  });
+
+  // Schedule draft publishing
+  app.put("/api/admin/schedule-publish/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { scheduledPublishAt } = req.body;
+      
+      const updated = await storage.updateAffiliateLink(id, { 
+        scheduledPublishAt: scheduledPublishAt ? new Date(scheduledPublishAt) : null 
+      });
+      
+      if (updated) {
+        res.json(updated);
+      } else {
+        res.status(404).json({ message: "Draft not found" });
+      }
+    } catch (error) {
+      res.status(500).json({ message: "Failed to schedule publishing" });
     }
   });
 

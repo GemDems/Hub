@@ -40,7 +40,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     scheduledDeleteAt: undefined,
   });
 
-  const [schedulingProduct, setSchedulingProduct] = useState<{ id: number; title: string } | null>(null);
+  const [schedulingProduct, setSchedulingProduct] = useState<{ id: number; title: string; type: 'publish' | 'delete' } | null>(null);
   const [deleteDate, setDeleteDate] = useState<string>("");
   const [additionalImages, setAdditionalImages] = useState<string[]>([]);
   
@@ -194,6 +194,30 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       toast({
         title: "Error",
         description: "Failed to schedule deletion",
+        variant: "destructive",
+      });
+    },
+  });
+
+  // Schedule publishing mutation
+  const schedulePublishMutation = useMutation({
+    mutationFn: async ({ id, scheduledPublishAt }: { id: number; scheduledPublishAt: Date | null }) => {
+      return await apiRequest("PUT", `/api/admin/schedule-publish/${id}`, { scheduledPublishAt });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/drafts"] });
+      setSchedulingProduct(null);
+      setScheduleTime(null);
+      toast({
+        title: "Publishing Scheduled",
+        description: "Draft will be automatically published at the scheduled time",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to schedule publishing",
         variant: "destructive",
       });
     },
@@ -374,20 +398,30 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
           </div>
           <div className="flex gap-2">
             {isDraft && (
-              <Button
-                size="sm"
-                onClick={() => publishDraftMutation.mutate(product.id)}
-                disabled={publishDraftMutation.isPending}
-              >
-                <Globe className="w-4 h-4 mr-1" />
-                Publish
-              </Button>
+              <>
+                <Button
+                  size="sm"
+                  onClick={() => publishDraftMutation.mutate(product.id)}
+                  disabled={publishDraftMutation.isPending}
+                >
+                  <Globe className="w-4 h-4 mr-1" />
+                  Publish Now
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSchedulingProduct({ id: product.id, title: product.title, type: 'publish' })}
+                >
+                  <Clock className="w-4 h-4 mr-1" />
+                  Schedule Publish
+                </Button>
+              </>
             )}
             {!isDraft && (
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => setSchedulingProduct({ id: product.id, title: product.title })}
+                onClick={() => setSchedulingProduct({ id: product.id, title: product.title, type: 'delete' })}
               >
                 <Clock className="w-4 h-4 mr-1" />
                 Schedule Delete
@@ -423,6 +457,12 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <Calendar className="w-4 h-4" />
             Created: {new Date(product.createdAt).toLocaleDateString()}
           </div>
+          {product.scheduledPublishAt && (
+            <div className="flex items-center gap-2 text-sm text-blue-600">
+              <Clock className="w-4 h-4" />
+              Scheduled for publishing: {new Date(product.scheduledPublishAt).toLocaleDateString()} at {new Date(product.scheduledPublishAt).toLocaleTimeString()}
+            </div>
+          )}
           {product.scheduledDeleteAt && (
             <div className="flex items-center gap-2 text-sm text-red-600">
               <Clock className="w-4 h-4" />
@@ -803,21 +843,25 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       </DialogContent>
     </Dialog>
 
-    {/* Schedule Deletion Dialog */}
+    {/* Schedule Publishing/Deletion Dialog */}
     <Dialog open={!!schedulingProduct} onOpenChange={() => setSchedulingProduct(null)}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Schedule Product Deletion</DialogTitle>
+          <DialogTitle>
+            {schedulingProduct?.type === 'publish' ? 'Schedule Publishing' : 'Schedule Deletion'}
+          </DialogTitle>
         </DialogHeader>
         <div className="space-y-4">
           <p className="text-sm text-gray-600">
-            Schedule automatic deletion for: <strong>{schedulingProduct?.title}</strong>
+            Schedule automatic {schedulingProduct?.type === 'publish' ? 'publishing' : 'deletion'} for: <strong>{schedulingProduct?.title}</strong>
           </p>
           
           <div>
-            <Label htmlFor="deleteDateTime">Delete Date & Time</Label>
+            <Label htmlFor="scheduleDateTime">
+              {schedulingProduct?.type === 'publish' ? 'Publish' : 'Delete'} Date & Time
+            </Label>
             <Input
-              id="deleteDateTime"
+              id="scheduleDateTime"
               type="datetime-local"
               value={deleteDate}
               onChange={(e) => setDeleteDate(e.target.value)}
@@ -829,18 +873,25 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <Button
               onClick={() => {
                 if (schedulingProduct && deleteDate) {
-                  scheduleDeleteMutation.mutate({
-                    id: schedulingProduct.id,
-                    scheduledDeleteAt: new Date(deleteDate),
-                  });
+                  if (schedulingProduct.type === 'publish') {
+                    schedulePublishMutation.mutate({
+                      id: schedulingProduct.id,
+                      scheduledPublishAt: new Date(deleteDate),
+                    });
+                  } else {
+                    scheduleDeleteMutation.mutate({
+                      id: schedulingProduct.id,
+                      scheduledDeleteAt: new Date(deleteDate),
+                    });
+                  }
                   setSchedulingProduct(null);
                   setDeleteDate("");
                 }
               }}
-              disabled={!deleteDate || scheduleDeleteMutation.isPending}
+              disabled={!deleteDate || scheduleDeleteMutation.isPending || schedulePublishMutation.isPending}
               className="flex-1"
             >
-              Schedule Deletion
+              {schedulingProduct?.type === 'publish' ? 'Schedule Publishing' : 'Schedule Deletion'}
             </Button>
             <Button
               variant="outline"
