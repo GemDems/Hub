@@ -169,6 +169,17 @@ export class DatabaseStorage implements IStorage {
     
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
+    // Check if user has $1000+ saved and ensure they have bonus codes
+    if (userStat && userStat.savingsProgress >= 1000) {
+      const existingBonusCodes = await db.select().from(referralCodes)
+        .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
+      
+      // If no bonus codes exist, generate them
+      if (existingBonusCodes.length === 0) {
+        await this.generateRewardCodes(userId);
+      }
+    }
+    
     // Get all user's codes including reward codes
     const allUserCodes = await db.select().from(referralCodes).where(eq(referralCodes.userId, userId));
     const rewardCodes = allUserCodes.filter(code => code.codeType && code.codeType !== "regular");
@@ -378,15 +389,14 @@ export class DatabaseStorage implements IStorage {
     return { topSavers, topReferrers };
   }
 
-  // Generate reward codes when user hits $1000 milestone
+  // Generate reward codes when user has $1000+ saved
   private async generateRewardCodes(userId: string): Promise<void> {
-    // Generate Bonus Invite Code 1 (2x Bonus) 
-    const bonusCode1 = Math.random().toString(36).substring(2, 8).toUpperCase() + 
-                       Math.random().toString(36).substring(2, 4).toUpperCase();
+    // Generate unique random codes each time
+    const bonusCode1 = Math.random().toString(36).substring(2, 6).toUpperCase() + 
+                       Math.random().toString(36).substring(2, 6).toUpperCase();
     
-    // Generate Bonus Invite Code 2 (Regular)
-    const bonusCode2 = Math.random().toString(36).substring(2, 8).toUpperCase() + 
-                       Math.random().toString(36).substring(2, 4).toUpperCase();
+    const bonusCode2 = Math.random().toString(36).substring(2, 6).toUpperCase() + 
+                       Math.random().toString(36).substring(2, 6).toUpperCase();
     
     // Insert both reward codes as additional invite codes
     await db.insert(referralCodes).values([
@@ -409,6 +419,20 @@ export class DatabaseStorage implements IStorage {
         codeType: "bonus_regular"
       }
     ]);
+  }
+
+  // Method to regenerate bonus codes for existing users with $1000+
+  async regenerateBonusCodesIfNeeded(userId: string): Promise<void> {
+    const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
+    
+    if (userStat && userStat.savingsProgress >= 1000) {
+      // Delete existing bonus codes
+      await db.delete(referralCodes)
+        .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
+      
+      // Generate fresh bonus codes
+      await this.generateRewardCodes(userId);
+    }
   }
 }
 
