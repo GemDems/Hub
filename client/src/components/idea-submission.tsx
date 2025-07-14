@@ -98,7 +98,7 @@ export default function IdeaSubmission() {
       return;
     }
     
-    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+    const colors = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#f97316', '#06b6d4'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
     
     const rect = e.currentTarget.getBoundingClientRect();
@@ -117,7 +117,7 @@ export default function IdeaSubmission() {
     // Remove overlay after animation
     setTimeout(() => {
       setClickOverlays(prev => prev.filter(overlay => overlay.id !== newOverlay.id));
-    }, 1000);
+    }, 1500);
   };
 
   if (hasSubmitted) {
@@ -145,21 +145,58 @@ export default function IdeaSubmission() {
         {clickOverlays.map(overlay => (
           <div
             key={overlay.id}
-            className="absolute pointer-events-none animate-bounce"
+            className="absolute pointer-events-none"
             style={{
-              left: overlay.x - 10,
-              top: overlay.y - 10,
-              animation: 'colorful-bounce 1s ease-out forwards'
+              left: overlay.x - 15,
+              top: overlay.y - 15,
+              color: overlay.color,
+              animation: 'colorful-bounce 1.5s ease-out forwards'
             }}
           >
             <div 
-              className="w-5 h-5 rounded-full"
+              className="w-8 h-8 rounded-full relative"
               style={{ 
                 backgroundColor: overlay.color,
-                boxShadow: `0 0 20px ${overlay.color}`,
-                animation: 'pulse 1s ease-out forwards'
+                animation: 'glow-pulse 1.5s ease-out forwards'
               }}
-            />
+            >
+              {/* Outer glow ring */}
+              <div 
+                className="absolute -inset-4 rounded-full animate-ping"
+                style={{ 
+                  backgroundColor: overlay.color,
+                  opacity: 0.3,
+                  filter: 'blur(4px)'
+                }}
+              />
+              {/* Middle glow ring */}
+              <div 
+                className="absolute -inset-2 rounded-full animate-pulse"
+                style={{ 
+                  backgroundColor: overlay.color,
+                  opacity: 0.5,
+                  filter: 'blur(2px)'
+                }}
+              />
+              {/* Inner bright core */}
+              <div 
+                className="absolute inset-1 rounded-full"
+                style={{ 
+                  backgroundColor: overlay.color,
+                  boxShadow: `0 0 40px ${overlay.color}, 0 0 80px ${overlay.color}`,
+                  filter: 'brightness(2) saturate(1.5)'
+                }}
+              />
+              {/* Ultra bright center dot */}
+              <div 
+                className="absolute inset-3 rounded-full"
+                style={{ 
+                  backgroundColor: 'white',
+                  filter: 'brightness(3)',
+                  boxShadow: `0 0 20px ${overlay.color}`
+                }}
+              />
+            </div>
           </div>
         ))}
         <div className="text-center mb-4">
