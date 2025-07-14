@@ -68,7 +68,7 @@ export default function SavingsProgress() {
       />
       
       <div className="text-xs text-gray-500 mb-1">
-        Every "Get Deal Now" click increases this amount
+        👉 Every "Get Deal Now" increases your amount saved
       </div>
       
       <div className="text-xs font-medium text-gray-700">
