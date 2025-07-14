@@ -159,14 +159,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     return randomStock;
   });
   
-  // Debug: Log stock value
-  console.log('stock value:', stock);
-  
   // Elite pick logic (simulated - would be based on database flag)
   const isElitePick = Math.random() < 0.2; // 20% chance for demo
-  
-  // Debug: Log to see if this is causing the issue
-  console.log('isElitePick:', isElitePick, 'currentAlertText:', currentAlertText);
 
   // Generate clean images array without duplication
   const allImages = link.imageUrls && link.imageUrls.length > 0 ? 
@@ -191,7 +185,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         
         {/* Cycling Alert Badge */}
         {isElitePick && currentAlertText && (
-          <div className="absolute top-0 left-0 right-0 z-30">
+          <div className="absolute top-[0px] left-[0px] right-[0px] z-30">
             <div className="bg-gradient-to-r from-yellow-400 to-yellow-600 text-yellow-900 text-xs font-bold text-center py-1">
               <Users className="w-3 h-3 inline mr-1" />
               {currentAlertText}
@@ -201,7 +195,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         
         {/* Verified Source Badge */}
         {link.isVerified && (
-          <div className={`absolute ${isElitePick ? 'top-6' : 'top-0'} left-0 right-0 z-20`}>
+          <div className={`absolute ${isElitePick ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-20`}>
             <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold text-center py-1 flex items-center justify-center">
               <div className="w-3 h-3 bg-white rounded-full mr-1 flex items-center justify-center">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
@@ -212,12 +206,14 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         )}
         
         {/* Stock Countdown Alert */}
-        <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-0'} left-0 right-0 z-10`}>
-          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
-            <AlertCircle className="w-3 h-3 inline mr-1" />
-            ONLY {stock} LEFT IN STOCK
+        {stock > 0 && (
+          <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-10`}>
+            <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
+              <AlertCircle className="w-3 h-3 inline mr-1" />
+              ONLY {stock} LEFT IN STOCK
+            </div>
           </div>
-        </div>
+        )}
       
       <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
