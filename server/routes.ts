@@ -357,6 +357,61 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // User Ideas endpoints
+  app.post("/api/user-ideas", async (req, res) => {
+    try {
+      const { idea, deviceId } = req.body;
+      
+      if (!idea || !deviceId) {
+        return res.status(400).json({ message: "Idea and deviceId are required" });
+      }
+
+      if (idea.length > 20) {
+        return res.status(400).json({ message: "Idea must be 20 characters or less" });
+      }
+
+      const words = idea.trim().split(/\s+/);
+      if (words.length > 2) {
+        return res.status(400).json({ message: "Idea must be 2 words maximum" });
+      }
+
+      const newIdea = await storage.submitUserIdea(deviceId, idea.trim());
+      res.json(newIdea);
+    } catch (error) {
+      if (error.message === "Device has already submitted an idea") {
+        return res.status(409).json({ message: "You have already submitted an idea" });
+      }
+      console.error("Error submitting idea:", error);
+      res.status(500).json({ message: "Failed to submit idea" });
+    }
+  });
+
+  app.get("/api/admin/user-ideas", async (req, res) => {
+    try {
+      const ideas = await storage.getAllUserIdeas();
+      res.json(ideas);
+    } catch (error) {
+      console.error("Error fetching user ideas:", error);
+      res.status(500).json({ message: "Failed to fetch user ideas" });
+    }
+  });
+
+  app.put("/api/admin/user-ideas/:id/review", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const updated = await storage.markIdeaAsReviewed(id);
+      
+      if (!updated) {
+        return res.status(404).json({ message: "Idea not found" });
+      }
+      
+      res.json(updated);
+    } catch (error) {
+      console.error("Error marking idea as reviewed:", error);
+      res.status(500).json({ message: "Failed to mark idea as reviewed" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

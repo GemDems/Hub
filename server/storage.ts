@@ -1,4 +1,4 @@
-import { users, affiliateLinks, referralCodes, userStats, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats } from "@shared/schema";
+import { users, affiliateLinks, referralCodes, userStats, userIdeas, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats, type UserIdea, type InsertUserIdea } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -29,6 +29,11 @@ export interface IStorage {
   updateSavingsProgress(userId: string, amount: number): Promise<{ hasReward: boolean; newProgress: number }>;
   updateUsername(userId: string, username: string): Promise<void>;
   getLeaderboard(): Promise<{ topSavers: any[]; topReferrers: any[] }>;
+  
+  // User Ideas
+  submitUserIdea(deviceId: string, idea: string): Promise<UserIdea>;
+  getAllUserIdeas(): Promise<UserIdea[]>;
+  markIdeaAsReviewed(id: number): Promise<UserIdea | undefined>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -613,6 +618,38 @@ export class DatabaseStorage implements IStorage {
           });
       }
     }
+  }
+  // User Ideas Methods
+  async submitUserIdea(deviceId: string, idea: string): Promise<UserIdea> {
+    // Check if device already submitted an idea
+    const existing = await db.select().from(userIdeas).where(eq(userIdeas.deviceId, deviceId));
+    if (existing.length > 0) {
+      throw new Error("Device has already submitted an idea");
+    }
+
+    const [newIdea] = await db
+      .insert(userIdeas)
+      .values({
+        deviceId,
+        idea,
+        isReviewed: 0,
+      })
+      .returning();
+    return newIdea;
+  }
+
+  async getAllUserIdeas(): Promise<UserIdea[]> {
+    const ideas = await db.select().from(userIdeas).orderBy(desc(userIdeas.createdAt));
+    return ideas;
+  }
+
+  async markIdeaAsReviewed(id: number): Promise<UserIdea | undefined> {
+    const [updated] = await db
+      .update(userIdeas)
+      .set({ isReviewed: 1 })
+      .where(eq(userIdeas.id, id))
+      .returning();
+    return updated || undefined;
   }
 }
 

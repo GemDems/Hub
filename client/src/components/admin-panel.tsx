@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock } from "lucide-react";
-import type { InsertAffiliateLink, AffiliateLink } from "@shared/schema";
+import type { InsertAffiliateLink, AffiliateLink, UserIdea } from "@shared/schema";
 
 interface AdminPanelProps {
   isOpen: boolean;
@@ -25,7 +25,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState("create");
+  const [activeTab, setActiveTab] = useState<"create" | "drafts" | "manage" | "ideas">("create");
   const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean; isDraft?: boolean; scheduledPublishAt?: Date; scheduledDeleteAt?: Date }>({
     title: "",
     url: "",
@@ -56,6 +56,12 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const { data: drafts = [] } = useQuery({
     queryKey: ["/api/admin/drafts"],
     enabled: isAuthenticated,
+  });
+
+  // Fetch user ideas
+  const { data: userIdeas = [], refetch: refetchIdeas } = useQuery<UserIdea[]>({
+    queryKey: ["/api/admin/user-ideas"],
+    enabled: isAuthenticated && activeTab === "ideas",
   });
 
   const addImageField = () => {
@@ -546,10 +552,11 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
           </form>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="create">Create Product</TabsTrigger>
               <TabsTrigger value="drafts">Drafts ({drafts.length})</TabsTrigger>
               <TabsTrigger value="manage">Manage All</TabsTrigger>
+              <TabsTrigger value="ideas">User Ideas ({userIdeas.length})</TabsTrigger>
             </TabsList>
             
             <TabsContent value="create">
@@ -842,6 +849,75 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                   ) : (
                     <div className="space-y-4">
                       {allProducts.map((product) => renderProductCard(product, false))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="ideas">
+              <Card>
+                <CardHeader>
+                  <CardTitle>User Ideas</CardTitle>
+                  <CardDescription>
+                    Product ideas submitted by users (max 2 words, one per device)
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {userIdeas.length === 0 ? (
+                    <div className="text-center py-8">
+                      <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500">No user ideas yet</p>
+                      <p className="text-sm text-gray-400 mt-1">
+                        Ideas will appear here as users submit them
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {userIdeas.map((idea) => (
+                        <div key={idea.id} className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-3">
+                              <div className="text-lg font-medium text-blue-600">
+                                "{idea.idea}"
+                              </div>
+                              {idea.isReviewed ? (
+                                <Badge variant="secondary">Reviewed</Badge>
+                              ) : (
+                                <Badge variant="outline">New</Badge>
+                              )}
+                            </div>
+                            <div className="text-sm text-gray-500 mt-1">
+                              Device: {idea.deviceId.slice(-8)} • 
+                              Submitted: {new Date(idea.createdAt).toLocaleDateString()} at {new Date(idea.createdAt).toLocaleTimeString()}
+                            </div>
+                          </div>
+                          {!idea.isReviewed && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={async () => {
+                                try {
+                                  await apiRequest("PUT", `/api/admin/user-ideas/${idea.id}/review`);
+                                  refetchIdeas();
+                                  toast({
+                                    title: "Marked as Reviewed",
+                                    description: "Idea has been marked as reviewed",
+                                  });
+                                } catch (error) {
+                                  toast({
+                                    title: "Error",
+                                    description: "Failed to mark as reviewed",
+                                    variant: "destructive",
+                                  });
+                                }
+                              }}
+                            >
+                              Mark as Reviewed
+                            </Button>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   )}
                 </CardContent>

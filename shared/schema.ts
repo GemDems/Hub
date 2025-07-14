@@ -53,6 +53,14 @@ export const userStats = pgTable("user_stats", {
   lastActive: timestamp("last_active").defaultNow().notNull(),
 });
 
+export const userIdeas = pgTable("user_ideas", {
+  id: serial("id").primaryKey(),
+  deviceId: text("device_id").notNull(),
+  idea: text("idea").notNull(), // 2 words max, 20 characters max
+  isReviewed: integer("is_reviewed").default(0), // 0 = new, 1 = reviewed
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -80,3 +88,5 @@ export type AffiliateLink = typeof affiliateLinks.$inferSelect;
 export type InsertAffiliateLink = z.infer<typeof insertAffiliateLinkSchema>;
 export type ReferralCode = typeof referralCodes.$inferSelect;
 export type UserStats = typeof userStats.$inferSelect;
+export type UserIdea = typeof userIdeas.$inferSelect;
+export type InsertUserIdea = typeof userIdeas.$inferInsert;

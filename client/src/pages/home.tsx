@@ -13,6 +13,7 @@ import Leaderboard from "@/components/leaderboard";
 import ReferralSystem from "@/components/referral-system";
 import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
+import IdeaSubmission from "@/components/idea-submission";
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -160,6 +161,13 @@ export default function Home() {
       {/* Live Feed - At very bottom, requires scroll */}
       <div className="bg-gray-900 py-16">
         <LiveFeed />
+      </div>
+      
+      {/* User Idea Submission - After Live Feed */}
+      <div className="bg-gradient-to-b from-gray-900 to-gray-800 py-12">
+        <div className="max-w-md mx-auto px-4">
+          <IdeaSubmission />
+        </div>
       </div>
 
       <AdminPanel 
