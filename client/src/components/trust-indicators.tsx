@@ -29,9 +29,6 @@ export default function TrustIndicators() {
         <div className="nike-steroids-text">
           LIKE STEROIDS*
         </div>
-        <div className="nike-finds-text">
-          FOR FINDS
-        </div>
         <div className="text-gray-500 text-sm mt-2 italic">
           *but it's 100% safe (pinky promise)
         </div>

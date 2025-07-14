@@ -168,7 +168,7 @@
   .nike-steroids-text {
     font-family: 'Futura', 'Century Gothic', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
     font-weight: 900;
-    font-size: 4rem;
+    font-size: 3rem;
     line-height: 0.9;
     letter-spacing: -0.02em;
     transform: skew(-5deg);
@@ -176,25 +176,16 @@
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   }
   
-  .nike-finds-text {
-    font-family: 'Futura', 'Century Gothic', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    font-weight: 900;
-    font-size: 2.5rem;
-    line-height: 0.9;
-    letter-spacing: 0.05em;
-    transform: skew(-3deg);
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
-    margin-left: 1rem;
-  }
-  
   /* Guarantee text styling */
   .guarantee-text {
-    font-weight: bold;
-    font-size: 0.875rem;
-    color: rgba(29, 78, 216, 0.5);
+    font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 1.125rem;
+    color: black;
     text-decoration: underline;
-    text-decoration-color: rgba(29, 78, 216, 0.5);
+    text-decoration-color: #1d4ed8;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 4px;
   }
   
   /* Verified Source Badge Glowing Animation */
