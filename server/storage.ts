@@ -375,6 +375,9 @@ export class DatabaseStorage implements IStorage {
 
 
   async getLeaderboard(): Promise<{ topSavers: any[]; topReferrers: any[] }> {
+    // Auto-promote users who qualify for leaderboard
+    await this.autoPromoteQualifyingUsers();
+    
     // Top savers: Only VIP users with usernames and savings progress > 0
     const topSavers = await db
       .select({
@@ -387,7 +390,7 @@ export class DatabaseStorage implements IStorage {
       .orderBy(desc(userStats.savingsProgress))
       .limit(10);
 
-    // Top referrers: Only VIP users with usernames and 3+ invites used
+    // Top referrers: Only VIP users with usernames and 3+ invites used  
     const topReferrers = await db
       .select({
         username: userStats.username,
@@ -470,6 +473,73 @@ export class DatabaseStorage implements IStorage {
           invitesUsedCount: pointsToAdd,
           isVip: 0
         });
+    }
+  }
+
+  private async autoPromoteQualifyingUsers(): Promise<void> {
+    // Get current 10th place threshold from leaderboard
+    const currentTopReferrers = await db
+      .select({
+        username: userStats.username,
+        referralCount: userStats.invitesUsedCount,
+        isVip: userStats.isVip
+      })
+      .from(userStats)
+      .where(sql`${userStats.invitesUsedCount} >= 3 AND ${userStats.isVip} = 1 AND ${userStats.username} IS NOT NULL`)
+      .orderBy(desc(userStats.invitesUsedCount))
+      .limit(10);
+
+    // Find the minimum invite count to qualify (10th place or default to 17)
+    const minQualifyingInvites = currentTopReferrers.length === 10 
+      ? currentTopReferrers[9].referralCount 
+      : 17;
+
+    // Find users who qualify but aren't VIP yet
+    const qualifyingUsers = await db
+      .select()
+      .from(userStats)
+      .where(sql`${userStats.invitesUsedCount} > ${minQualifyingInvites} AND ${userStats.isVip} = 0 AND ${userStats.username} IS NOT NULL`);
+
+    // Auto-promote qualifying users to VIP
+    for (const user of qualifyingUsers) {
+      await db
+        .update(userStats)
+        .set({ 
+          isVip: 1,
+          lastActive: new Date()
+        })
+        .where(eq(userStats.userId, user.userId));
+    }
+
+    // Also ensure any device with username has basic stats entry
+    await this.ensureStatsForUsernameDevices();
+  }
+
+  private async ensureStatsForUsernameDevices(): Promise<void> {
+    // Get all devices that have usernames but might not have user_stats entries
+    const allUsernames = await db
+      .select({ userId: userStats.userId })
+      .from(userStats)
+      .where(sql`${userStats.username} IS NOT NULL`);
+
+    // Create stats entries for any device that doesn't have one yet
+    const deviceIds = allUsernames.map(u => u.userId);
+    
+    for (const deviceId of deviceIds) {
+      const [existingStats] = await db.select().from(userStats).where(eq(userStats.userId, deviceId));
+      
+      if (!existingStats) {
+        await db
+          .insert(userStats)
+          .values({
+            userId: deviceId,
+            totalSavings: 0,
+            referralCount: 0,
+            totalCodesShared: 0,
+            invitesUsedCount: 0,
+            isVip: 0
+          });
+      }
     }
   }
 }
