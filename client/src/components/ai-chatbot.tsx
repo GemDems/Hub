@@ -671,14 +671,6 @@ export default function AIChatbot() {
           // Add bot response to conversation history
           setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponseContent }]);
           setMessages(prev => [...prev, botResponse]);
-          
-          // Show popup notification for new message
-          setShowNewMessagePopup(true);
-          
-          // Auto-hide popup after 5 seconds
-          setTimeout(() => {
-            setShowNewMessagePopup(false);
-          }, 5000);
         }, searchDelay);
       } else {
         // Generate response without search animation
@@ -728,14 +720,6 @@ export default function AIChatbot() {
           // Add bot response to conversation history
           setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponse.content }]);
           setMessages(prev => [...prev, botResponse]);
-          
-          // Show popup notification for new message
-          setShowNewMessagePopup(true);
-          
-          // Auto-hide popup after 5 seconds
-          setTimeout(() => {
-            setShowNewMessagePopup(false);
-          }, 5000);
         }, normalDelay);
       }
       
