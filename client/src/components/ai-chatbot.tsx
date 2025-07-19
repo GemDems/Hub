@@ -1555,7 +1555,7 @@ Can I help you find something excellent in one of these available categories?`
         <div 
           className="fixed z-40"
           style={{
-            left: position.x,
+            left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)), // Ensure it stays within screen bounds
             top: position.y + 60, // Right below the collapsed header bar
             width: size.width,
             height: '9999px', // Extends far beyond the screen
