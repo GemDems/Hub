@@ -357,7 +357,7 @@ export default function Home() {
           >
             <Dice6 className="w-8 h-8 text-white" />
           </button>
-          
+          <p className="text-white text-sm">Click for a random deal!</p>
         </div>
       </div>
       
