@@ -36,6 +36,11 @@ export default function AIChatbot() {
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   const [resizeDirection, setResizeDirection] = useState('');
   
+  // Chat button visibility states
+  const [showChatButton, setShowChatButton] = useState(false);
+  const [isButtonFading, setIsButtonFading] = useState(false);
+  const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
+  
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
@@ -272,17 +277,85 @@ export default function AIChatbot() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Chat button visibility logic
+  useEffect(() => {
+    // Initial fade in after 5 seconds
+    const initialTimer = setTimeout(() => {
+      setShowChatButton(true);
+      setIsButtonFading(true);
+      
+      // Auto fade out after another 5 seconds
+      const fadeOutTimer = setTimeout(() => {
+        setIsButtonFading(false);
+        // Keep button in DOM but invisible for smooth transitions
+      }, 5000);
+      
+      return () => clearTimeout(fadeOutTimer);
+    }, 5000);
+
+    return () => clearTimeout(initialTimer);
+  }, []);
+
+  // Scroll behavior
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollY = window.scrollY;
+      
+      // Clear any existing timeout
+      if (scrollTimeout) {
+        clearTimeout(scrollTimeout);
+      }
+      
+      // If scrolling down, fade out smoothly
+      if (scrollY > 100) {
+        setIsButtonFading(false);
+        setScrollTimeout(null);
+      } 
+      // If near top, set timeout to show after user stops scrolling
+      else if (scrollY <= 100) {
+        const timeout = setTimeout(() => {
+          // Wait 5 seconds after user stops scrolling near top
+          setTimeout(() => {
+            setShowChatButton(true);
+            setIsButtonFading(true);
+            
+            // Auto fade out after 5 seconds
+            setTimeout(() => {
+              setIsButtonFading(false);
+            }, 5000);
+          }, 5000);
+        }, 100); // Small delay to detect stop scrolling
+        
+        setScrollTimeout(timeout);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+    };
+  }, [scrollTimeout]);
+
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
-      >
-        <MessageCircle className="w-5 h-5" />
-        <Phone className="w-4 h-4" />
-        <span className="text-sm font-medium">Chat Assistant</span>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
-      </button>
+      <>
+        {/* Animated Chat Button - Always in DOM for smooth transitions */}
+        <button
+          onClick={() => setIsOpen(true)}
+          className={`fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:scale-105 group ${
+            isButtonFading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          }`}
+          style={{
+            transition: 'opacity 5s ease-in-out, transform 0.3s ease'
+          }}
+        >
+          <MessageCircle className="w-5 h-5" />
+          <Phone className="w-4 h-4" />
+          <span className="text-sm font-medium">Chat Assistant</span>
+          <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
+        </button>
+      </>
     );
   }
 
