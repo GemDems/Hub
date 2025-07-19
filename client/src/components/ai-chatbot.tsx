@@ -473,12 +473,10 @@ export default function AIChatbot() {
     setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 500 });
   };
 
-  const dismissTooltip = (permanent = false) => {
+  const dismissTooltip = () => {
     setShowResetTooltip(false);
-    if (permanent) {
-      localStorage.setItem('resetTooltipDismissed', 'true');
-      setTooltipDismissed(true);
-    }
+    localStorage.setItem('resetTooltipDismissed', 'true');
+    setTooltipDismissed(true);
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -596,7 +594,12 @@ export default function AIChatbot() {
           setShowResetTooltip(true);
           console.log('Tooltip should be visible now');
         }, 1000);
-        setTimeout(() => setShowResetTooltip(false), 15000); // Hide after 15 seconds
+        setTimeout(() => {
+          setShowResetTooltip(false);
+          // Auto-dismiss permanently after showing once
+          localStorage.setItem('resetTooltipDismissed', 'true');
+          setTooltipDismissed(true);
+        }, 5000); // Hide after 5 seconds and don't show again
       }
     }
   }, [isOpen]);
@@ -827,50 +830,22 @@ export default function AIChatbot() {
 
   return (
     <>
-      {/* External Reset Tooltip */}
+      {/* Reset Button Tooltip */}
       {showResetTooltip && isOpen && (
         <div 
-          className="fixed z-[1000] pointer-events-auto"
+          className="fixed z-[1000] pointer-events-none"
           style={{
-            left: position.x + size.width - 100,
-            top: position.y - 80
+            left: position.x + size.width - 120,
+            top: position.y - 35
           }}
         >
-          <div className="bg-black/95 backdrop-blur-md text-white p-4 rounded-xl border border-white/30 shadow-2xl max-w-[280px]">
-            <div className="flex items-start justify-between gap-3 mb-3">
-              <div className="flex-1">
-                <h4 className="font-semibold text-sm mb-1">💡 Reset Chat</h4>
-                <p className="text-xs text-gray-200 leading-relaxed">
-                  This will clear your conversation history and start fresh. Your saved messages will be deleted.
-                </p>
-              </div>
-              <button
-                onClick={() => dismissTooltip(false)}
-                className="p-1 hover:bg-white/20 rounded transition-colors"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </div>
-            <div className="flex gap-2">
-              <button
-                onClick={() => dismissTooltip(true)}
-                className="flex-1 text-xs px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors"
-              >
-                Don't show again
-              </button>
-              <button
-                onClick={() => dismissTooltip(false)}
-                className="flex-1 text-xs px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded transition-colors"
-              >
-                Got it
-              </button>
-            </div>
-            {/* Arrow pointing to reset button */}
+          <div className="bg-black/90 text-white text-xs px-2 py-1 rounded shadow-lg">
+            Click to reset chat history
             <div 
-              className="absolute w-3 h-3 bg-black/95 border-r border-b border-white/30 transform rotate-45"
+              className="absolute w-2 h-2 bg-black/90 transform rotate-45"
               style={{
-                bottom: '-6px',
-                right: '80px'
+                bottom: '-4px',
+                right: '45px'
               }}
             ></div>
           </div>
