@@ -487,70 +487,10 @@ Can I help you find something excellent in one of these available categories?`
       return parts.join('. ') + '. Ready to find the perfect deals for you!' + searchButton;
     }
 
-    // Handle confirmed search with real product data
-    const hasProducts = affiliateLinks.length > 0;
-    if (hasProducts && intent?.confirmed) {
-      const categories = [...new Set(affiliateLinks.map((link: any) => link.category))];
-      const productNames = affiliateLinks.map((link: any) => link.title);
-      
-      // Look for specific product mentions
-      const mentionedProducts = productNames.filter(name => 
-        lowerQuery.includes(name.toLowerCase()) || 
-        name.toLowerCase().includes(lowerQuery)
-      );
-      
-      if (mentionedProducts.length > 0) {
-        const product = affiliateLinks.find((link: any) => link.title === mentionedProducts[0]);
-        return `I found "${product.title}" which matches your search. ${product.description.slice(0, 60)}... This appears to be a quality deal for your needs.`;
-      }
-      
-      if (lowerQuery.includes('more') || lowerQuery.includes('other') || lowerQuery.includes('different')) {
-        const randomProducts = productNames.sort(() => 0.5 - Math.random()).slice(0, 3);
-        return `Here are additional options I found: ${randomProducts.join(', ')}. Would any of these work for your needs?`;
-      }
-      
-      if (categories.some(cat => lowerQuery.includes(cat.toLowerCase()))) {
-        const matchedCategory = categories.find(cat => lowerQuery.includes(cat.toLowerCase()));
-        const categoryProducts = affiliateLinks.filter((link: any) => link.category === matchedCategory);
-        return `I found ${categoryProducts.length} ${matchedCategory} options. Top recommendations include: ${categoryProducts.slice(0, 3).map((p: any) => p.title).join(', ')}. Which of these interests you most?`;
-      }
-      
-      if (lowerQuery.includes('best') || lowerQuery.includes('recommend') || lowerQuery.includes('top')) {
-        const topProducts = productNames.slice(0, 3);
-        return `Based on current deals available, my top recommendations are: ${topProducts.join(', ')}. Would you like more details about any of these?`;
-      }
-      
-      // Contextual response based on conversation history
-      if (hasDiscussedProducts) {
-        return `I also have options in ${categories.slice(0, 2).join(' and ')} categories. With ${affiliateLinks.length} total deals available, what specific features matter most to you?`;
-      } else {
-        return `I have ${affiliateLinks.length} deals across categories including ${categories.slice(0, 3).join(', ')}. What type of product would work best for your situation?`;
-      }
-    }
+    // REMOVED ALL FALLBACK SYSTEMS - No more random product suggestions
+    // When no matches are found, only graceful responses should be shown
     
-    // Handle general queries when products are available
-    if (hasProducts) {
-      const categories = [...new Set(affiliateLinks.map((link: any) => link.category))];
-      
-      // Handle specific product inquiries
-      if (lowerQuery.includes('best') || lowerQuery.includes('recommend')) {
-        return `I currently have ${affiliateLinks.length} deals available across ${categories.join(', ')}. To give you the best recommendation, what type of product are you looking for?`;
-      }
-      
-      if (lowerQuery.includes('show') || lowerQuery.includes('what') || lowerQuery.includes('available')) {
-        const sampleProducts = affiliateLinks.slice(0, 3).map(p => p.title);
-        return `I have deals on items like ${sampleProducts.join(', ')} among others. What category interests you most?`;
-      }
-      
-      // Category-specific responses
-      for (const link of affiliateLinks) {
-        if (lowerQuery.includes(link.category.toLowerCase()) || lowerQuery.includes(link.title.toLowerCase())) {
-          return `I found "${link.title}" in the ${link.category} category. ${link.description.slice(0, 70)}... Would this work for what you need?`;
-        }
-      }
-      
-      return `I have ${affiliateLinks.length} deals available in categories like ${categories.slice(0, 3).join(', ')}. What type of product would be most helpful for you today?`;
-    }
+    // REMOVED ALL GENERAL FALLBACK SYSTEMS - No more random product listings
     
     // Fallback when no products are available  
     return "The creator dashboard doesn't have any products available right now. Please check back later when new deals have been added to the system.";
