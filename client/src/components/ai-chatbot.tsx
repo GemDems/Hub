@@ -1026,7 +1026,7 @@ export default function AIChatbot() {
     if (isCollapsed) {
       // If collapsed, expand back to normal - preserve all chat state
       setIsCollapsed(false);
-      setPosition({ x: window.innerWidth - 420, y: 100 });
+      setPosition({ x: Math.max(0, window.innerWidth - 420), y: 100 });
       setSize({ width: 400, height: 500 });
       setShouldGlowRestoreButton(false); // Stop glowing when restored
       setIsHoveringRestoreButton(false);
@@ -1038,7 +1038,7 @@ export default function AIChatbot() {
     } else {
       // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
-      setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 60 }); // Position at bottom edge, visible
+      setPosition({ x: Math.max(0, window.innerWidth - 420), y: Math.max(0, window.innerHeight - 70) }); // Ensure it's visible and not cut off
       setSize({ width: 400, height: 60 });
       setShouldGlowRestoreButton(false); // Don't auto-glow, only on hover
       // Don't reset any chat state - messages, history, typing status should remain
@@ -1321,20 +1321,21 @@ export default function AIChatbot() {
       <div
         ref={chatRef}
         className={`fixed z-50 bg-gray-900 rounded-lg shadow-2xl border border-gray-700 overflow-hidden ${
-          isCollapsed ? 'cursor-default' : 'cursor-move'
+          isCollapsed ? 'cursor-pointer' : 'cursor-move'
         } ${isCollapsed ? 'rounded-b-none' : ''}`}
         style={{
-          left: position.x,
-          top: position.y,
+          left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)),
+          top: Math.max(0, Math.min(position.y, window.innerHeight - size.height)),
           width: size.width,
           height: size.height,
           backgroundColor: 'rgba(34, 38, 50, 0.95)',
-          backdropFilter: 'blur(10px)'
+          backdropFilter: 'blur(10px)',
+          transform: 'translateZ(0)' // Force hardware acceleration for better rendering
         }}
         onClick={isCollapsed ? (e) => {
           e.stopPropagation();
-          // When collapsed, clicking anywhere on the popup repositions to origin
-          setPosition({ x: window.innerWidth - 420, y: 100 });
+          // When collapsed, clicking anywhere on the popup expands back to normal
+          handleSnapToDefault();
         } : undefined}
         onMouseDown={isCollapsed ? undefined : handleMouseDown}
       >
@@ -1352,19 +1353,21 @@ export default function AIChatbot() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              if (!isCollapsed) {
-                // Only reset chat when not collapsed
+              if (isCollapsed) {
+                // When collapsed, reposition to original location instead of resetting
+                setPosition({ x: Math.max(0, window.innerWidth - 420), y: 100 });
+              } else {
+                // When not collapsed, reset the chat
                 handleReset();
-                setIsHoveringReset(false);
-                setShowResetTooltip(false);
-                // Stop glowing immediately when clicked
-                setIsButtonGlowing(false);
-                if (glowTimer) {
-                  clearTimeout(glowTimer);
-                  setGlowTimer(null);
-                }
               }
-              // When collapsed, do nothing - clicking anywhere on popup handles repositioning
+              setIsHoveringReset(false);
+              setShowResetTooltip(false);
+              // Stop glowing immediately when clicked
+              setIsButtonGlowing(false);
+              if (glowTimer) {
+                clearTimeout(glowTimer);
+                setGlowTimer(null);
+              }
             }}
             className={`p-1 rounded transition-all duration-300 cursor-pointer relative ${
               isButtonGlowing 
