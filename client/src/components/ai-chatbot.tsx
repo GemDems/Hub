@@ -1040,6 +1040,35 @@ Can I help you find something excellent in one of these available categories?`
     });
   };
 
+  // Touch event handlers for iPhone/mobile support
+  const handleTouchStart = (e: React.TouchEvent) => {
+    e.preventDefault();
+    if (!chatRef.current) return;
+    const touch = e.touches[0];
+    setIsDraggingWindow(true);
+    setDragOffset({
+      x: touch.clientX - position.x,
+      y: touch.clientY - position.y
+    });
+  };
+
+  const handleTouchMove = (e: TouchEvent) => {
+    if (isDraggingWindow) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      setPosition({
+        x: touch.clientX - dragOffset.x,
+        y: touch.clientY - dragOffset.y
+      });
+    }
+  };
+
+  const handleTouchEnd = () => {
+    setIsDraggingWindow(false);
+    setIsResizing(false);
+    setIsDragging(false);
+  };
+
   const handleMouseUp = () => {
     setIsDraggingWindow(false);
     setIsResizing(false);
@@ -1107,15 +1136,23 @@ Can I help you find something excellent in one of these available categories?`
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mousemove', handleResizeMove);
       document.removeEventListener('mouseup', handleMouseUp);
+      // Clean up touch events
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('touchend', handleTouchEnd);
     };
 
     if (isDraggingWindow) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      // Add touch event listeners for mobile
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
     }
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('touchmove', handleTouchMove, { passive: false });
+      document.addEventListener('touchend', handleTouchEnd);
     }
     if (isResizing) {
       document.addEventListener('mousemove', handleResizeMove);
@@ -1525,7 +1562,8 @@ Can I help you find something excellent in one of these available categories?`
           height: size.height,
           backgroundColor: 'rgba(34, 38, 50, 0.95)',
           backdropFilter: 'blur(10px)',
-          transform: 'translateZ(0)' // Force hardware acceleration for better rendering
+          transform: 'translateZ(0)', // Force hardware acceleration for better rendering
+          touchAction: 'none' // Prevent default touch behaviors for better dragging
         }}
         onClick={isCollapsed ? (e) => {
           e.stopPropagation();
@@ -1544,6 +1582,7 @@ Can I help you find something excellent in one of these available categories?`
           }
         } : undefined}
         onMouseDown={!isCollapsed ? handleMouseDown : undefined}
+        onTouchStart={!isCollapsed ? handleTouchStart : undefined}
       >
       {/* Header with controls */}
       <div 
@@ -1551,6 +1590,8 @@ Can I help you find something excellent in one of these available categories?`
           isCollapsed ? 'cursor-pointer' : 'cursor-grab'
         }`}
         onMouseDown={!isCollapsed ? handleDragStart : undefined}
+        onTouchStart={!isCollapsed ? handleTouchStart : undefined}
+        style={{ touchAction: 'none' }}
       >
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
