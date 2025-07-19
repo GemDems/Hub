@@ -1550,6 +1550,25 @@ Can I help you find something excellent in one of these available categories?`
         </div>
       )}
 
+      {/* Visible grey-bluish background extension when collapsed */}
+      {isCollapsed && isOpen && (
+        <div 
+          className="fixed z-40"
+          style={{
+            left: position.x,
+            top: position.y + 60, // Right below the collapsed header bar
+            width: size.width,
+            height: '9999px', // Extends far beyond the screen
+            backgroundColor: 'rgba(55, 65, 81, 0.85)', // Visible grey-bluish tint
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(75, 85, 99, 0.6)',
+            borderTop: 'none', // No border on top to connect with header
+            borderBottomLeftRadius: '8px',
+            borderBottomRightRadius: '8px'
+          }}
+        />
+      )}
+
       <div
         ref={chatRef}
         className={`fixed z-50 bg-gray-900 rounded-lg shadow-2xl border border-gray-700 overflow-hidden ${
@@ -1704,24 +1723,7 @@ Can I help you find something excellent in one of these available categories?`
         </div>
       </div>
 
-      {/* Visible grey-bluish background extension when collapsed */}
-      {isCollapsed && (
-        <div 
-          className="absolute left-0 right-0"
-          style={{
-            top: '60px', // Right below the collapsed header bar
-            width: '100%',
-            height: '9999px', // Extends far beyond the screen
-            backgroundColor: 'rgba(55, 65, 81, 0.85)', // Visible grey-bluish tint
-            backdropFilter: 'blur(8px)',
-            border: '1px solid rgba(75, 85, 99, 0.6)',
-            borderTop: 'none', // No border on top to connect with header
-            borderBottomLeftRadius: '8px',
-            borderBottomRightRadius: '8px',
-            zIndex: 999 // Make sure it's visible
-          }}
-        />
-      )}
+
 
       {/* Messages area - hidden when collapsed but state preserved */}
       <div 
