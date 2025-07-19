@@ -88,34 +88,30 @@ export default function AIChatbot() {
     const newIntent = { ...currentIntent };
     
     // Extract category information
-    const categories = ['electronics', 'fashion', 'home', 'garden', 'sports', 'books', 'beauty', 'automotive', 'toys'];
+    const categories = ['electronics', 'fashion', 'home', 'garden', 'sports', 'books', 'beauty', 'automotive', 'toys', 'health', 'kitchen', 'tech'];
     categories.forEach(cat => {
       if (lowerMessage.includes(cat)) {
         newIntent.category = cat;
       }
     });
     
-    // Extract budget information
-    if (lowerMessage.includes('$') || lowerMessage.includes('budget') || lowerMessage.includes('price')) {
-      const budgetMatch = message.match(/\$(\d+)/);
-      if (budgetMatch) {
-        newIntent.budget = budgetMatch[1];
-      }
-    }
-    
-    // Extract features
+    // Extract quality and features only (no budget questions)
     const features = [];
     if (lowerMessage.includes('wireless') || lowerMessage.includes('bluetooth')) features.push('wireless');
     if (lowerMessage.includes('waterproof') || lowerMessage.includes('water resistant')) features.push('waterproof');
-    if (lowerMessage.includes('fast') || lowerMessage.includes('quick')) features.push('fast');
-    if (lowerMessage.includes('portable') || lowerMessage.includes('travel')) features.push('portable');
+    if (lowerMessage.includes('fast') || lowerMessage.includes('quick') || lowerMessage.includes('speed')) features.push('fast');
+    if (lowerMessage.includes('portable') || lowerMessage.includes('travel') || lowerMessage.includes('compact')) features.push('portable');
+    if (lowerMessage.includes('durable') || lowerMessage.includes('strong') || lowerMessage.includes('reliable')) features.push('durable');
+    if (lowerMessage.includes('premium') || lowerMessage.includes('high-quality') || lowerMessage.includes('quality')) features.push('premium quality');
+    if (lowerMessage.includes('rechargeable') || lowerMessage.includes('battery')) features.push('rechargeable');
+    if (lowerMessage.includes('smart') || lowerMessage.includes('intelligent')) features.push('smart');
     
     if (features.length > 0) {
       newIntent.features = [...(newIntent.features || []), ...features];
     }
     
-    // Check for confirmation
-    if (lowerMessage.includes('yes') || lowerMessage.includes('confirm') || lowerMessage.includes('search') || lowerMessage.includes('find')) {
+    // Check for confirmation to search creator dashboard
+    if (lowerMessage.includes('yes') || lowerMessage.includes('confirm') || lowerMessage.includes('search') || lowerMessage.includes('find') || lowerMessage.includes('show me') || lowerMessage.includes('go ahead')) {
       newIntent.confirmed = true;
     }
     
@@ -150,13 +146,12 @@ export default function AIChatbot() {
       return `That's outside my area of expertise. I specialize in finding great deals on products. What type of items are you interested in purchasing?`;
     }
 
-    // Handle progressive information gathering
+    // Handle progressive information gathering - only ask about what user specifically inquires about
     if (intent && !intent.confirmed && (intent.category || intent.features?.length)) {
       const parts = [];
-      if (intent.category) parts.push(`Focusing on ${intent.category}`);
-      if (intent.features?.length) parts.push(`features: ${intent.features.join(', ')}`);
-      if (!intent.budget) parts.push("What's your budget range?");
-      parts.push("Ready to search for deals?");
+      if (intent.category) parts.push(`Looking for ${intent.category} products`);
+      if (intent.features?.length) parts.push(`with ${intent.features.join(', ')} features`);
+      parts.push("Should I search the creator dashboard for available deals?");
       return parts.join('. ') + '';
     }
 
@@ -225,8 +220,8 @@ export default function AIChatbot() {
       return `I have ${affiliateLinks.length} deals available in categories like ${categories.slice(0, 3).join(', ')}. What type of product would be most helpful for you today?`;
     }
     
-    // Fallback when no products are available
-    return "I don't see any deals available in our system right now. The creator dashboard appears to be empty at the moment. Please check back later when new products have been added, or contact the site administrator if this seems like an error.";
+    // Fallback when no products are available  
+    return "The creator dashboard doesn't have any affiliate link products available right now. Please check back later when new deals have been added to the system.";
   };
 
   const generateBotResponse = (userMessage: string): string => {
@@ -358,7 +353,7 @@ export default function AIChatbot() {
           let botResponseContent: string;
           
           if (!hasProducts) {
-            botResponseContent = "I searched through our current deals inventory but don't see any products available right now. The creator dashboard appears to be empty at the moment. You might want to check back later when new deals have been added to the system.";
+            botResponseContent = "I searched the creator dashboard but there aren't any affiliate link products available right now. The dashboard appears empty at the moment. Please check back later when new deals have been added.";
           } else {
             botResponseContent = generateContextualResponse(messageToProcess, newHistory, newIntentData);
           }
@@ -411,6 +406,16 @@ export default function AIChatbot() {
   };
 
   const handleReset = () => {
+    // Reset chat completely
+    setMessages([]);
+    setConversationHistory([]);
+    setUserIntent({});
+    setInputValue("");
+    setIsTyping(false);
+    setIsSearching(false);
+    setSearchProducts([]);
+    
+    // Reset size and position
     setSize({ width: 380, height: 480 });
     setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 500 });
   };
@@ -685,7 +690,7 @@ export default function AIChatbot() {
               handleReset();
             }}
             className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
-            title="Reset size"
+            title="Reset chat and start new conversation"
             onMouseDown={(e) => e.stopPropagation()}
           >
             <RotateCcw className="w-4 h-4 text-gray-300" />
