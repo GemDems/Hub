@@ -595,25 +595,32 @@ export default function AIChatbot() {
     }
   }, [isOpen, sessionId]);
 
-  // Show tooltip only on second open after a close
+  // Show tooltip only on second reopening after closing once
   useEffect(() => {
     if (isOpen) {
       const openCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0');
       const hasBeenClosed = localStorage.getItem(`chatClosed-${sessionId}`) === 'true';
+      const reopenCount = parseInt(localStorage.getItem(`chatReopenCount-${sessionId}`) || '0');
       
-      // Show tooltip on second open AND only if chat was closed before
-      if (openCount >= 2 && hasBeenClosed && !tooltipDismissed) {
-        console.log('Showing reset tooltip after open->close->open sequence...');
-        setTimeout(() => {
-          setShowResetTooltip(true);
-          console.log('Tooltip should be visible now');
-        }, 1000);
-        setTimeout(() => {
-          setShowResetTooltip(false);
-          // Auto-dismiss permanently after showing once
-          localStorage.setItem(`resetTooltipDismissed-${sessionId}`, 'true');
-          setTooltipDismissed(true);
-        }, 5000); // Hide after 5 seconds and don't show again
+      // Count reopens only after first close
+      if (hasBeenClosed) {
+        const newReopenCount = reopenCount + 1;
+        localStorage.setItem(`chatReopenCount-${sessionId}`, newReopenCount.toString());
+        
+        // Show tooltip only on the second reopen after closing
+        if (newReopenCount === 2 && !tooltipDismissed) {
+          console.log('Showing reset tooltip on second reopen after close...');
+          setTimeout(() => {
+            setShowResetTooltip(true);
+            console.log('Tooltip should be visible now');
+          }, 1000);
+          setTimeout(() => {
+            setShowResetTooltip(false);
+            // Auto-dismiss permanently after showing once
+            localStorage.setItem(`resetTooltipDismissed-${sessionId}`, 'true');
+            setTooltipDismissed(true);
+          }, 5000); // Hide after 5 seconds and don't show again
+        }
       }
     }
   }, [isOpen, tooltipDismissed, sessionId]);
@@ -865,7 +872,7 @@ export default function AIChatbot() {
               className="absolute w-2 h-2 bg-black/90 transform rotate-45"
               style={{
                 bottom: '-4px',
-                left: '20px'
+                left: '15px'
               }}
             ></div>
           </div>
