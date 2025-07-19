@@ -352,8 +352,8 @@ export default function AIChatbot() {
           if (product.isElitePick === 1) similarityScore += 10;
           if (product.isVerified === 1) similarityScore += 5;
           
-          // Only add products with meaningful similarity (threshold)
-          if (similarityScore >= 25) { // Minimum threshold to avoid weak matches
+          // Only add products with VERY HIGH similarity (raised threshold to prevent random matches)
+          if (similarityScore >= 85) { // VERY HIGH threshold to completely avoid weak/random matches
             broadMatches.push({ product, score: similarityScore });
           }
         });
@@ -361,39 +361,8 @@ export default function AIChatbot() {
         // Sort by similarity score and get best matches
         broadMatches.sort((a, b) => b.score - a.score);
 
-        // If we found related matches, show the most relevant ones
-        if (broadMatches.length > 0) {
-          const bestMatch = broadMatches[0].product;
-          const topMatches = broadMatches.slice(0, 3); // Get top 3 most related
-          
-          setTimeout(() => {
-            setFoundProduct(bestMatch);
-            setShowPitchButton(true);
-          }, 100);
-
-          // Show single best match with explanation of why it's related
-          const relatedResponses = [
-            `I searched for exactly what you mentioned but didn't find a direct match. However, I found something closely related that might work even better: **${bestMatch.title}** ${bestMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
-
-${bestMatch.description || 'Quality craftsmanship and reliable performance.'} ${bestMatch.stock > 0 ? `Only ${bestMatch.stock} left! ` : ''}This is the most relevant match from our current live inventory. ${bestMatch.aiPrivateInfo || 'Built to professional standards.'}
-
-<a href="${bestMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestMatch.title} →</a>`,
-
-            `I don't have the exact item you mentioned, but I found the closest alternative currently available: **${bestMatch.title}** ${bestMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
-
-${bestMatch.description || 'Exceptional attention to detail.'} ${bestMatch.stock > 0 ? `Only ${bestMatch.stock} left! ` : ''}This is the most related product I could find in our live catalog. ${bestMatch.aiPrivateInfo || 'Designed for reliability.'}
-
-<a href="${bestMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestMatch.title} →</a>`,
-
-            `While I don't have exactly what you're looking for, I discovered the most similar item currently live on the site: **${bestMatch.title}** ${bestMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
-
-${bestMatch.description || 'Superior quality and performance.'} ${bestMatch.stock > 0 ? `Only ${bestMatch.stock} left! ` : ''}This is the closest match to your request from what's currently available. ${bestMatch.aiPrivateInfo || 'Expertly crafted.'}
-
-<a href="${bestMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestMatch.title} →</a>`
-          ];
-
-          return relatedResponses[Math.floor(Math.random() * relatedResponses.length)];
-        }
+        // COMPLETELY REMOVED WEAK MATCH FALLBACK - No more random products!
+        // broadMatches with high threshold would be empty for most queries now
 
         // If no related matches either, gracefully explain and ask for alternatives
         const availableCategories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
