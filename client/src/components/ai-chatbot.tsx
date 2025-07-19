@@ -17,10 +17,17 @@ interface ChatPosition {
 }
 
 export default function AIChatbot() {
+  // Generate unique session ID for this tab
+  const [sessionId] = useState(() => {
+    const deviceId = localStorage.getItem('deviceId') || 'unknown';
+    const tabId = Math.random().toString(36).substr(2, 9);
+    return `${deviceId}-${tabId}`;
+  });
+
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => {
     // Load saved messages from localStorage or use default
-    const savedMessages = localStorage.getItem('chatMessages');
+    const savedMessages = localStorage.getItem(`chatMessages-${sessionId}`);
     if (savedMessages) {
       try {
         return JSON.parse(savedMessages).map((msg: any) => ({
@@ -74,7 +81,7 @@ export default function AIChatbot() {
   const [chatOpenCount, setChatOpenCount] = useState(0);
   const [showResetTooltip, setShowResetTooltip] = useState(false);
   const [tooltipDismissed, setTooltipDismissed] = useState(() => {
-    return localStorage.getItem('resetTooltipDismissed') === 'true';
+    return localStorage.getItem(`resetTooltipDismissed-${sessionId}`) === 'true';
   });
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   
@@ -463,9 +470,9 @@ export default function AIChatbot() {
     setSearchProducts([]);
     setShowResetTooltip(false);
     
-    // Clear saved messages and reset open count
-    localStorage.setItem('chatMessages', JSON.stringify(resetMessages));
-    localStorage.setItem('chatOpenCount', '0');
+    // Clear saved messages and reset open count for this session
+    localStorage.setItem(`chatMessages-${sessionId}`, JSON.stringify(resetMessages));
+    localStorage.setItem(`chatOpenCount-${sessionId}`, '0');
     setChatOpenCount(0);
     
     // Reset size and position
@@ -475,7 +482,7 @@ export default function AIChatbot() {
 
   const dismissTooltip = () => {
     setShowResetTooltip(false);
-    localStorage.setItem('resetTooltipDismissed', 'true');
+    localStorage.setItem(`resetTooltipDismissed-${sessionId}`, 'true');
     setTooltipDismissed(true);
   };
 
@@ -567,18 +574,18 @@ export default function AIChatbot() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     // Save messages to localStorage whenever they change
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
-  }, [messages]);
+    localStorage.setItem(`chatMessages-${sessionId}`, JSON.stringify(messages));
+  }, [messages, sessionId]);
 
   // Track chat opens and show reset tooltip on second open
   useEffect(() => {
     if (isOpen) {
-      const currentCount = parseInt(localStorage.getItem('chatOpenCount') || '0') + 1;
+      const currentCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0') + 1;
       setChatOpenCount(currentCount);
-      localStorage.setItem('chatOpenCount', currentCount.toString());
+      localStorage.setItem(`chatOpenCount-${sessionId}`, currentCount.toString());
       
       // Show tooltip on second open or if there are saved messages from previous sessions
-      const hasSavedMessages = localStorage.getItem('chatMessages');
+      const hasSavedMessages = localStorage.getItem(`chatMessages-${sessionId}`);
       let savedMessagesExist = false;
       try {
         savedMessagesExist = hasSavedMessages && JSON.parse(hasSavedMessages).length > 1;
@@ -597,7 +604,7 @@ export default function AIChatbot() {
         setTimeout(() => {
           setShowResetTooltip(false);
           // Auto-dismiss permanently after showing once
-          localStorage.setItem('resetTooltipDismissed', 'true');
+          localStorage.setItem(`resetTooltipDismissed-${sessionId}`, 'true');
           setTooltipDismissed(true);
         }, 5000); // Hide after 5 seconds and don't show again
       }
