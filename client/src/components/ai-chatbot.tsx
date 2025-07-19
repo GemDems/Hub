@@ -577,26 +577,33 @@ export default function AIChatbot() {
     localStorage.setItem(`chatMessages-${sessionId}`, JSON.stringify(messages));
   }, [messages, sessionId]);
 
-  // Track chat opens and show reset tooltip on second open
+  // Track chat opens and show reset tooltip after open -> close -> open sequence
   useEffect(() => {
     if (isOpen) {
-      const currentCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0') + 1;
-      setChatOpenCount(currentCount);
-      localStorage.setItem(`chatOpenCount-${sessionId}`, currentCount.toString());
+      const openCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0') + 1;
+      setChatOpenCount(openCount);
+      localStorage.setItem(`chatOpenCount-${sessionId}`, openCount.toString());
       
-      // Show tooltip on second open or if there are saved messages from previous sessions
-      const hasSavedMessages = localStorage.getItem(`chatMessages-${sessionId}`);
-      let savedMessagesExist = false;
-      try {
-        savedMessagesExist = hasSavedMessages && JSON.parse(hasSavedMessages).length > 1;
-      } catch (e) {
-        console.log('Error parsing saved messages:', e);
+      console.log('Chat opened, count:', openCount);
+    } else {
+      // When chat closes, track that it was closed
+      const hasBeenClosed = localStorage.getItem(`chatClosed-${sessionId}`) === 'true';
+      if (!hasBeenClosed) {
+        localStorage.setItem(`chatClosed-${sessionId}`, 'true');
+        console.log('Chat closed for first time');
       }
+    }
+  }, [isOpen, sessionId]);
+
+  // Show tooltip only on second open after a close
+  useEffect(() => {
+    if (isOpen) {
+      const openCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0');
+      const hasBeenClosed = localStorage.getItem(`chatClosed-${sessionId}`) === 'true';
       
-      console.log('Chat open count:', currentCount, 'Saved messages exist:', savedMessagesExist);
-      
-      if ((currentCount >= 2 || savedMessagesExist) && !tooltipDismissed) {
-        console.log('Showing reset tooltip...');
+      // Show tooltip on second open AND only if chat was closed before
+      if (openCount >= 2 && hasBeenClosed && !tooltipDismissed) {
+        console.log('Showing reset tooltip after open->close->open sequence...');
         setTimeout(() => {
           setShowResetTooltip(true);
           console.log('Tooltip should be visible now');
@@ -609,7 +616,7 @@ export default function AIChatbot() {
         }, 5000); // Hide after 5 seconds and don't show again
       }
     }
-  }, [isOpen]);
+  }, [isOpen, tooltipDismissed, sessionId]);
 
   // Add global search trigger function for Search Now button
   useEffect(() => {
@@ -842,7 +849,7 @@ export default function AIChatbot() {
         <div 
           className="fixed z-[1000] pointer-events-auto"
           style={{
-            left: position.x + size.width - 110,
+            left: position.x + 15,
             top: position.y - 28
           }}
         >
@@ -858,7 +865,7 @@ export default function AIChatbot() {
               className="absolute w-2 h-2 bg-black/90 transform rotate-45"
               style={{
                 bottom: '-4px',
-                right: '40px'
+                left: '20px'
               }}
             ></div>
           </div>
