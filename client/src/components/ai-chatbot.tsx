@@ -183,9 +183,16 @@ export default function AIChatbot() {
     const userMessages = history.filter(msg => msg.role === 'user').map(msg => msg.content.toLowerCase());
     const allUserInput = userMessages.join(' ') + ' ' + lowerQuery;
     
+    // Get AI's last message to understand context
+    const aiMessages = history.filter(msg => msg.role === 'assistant');
+    const lastAiMessage = aiMessages[aiMessages.length - 1]?.content.toLowerCase() || '';
+    
     // ANALYZE USER INPUT - Look for any specific request or need
     const userWords = lowerQuery.split(' ').filter(word => word.length > 2);
     const hasSpecificRequest = userWords.length >= 2 || lowerQuery.includes('need') || lowerQuery.includes('want') || lowerQuery.includes('looking for');
+    
+    // Check if AI asked a question and user is responding
+    const aiAskedQuestion = lastAiMessage.includes('?') || lastAiMessage.includes('what') || lastAiMessage.includes('tell me') || lastAiMessage.includes('share');
     
     // ALWAYS SEARCH PRODUCTS when user provides any specific input
     if (hasSpecificRequest && lowerQuery.trim().length > 3) {
@@ -288,7 +295,20 @@ export default function AIChatbot() {
       
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       
-      return `${randomResponse}
+      // Generate contextual response based on previous conversation
+      let contextualResponse = randomResponse;
+      if (aiAskedQuestion) {
+        const contextResponses = [
+          `Perfect! Based on what you just told me, here's what I found:`,
+          `Great info! I searched through everything and this caught my attention:`,
+          `Thanks for clarifying! This product seems to match exactly what you described:`,
+          `Excellent! After analyzing your response, I found this:`,
+          `Got it! Here's what stood out when I searched for what you mentioned:`
+        ];
+        contextualResponse = contextResponses[Math.floor(Math.random() * contextResponses.length)];
+      }
+
+      return `${contextualResponse}
 
 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
 
@@ -1743,6 +1763,78 @@ ${analysisDetails ? `I selected this because: ${analysisDetails}.` : 'This seeme
 
         {/* Input area */}
         <div className="border-t border-gray-700 p-4 mt-auto">
+          {/* Recommended Questions - Dynamic based on conversation */}
+          {(() => {
+            const aiMessages = history.filter(msg => msg.role === 'assistant');
+            const lastAiMessage = aiMessages[aiMessages.length - 1]?.content.toLowerCase() || '';
+            
+            let suggestedQuestions = [];
+            
+            if (messages.length <= 1) {
+              // Initial conversation starters
+              suggestedQuestions = [
+                "Looking for electronics",
+                "Need something affordable", 
+                "Show me trending deals",
+                "Want quality products",
+                "Find tech gadgets",
+                "Best value items"
+              ];
+            } else if (lastAiMessage.includes('what') || lastAiMessage.includes('tell me') || lastAiMessage.includes('share')) {
+              // AI asked a question - provide contextual responses
+              suggestedQuestions = [
+                "For work/office use",
+                "Something under $50", 
+                "High quality preferred",
+                "Popular trending items",
+                "Tech and gadgets",
+                "Home and lifestyle"
+              ];
+            } else if (lastAiMessage.includes('found') || lastAiMessage.includes('product') || lastAiMessage.includes('match')) {
+              // AI recommended a product - provide follow-up questions
+              suggestedQuestions = [
+                "Tell me more about it",
+                "What makes it special?", 
+                "Show me alternatives",
+                "Is it worth the price?",
+                "Any similar options?",
+                "What's the best deal?"
+              ];
+            } else {
+              // General conversation follow-ups
+              suggestedQuestions = [
+                "Show me more options",
+                "Something different", 
+                "What's most popular?",
+                "Best value for money",
+                "Latest arrivals",
+                "Top rated products"
+              ];
+            }
+            
+            return suggestedQuestions.length > 0 && (
+              <div className="mb-3">
+                <div className="text-xs text-gray-400 mb-2">
+                  {messages.length <= 1 ? "Quick questions to ask:" : "You might want to ask:"}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {suggestedQuestions.map((question, index) => (
+                    <button
+                      key={index}
+                      onClick={() => {
+                        setInputValue(question);
+                        setTimeout(handleSendMessage, 100);
+                      }}
+                      className="px-3 py-1 text-xs bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white rounded-full border border-gray-600 transition-colors"
+                    >
+                      {question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+          
           {/* Reply indicator */}
           {replyingTo && (
             <div className="mb-3 p-2 bg-gray-800 rounded border-l-4 border-blue-500">
