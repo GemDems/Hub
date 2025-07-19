@@ -302,7 +302,7 @@ export default function Home() {
       <TrustIndicators />
       
       {/* Leaderboard Section - At bottom */}
-      <div className="bg-white py-16" data-section="leaderboard">
+      <div className="bg-white py-10" data-section="leaderboard">
         <Leaderboard />
       </div>
       
