@@ -58,38 +58,29 @@ export default function AIChatbot() {
     queryKey: ["/api/affiliate-links"],
   });
 
-  // Predefined responses for conversion optimization
-  const botResponses = {
-    greeting: [
-      "What's good! Looking for some fire deals? 🔥",
-      "Hey there! Ready to save some serious cash? 💰",
-      "Yo! What kind of deals are calling your name today? 👀"
-    ],
-    product: [
-      "That's a solid choice! This one's been flying off the shelves 🚀 Want me to hook you up with the best deal?",
-      "Oh snap, you've got great taste! 🎯 This is actually one of our elite picks. Ready to grab it?",
-      "YES! That's exactly what I'd recommend too 💯 Want the exclusive discount link?"
-    ],
-    comparison: [
-      "Great question! Here's the real talk - this one beats the competition because... 🏆 Want me to show you why?",
-      "Smart to compare! This option is actually crushing it with our users 📈 Here's what makes it special...",
-      "I love that you're doing your research! 🧠 Let me break down why this is the winner..."
-    ],
-    urgency: [
-      "Real talk - this deal expires soon ⏰ Only got a few spots left!",
-      "Not gonna lie, prices might jump tomorrow 📈 Want me to lock this in for you?",
-      "Heads up - this is limited time only! 🚨 Should we secure your spot?"
-    ],
-    objection: [
-      "I totally get it! Here's why this is different from everything else you've tried... 💪",
-      "Valid concern! That's exactly why we offer a full guarantee 🛡️ Zero risk for you!",
-      "Been there! But check this - our users are seeing crazy results 📊 Want to see the proof?"
-    ]
-  };
-
-  const getRandomResponse = (category: keyof typeof botResponses) => {
-    const responses = botResponses[category];
-    return responses[Math.floor(Math.random() * responses.length)];
+  // Dynamic response generator based on user query
+  const generateDynamicResponse = (userMessage: string, context: any) => {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    // Analyze query type and generate appropriate response
+    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+      return `Hi! I help find the best deals. What are you looking for today?`;
+    }
+    
+    if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
+      return `I can help you find deals across different categories. Just tell me what you need and I'll search for the best options.`;
+    }
+    
+    if (lowerMessage.includes('thank')) {
+      return `You're welcome! Need help finding anything else?`;
+    }
+    
+    if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) {
+      return `See you later! Come back anytime for more deals.`;
+    }
+    
+    // Default response for unrecognized queries
+    return `I understand you're asking about "${userMessage}". Let me help you find relevant deals. What specific product category interests you?`;
   };
 
   const analyzeUserIntent = (message: string, currentIntent: any) => {
@@ -135,47 +126,47 @@ export default function AIChatbot() {
     const lowerQuery = userMessage.toLowerCase();
     
     // Check conversation context for better responses
-    const previousMessages = history.slice(-4); // Last 4 messages for context
+    const previousMessages = history.slice(-4);
     const hasDiscussedProducts = previousMessages.some(msg => 
       msg.content.toLowerCase().includes('product') || 
       msg.content.toLowerCase().includes('deal') || 
       msg.content.toLowerCase().includes('buy')
     );
 
-    // Check if user is asking about specific topics outside our scope
+    // Handle off-topic queries with direct, helpful responses
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
-      return "I find deals, not weather! Need weather gear or outdoor equipment?";
-    } else if (lowerQuery.includes('news') || lowerQuery.includes('politics') || lowerQuery.includes('election')) {
-      return "I find deals, not news! What can I help you shop for?";
-    } else if (lowerQuery.includes('stock') || lowerQuery.includes('crypto') || lowerQuery.includes('bitcoin') || lowerQuery.includes('investment')) {
-      return "I find product deals, not financial advice! What are you shopping for?";
-    } else if (lowerQuery.includes('quantum') || lowerQuery.includes('physics') || lowerQuery.includes('medical') || lowerQuery.includes('legal') || lowerQuery.includes('doctor')) {
-      return "That's outside my expertise! I find deals. What products do you need?";
+      return `I specialize in product deals rather than weather updates. However, if you need weather-related gear like jackets, umbrellas, or outdoor equipment, I can help you find those deals.`;
+    } 
+    
+    if (lowerQuery.includes('news') || lowerQuery.includes('politics') || lowerQuery.includes('election')) {
+      return `I focus on finding product deals rather than current events. Is there anything specific you'd like to shop for today?`;
+    }
+    
+    if (lowerQuery.includes('stock') || lowerQuery.includes('crypto') || lowerQuery.includes('bitcoin') || lowerQuery.includes('investment')) {
+      return `I help with product deals rather than financial markets. Are you looking for any specific products or electronics today?`;
+    }
+    
+    if (lowerQuery.includes('quantum') || lowerQuery.includes('physics') || lowerQuery.includes('medical') || lowerQuery.includes('legal') || lowerQuery.includes('doctor')) {
+      return `That's outside my area of expertise. I specialize in finding great deals on products. What type of items are you interested in purchasing?`;
     }
 
-    // Check if we should ask for more information or proceed with search
+    // Handle progressive information gathering
     if (intent && !intent.confirmed && (intent.category || intent.features?.length)) {
-      let response = "";
-      if (intent.category) {
-        response += `Got it - ${intent.category}. `;
-      }
-      if (intent.features?.length) {
-        response += `Features: ${intent.features.join(', ')}. `;
-      }
-      if (!intent.budget) {
-        response += "Budget? ";
-      }
-      response += "Search deals now?";
-      return response;
+      const parts = [];
+      if (intent.category) parts.push(`Focusing on ${intent.category}`);
+      if (intent.features?.length) parts.push(`features: ${intent.features.join(', ')}`);
+      if (!intent.budget) parts.push("What's your budget range?");
+      parts.push("Ready to search for deals?");
+      return parts.join('. ') + '';
     }
 
-    // Use affiliate links data if available and confirmed
+    // Handle confirmed search with real product data
     const hasProducts = affiliateLinks.length > 0;
     if (hasProducts && intent?.confirmed) {
       const categories = [...new Set(affiliateLinks.map((link: any) => link.category))];
       const productNames = affiliateLinks.map((link: any) => link.title);
       
-      // Look for specific product mentions in query
+      // Look for specific product mentions
       const mentionedProducts = productNames.filter(name => 
         lowerQuery.includes(name.toLowerCase()) || 
         name.toLowerCase().includes(lowerQuery)
@@ -183,36 +174,59 @@ export default function AIChatbot() {
       
       if (mentionedProducts.length > 0) {
         const product = affiliateLinks.find((link: any) => link.title === mentionedProducts[0]);
-        return `Found "${product.title}" - ${product.description.slice(0, 50)}... Great deal!`;
-      } else if (lowerQuery.includes('more') || lowerQuery.includes('other') || lowerQuery.includes('different')) {
-        if (hasDiscussedProducts) {
-          const randomProducts = productNames.sort(() => 0.5 - Math.random()).slice(0, 3);
-          return `Other options: ${randomProducts.join(', ')}. Which interests you?`;
-        } else {
-          return `${affiliateLinks.length} deals available. Popular: ${productNames.slice(0, 3).join(', ')}. What type?`;
-        }
-      } else if (categories.some(cat => lowerQuery.includes(cat.toLowerCase()))) {
+        return `I found "${product.title}" which matches your search. ${product.description.slice(0, 60)}... This appears to be a quality option for your needs.`;
+      }
+      
+      if (lowerQuery.includes('more') || lowerQuery.includes('other') || lowerQuery.includes('different')) {
+        const randomProducts = productNames.sort(() => 0.5 - Math.random()).slice(0, 3);
+        return `Here are additional options I found: ${randomProducts.join(', ')}. Would any of these work for your needs?`;
+      }
+      
+      if (categories.some(cat => lowerQuery.includes(cat.toLowerCase()))) {
         const matchedCategory = categories.find(cat => lowerQuery.includes(cat.toLowerCase()));
         const categoryProducts = affiliateLinks.filter((link: any) => link.category === matchedCategory);
-        return `${categoryProducts.length} ${matchedCategory} deals found. Top picks: ${categoryProducts.slice(0, 3).map((p: any) => p.title).join(', ')}. Which one?`;
-      } else if (lowerQuery.includes('best') || lowerQuery.includes('recommend') || lowerQuery.includes('top')) {
+        return `I found ${categoryProducts.length} ${matchedCategory} options. Top recommendations include: ${categoryProducts.slice(0, 3).map((p: any) => p.title).join(', ')}. Which of these interests you most?`;
+      }
+      
+      if (lowerQuery.includes('best') || lowerQuery.includes('recommend') || lowerQuery.includes('top')) {
         const topProducts = productNames.slice(0, 3);
-        return `Top deals: ${topProducts.join(', ')}. Want details?`;
+        return `Based on current availability, my top recommendations are: ${topProducts.join(', ')}. Would you like more details about any of these?`;
+      }
+      
+      // Contextual response based on conversation history
+      if (hasDiscussedProducts) {
+        return `I also have options in ${categories.slice(0, 2).join(' and ')} categories. With ${affiliateLinks.length} total deals available, what specific features matter most to you?`;
       } else {
-        // Contextual response based on conversation
-        if (hasDiscussedProducts) {
-          return `Also have ${categories.slice(0, 2).join(' and ')} deals. ${affiliateLinks.length} total. What features?`;
-        } else {
-          return `${affiliateLinks.length} deals across ${categories.slice(0, 3).join(', ')}. What are you shopping for?`;
+        return `I have ${affiliateLinks.length} deals across categories including ${categories.slice(0, 3).join(', ')}. What type of product would work best for your situation?`;
+      }
+    }
+    
+    // Handle general queries when products are available
+    if (hasProducts) {
+      const categories = [...new Set(affiliateLinks.map((link: any) => link.category))];
+      
+      // Handle specific product inquiries
+      if (lowerQuery.includes('best') || lowerQuery.includes('recommend')) {
+        return `I currently have ${affiliateLinks.length} deals available across ${categories.join(', ')}. To give you the best recommendation, what type of product are you looking for?`;
+      }
+      
+      if (lowerQuery.includes('show') || lowerQuery.includes('what') || lowerQuery.includes('available')) {
+        const sampleProducts = affiliateLinks.slice(0, 3).map(p => p.title);
+        return `I have deals on items like ${sampleProducts.join(', ')} among others. What category interests you most?`;
+      }
+      
+      // Category-specific responses
+      for (const link of affiliateLinks) {
+        if (lowerQuery.includes(link.category.toLowerCase()) || lowerQuery.includes(link.title.toLowerCase())) {
+          return `I found "${link.title}" in the ${link.category} category. ${link.description.slice(0, 70)}... Would this work for what you need?`;
         }
       }
-    } else if (hasProducts) {
-      // Products available but not confirmed search yet
-      const categories = [...new Set(affiliateLinks.map((link: any) => link.category))];
-      return `${affiliateLinks.length} deals available in ${categories.slice(0, 3).join(', ')}. What are you shopping for?`;
-    } else {
-      return "I help find deals! No products loaded right now, but check back soon for amazing deals!";
+      
+      return `I have ${affiliateLinks.length} deals available in categories like ${categories.slice(0, 3).join(', ')}. What type of product would be most helpful for you today?`;
     }
+    
+    // Fallback when no products are available
+    return generateDynamicResponse(userMessage, { hasProducts: false, conversationLength: history.length });
   };
 
   const generateBotResponse = (userMessage: string): string => {
@@ -392,12 +406,12 @@ export default function AIChatbot() {
   };
 
   const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (!chatRef.current) return;
     setIsDragging(true);
-    const rect = chatRef.current.getBoundingClientRect();
     setDragOffset({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
     });
   };
 
@@ -458,6 +472,12 @@ export default function AIChatbot() {
   };
 
   useEffect(() => {
+    const cleanup = () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleResizeMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
@@ -466,12 +486,9 @@ export default function AIChatbot() {
       document.addEventListener('mousemove', handleResizeMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-    return () => {
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mousemove', handleResizeMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-  }, [isDragging, isResizing, dragOffset, resizeStart]);
+    
+    return cleanup;
+  }, [isDragging, isResizing, dragOffset.x, dragOffset.y, position.x, position.y, resizeStart]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -657,6 +674,7 @@ export default function AIChatbot() {
             className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
             title="Reset size"
             onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <RotateCcw className="w-4 h-4 text-gray-300" />
           </button>
@@ -665,6 +683,7 @@ export default function AIChatbot() {
             className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
             title="Snap to default"
             onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <MousePointer className="w-4 h-4 text-gray-300" />
           </button>
@@ -673,6 +692,7 @@ export default function AIChatbot() {
             className="p-1 hover:bg-red-600 rounded transition-colors cursor-pointer"
             title="Close chat"
             onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
           >
             <X className="w-4 h-4 text-gray-300" />
           </button>
@@ -685,6 +705,7 @@ export default function AIChatbot() {
           className="flex-1 overflow-y-auto p-4 space-y-4" 
           style={{ maxHeight: 'calc(100% - 80px)' }}
           onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
         >
           {messages.map((message) => (
             <div
@@ -753,11 +774,13 @@ export default function AIChatbot() {
               style={{ fontFamily: 'Inter, sans-serif' }}
               onMouseDown={(e) => e.stopPropagation()}
               onFocus={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             />
             <button
               onClick={handleSendMessage}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer"
               onMouseDown={(e) => e.stopPropagation()}
+              onClick={(e) => e.stopPropagation()}
             >
               Send
             </button>
