@@ -686,14 +686,18 @@ export default function AIChatbot() {
               setFadeTimer(fadeOutTimer);
             }
           }}
-          className={`fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:scale-105 group transition-all duration-700 ease-out ${
+          className={`fixed bottom-6 right-6 z-50 flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 group transition-all duration-700 ease-out ${
             isButtonFading && !isSlideUp ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          } ${isSlideUp ? 'transform -translate-y-32' : 'transform translate-y-0'}`}
+          } ${isSlideUp ? 'transform translate-y-32' : 'transform translate-y-0'}`}
+          style={{
+            boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
+            background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%)'
+          }}
         >
-          <MessageCircle className="w-5 h-5" />
-          <Phone className="w-4 h-4" />
-          <span className="text-sm font-medium">Chat Assistant</span>
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
+          <div className="relative flex items-center justify-center">
+            <MessageCircle className="w-7 h-7 group-hover:scale-110 transition-transform duration-300" />
+            <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full border-2 border-white animate-pulse"></div>
+          </div>
         </button>
 
         {/* Pause/Play Control Button */}
