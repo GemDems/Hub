@@ -1797,7 +1797,7 @@ I analyzed every product detail including private specifications and these stood
         <div className="border-t border-gray-700 p-4 mt-auto">
           {/* Recommended Questions - Dynamic based on conversation */}
           {(() => {
-            const aiMessages = history.filter(msg => msg.role === 'assistant');
+            const aiMessages = messages.filter(msg => msg.role === 'assistant');
             const lastAiMessage = aiMessages[aiMessages.length - 1]?.content.toLowerCase() || '';
             
             let suggestedQuestions = [];
