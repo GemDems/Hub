@@ -576,35 +576,36 @@ export default function AIChatbot() {
     };
   }, [conversationHistory, userIntent, affiliateLinks]);
 
-  // Chat button visibility logic
+  // Chat button visibility logic - initial fade in
   useEffect(() => {
-    if (isAnimationPaused || isHovering) return;
+    if (isOpen) return; // Don't show button when chat is open
     
-    // Clear any existing fade timer
-    if (fadeTimer) {
-      clearTimeout(fadeTimer);
-    }
-    
-    // Initial fade in after 4 seconds
+    // Initial fade in after 4 seconds on page load
     const initialTimer = setTimeout(() => {
-      setIsButtonFading(true);
-      
-      // Auto fade out after 7 seconds
-      const fadeOutTimer = setTimeout(() => {
-        if (!isHovering) {
-          setIsButtonFading(false);
-        }
-      }, 7000);
-      
-      setFadeTimer(fadeOutTimer);
-      return () => clearTimeout(fadeOutTimer);
+      if (!isAnimationPaused && !isHovering) {
+        setIsButtonFading(true);
+        
+        // Auto fade out after 7 seconds
+        const fadeOutTimer = setTimeout(() => {
+          if (!isHovering && !isAnimationPaused) {
+            setIsButtonFading(false);
+          }
+        }, 7000);
+        
+        setFadeTimer(fadeOutTimer);
+      }
     }, 4000);
 
-    return () => clearTimeout(initialTimer);
-  }, [isAnimationPaused, isHovering, fadeTimer]);
+    return () => {
+      clearTimeout(initialTimer);
+      if (fadeTimer) clearTimeout(fadeTimer);
+    };
+  }, []); // Only run once on mount
 
   // Scroll behavior
   useEffect(() => {
+    if (isOpen) return; // Don't handle scroll when chat is open
+    
     const handleScroll = () => {
       const scrollY = window.scrollY;
       
@@ -631,7 +632,7 @@ export default function AIChatbot() {
               
               // Auto fade out after 7 seconds
               const fadeOutTimer = setTimeout(() => {
-                if (!isHovering) {
+                if (!isHovering && !isAnimationPaused) {
                   setIsButtonFading(false);
                 }
               }, 7000);
@@ -691,7 +692,38 @@ export default function AIChatbot() {
           <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
         </button>
 
-        
+        {/* Pause/Play Control Button */}
+        <div
+          className={`fixed bottom-4 left-2 z-50 transition-opacity duration-300 ${
+            showControlButton || isHovering ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          <button
+            onClick={() => {
+              setIsAnimationPaused(!isAnimationPaused);
+              // If unpausing and button is visible, start fade timer
+              if (isAnimationPaused && isButtonFading) {
+                const fadeOutTimer = setTimeout(() => {
+                  if (!isHovering) {
+                    setIsButtonFading(false);
+                  }
+                }, 7000);
+                setFadeTimer(fadeOutTimer);
+              }
+            }}
+            className="w-8 h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 shadow-lg"
+          >
+            {isAnimationPaused ? (
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            ) : (
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+              </svg>
+            )}
+          </button>
+        </div>
       </>
     );
   }
