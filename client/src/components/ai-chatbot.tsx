@@ -311,43 +311,28 @@ export default function AIChatbot() {
           contextualResponse = contextResponses[Math.floor(Math.random() * contextResponses.length)];
         }
 
-        // Format multiple products if we have more than one good match
-        if (topMatches.length === 1) {
-          const product = bestMatch.product;
-          const eliteBadge = product.isElitePick === 1 ? '⭐ ELITE PICK' : '';
-          const verifiedBadge = product.isVerified === 1 ? '✓ VERIFIED' : '';
-          const price = parseInt(product.price) || 0;
-          const priceText = price > 0 ? `$${price}` : '';
-          const stockText = product.stock > 0 ? `Only ${product.stock} left!` : '';
+        // ALWAYS show only 1 product - secret master sales manipulator approach
+        const product = bestMatch.product;
+        const eliteBadge = product.isElitePick === 1 ? '⭐ ELITE PICK' : '';
+        const verifiedBadge = product.isVerified === 1 ? '✓ VERIFIED' : '';
+        const stockText = product.stock > 0 ? `Only ${product.stock} left!` : '';
 
-          return `${contextualResponse}
+        // Secret manipulation: Focus on quality and scarcity, no money talk
+        const manipulativeResponses = [
+          `I found something exceptional: **${product.title}** ${eliteBadge} ${verifiedBadge}
 
-**${product.title}** ${eliteBadge} ${verifiedBadge}
+${product.description || 'This is genuinely impressive quality.'} ${stockText ? `${stockText} ` : ''}I rarely see products this well-made. ${product.aiPrivateInfo || 'The craftsmanship really stands out.'} Want to see why this caught my attention?`,
 
-${product.description || `This matches exactly what you're looking for.`}
+          `Perfect match: **${product.title}** ${eliteBadge} ${verifiedBadge}
 
-${price > 0 ? priceText : ''} ${stockText ? ` • ${stockText}` : ''}
+${product.description || 'The quality here is remarkable.'} ${stockText ? `${stockText} ` : ''}Honestly, this is one of those products that just works. ${product.aiPrivateInfo || 'Built to last.'} Interested in learning more?`,
 
-${bestMatch.reasons ? `Why I picked this: ${bestMatch.reasons}.` : 'This was the best match from all available products.'} Want to know more?`;
-        } else {
-          // Multiple products - show top recommendations
-          let productList = '';
-          topMatches.forEach((match, index) => {
-            const product = match.product;
-            const eliteBadge = product.isElitePick === 1 ? '⭐' : '';
-            const verifiedBadge = product.isVerified === 1 ? '✓' : '';
-            const price = parseInt(product.price) || 0;
-            const priceText = price > 0 ? `$${price}` : '';
-            
-            productList += `\n${index + 1}. **${product.title}** ${eliteBadge}${verifiedBadge} ${priceText}\n   ${product.description?.substring(0, 80) || 'Perfect for your needs'}...\n`;
-          });
+          `Found it: **${product.title}** ${eliteBadge} ${verifiedBadge}
 
-          return `${contextualResponse}
+${product.description || 'This delivers exactly what you need.'} ${stockText ? `${stockText} ` : ''}I'm impressed by the attention to detail. ${product.aiPrivateInfo || 'Solid construction throughout.'} Want the full details?`
+        ];
 
-Here are my top ${topMatches.length} recommendations:${productList}
-
-I analyzed every product detail including private specifications and these stood out based on your request. Which one interests you most?`;
-        }
+        return manipulativeResponses[Math.floor(Math.random() * manipulativeResponses.length)];
       }
     }
     
@@ -1844,25 +1829,34 @@ I analyzed every product detail including private specifications and these stood
               ];
             }
             
-            return suggestedQuestions.length > 0 && (
-              <div className="mb-3">
-                <div className="text-xs text-gray-400 mb-2">
-                  {messages.length <= 1 ? "Quick questions to ask:" : "You might want to ask:"}
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {suggestedQuestions.map((question, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        setInputValue(question);
-                        setTimeout(handleSendMessage, 100);
-                      }}
-                      className="px-3 py-1 text-xs bg-gray-800 text-gray-300 hover:bg-gray-700 hover:text-white rounded-full border border-gray-600 transition-colors"
-                    >
-                      {question}
-                    </button>
-                  ))}
-                </div>
+            // Single question that updates every message
+            const singleQuestion = (() => {
+              if (messages.length <= 1) {
+                const starters = ["Looking for quality products", "Need something reliable", "Show me what's good"];
+                return starters[Math.floor(Math.random() * starters.length)];
+              } else if (lastAiMessage.includes('what') || lastAiMessage.includes('tell me')) {
+                const responses = ["High quality preferred", "Something reliable", "Popular items"];
+                return responses[Math.floor(Math.random() * responses.length)];
+              } else if (lastAiMessage.includes('found') || lastAiMessage.includes('product')) {
+                const followups = ["Tell me more", "What makes it special?", "Any other options?"];
+                return followups[Math.floor(Math.random() * followups.length)];
+              } else {
+                const defaults = ["What's popular?", "Show quality options", "What do you recommend?"];
+                return defaults[Math.floor(Math.random() * defaults.length)];
+              }
+            })();
+            
+            return (
+              <div className="mb-2">
+                <button
+                  onClick={() => {
+                    setInputValue(singleQuestion);
+                    setTimeout(handleSendMessage, 100);
+                  }}
+                  className="px-2 py-1 text-xs text-blue-400 hover:text-blue-300 transition-colors"
+                >
+                  {singleQuestion}
+                </button>
               </div>
             );
           })()}
