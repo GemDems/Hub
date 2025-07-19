@@ -39,7 +39,7 @@ export default function AIChatbot() {
         return [
           {
             id: '1',
-            content: "Hey! 👋 I'm your personal deal hunter. What type of product are you looking for today?",
+            content: "Hey! 👋 I'm your personal deal hunter. I need to understand exactly what you're looking for to find the perfect deal. What specific type of product do you need? Please be detailed!",
             isBot: true,
             timestamp: new Date()
           }
@@ -49,7 +49,7 @@ export default function AIChatbot() {
     return [
       {
         id: '1',
-        content: "Hey! 👋 I'm your personal deal hunter. What type of product are you looking for today?",
+        content: "Hey! 👋 I'm your personal deal hunter. I need to understand exactly what you're looking for to find the perfect deal. What specific type of product do you need? Please be detailed!",
         isBot: true,
         timestamp: new Date()
       }
@@ -213,8 +213,8 @@ export default function AIChatbot() {
     // Count how much information we have
     const infoGathered = [hasCategory, hasBudget, hasUseCase, hasFeatures].filter(Boolean).length;
     
-    // ONLY RECOMMEND PRODUCT AFTER GATHERING SUFFICIENT INFORMATION
-    if (infoGathered >= 2 || userMessages.length >= 2) {
+    // ONLY RECOMMEND PRODUCT AFTER GATHERING SUFFICIENT DETAILED INFORMATION
+    if (infoGathered >= 3 || userMessages.length >= 4) {
       // NOW find the best matching product based on gathered information
       let bestProduct = null;
       let matchScore = 0;
@@ -268,7 +268,7 @@ export default function AIChatbot() {
         setShowPitchButton(true);
       }, 100);
 
-      return `Based on what you've told me, I have the PERFECT recommendation:
+      return `After carefully analyzing everything you've shared, I found the PERFECT match for your specific needs:
 
 🎯 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
 
@@ -278,24 +278,64 @@ ${stockText ? `⚡ ${stockText}` : ''}
 
 ${bestProduct.description || 'This matches exactly what you described!'}
 
-This is my #1 recommendation based on your specific needs. Want the full details?`;
+Here's why this is perfect for you based on your requirements:
+${hasCategory ? `✓ Matches your ${bestProduct.category} category need` : ''}
+${hasBudget ? `✓ Fits within your specified budget range` : ''}
+${hasUseCase ? `✓ Perfect for your specific use case` : ''}
+${hasFeatures ? `✓ Has the features you mentioned` : ''}
+
+This is my #1 recommendation based on your detailed requirements. Ready for the full pitch?`;
     }
     
-    // GATHER MORE INFORMATION - Ask progressive questions
+    // GATHER MORE INFORMATION - Ask very specific, detailed questions
     if (!hasCategory) {
-      return `Hi! I'm here to find you the perfect deal. What type of product are you looking for? (electronics, fashion, home goods, beauty, sports, books, etc.)`;
+      return `Hi! I'm here to find you the perfect deal. I need to understand exactly what you're looking for.
+
+What specific type of product do you need? Please be detailed - for example:
+• Electronics (phone, laptop, headphones, etc.)
+• Fashion (clothing, shoes, accessories, etc.) 
+• Home items (kitchen, furniture, decor, etc.)
+• Beauty/health (skincare, makeup, fitness, etc.)
+• Other category?
+
+The more specific you are, the better I can help you!`;
     }
     
-    if (!hasUseCase && !hasBudget) {
-      return `Great choice! What will you be using this for? And do you have a budget range in mind?`;
+    if (!hasUseCase) {
+      return `Great! Now I need to understand your specific situation:
+
+• What exactly will you be using this for?
+• Who is this for? (yourself, gift, family, etc.)
+• What problem are you trying to solve?
+• Any specific requirements or must-haves?
+
+Please share as many details as possible so I can find the perfect match.`;
+    }
+    
+    if (!hasBudget) {
+      return `Perfect! Now let's talk budget so I can show you the right options:
+
+• What's your budget range? (be specific - $10-50, $50-100, $100+, etc.)
+• Are you looking for the cheapest option or willing to pay more for quality?
+• Any price you absolutely won't go over?
+
+This helps me filter to exactly what works for you.`;
     }
     
     if (!hasFeatures) {
-      return `Perfect! Any specific features or requirements I should know about? (brand preferences, size, quality level, etc.)`;
+      return `Excellent! Just a few more specifics to nail down the perfect recommendation:
+
+• Any brand preferences or brands to avoid?
+• Size, color, or style preferences?
+• Quality level you're expecting?
+• Any features that are absolutely essential?
+• Anything you definitely DON'T want?
+
+These details ensure I recommend exactly what you need.`;
     }
 
-    // Fallback if we somehow get here
-    return `Let me find the perfect match for you based on what you've shared...`;
+    // Fallback - shouldn't normally reach here
+    return `Thank you for all those details! Let me analyze everything you've shared and find the perfect product match...`;
 
     // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
@@ -925,7 +965,7 @@ This is my #1 recommendation based on your specific needs. Want the full details
     const resetMessages = [
       {
         id: '1',
-        content: "Hey! 👋 I'm your personal deal hunter. What type of product are you looking for today?",
+        content: "Hey! 👋 I'm your personal deal hunter. I need to understand exactly what you're looking for to find the perfect deal. What specific type of product do you need? Please be detailed!",
         isBot: true,
         timestamp: new Date()
       }
