@@ -297,8 +297,6 @@ export default function Home() {
         )}
       </main>
 
-
-
       <TrustIndicators />
       
       {/* Leaderboard Section - At bottom */}
