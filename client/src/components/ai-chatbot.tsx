@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { MessageCircle, Phone, X, RotateCcw, MousePointer } from "lucide-react";
+import { MessageCircle, Phone, X, RotateCcw, MousePointer, Move } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import type { AffiliateLink } from "@shared/schema";
 
 interface Message {
   id: string;
@@ -30,9 +32,15 @@ export default function AIChatbot() {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Fetch real affiliate links data
+  const { data: affiliateLinks = [] } = useQuery<AffiliateLink[]>({
+    queryKey: ["/api/affiliate-links"],
+  });
 
   // Predefined responses for conversion optimization
   const botResponses = {
@@ -71,13 +79,42 @@ export default function AIChatbot() {
   const generateBotResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
     
-    // Product-specific responses
+    // If we have real products, include them in responses
+    const hasProducts = affiliateLinks.length > 0;
+    const randomProduct = hasProducts ? affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)] : null;
+    
+    // Product-specific responses with real data
     if (message.includes('best') || message.includes('recommend') || message.includes('which')) {
+      if (hasProducts && randomProduct) {
+        return `Perfect timing! 🎯 I'd recommend "${randomProduct.title}" - it's been absolutely crushing it with our users! ${randomProduct.description.slice(0, 100)}... Want the exclusive link?`;
+      }
       return getRandomResponse('product');
     }
     
+    // Show available deals
+    if (message.includes('deals') || message.includes('what') || message.includes('show') || message.includes('available')) {
+      if (hasProducts) {
+        const topDeals = affiliateLinks.slice(0, 3);
+        const dealsList = topDeals.map(deal => `• ${deal.title} (${deal.category})`).join('\n');
+        return `Here are our hottest deals right now! 🔥\n\n${dealsList}\n\nWhich one catches your eye? I can hook you up with the best price! 💰`;
+      }
+      return "We're loading up some incredible deals right now! 🚀 Check back in a few minutes for the latest drops. Want me to notify you when they're live?";
+    }
+    
+    // Category-specific recommendations
+    affiliateLinks.forEach(link => {
+      if (message.includes(link.category.toLowerCase()) || message.includes(link.title.toLowerCase())) {
+        return `YES! "${link.title}" is exactly what you need! 🎯 ${link.description.slice(0, 80)}... This is flying off the shelves. Ready to grab it?`;
+      }
+    });
+    
     // Comparison questions
     if (message.includes('compare') || message.includes('difference') || message.includes('vs') || message.includes('better')) {
+      if (hasProducts && affiliateLinks.length >= 2) {
+        const product1 = affiliateLinks[0];
+        const product2 = affiliateLinks[1];
+        return `Great question! 🤔 Between "${product1.title}" and "${product2.title}", I'd lean toward ${product1.title} because of the value. Want me to break down the differences?`;
+      }
       return getRandomResponse('comparison');
     }
     
@@ -97,6 +134,9 @@ export default function AIChatbot() {
     }
     
     // Default response with conversion focus
+    if (hasProducts) {
+      return `Interesting! 🤔 You know what might be perfect for that? "${randomProduct?.title}" has been crushing it lately 🔥 Want me to show you why everyone's obsessed with it?`;
+    }
     return "Interesting! 🤔 You know what might be perfect for that? Let me show you our top pick that's been crushing it lately 🔥 Want the details?";
   };
 
@@ -154,6 +194,29 @@ export default function AIChatbot() {
 
   const handleMouseUp = () => {
     setIsDragging(false);
+    setIsResizing(false);
+  };
+
+  const handleResizeStart = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsResizing(true);
+    setResizeStart({
+      x: e.clientX,
+      y: e.clientY,
+      width: size.width,
+      height: size.height
+    });
+  };
+
+  const handleResizeMove = (e: MouseEvent) => {
+    if (isResizing) {
+      const deltaX = e.clientX - resizeStart.x;
+      const deltaY = e.clientY - resizeStart.y;
+      setSize({
+        width: Math.max(300, resizeStart.width + deltaX),
+        height: Math.max(400, resizeStart.height + deltaY)
+      });
+    }
   };
 
   useEffect(() => {
@@ -161,11 +224,16 @@ export default function AIChatbot() {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
+    if (isResizing) {
+      document.addEventListener('mousemove', handleResizeMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
     return () => {
       document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mousemove', handleResizeMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragOffset]);
+  }, [isDragging, isResizing, dragOffset, resizeStart]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -234,8 +302,8 @@ export default function AIChatbot() {
       </div>
 
       {/* Messages area */}
-      <div className="flex flex-col h-full">
-        <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex flex-col" style={{ height: 'calc(100% - 60px)' }}>
+        <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: 'calc(100% - 80px)' }}>
           {messages.map((message) => (
             <div
               key={message.id}
@@ -273,7 +341,7 @@ export default function AIChatbot() {
         </div>
 
         {/* Input area */}
-        <div className="border-t border-gray-700 p-4">
+        <div className="border-t border-gray-700 p-4 mt-auto">
           <div className="flex gap-2">
             <input
               type="text"
@@ -293,6 +361,15 @@ export default function AIChatbot() {
           </div>
         </div>
       </div>
+      
+      {/* Resize handle */}
+      <div
+        className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize bg-gray-600 hover:bg-gray-500 transition-colors"
+        onMouseDown={handleResizeStart}
+        style={{
+          clipPath: 'polygon(100% 0%, 0% 100%, 100% 100%)'
+        }}
+      />
     </div>
   );
 }
