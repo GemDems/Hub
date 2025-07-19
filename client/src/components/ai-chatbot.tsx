@@ -43,6 +43,8 @@ export default function AIChatbot() {
   const [isSlideUp, setIsSlideUp] = useState(false);
   const [isAnimationPaused, setIsAnimationPaused] = useState(false);
   const [showControlButton, setShowControlButton] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const [fadeTimer, setFadeTimer] = useState<NodeJS.Timeout | null>(null);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -282,23 +284,30 @@ export default function AIChatbot() {
 
   // Chat button visibility logic
   useEffect(() => {
-    if (isAnimationPaused) return;
+    if (isAnimationPaused || isHovering) return;
     
-    // Initial fade in after 2 seconds with faster animation
+    // Clear any existing fade timer
+    if (fadeTimer) {
+      clearTimeout(fadeTimer);
+    }
+    
+    // Initial fade in after 4 seconds
     const initialTimer = setTimeout(() => {
       setIsButtonFading(true);
       
-      // Auto fade out after another 5 seconds
+      // Auto fade out after 7 seconds
       const fadeOutTimer = setTimeout(() => {
-        setIsButtonFading(false);
-        // Keep button in DOM but invisible for smooth transitions
-      }, 5000);
+        if (!isHovering) {
+          setIsButtonFading(false);
+        }
+      }, 7000);
       
+      setFadeTimer(fadeOutTimer);
       return () => clearTimeout(fadeOutTimer);
-    }, 2000);
+    }, 4000);
 
     return () => clearTimeout(initialTimer);
-  }, [isAnimationPaused]);
+  }, [isAnimationPaused, isHovering, fadeTimer]);
 
   // Scroll behavior
   useEffect(() => {
@@ -320,17 +329,21 @@ export default function AIChatbot() {
       else if (scrollY <= 100) {
         setIsSlideUp(false);
         
-        if (!isAnimationPaused) {
+        if (!isAnimationPaused && !isHovering) {
           const timeout = setTimeout(() => {
-            // Wait 5 seconds after user stops scrolling near top
+            // Wait 4 seconds after user stops scrolling near top
             setTimeout(() => {
               setIsButtonFading(true);
               
-              // Auto fade out after 5 seconds
-              setTimeout(() => {
-                setIsButtonFading(false);
-              }, 5000);
-            }, 5000);
+              // Auto fade out after 7 seconds
+              const fadeOutTimer = setTimeout(() => {
+                if (!isHovering) {
+                  setIsButtonFading(false);
+                }
+              }, 7000);
+              
+              setFadeTimer(fadeOutTimer);
+            }, 4000);
           }, 100); // Small delay to detect stop scrolling
           
           setScrollTimeout(timeout);
@@ -351,8 +364,26 @@ export default function AIChatbot() {
         {/* Animated Chat Button - Always in DOM for smooth transitions */}
         <button
           onClick={() => setIsOpen(true)}
-          onMouseEnter={() => setShowControlButton(true)}
-          onMouseLeave={() => setShowControlButton(false)}
+          onMouseEnter={() => {
+            setIsHovering(true);
+            setShowControlButton(true);
+            // Clear fade out timer when hovering
+            if (fadeTimer) {
+              clearTimeout(fadeTimer);
+              setFadeTimer(null);
+            }
+          }}
+          onMouseLeave={() => {
+            setIsHovering(false);
+            setShowControlButton(false);
+            // Restart fade timer when leaving hover if not paused
+            if (!isAnimationPaused && isButtonFading) {
+              const fadeOutTimer = setTimeout(() => {
+                setIsButtonFading(false);
+              }, 7000);
+              setFadeTimer(fadeOutTimer);
+            }
+          }}
           className={`fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:scale-105 group ${
             isButtonFading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
           } ${isSlideUp ? 'transform -translate-y-20' : 'transform translate-y-0'}`}
@@ -369,11 +400,22 @@ export default function AIChatbot() {
         {/* Mini Glass Control Button */}
         <div
           className={`fixed bottom-4 left-2 z-50 transition-opacity duration-300 ${
-            showControlButton ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            showControlButton || isHovering ? 'opacity-100' : 'opacity-0 pointer-events-none'
           }`}
         >
           <button
-            onClick={() => setIsAnimationPaused(!isAnimationPaused)}
+            onClick={() => {
+              setIsAnimationPaused(!isAnimationPaused);
+              // If unpausing and button is visible, start fade timer
+              if (isAnimationPaused && isButtonFading) {
+                const fadeOutTimer = setTimeout(() => {
+                  if (!isHovering) {
+                    setIsButtonFading(false);
+                  }
+                }, 7000);
+                setFadeTimer(fadeOutTimer);
+              }
+            }}
             className="w-8 h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 shadow-lg"
           >
             {isAnimationPaused ? (
