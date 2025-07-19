@@ -183,78 +183,79 @@ export default function AIChatbot() {
     const userMessages = history.filter(msg => msg.role === 'user').map(msg => msg.content.toLowerCase());
     const allUserInput = userMessages.join(' ') + ' ' + lowerQuery;
     
-    // Track what information we've gathered - need COMPREHENSIVE details
-    let hasCategory = false;
-    let hasUseCase = false;
-    let hasSpecifics = false;
-    let hasContext = false;
+    // ANALYZE USER INPUT - Look for any specific request or need
+    const userWords = lowerQuery.split(' ').filter(word => word.length > 2);
+    const hasSpecificRequest = userWords.length >= 2 || lowerQuery.includes('need') || lowerQuery.includes('want') || lowerQuery.includes('looking for');
     
-    // Check for category mentions - must be specific
-    const categories = ['electronics', 'fashion', 'home', 'beauty', 'sports', 'books', 'automotive', 'toys', 'health', 'tech', 'phone', 'laptop', 'headphones', 'clothing', 'shoes', 'kitchen', 'furniture'];
-    categories.forEach(cat => {
-      if (allUserInput.includes(cat)) hasCategory = true;
-    });
-    
-    // Check for use case mentions - need detailed context
-    if ((allUserInput.includes('for') || allUserInput.includes('need') || allUserInput.includes('want') || allUserInput.includes('use') || allUserInput.includes('help')) && allUserInput.split(' ').length > 4) {
-      hasUseCase = true;
-    }
-    
-    // Check for specific features or requirements - need details
-    if (allUserInput.includes('feature') || allUserInput.includes('quality') || allUserInput.includes('brand') || allUserInput.includes('size') || allUserInput.includes('color') || allUserInput.includes('type') || allUserInput.includes('specific')) {
-      hasSpecifics = true;
-    }
-    
-    // Check for sufficient context and detail
-    if (allUserInput.split(' ').length > 8 && userMessages.length >= 2) {
-      hasContext = true;
-    }
-    
-    // Count how much information we have - need COMPREHENSIVE details
-    const infoGathered = [hasCategory, hasUseCase, hasSpecifics, hasContext].filter(Boolean).length;
-    
-    // ONLY RECOMMEND PRODUCT when user has provided COMPREHENSIVE information
-    if (infoGathered >= 4 && userMessages.length >= 3 && allUserInput.length > 25) {
-      // NOW find the best matching product based on gathered information
+    // ALWAYS SEARCH PRODUCTS when user provides any specific input
+    if (hasSpecificRequest && lowerQuery.trim().length > 3) {
+      // DEEP ANALYSIS of ALL products against user's specific request
       let bestProduct = null;
       let matchScore = 0;
+      let analysisDetails = '';
 
       affiliateLinks.forEach(product => {
         let score = 0;
-        const title = product.title.toLowerCase();
+        let reasons = [];
+        
+        // Extract ALL product details for thorough analysis
+        const title = product.title?.toLowerCase() || '';
         const description = product.description?.toLowerCase() || '';
         const category = product.category?.toLowerCase() || '';
+        const price = product.price || 0;
+        const originalPrice = product.originalPrice || 0;
+        const isElite = product.isElitePick || false;
+        const isVerified = product.isVerified || false;
+        const stockCount = product.stockCount || 0;
         
-        // Score based on all user input (not just current message)
-        if (allUserInput.includes(title) || title.includes(allUserInput)) score += 100;
-        
-        categories.forEach(cat => {
-          if (allUserInput.includes(cat) && (category.includes(cat) || title.includes(cat))) score += 60;
+        // COMPREHENSIVE keyword matching against user's current request
+        userWords.forEach(word => {
+          // Check title matches
+          if (title.includes(word)) {
+            score += 50;
+            reasons.push(`title matches "${word}"`);
+          }
+          
+          // Check description matches (most important)
+          if (description.includes(word)) {
+            score += 60;
+            reasons.push(`description contains "${word}"`);
+          }
+          
+          // Check category matches
+          if (category.includes(word)) {
+            score += 40;
+            reasons.push(`category fits "${word}"`);
+          }
         });
         
-        // Price sensitivity matching (without asking about budget)
-        if (allUserInput.includes('cheap') || allUserInput.includes('affordable') || allUserInput.includes('budget')) {
-          if (product.price && product.price < 50) score += 20;
-        }
-        if (allUserInput.includes('premium') || allUserInput.includes('high quality') || allUserInput.includes('best')) {
-          if (product.price && product.price > 50) score += 20;
+        // Semantic analysis for better understanding
+        if (lowerQuery.includes('cheap') || lowerQuery.includes('affordable')) {
+          if (price > 0 && price < 50) {
+            score += 30;
+            reasons.push('affordable price point');
+          }
         }
         
-        // DEEP feature matching - thorough analysis of product descriptions
-        const keywords = allUserInput.split(' ').filter(word => word.length > 2);
-        keywords.forEach(keyword => {
-          // Higher scores for description matches (deeper product understanding)
-          if (description.includes(keyword)) score += 40;
-          if (title.includes(keyword)) score += 25;
-          // Check for semantic matches
-          if (keyword.includes('good') && (description.includes('quality') || description.includes('premium'))) score += 20;
-          if (keyword.includes('cheap') && (description.includes('affordable') || description.includes('budget'))) score += 20;
-          if (keyword.includes('fast') && (description.includes('quick') || description.includes('speed'))) score += 20;
-        });
+        if (lowerQuery.includes('best') || lowerQuery.includes('quality') || lowerQuery.includes('premium')) {
+          if (isElite || isVerified || price > 50) {
+            score += 35;
+            reasons.push('high quality/premium option');
+          }
+        }
         
+        if (lowerQuery.includes('popular') || lowerQuery.includes('trending')) {
+          if (isElite) {
+            score += 25;
+            reasons.push('elite/popular pick');
+          }
+        }
+        
+        // Update best match if this product scores higher
         if (score > matchScore) {
           matchScore = score;
           bestProduct = product;
+          analysisDetails = reasons.join(', ');
         }
       });
 
@@ -276,36 +277,39 @@ export default function AIChatbot() {
         setShowPitchButton(true);
       }, 100);
 
-      return `After carefully analyzing all the details you've shared and browsing through our entire product catalog, I found something that matches your specific requirements:
+      // Generate unique response based on actual analysis
+      const responses = [
+        `I looked through all our products and found this one that caught my attention for you:`,
+        `After checking our entire catalog, here's what stood out based on what you mentioned:`,
+        `I found something interesting that seems to match what you're looking for:`,
+        `This product came up when I analyzed your request against our full inventory:`,
+        `Based on your specific needs, this one looks promising:`
+      ];
+      
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      return `${randomResponse}
 
 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
 
-${bestProduct.description || 'This appears to be an excellent match based on everything you\'ve told me.'}
+${bestProduct.description || `This product seems relevant to your request.`}
 
-${priceText !== 'Great price' ? `Price: ${priceText}${originalPriceText}` : ''} ${stockText ? ` | ${stockText}` : ''}
+${priceText !== 'Great price' ? `${priceText}${originalPriceText}` : ''} ${stockText ? ` • ${stockText}` : ''}
 
-Based on our conversation, this product aligns with what you're looking for. Would you like me to share more details about why I think this is a great fit for your needs?`;
+${analysisDetails ? `I selected this because: ${analysisDetails}.` : 'This seemed like the best match from our available products.'} Want to know more about it?`;
     }
     
-    // GATHER MORE INFORMATION - Ask natural, helpful questions for COMPREHENSIVE understanding
-    if (!hasCategory) {
-      return `What kind of product are you looking for? I want to make sure I understand exactly what you need.`;
-    }
+    // Generate unique helpful response when no specific request is detected
+    const helpfulResponses = [
+      `What are you looking for today? I can help you find something specific.`,
+      `Tell me what you need and I'll search through our products for you.`,
+      `What kind of product do you have in mind? I'll find options for you.`,
+      `Share what you're shopping for and I'll look for the best matches.`,
+      `What can I help you find? Just describe what you need.`,
+      `Looking for anything particular? I can browse our inventory for you.`
+    ];
     
-    if (!hasUseCase) {
-      return `Tell me more about what you'll be using this for. Understanding your situation helps me find the right fit.`;
-    }
-    
-    if (!hasSpecifics) {
-      return `What specific features or qualities are important to you? Any particular requirements or preferences?`;
-    }
-    
-    if (!hasContext) {
-      return `I want to make sure I fully understand your needs. Can you share a bit more detail about your situation or what you're hoping to accomplish?`;
-    }
-
-    // Fallback - shouldn't normally reach here
-    return `Let me carefully analyze everything you've shared and browse through all our products to find the perfect match...`;
+    return helpfulResponses[Math.floor(Math.random() * helpfulResponses.length)];
 
     // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
