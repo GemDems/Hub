@@ -1575,7 +1575,7 @@ Can I help you find something excellent in one of these available categories?`
           isCollapsed ? 'cursor-pointer' : 'cursor-move'
         } ${isCollapsed ? 'rounded-b-none' : ''}`}
         style={{
-          left: isCollapsed ? position.x : Math.max(0, Math.min(position.x, window.innerWidth - size.width)),
+          left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)), // Always apply boundary checking
           top: isCollapsed ? position.y : Math.max(0, Math.min(position.y, window.innerHeight - size.height)),
           width: size.width,
           height: size.height,
