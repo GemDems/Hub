@@ -303,12 +303,6 @@ export default function Home() {
       
       {/* Leaderboard Section - At bottom */}
       <div className="bg-white py-16" data-section="leaderboard">
-        <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-800 mb-2">
-            Elite Leaderboard - <span className="text-blue-600">This Month</span>
-          </h2>
-          <p className="text-gray-600">Top 10 Savers This Month</p>
-        </div>
         <Leaderboard />
       </div>
       
@@ -363,7 +357,7 @@ export default function Home() {
           >
             <Dice6 className="w-8 h-8 text-white" />
           </button>
-          <p className="text-white text-sm">Click for a random deal!</p>
+          
         </div>
       </div>
       
