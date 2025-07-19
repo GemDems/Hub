@@ -1038,7 +1038,7 @@ export default function AIChatbot() {
     } else {
       // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
-      setPosition({ x: window.innerWidth - 420, y: window.innerHeight }); // Position at bottom edge
+      setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 60 }); // Position at bottom edge, visible
       setSize({ width: 400, height: 60 });
       setShouldGlowRestoreButton(false); // Don't auto-glow, only on hover
       // Don't reset any chat state - messages, history, typing status should remain
