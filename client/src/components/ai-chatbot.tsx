@@ -1707,8 +1707,10 @@ Can I help you find something excellent in one of these available categories?`
       {/* Clean background extension when collapsed - matches chat background */}
       {isCollapsed && (
         <div 
-          className="absolute top-16 left-0 right-0 bottom-0"
+          className="absolute left-0 right-0 border border-gray-700 border-t-0"
           style={{
+            top: '60px',
+            bottom: '0px',
             backgroundColor: 'rgba(34, 38, 50, 0.95)',
             backdropFilter: 'blur(10px)',
             borderBottomLeftRadius: '8px',
