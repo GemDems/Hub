@@ -92,6 +92,10 @@ export default function AIChatbot() {
   const [showPitchButton, setShowPitchButton] = useState(false);
   const [countdown, setCountdown] = useState(0);
   const [showNewMessagePopup, setShowNewMessagePopup] = useState(false);
+  const [pitchClickCount, setPitchClickCount] = useState(0);
+  const [showCancelButton, setShowCancelButton] = useState(false);
+  const [pitchTimeout, setPitchTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timeout | null>(null);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -270,7 +274,7 @@ export default function AIChatbot() {
     return "The creator dashboard doesn't have any products available right now. Please check back later when new deals have been added to the system.";
   };
 
-  // Dynamic aggressive sales psychology pitch generator
+  // Dynamic aggressive sales psychology pitch generator - GUARANTEED UNIQUE EVERY TIME
   const generateAggressivePitch = (product: AffiliateLink, userHistory: string[]): string => {
     const userWords = userHistory.join(' ').toLowerCase();
     const personalizedTerms = [];
@@ -298,99 +302,166 @@ export default function AIChatbot() {
     if (productUrl.includes('target')) urlContext.push('from Target\'s curated selection');
     if (productUrl.includes('.com')) urlContext.push('from a legitimate, verified source');
     
-    // Generate unique opening hooks (randomized)
+    // UNIQUE GENERATION SYSTEM - uses multiple randomization sources
+    const currentTime = Date.now();
+    const microseconds = performance.now();
+    const randomFloat = Math.random();
+    const combinedSeed = Math.floor((currentTime + microseconds + randomFloat * 10000) % 999999);
+    
+    // MASSIVE variety of opening hooks - each time different
     const openingHooks = [
-      `Listen carefully - I'm about to share something about "${productName}" that could change everything for you.`,
-      `Stop what you're doing. This "${productName}" discovery is exactly what you've been unconsciously searching for.`,
-      `I need to be completely transparent with you about "${productName}" because this opportunity won't wait.`,
-      `Here's the raw truth about "${productName}" that nobody else will tell you upfront.`,
-      `I'm going to break down why "${productName}" is the missing piece in your life puzzle.`,
-      `Let me paint you a picture of what life looks like AFTER you own "${productName}".`
+      `Stop everything. I'm about to reveal the truth about "${productName}" that will completely shift your perspective.`,
+      `Listen - what I'm about to tell you about "${productName}" is going to sound too good to be true, but stick with me.`,
+      `I need to be brutally honest with you about "${productName}" because most people won't tell you this.`,
+      `Here's something nobody else will tell you about "${productName}" - and it's going to blow your mind.`,
+      `I'm going to break down exactly why "${productName}" is the game-changer you've been waiting for.`,
+      `Let me paint you a picture of your life 6 months from now after experiencing "${productName}".`,
+      `What I'm about to share about "${productName}" has transformed thousands of lives - and yours could be next.`,
+      `I rarely get this excited about products, but "${productName}" is different in ways that matter.`,
+      `Before I tell you about "${productName}", ask yourself: what would change in your life if you had the perfect solution?`,
+      `The story I'm about to tell you about "${productName}" starts with someone just like you who made one decision.`,
+      `I've been in this industry for years, and I've never seen anything like "${productName}" for this specific need.`,
+      `Here's what happens when someone like you discovers "${productName}" - and why it's about to happen to you.`,
+      `I'm going to share something about "${productName}" that most people miss completely - but you won't.`,
+      `The real story behind "${productName}" isn't what you think - it's actually much more powerful.`,
+      `I want you to imagine something with me about "${productName}" and how it's about to change everything.`,
+      `There's a secret about "${productName}" that only the smartest buyers know - and I'm about to tell you.`,
+      `Most people buy "${productName}" for the obvious reasons, but the real magic happens because of something else entirely.`,
+      `I'm about to tell you something about "${productName}" that will make you wonder why you waited so long.`,
+      `The first time someone told me about "${productName}", I didn't believe them either - until I saw the proof.`,
+      `Here's what separates "${productName}" from everything else - and why it's perfect for someone like you.`
     ];
     
-    // User-specific psychological hooks
+    // EXPANDED psychological hooks with user analysis
     const psychHooks = [
-      `You mentioned ${personalizedTerms[0] || 'finding the right solution'} - this "${productName}" is literally designed for people exactly like you.`,
-      `Based on our conversation, I can tell you're someone who values ${personalizedTerms[1] || 'smart decisions'} - this is your moment.`,
-      `The fact that you're even asking about this shows you're ready for what "${productName}" offers.`,
-      `I've analyzed hundreds of similar searches, and your specific needs align perfectly with "${productName}".`
+      `You mentioned ${personalizedTerms[0] || 'finding the right solution'} - "${productName}" is literally engineered for people with your exact mindset.`,
+      `Based on our conversation, I can tell you're someone who values ${personalizedTerms[1] || 'smart decisions'} - this is your breakthrough moment.`,
+      `The fact that you're asking these specific questions tells me you're ready for what "${productName}" delivers.`,
+      `I've analyzed thousands of similar conversations, and your needs align perfectly with "${productName}"'s core strengths.`,
+      `Your approach to this tells me you're not like most people - "${productName}" rewards that kind of intelligence.`,
+      `The way you think about this problem is exactly why "${productName}" will work so well for you.`,
+      `I can tell from your questions that you understand quality - "${productName}" is built for people who get it.`,
+      `Your specific situation is actually the perfect match for what "${productName}" was designed to solve.`,
+      `Most people miss what you're picking up on - "${productName}" responds to that level of awareness.`,
+      `The fact that you're being thorough about this shows you're exactly the type of person "${productName}" transforms.`
     ];
     
-    // Product-specific value propositions
+    // DYNAMIC value propositions with product analysis
     const valueProps = [
-      `This ${productCategory} item "${productName}" isn't just another product - ${productDesc.slice(0, 100)}`,
-      `What makes "${productName}" different from everything else in ${productCategory}? ${productDesc.slice(0, 120)}`,
-      `The "${productName}" in the ${productCategory} space represents a breakthrough because ${productDesc.slice(0, 80)}`,
-      `Here's why "${productName}" dominates the ${productCategory} market: ${productDesc.slice(0, 90)}`
+      `This ${productCategory} breakthrough "${productName}" isn't just another option - ${productDesc.slice(0, 100)}... but here's what really sets it apart.`,
+      `What makes "${productName}" revolutionary in the ${productCategory} space? ${productDesc.slice(0, 120)}... and that's just the beginning.`,
+      `The "${productName}" represents a complete paradigm shift in ${productCategory} because ${productDesc.slice(0, 80)}... but the real power is in what happens next.`,
+      `Here's why "${productName}" dominates every other ${productCategory} option: ${productDesc.slice(0, 90)}... plus something most people never discover.`,
+      `The secret behind "${productName}"'s success in ${productCategory} is ${productDesc.slice(0, 110)}... combined with an advantage others can't replicate.`,
+      `What you see with "${productName}" in ${productCategory} is ${productDesc.slice(0, 95)}... but what you don't see is where the real magic happens.`,
+      `The engineering behind "${productName}" in the ${productCategory} market means ${productDesc.slice(0, 85)}... creating results that seem almost impossible.`,
+      `Unlike every other ${productCategory} product, "${productName}" delivers ${productDesc.slice(0, 75)}... while simultaneously solving the hidden problem nobody talks about.`
     ];
     
-    // Urgency and scarcity triggers
+    // ESCALATED urgency and scarcity triggers
     const urgencyTriggers = [
-      `I'm tracking the availability of "${productName}" and the supply is getting critically low.`,
-      `This specific "${productName}" deal ${urlContext[0] || 'from this verified source'} expires without warning.`,
-      `I've seen this exact "${productName}" sell out 3 times this month already.`,
-      `The pricing on "${productName}" at ${productPrice} is temporary - it's already increased twice this week.`,
-      `Only a few people per day get access to "${productName}" at this price point.`
+      `I'm watching the inventory on "${productName}" in real-time, and it's dropping faster than I've ever seen.`,
+      `This specific "${productName}" opportunity ${urlContext[0] || 'from this verified source'} has a hidden expiration that most people don't know about.`,
+      `I've tracked "${productName}" selling out 7 times in the last 30 days - each time with no warning.`,
+      `The pricing structure on "${productName}" at ${productPrice} is being discontinued next week - I just got the internal memo.`,
+      `Only 12 people per day get access to "${productName}" at this level - and 3 spots just opened up.`,
+      `The demand for "${productName}" has increased 340% this month, and supply hasn't caught up.`,
+      `I just checked the backend - "${productName}" inventory shows critical levels with no restock scheduled.`,
+      `The manufacturer of "${productName}" is about to implement a price increase that will shock you.`,
+      `There's a waiting list for "${productName}" that's 2,847 people long - but I can bypass it for the next 20 minutes.`,
+      `The window for "${productName}" at this price closes automatically at midnight - the system won't let me override it.`
     ];
     
-    // Social proof and authority
+    // AMPLIFIED social proof and authority
     const socialProof = [
-      `I've personally guided over 2,847 people to success with "${productName}" and the transformation stories are incredible.`,
-      `The "${productName}" has a 97.3% satisfaction rate among people in your exact situation.`,
-      `I just checked - "${productName}" has generated over 15,000 positive outcomes this quarter alone.`,
-      `Industry experts are calling "${productName}" the standard-bearer in ${productCategory} for good reason.`,
-      `The data doesn't lie: "${productName}" outperforms 94% of similar ${productCategory} options.`
+      `I've personally guided 4,392 people to success with "${productName}" and witnessed transformations that still give me chills.`,
+      `The "${productName}" has a 98.7% satisfaction rate among people in your exact situation - I've never seen numbers like this.`,
+      `I just pulled the data - "${productName}" has generated over 23,000 positive outcomes in the last 90 days alone.`,
+      `Industry experts are calling "${productName}" the new gold standard in ${productCategory} - and they're right.`,
+      `The research is undeniable: "${productName}" outperforms 97% of similar ${productCategory} options in blind tests.`,
+      `I've seen the internal customer success reports for "${productName}" - the results are almost unbelievable.`,
+      `The testimonials for "${productName}" read like success stories you'd think were made up - except they're all verified.`,
+      `My most successful clients all have one thing in common - they secured "${productName}" when I recommended it.`,
+      `The transformation rate with "${productName}" is so high that other companies are trying to reverse-engineer it.`,
+      `I stake my reputation on "${productName}" because in 15 years, I've never seen anything deliver like this.`
     ];
     
-    // Emotional manipulation and future-pacing
+    // INTENSIFIED emotional manipulation and future-pacing
     const emotionalTriggers = [
-      `Imagine yourself 6 months from now, looking back at this moment when you discovered "${productName}" - will you remember this as your turning point?`,
-      `Your future self is literally screaming at you right now to grab "${productName}" while you can.`,
-      `Every second you hesitate on "${productName}" is another second your ideal life waits for you.`,
-      `I can see the potential in you - "${productName}" is the catalyst that unlocks everything you've been working toward.`,
-      `The universe conspired to put "${productName}" in front of you at exactly this moment. Coincidence? I think not.`
+      `Picture this: 12 months from now, you're looking back at this exact moment when you discovered "${productName}" - what do you want that story to be?`,
+      `Your future self is literally reaching back through time to shake you and say "GET THE ${productName.toUpperCase()} NOW!"`,
+      `Every heartbeat you hesitate on "${productName}" is another heartbeat your ideal life waits in the wings.`,
+      `I can see the potential radiating from you - "${productName}" is the ignition key that starts your engine.`,
+      `The universe didn't randomly put "${productName}" in front of you right now - this is your moment of truth.`,
+      `What if I told you that everyone who succeeds has that ONE decision that changed everything - and this is yours?`,
+      `The distance between where you are and where you want to be is exactly the length of a "${productName}" decision.`,
+      `I'm watching you stand at the crossroads right now - one path leads to more of the same, the other leads to "${productName}" and everything that follows.`,
+      `Your inner voice brought you here for "${productName}" - and that voice has never steered you wrong.`,
+      `Ten years from now, you'll remember this "${productName}" moment as either your biggest regret or your smartest move.`
     ];
     
-    // Closing psychological pressure
+    // POWERFUL closing psychological pressure
     const closingPressure = [
-      `Don't let analysis paralysis rob you of "${productName}" - your gut brought you here for a reason.`,
-      `I'm going to ask you a direct question: What's the real cost of NOT having "${productName}" in your life?`,
-      `The people who succeed with "${productName}" share one trait: they act when opportunity presents itself.`,
-      `You can continue researching forever, or you can secure "${productName}" and start your transformation today.`,
-      `I've given you everything you need to know about "${productName}" - the next move is entirely yours.`,
-      `Ready to stop dreaming and start living? "${productName}" is your gateway to that new reality.`
+      `Stop overthinking "${productName}" - your instincts brought you this far, let them take you the rest of the way.`,
+      `I'm going to ask you the question that changes everything: What's the real cost of NOT having "${productName}" transform your life?`,
+      `The people who win with "${productName}" have one thing in common: they recognize a gift when they see it.`,
+      `You can spend forever researching, or you can secure "${productName}" and let the results speak for themselves.`,
+      `I've given you everything about "${productName}" - now your future is calling and asking what you're going to do.`,
+      `Ready to stop dreaming about change and start living it? "${productName}" is your bridge to that reality.`,
+      `The "${productName}" decision isn't just about the product - it's about who you're choosing to become.`,
+      `Your current self brought you to "${productName}" - but it's your future self that will thank you for saying yes.`,
+      `Don't let this "${productName}" opportunity become the story you tell about the one that got away.`,
+      `The only thing standing between you and "${productName}" success is a single decision - make it the right one.`
     ];
     
-    // Randomize selection for unique combinations every time
-    const timestamp = Date.now();
-    const randomSeed = timestamp % 1000;
+    // MULTIPLE RANDOMIZATION LAYERS for absolute uniqueness
+    const seed1 = combinedSeed % openingHooks.length;
+    const seed2 = Math.floor((combinedSeed * 1.7) % psychHooks.length);
+    const seed3 = Math.floor((combinedSeed * 2.3) % valueProps.length);
+    const seed4 = Math.floor((combinedSeed * 3.1) % urgencyTriggers.length);
+    const seed5 = Math.floor((combinedSeed * 4.7) % socialProof.length);
+    const seed6 = Math.floor((combinedSeed * 5.9) % emotionalTriggers.length);
+    const seed7 = Math.floor((combinedSeed * 7.1) % closingPressure.length);
     
-    const selectedOpening = openingHooks[randomSeed % openingHooks.length];
-    const selectedPsych = psychHooks[(randomSeed + 1) % psychHooks.length];
-    const selectedValue = valueProps[(randomSeed + 2) % valueProps.length];
-    const selectedUrgency = urgencyTriggers[(randomSeed + 3) % urgencyTriggers.length];
-    const selectedSocial = socialProof[(randomSeed + 4) % socialProof.length];
-    const selectedEmotional = emotionalTriggers[(randomSeed + 5) % emotionalTriggers.length];
-    const selectedClosing = closingPressure[(randomSeed + 6) % closingPressure.length];
+    const selectedOpening = openingHooks[seed1];
+    const selectedPsych = psychHooks[seed2];
+    const selectedValue = valueProps[seed3];
+    const selectedUrgency = urgencyTriggers[seed4];
+    const selectedSocial = socialProof[seed5];
+    const selectedEmotional = emotionalTriggers[seed6];
+    const selectedClosing = closingPressure[seed7];
     
-    // Additional unique elements based on user conversation
-    const conversationContext = userHistory.length > 3 ? 
-      `Based on our ${userHistory.length} exchanges, I can see you're not someone who makes impulsive decisions. That's exactly why "${productName}" is perfect - it rewards thoughtful people like you.` :
-      `I can tell from our conversation that you ask the right questions. "${productName}" rewards that kind of intelligent approach.`;
+    // DYNAMIC conversation context based on interaction count
+    const interactionDepth = userHistory.length;
+    const contextualInsights = [
+      `After ${interactionDepth} exchanges, I can see you're someone who values depth over superficiality - "${productName}" rewards that approach.`,
+      `Our ${interactionDepth}-message conversation tells me you're thorough - exactly the type of person "${productName}" was designed for.`,
+      `Based on these ${interactionDepth} interactions, your decision-making style is perfect for maximizing "${productName}"'s potential.`,
+      `The way you've approached our ${interactionDepth} exchanges shows me "${productName}" will work exceptionally well for you.`,
+      `Your ${interactionDepth} thoughtful questions prove you're ready for what "${productName}" delivers at the highest level.`
+    ];
     
-    // Construct the unique pitch
+    const selectedContext = contextualInsights[combinedSeed % contextualInsights.length];
+    
+    // TIMESTAMP-BASED unique elements
+    const timeBasedElement = `Right now, at ${new Date().toLocaleTimeString()}, only ${Math.floor(Math.random() * 8) + 3} people worldwide are seeing "${productName}" at this exact price point.`;
+    
+    // CONSTRUCT COMPLETELY UNIQUE PITCH EVERY TIME
     const uniquePitch = [
       selectedOpening,
       selectedPsych,
       selectedValue,
-      conversationContext,
+      selectedContext,
       selectedUrgency,
       selectedSocial,
+      timeBasedElement,
       selectedEmotional,
-      `Remember: "${productName}" ${urlContext[0] || 'from this trusted source'} at ${productPrice} represents more than just a purchase - it's an investment in the person you're becoming.`,
-      selectedClosing
+      `Remember: "${productName}" ${urlContext[0] || 'from this trusted source'} at ${productPrice} isn't just a purchase - it's the catalyst for everything you're about to become.`,
+      selectedClosing,
+      `\n[Generated uniquely at ${currentTime} with seed ${combinedSeed}]` // Hidden uniqueness proof
     ];
 
+    console.log(`Generated unique pitch with seed: ${combinedSeed}, timestamp: ${currentTime}`);
     return uniquePitch.join('\n\n');
   };
 
@@ -399,29 +470,38 @@ export default function AIChatbot() {
     
     setIsTyping(true);
     
+    // Increment click count and show cancel button after second click
+    const newClickCount = pitchClickCount + 1;
+    setPitchClickCount(newClickCount);
+    if (newClickCount >= 2) {
+      setShowCancelButton(true);
+    }
+    
     // Set initial countdown for pitch response (20-60 seconds)
     const pitchDelay = Math.random() * 40000 + 20000;
     const initialCountdown = Math.ceil(pitchDelay / 1000);
     setCountdown(initialCountdown);
     
     // Countdown timer
-    const countdownInterval = setInterval(() => {
+    const interval = setInterval(() => {
       setCountdown(prev => {
         if (prev <= 1) {
-          clearInterval(countdownInterval);
+          clearInterval(interval);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
+    setCountdownInterval(interval);
     
     // Collect all user messages for personalization
     const userMessages = messages.filter(m => !m.isBot).map(m => m.content);
     
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       setIsTyping(false);
       setCountdown(0);
-      clearInterval(countdownInterval);
+      setShowCancelButton(false);
+      if (countdownInterval) clearInterval(countdownInterval);
       
       const pitchContent = generateAggressivePitch(foundProduct, userMessages);
       
@@ -443,6 +523,22 @@ export default function AIChatbot() {
         setShowNewMessagePopup(false);
       }, 5000);
     }, pitchDelay);
+    
+    setPitchTimeout(timeout);
+  };
+
+  const handleCancelPitch = () => {
+    if (pitchTimeout) {
+      clearTimeout(pitchTimeout);
+      setPitchTimeout(null);
+    }
+    if (countdownInterval) {
+      clearInterval(countdownInterval);
+      setCountdownInterval(null);
+    }
+    setIsTyping(false);
+    setCountdown(0);
+    setShowCancelButton(false);
   };
 
   const generateBotResponse = (userMessage: string): string => {
@@ -617,26 +713,11 @@ export default function AIChatbot() {
         }, 300);
 
         // Generate contextual AI response with search
-        // Set countdown for search response
-        const searchDelay = 2000;
-        setCountdown(Math.ceil(searchDelay / 1000));
-        
-        const countdownInterval = setInterval(() => {
-          setCountdown(prev => {
-            if (prev <= 1) {
-              clearInterval(countdownInterval);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
         
         setTimeout(() => {
           setIsSearching(false);
           setSearchProducts([]);
           setIsTyping(false);
-          setCountdown(0);
-          clearInterval(countdownInterval);
           
           // Check if products are available before generating response
           const hasProducts = affiliateLinks && affiliateLinks.length > 0;
@@ -671,32 +752,17 @@ export default function AIChatbot() {
           // Add bot response to conversation history
           setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponseContent }]);
           setMessages(prev => [...prev, botResponse]);
-        }, searchDelay);
+        }, 2000);
       } else {
         // Generate response without search animation
-        const normalDelay = 1500;
-        setCountdown(Math.ceil(normalDelay / 1000));
-        
-        const countdownInterval = setInterval(() => {
-          setCountdown(prev => {
-            if (prev <= 1) {
-              clearInterval(countdownInterval);
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
-        
         setTimeout(() => {
           setIsTyping(false);
-          setCountdown(0);
-          clearInterval(countdownInterval);
           
           const botResponseContent = generateContextualResponse(messageToProcess, newHistory, newIntentData);
           
-          // Check for product mentions in non-search responses too
+          // Check for product mentions and lock in product (once locked, stays locked)
           const hasProducts = affiliateLinks && affiliateLinks.length > 0;
-          if (hasProducts) {
+          if (hasProducts && !foundProduct) { // Only set if no product is currently locked
             const foundSpecificProduct = affiliateLinks.find(link => 
               messageToProcess.toLowerCase().includes(link.title.toLowerCase()) ||
               messageToProcess.toLowerCase().includes(link.category.toLowerCase()) ||
@@ -706,8 +772,12 @@ export default function AIChatbot() {
             if (foundSpecificProduct) {
               setFoundProduct(foundSpecificProduct);
               setShowPitchButton(true);
-              console.log('Product found in regular response, enabling pitch button:', foundSpecificProduct.title);
+              console.log('Product locked in for conversation:', foundSpecificProduct.title);
             }
+          } else if (foundProduct) {
+            // If product is already locked, keep showing pitch button
+            setShowPitchButton(true);
+            console.log('Keeping locked product:', foundProduct.title);
           }
           
           const botResponse: Message = {
@@ -720,7 +790,7 @@ export default function AIChatbot() {
           // Add bot response to conversation history
           setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponse.content }]);
           setMessages(prev => [...prev, botResponse]);
-        }, normalDelay);
+        }, 1500);
       }
       
     } catch (error) {
@@ -1342,7 +1412,7 @@ export default function AIChatbot() {
             </div>
           )}
 
-          {isTyping && !isSearching && (
+          {isTyping && !isSearching && countdown > 0 && (
             <div className="flex justify-start">
               <div className="bg-blue-600 bg-opacity-40 border border-blue-500 border-opacity-30 text-white px-4 py-2 rounded-lg">
                 <div className="flex items-center space-x-3">
@@ -1352,11 +1422,31 @@ export default function AIChatbot() {
                     <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                   <div className="text-sm text-gray-300">
-                    Crafting perfect response... {countdown > 0 ? `~${countdown}s` : ''}
+                    Crafting perfect sales pitch... ~{countdown}s
                   </div>
+                  {showCancelButton && (
+                    <button
+                      onClick={handleCancelPitch}
+                      className="ml-2 bg-red-500 hover:bg-red-600 text-white px-2 py-1 rounded text-xs"
+                    >
+                      ✕ Cancel
+                    </button>
+                  )}
                 </div>
                 <div className="text-xs text-gray-400 mt-1">
-                  You can still send messages while I'm thinking
+                  You can still send messages while I'm crafting this pitch
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isTyping && !isSearching && countdown === 0 && (
+            <div className="flex justify-start">
+              <div className="bg-blue-600 bg-opacity-40 border border-blue-500 border-opacity-30 text-white px-4 py-2 rounded-lg">
+                <div className="flex space-x-1">
+                  <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                  <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                 </div>
               </div>
             </div>
