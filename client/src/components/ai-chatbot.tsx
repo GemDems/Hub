@@ -37,7 +37,7 @@ export default function AIChatbot() {
   const [resizeDirection, setResizeDirection] = useState('');
   
   // Chat button visibility states
-  const [showChatButton, setShowChatButton] = useState(false);
+  const [showChatButton, setShowChatButton] = useState(true);
   const [isButtonFading, setIsButtonFading] = useState(false);
   const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
   const [isSlideUp, setIsSlideUp] = useState(false);
@@ -286,7 +286,6 @@ export default function AIChatbot() {
     
     // Initial fade in after 2 seconds with faster animation
     const initialTimer = setTimeout(() => {
-      setShowChatButton(true);
       setIsButtonFading(true);
       
       // Auto fade out after another 5 seconds
@@ -325,7 +324,6 @@ export default function AIChatbot() {
           const timeout = setTimeout(() => {
             // Wait 5 seconds after user stops scrolling near top
             setTimeout(() => {
-              setShowChatButton(true);
               setIsButtonFading(true);
               
               // Auto fade out after 5 seconds
