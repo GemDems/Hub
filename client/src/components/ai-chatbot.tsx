@@ -559,13 +559,27 @@ export default function AIChatbot() {
       setChatOpenCount(currentCount);
       localStorage.setItem('chatOpenCount', currentCount.toString());
       
-      // Show tooltip on second open (after first conversation)
-      if (currentCount === 2 && messages.length > 1) {
-        setTimeout(() => setShowResetTooltip(true), 1000);
-        setTimeout(() => setShowResetTooltip(false), 8000); // Hide after 8 seconds
+      // Show tooltip on second open or if there are saved messages from previous sessions
+      const hasSavedMessages = localStorage.getItem('chatMessages');
+      let savedMessagesExist = false;
+      try {
+        savedMessagesExist = hasSavedMessages && JSON.parse(hasSavedMessages).length > 1;
+      } catch (e) {
+        console.log('Error parsing saved messages:', e);
+      }
+      
+      console.log('Chat open count:', currentCount, 'Saved messages exist:', savedMessagesExist);
+      
+      if (currentCount >= 2 || savedMessagesExist) {
+        console.log('Showing reset tooltip...');
+        setTimeout(() => {
+          setShowResetTooltip(true);
+          console.log('Tooltip should be visible now');
+        }, 1000);
+        setTimeout(() => setShowResetTooltip(false), 10000); // Hide after 10 seconds
       }
     }
-  }, [isOpen, messages.length]);
+  }, [isOpen]);
 
   // Add global search trigger function for Search Now button
   useEffect(() => {
@@ -817,10 +831,10 @@ export default function AIChatbot() {
         <div className="flex items-center gap-2 relative">
           {/* Reset Tooltip */}
           {showResetTooltip && (
-            <div className="absolute -bottom-12 left-0 z-50 bg-black/90 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg border border-white/20 shadow-xl pointer-events-none">
-              <div className="flex items-center gap-1">
-                <span>Click here to reset chat</span>
-                <div className="absolute -top-1 left-4 w-2 h-2 bg-black/90 border-l border-t border-white/20 transform rotate-45"></div>
+            <div className="absolute -bottom-14 left-0 z-[999] bg-black/95 backdrop-blur-md text-white text-sm px-4 py-3 rounded-lg border border-white/30 shadow-2xl pointer-events-none animate-pulse">
+              <div className="flex items-center gap-2">
+                <span className="whitespace-nowrap">👆 Click here to reset chat</span>
+                <div className="absolute -top-1.5 left-6 w-3 h-3 bg-black/95 border-l border-t border-white/30 transform rotate-45"></div>
               </div>
             </div>
           )}
