@@ -83,6 +83,8 @@ export default function AIChatbot() {
   const [tooltipDismissed, setTooltipDismissed] = useState(() => {
     return localStorage.getItem(`resetTooltipDismissed-${sessionId}`) === 'true';
   });
+  const [isHoveringReset, setIsHoveringReset] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   
   const chatRef = useRef<HTMLDivElement>(null);
@@ -496,15 +498,6 @@ export default function AIChatbot() {
     });
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
-      setPosition({
-        x: e.clientX - dragOffset.x,
-        y: e.clientY - dragOffset.y
-      });
-    }
-  };
-
   const handleMouseUp = () => {
     setIsDragging(false);
     setIsResizing(false);
@@ -595,35 +588,29 @@ export default function AIChatbot() {
     }
   }, [isOpen, sessionId]);
 
-  // Show tooltip only on second reopening after closing once
-  useEffect(() => {
-    if (isOpen) {
-      const openCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0');
-      const hasBeenClosed = localStorage.getItem(`chatClosed-${sessionId}`) === 'true';
-      const reopenCount = parseInt(localStorage.getItem(`chatReopenCount-${sessionId}`) || '0');
-      
-      // Count reopens only after first close
-      if (hasBeenClosed) {
-        const newReopenCount = reopenCount + 1;
-        localStorage.setItem(`chatReopenCount-${sessionId}`, newReopenCount.toString());
-        
-        // Show tooltip only on the second reopen after closing
-        if (newReopenCount === 2 && !tooltipDismissed) {
-          console.log('Showing reset tooltip on second reopen after close...');
-          setTimeout(() => {
-            setShowResetTooltip(true);
-            console.log('Tooltip should be visible now');
-          }, 1000);
-          setTimeout(() => {
-            setShowResetTooltip(false);
-            // Auto-dismiss permanently after showing once
-            localStorage.setItem(`resetTooltipDismissed-${sessionId}`, 'true');
-            setTooltipDismissed(true);
-          }, 5000); // Hide after 5 seconds and don't show again
-        }
-      }
+  // Show tooltip when hovering over glowing reset button
+  const handleResetButtonHover = (e: React.MouseEvent, isHovering: boolean) => {
+    setIsHoveringReset(isHovering);
+    if (isHovering) {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+      setShowResetTooltip(true);
+    } else {
+      setShowResetTooltip(false);
     }
-  }, [isOpen, tooltipDismissed, sessionId]);
+  };
+
+  // Track mouse movement for tooltip positioning
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      setPosition({
+        x: e.clientX - dragOffset.x,
+        y: e.clientY - dragOffset.y
+      });
+    }
+    if (isHoveringReset) {
+      setMousePosition({ x: e.clientX, y: e.clientY });
+    }
+  };
 
   // Add global search trigger function for Search Now button
   useEffect(() => {
@@ -851,30 +838,17 @@ export default function AIChatbot() {
 
   return (
     <>
-      {/* Reset Button Tooltip */}
-      {showResetTooltip && isOpen && (
+      {/* Reset Button Tooltip - Shows when hovering over glowing reset button */}
+      {showResetTooltip && isOpen && isHoveringReset && (
         <div 
-          className="fixed z-[1000] pointer-events-auto"
+          className="fixed z-[1000] pointer-events-none"
           style={{
-            left: position.x + 15,
-            top: position.y - 28
+            left: mousePosition.x + 10,
+            top: mousePosition.y - 35
           }}
         >
-          <div className="bg-black/90 text-white text-xs px-2 py-1 rounded shadow-lg flex items-center gap-2">
+          <div className="bg-black/90 text-white text-xs px-2 py-1 rounded shadow-lg">
             <span>Reset chat</span>
-            <button
-              onClick={dismissTooltip}
-              className="hover:bg-white/20 rounded p-0.5 transition-colors"
-            >
-              <X className="w-2.5 h-2.5" />
-            </button>
-            <div 
-              className="absolute w-2 h-2 bg-black/90 transform rotate-45"
-              style={{
-                bottom: '-4px',
-                left: '15px'
-              }}
-            ></div>
           </div>
         </div>
       )}
@@ -906,15 +880,30 @@ export default function AIChatbot() {
             onClick={(e) => {
               e.stopPropagation();
               handleReset();
+              setIsHoveringReset(false);
+              setShowResetTooltip(false);
             }}
             className={`p-1 hover:bg-gray-600 rounded transition-all duration-300 cursor-pointer relative ${
-              showResetTooltip ? 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse' : ''
+              chatOpenCount >= 2 ? 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse' : ''
             }`}
             title="Reset chat and start new conversation"
             onMouseDown={(e) => e.stopPropagation()}
+            onMouseEnter={(e) => {
+              if (chatOpenCount >= 2) {
+                handleResetButtonHover(e, true);
+              }
+            }}
+            onMouseLeave={(e) => {
+              handleResetButtonHover(e, false);
+            }}
+            onMouseMove={(e) => {
+              if (isHoveringReset) {
+                setMousePosition({ x: e.clientX, y: e.clientY });
+              }
+            }}
           >
             <RotateCcw className={`w-4 h-4 transition-all duration-300 ${
-              showResetTooltip ? 'text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]' : 'text-gray-300'
+              chatOpenCount >= 2 ? 'text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]' : 'text-gray-300'
             }`} />
           </button>
           <button
