@@ -179,17 +179,26 @@ export default function AIChatbot() {
       return "I don't see any products available in the creator dashboard right now. Please check back when new deals have been added!";
     }
 
-    // Handle popular generic questions first - before complex product matching
-    if (lowerQuery.includes('popular') || lowerQuery.includes('trending') || lowerQuery.includes('hot')) {
-      const popularProducts = affiliateLinks
-        .filter(p => p.isElitePick === 1 || p.clicks > 5)
-        .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
-        .slice(0, 3);
+    // === PURE GENERIC QUESTIONS - SEPARATED FROM PRODUCT BROWSING ===
+    if (lowerQuery.includes('popular') || lowerQuery.includes('trending') || lowerQuery.includes('hot') || 
+        (lowerQuery.includes('what') && lowerQuery.includes('popular'))) {
+      console.log('🔥 Processing PURE generic "popular" question based on actual click counts');
       
-      if (popularProducts.length > 0) {
-        const topPick = popularProducts[0];
-        const eliteBadge = topPick.isElitePick === 1 ? '⭐ ELITE PICK' : '';
-        const verifiedBadge = topPick.isVerified === 1 ? '✓ VERIFIED' : '';
+      // Sort by ACTUAL click counts to show REAL most popular products
+      const clickedProducts = affiliateLinks
+        .filter(p => p.clicks && p.clicks > 0) // Only products with actual clicks
+        .sort((a, b) => (b.clicks || 0) - (a.clicks || 0)); // Highest clicks first
+      
+      // If no clicks yet, fall back to Elite picks, then any product
+      const elitePicks = affiliateLinks.filter(p => p.isElitePick === 1);
+      const topPick = clickedProducts.length > 0 ? clickedProducts[0] : 
+                     elitePicks.length > 0 ? elitePicks[0] : 
+                     affiliateLinks[0];
+      
+      if (topPick) {
+        const clickText = topPick.clicks > 0 ? `(${topPick.clicks} people clicked "Get Deal Now")` : '';
+        const eliteBadge = topPick.isElitePick === 1 ? '🧠 **Elite Brain Pick**' : '';
+        const verifiedBadge = topPick.isVerified === 1 ? '✅' : '';
         
         setTimeout(() => {
           setFoundProduct(topPick);
@@ -197,22 +206,56 @@ export default function AIChatbot() {
         }, 100);
 
         const stockText = topPick.stock > 0 ? `Only ${topPick.stock} left! ` : '';
-        return `Right now, the most popular item is **${topPick.title}** ${eliteBadge} ${verifiedBadge}
+        return `The most popular deal right now is **${topPick.title}** ${clickText} ${eliteBadge} ${verifiedBadge}
 
-${topPick.description || 'Everyone\'s been talking about this one.'} ${stockText}This is definitely trending for good reason. ${topPick.aiPrivateInfo || 'The quality really speaks for itself.'}
+${topPick.description || 'This is the one everyone\'s been checking out.'} ${stockText}This is trending for good reason. ${topPick.aiPrivateInfo || 'The quality definitely speaks for itself.'}
 
 <a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
       } else {
-        return "I'd love to show you what's popular, but I need to see more activity on the current products first. What specific type of product are you interested in? I can find you some great options.";
+        return "I'd love to show you what's popular, but no products are available right now. Check back when new deals are added!";
       }
     }
 
-    // Handle general browsing questions
-    if (lowerQuery.includes('what do you have') || (lowerQuery.includes('show me') && !lowerQuery.includes('specific'))) {
+    // === MORE GENERIC QUESTIONS - SEPARATED FROM PRODUCT SEARCHING ===
+    if (lowerQuery.includes('what do you have') || lowerQuery.includes('what\'s available') || 
+        (lowerQuery.includes('show me') && !lowerQuery.includes('specific'))) {
+      console.log('📋 Processing generic browsing question');
       const categories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
       return `I have deals across several categories: ${categories.slice(0, 4).join(', ')}${categories.length > 4 ? ', and more' : ''}. 
 
 What type of product interests you most? I can find you the best options in any of these areas.`;
+    }
+
+    // Handle "what's best" generic questions based on Elite picks and high clicks
+    if ((lowerQuery.includes('best') || lowerQuery.includes('recommend')) && 
+        !lowerQuery.includes('for') && !lowerQuery.includes('need')) {
+      console.log('🏆 Processing generic "best" question');
+      
+      const bestProducts = affiliateLinks
+        .filter(p => p.isElitePick === 1 || p.clicks > 3) // Elite or clicked products
+        .sort((a, b) => {
+          // Sort by Elite status first, then clicks
+          if (a.isElitePick && !b.isElitePick) return -1;
+          if (b.isElitePick && !a.isElitePick) return 1;
+          return (b.clicks || 0) - (a.clicks || 0);
+        });
+      
+      if (bestProducts.length > 0) {
+        const topBest = bestProducts[0];
+        const eliteBadge = topBest.isElitePick === 1 ? '🧠 **Elite Brain Pick**' : '';
+        const clickText = topBest.clicks > 0 ? `(${topBest.clicks} people have chosen this)` : '';
+        
+        setTimeout(() => {
+          setFoundProduct(topBest);
+          setShowPitchButton(true);
+        }, 100);
+
+        return `The best deal I can recommend is **${topBest.title}** ${clickText} ${eliteBadge}
+
+${topBest.description || 'This is the top quality option.'} ${topBest.aiPrivateInfo || 'The craftsmanship really shows.'}
+
+<a href="${topBest.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topBest.title} →</a>`;
+      }
     }
 
     // Handle "what's new" or similar

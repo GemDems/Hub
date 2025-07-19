@@ -214,7 +214,15 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         </div>
         
-        <div className="absolute top-3 right-3 z-10">
+        <div className="absolute top-3 right-3 z-10 flex flex-col gap-1">
+          {/* Small Click Popularity Indicator */}
+          {link.clicks && link.clicks > 0 ? (
+            <div className="bg-gradient-to-r from-green-400 to-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow-lg text-center">
+              <TrendingUp className="w-3 h-3 mr-1 inline" />
+              {link.clicks} clicks
+            </div>
+          ) : null}
+          
           <div className="bg-gradient-to-r from-action-orange to-orange-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             <Clock className="w-3 h-3 mr-1 inline" />
             {stats.timeLeft}H LEFT
