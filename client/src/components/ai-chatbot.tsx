@@ -270,41 +270,128 @@ export default function AIChatbot() {
     return "The creator dashboard doesn't have any products available right now. Please check back later when new deals have been added to the system.";
   };
 
-  // Aggressive sales psychology pitch when product is found
+  // Dynamic aggressive sales psychology pitch generator
   const generateAggressivePitch = (product: AffiliateLink, userHistory: string[]): string => {
     const userWords = userHistory.join(' ').toLowerCase();
     const personalizedTerms = [];
     
-    // Extract user's words to use against them
-    if (userWords.includes('need') || userWords.includes('want')) personalizedTerms.push('essential need');
-    if (userWords.includes('budget') || userWords.includes('cheap') || userWords.includes('affordable')) personalizedTerms.push('incredible value');
-    if (userWords.includes('quality') || userWords.includes('good') || userWords.includes('best')) personalizedTerms.push('premium quality');
-    if (userWords.includes('work') || userWords.includes('job') || userWords.includes('office')) personalizedTerms.push('professional edge');
+    // Extract comprehensive user psychology
+    if (userWords.includes('need') || userWords.includes('want') || userWords.includes('require')) personalizedTerms.push('essential need');
+    if (userWords.includes('budget') || userWords.includes('cheap') || userWords.includes('affordable') || userWords.includes('price')) personalizedTerms.push('incredible value');
+    if (userWords.includes('quality') || userWords.includes('good') || userWords.includes('best') || userWords.includes('premium')) personalizedTerms.push('premium quality');
+    if (userWords.includes('work') || userWords.includes('job') || userWords.includes('office') || userWords.includes('business')) personalizedTerms.push('professional edge');
+    if (userWords.includes('fast') || userWords.includes('quick') || userWords.includes('urgent')) personalizedTerms.push('immediate results');
+    if (userWords.includes('reliable') || userWords.includes('trust') || userWords.includes('proven')) personalizedTerms.push('guaranteed reliability');
     
-    const triggers = [
-      `Listen, I'm going to be brutally honest with you about "${product.title}" because I genuinely care about your success.`,
-      `You mentioned ${personalizedTerms[0] || 'finding the right solution'} - this is EXACTLY what you've been searching for.`,
-      `I've seen thousands of people transform their lives with this exact product. The ones who hesitate? They regret it for months.`,
-      `Here's what nobody else will tell you: ${product.description}`,
-      `But here's the thing that really gets me excited for you - this isn't just about the product. It's about who you become when you own it.`,
-      `Think about this: Every day you delay is another day you're settling for less than you deserve.`,
-      `I'm not supposed to share this, but I've personally seen people pay 3x more for inferior alternatives. This deal won't last.`,
-      `Your future self is literally begging you to make this decision right now. Don't let fear steal your breakthrough.`,
-      `Look, I could show you dozens of other options, but I'd be doing you a disservice. This is THE one.`,
-      `The people who succeed? They recognize opportunity when it knocks. This is your knock.`,
-      `I'm going to ask you a tough question: What's the cost of staying exactly where you are right now?`,
-      `Every successful person I know has that ONE purchase that changed everything. This could be yours.`,
-      `You know what separates the dreamers from the achievers? The achievers take action when they see perfection.`,
-      `I can see from our conversation that you're not like everyone else. You actually care about quality and results.`,
-      `This product doesn't just solve your immediate need - it positions you for success in ways you can't even imagine yet.`,
-      `I'm going to be straight with you: I've never been more confident about recommending anything in my life.`,
-      `Years from now, you'll remember this exact moment as the turning point. The question is: which direction will you turn?`,
-      `Stop overthinking this. Your instincts brought you here for a reason. Trust them.`,
-      `The universe has a funny way of putting exactly what you need right in front of you. This is that moment.`,
-      `Ready to stop dreaming and start living? Click that link and watch your life upgrade instantly.`
+    // Extract product details for deep personalization
+    const productName = product.title;
+    const productDesc = product.description;
+    const productCategory = product.category;
+    const productPrice = product.price ? `$${product.price}` : 'an incredible price';
+    const productUrl = product.url;
+    
+    // Analyze URL for additional context
+    const urlContext = [];
+    if (productUrl.includes('amazon')) urlContext.push('backed by Amazon\'s guarantee');
+    if (productUrl.includes('ebay')) urlContext.push('with verified seller ratings');
+    if (productUrl.includes('walmart')) urlContext.push('with Walmart\'s trusted network');
+    if (productUrl.includes('target')) urlContext.push('from Target\'s curated selection');
+    if (productUrl.includes('.com')) urlContext.push('from a legitimate, verified source');
+    
+    // Generate unique opening hooks (randomized)
+    const openingHooks = [
+      `Listen carefully - I'm about to share something about "${productName}" that could change everything for you.`,
+      `Stop what you're doing. This "${productName}" discovery is exactly what you've been unconsciously searching for.`,
+      `I need to be completely transparent with you about "${productName}" because this opportunity won't wait.`,
+      `Here's the raw truth about "${productName}" that nobody else will tell you upfront.`,
+      `I'm going to break down why "${productName}" is the missing piece in your life puzzle.`,
+      `Let me paint you a picture of what life looks like AFTER you own "${productName}".`
+    ];
+    
+    // User-specific psychological hooks
+    const psychHooks = [
+      `You mentioned ${personalizedTerms[0] || 'finding the right solution'} - this "${productName}" is literally designed for people exactly like you.`,
+      `Based on our conversation, I can tell you're someone who values ${personalizedTerms[1] || 'smart decisions'} - this is your moment.`,
+      `The fact that you're even asking about this shows you're ready for what "${productName}" offers.`,
+      `I've analyzed hundreds of similar searches, and your specific needs align perfectly with "${productName}".`
+    ];
+    
+    // Product-specific value propositions
+    const valueProps = [
+      `This ${productCategory} item "${productName}" isn't just another product - ${productDesc.slice(0, 100)}`,
+      `What makes "${productName}" different from everything else in ${productCategory}? ${productDesc.slice(0, 120)}`,
+      `The "${productName}" in the ${productCategory} space represents a breakthrough because ${productDesc.slice(0, 80)}`,
+      `Here's why "${productName}" dominates the ${productCategory} market: ${productDesc.slice(0, 90)}`
+    ];
+    
+    // Urgency and scarcity triggers
+    const urgencyTriggers = [
+      `I'm tracking the availability of "${productName}" and the supply is getting critically low.`,
+      `This specific "${productName}" deal ${urlContext[0] || 'from this verified source'} expires without warning.`,
+      `I've seen this exact "${productName}" sell out 3 times this month already.`,
+      `The pricing on "${productName}" at ${productPrice} is temporary - it's already increased twice this week.`,
+      `Only a few people per day get access to "${productName}" at this price point.`
+    ];
+    
+    // Social proof and authority
+    const socialProof = [
+      `I've personally guided over 2,847 people to success with "${productName}" and the transformation stories are incredible.`,
+      `The "${productName}" has a 97.3% satisfaction rate among people in your exact situation.`,
+      `I just checked - "${productName}" has generated over 15,000 positive outcomes this quarter alone.`,
+      `Industry experts are calling "${productName}" the standard-bearer in ${productCategory} for good reason.`,
+      `The data doesn't lie: "${productName}" outperforms 94% of similar ${productCategory} options.`
+    ];
+    
+    // Emotional manipulation and future-pacing
+    const emotionalTriggers = [
+      `Imagine yourself 6 months from now, looking back at this moment when you discovered "${productName}" - will you remember this as your turning point?`,
+      `Your future self is literally screaming at you right now to grab "${productName}" while you can.`,
+      `Every second you hesitate on "${productName}" is another second your ideal life waits for you.`,
+      `I can see the potential in you - "${productName}" is the catalyst that unlocks everything you've been working toward.`,
+      `The universe conspired to put "${productName}" in front of you at exactly this moment. Coincidence? I think not.`
+    ];
+    
+    // Closing psychological pressure
+    const closingPressure = [
+      `Don't let analysis paralysis rob you of "${productName}" - your gut brought you here for a reason.`,
+      `I'm going to ask you a direct question: What's the real cost of NOT having "${productName}" in your life?`,
+      `The people who succeed with "${productName}" share one trait: they act when opportunity presents itself.`,
+      `You can continue researching forever, or you can secure "${productName}" and start your transformation today.`,
+      `I've given you everything you need to know about "${productName}" - the next move is entirely yours.`,
+      `Ready to stop dreaming and start living? "${productName}" is your gateway to that new reality.`
+    ];
+    
+    // Randomize selection for unique combinations every time
+    const timestamp = Date.now();
+    const randomSeed = timestamp % 1000;
+    
+    const selectedOpening = openingHooks[randomSeed % openingHooks.length];
+    const selectedPsych = psychHooks[(randomSeed + 1) % psychHooks.length];
+    const selectedValue = valueProps[(randomSeed + 2) % valueProps.length];
+    const selectedUrgency = urgencyTriggers[(randomSeed + 3) % urgencyTriggers.length];
+    const selectedSocial = socialProof[(randomSeed + 4) % socialProof.length];
+    const selectedEmotional = emotionalTriggers[(randomSeed + 5) % emotionalTriggers.length];
+    const selectedClosing = closingPressure[(randomSeed + 6) % closingPressure.length];
+    
+    // Additional unique elements based on user conversation
+    const conversationContext = userHistory.length > 3 ? 
+      `Based on our ${userHistory.length} exchanges, I can see you're not someone who makes impulsive decisions. That's exactly why "${productName}" is perfect - it rewards thoughtful people like you.` :
+      `I can tell from our conversation that you ask the right questions. "${productName}" rewards that kind of intelligent approach.`;
+    
+    // Construct the unique pitch
+    const uniquePitch = [
+      selectedOpening,
+      selectedPsych,
+      selectedValue,
+      conversationContext,
+      selectedUrgency,
+      selectedSocial,
+      selectedEmotional,
+      `Remember: "${productName}" ${urlContext[0] || 'from this trusted source'} at ${productPrice} represents more than just a purchase - it's an investment in the person you're becoming.`,
+      selectedClosing
     ];
 
-    return triggers.join('\n\n');
+    return uniquePitch.join('\n\n');
   };
 
   const handlePitchClick = () => {
@@ -360,12 +447,13 @@ export default function AIChatbot() {
 
   const generateBotResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
+    const timestamp = Date.now();
     
-    // If we have real products, include them in responses
+    // If we have real products, include them in responses with variation
     const hasProducts = affiliateLinks.length > 0;
-    const randomProduct = hasProducts ? affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)] : null;
+    const randomProduct = hasProducts ? affiliateLinks[Math.floor((timestamp * 7) % affiliateLinks.length)] : null;
     
-    // Product-specific responses with real data
+    // Product-specific responses with dynamic variation
     if (message.includes('best') || message.includes('recommend') || message.includes('which')) {
       if (hasProducts && randomProduct) {
         // Enable pitch button for product recommendations
@@ -375,27 +463,47 @@ export default function AIChatbot() {
           console.log('Product recommendation found, enabling pitch button:', randomProduct.title);
         }, 100);
         
-        return `Perfect timing! 🎯 I'd recommend "${randomProduct.title}" - it's been absolutely crushing it with our users! ${randomProduct.description.slice(0, 100)}... Want the exclusive link?`;
+        // Generate unique responses each time
+        const responseVariations = [
+          `Absolutely! I've got the perfect match: "${randomProduct.title}" - this ${randomProduct.category} gem has been delivering incredible results. ${randomProduct.description.slice(0, 80)}... Ready for the details?`,
+          `Perfect timing! "${randomProduct.title}" is exactly what you need. Here's why it's special: ${randomProduct.description.slice(0, 90)}... Want me to secure this for you?`,
+          `I've analyzed your needs and "${randomProduct.title}" stands out as the clear winner. ${randomProduct.description.slice(0, 85)}... This could be game-changing for you.`,
+          `Outstanding question! "${randomProduct.title}" is my top recommendation because ${randomProduct.description.slice(0, 70)}... Shall I show you why this beats everything else?`,
+          `You're in luck! "${randomProduct.title}" in the ${randomProduct.category} space is phenomenal. ${randomProduct.description.slice(0, 95)}... Want the insider details?`
+        ];
+        
+        const selectedResponse = responseVariations[timestamp % responseVariations.length];
+        return selectedResponse;
       }
       return getRandomResponse('product');
     }
     
-    // Show available deals
+    // Show available deals with dynamic presentation
     if (message.includes('deals') || message.includes('what') || message.includes('show') || message.includes('available')) {
       if (hasProducts) {
-        const topDeals = affiliateLinks.slice(0, 3);
-        const dealsList = topDeals.map(deal => `• ${deal.title} (${deal.category})`).join('\n');
+        // Rotate through different products as primary focus
+        const shuffledProducts = [...affiliateLinks].sort(() => (timestamp * 3) % 2 - 1);
+        const topDeals = shuffledProducts.slice(0, 3);
+        const dealsList = topDeals.map(deal => `• ${deal.title} (${deal.category}) - ${deal.description.slice(0, 50)}...`).join('\n');
         
-        // Enable pitch button when showing deals
-        if (affiliateLinks.length > 0) {
-          setTimeout(() => {
-            setFoundProduct(affiliateLinks[0]);
-            setShowPitchButton(true);
-            console.log('Deal list shown, enabling pitch button for:', affiliateLinks[0].title);
-          }, 100);
-        }
+        // Enable pitch button with rotating featured product
+        const featuredProduct = shuffledProducts[0];
+        setTimeout(() => {
+          setFoundProduct(featuredProduct);
+          setShowPitchButton(true);
+          console.log('Deal list shown, enabling pitch button for featured product:', featuredProduct.title);
+        }, 100);
         
-        return `Here are our hottest deals right now! 🔥\n\n${dealsList}\n\nWhich one catches your eye? I can hook you up with the best price! 💰`;
+        // Dynamic deal presentation variations
+        const dealResponses = [
+          `🔥 Here are today's exclusive deals:\n\n${dealsList}\n\nI'm personally excited about "${featuredProduct.title}" - it's been flying off the shelves! Which interests you most?`,
+          `💎 Check out these premium opportunities:\n\n${dealsList}\n\n"${featuredProduct.title}" is my current top pick. Want to know why it's crushing the competition?`,
+          `⚡ Fresh deals just dropped:\n\n${dealsList}\n\nBetween you and me, "${featuredProduct.title}" is about to explode in popularity. Ready to get ahead of the curve?`,
+          `🎯 Curated just for you:\n\n${dealsList}\n\n"${featuredProduct.title}" caught my attention immediately - the value here is insane. Shall we dive deeper?`,
+          `🚀 Today's hottest opportunities:\n\n${dealsList}\n\nI've been tracking "${featuredProduct.title}" and the numbers are incredible. Want the full breakdown?`
+        ];
+        
+        return dealResponses[timestamp % dealResponses.length];
       }
       return "We're loading up some incredible deals right now! 🚀 Check back in a few minutes for the latest drops. Want me to notify you when they're live?";
     }
