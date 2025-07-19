@@ -1026,7 +1026,8 @@ export default function AIChatbot() {
     if (isCollapsed) {
       // If collapsed, expand back to normal - preserve all chat state
       setIsCollapsed(false);
-      setPosition({ x: Math.max(0, window.innerWidth - 420), y: 100 });
+      // Return to slightly above original position
+      setPosition({ x: position.x, y: 80 });
       setSize({ width: 400, height: 500 });
       setShouldGlowRestoreButton(false); // Stop glowing when restored
       setIsHoveringRestoreButton(false);
@@ -1038,8 +1039,8 @@ export default function AIChatbot() {
     } else {
       // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
-      // Position slightly off-screen to the right to look like it "left the site"
-      setPosition({ x: window.innerWidth - 350, y: window.innerHeight - 65 }); // Extends 50px beyond screen
+      // Keep same X position, move down to bottom of screen
+      setPosition({ x: position.x, y: window.innerHeight - 60 });
       setSize({ width: 400, height: 60 });
       setShouldGlowRestoreButton(false); // Don't auto-glow, only on hover
       // Don't reset any chat state - messages, history, typing status should remain
@@ -1363,8 +1364,8 @@ export default function AIChatbot() {
             onClick={(e) => {
               e.stopPropagation();
               if (isCollapsed) {
-                // When collapsed, reposition to original location instead of resetting
-                setPosition({ x: Math.max(0, window.innerWidth - 420), y: 100 });
+                // When collapsed, reposition slightly above original location
+                setPosition({ x: position.x, y: 80 });
               } else {
                 // When not collapsed, reset the chat
                 handleReset();
