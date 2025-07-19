@@ -85,6 +85,8 @@ export default function AIChatbot() {
   });
   const [isHoveringReset, setIsHoveringReset] = useState(false);
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [isButtonGlowing, setIsButtonGlowing] = useState(false);
+  const [glowTimer, setGlowTimer] = useState<NodeJS.Timeout | null>(null);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   
   const chatRef = useRef<HTMLDivElement>(null);
@@ -570,12 +572,17 @@ export default function AIChatbot() {
     localStorage.setItem(`chatMessages-${sessionId}`, JSON.stringify(messages));
   }, [messages, sessionId]);
 
-  // Track chat opens and show reset tooltip after open -> close -> open sequence
+  // Track chat opens and enable button glowing after 2 opens
   useEffect(() => {
     if (isOpen) {
       const openCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0') + 1;
       setChatOpenCount(openCount);
       localStorage.setItem(`chatOpenCount-${sessionId}`, openCount.toString());
+      
+      // Start glowing when chat opened twice
+      if (openCount >= 2) {
+        setIsButtonGlowing(true);
+      }
       
       console.log('Chat opened, count:', openCount);
     } else {
@@ -594,6 +601,15 @@ export default function AIChatbot() {
     if (isHovering) {
       setMousePosition({ x: e.clientX, y: e.clientY });
       setShowResetTooltip(true);
+      
+      // Start 5-second timer to stop glowing
+      if (chatOpenCount >= 2 && !glowTimer) {
+        const timer = setTimeout(() => {
+          setIsButtonGlowing(false);
+          setGlowTimer(null);
+        }, 5000);
+        setGlowTimer(timer);
+      }
     } else {
       setShowResetTooltip(false);
     }
@@ -882,14 +898,20 @@ export default function AIChatbot() {
               handleReset();
               setIsHoveringReset(false);
               setShowResetTooltip(false);
+              // Stop glowing immediately when clicked
+              setIsButtonGlowing(false);
+              if (glowTimer) {
+                clearTimeout(glowTimer);
+                setGlowTimer(null);
+              }
             }}
             className={`p-1 hover:bg-gray-600 rounded transition-all duration-300 cursor-pointer relative ${
-              chatOpenCount >= 2 ? 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse' : ''
+              isButtonGlowing ? 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse' : ''
             }`}
             title="Reset chat and start new conversation"
             onMouseDown={(e) => e.stopPropagation()}
             onMouseEnter={(e) => {
-              if (chatOpenCount >= 2) {
+              if (isButtonGlowing) {
                 handleResetButtonHover(e, true);
               }
             }}
@@ -903,7 +925,7 @@ export default function AIChatbot() {
             }}
           >
             <RotateCcw className={`w-4 h-4 transition-all duration-300 ${
-              chatOpenCount >= 2 ? 'text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]' : 'text-gray-300'
+              isButtonGlowing ? 'text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]' : 'text-gray-300'
             }`} />
           </button>
           <button
