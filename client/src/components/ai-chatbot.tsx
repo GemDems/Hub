@@ -39,7 +39,7 @@ export default function AIChatbot() {
         return [
           {
             id: '1',
-            content: "Hey! 👋 I'm your personal deal hunter. I need to understand exactly what you're looking for to find the perfect deal. What specific type of product do you need? Please be detailed!",
+            content: "Hey! I'm here to help you find what you're looking for. What kind of product do you need?",
             isBot: true,
             timestamp: new Date()
           }
@@ -49,7 +49,7 @@ export default function AIChatbot() {
     return [
       {
         id: '1',
-        content: "Hey! 👋 I'm your personal deal hunter. I need to understand exactly what you're looking for to find the perfect deal. What specific type of product do you need? Please be detailed!",
+        content: "Hey! I'm here to help you find what you're looking for. What kind of product do you need?",
         isBot: true,
         timestamp: new Date()
       }
@@ -185,9 +185,8 @@ export default function AIChatbot() {
     
     // Track what information we've gathered
     let hasCategory = false;
-    let hasBudget = false;
     let hasUseCase = false;
-    let hasFeatures = false;
+    let hasSpecifics = false;
     
     // Check for category mentions
     const categories = ['electronics', 'fashion', 'home', 'beauty', 'sports', 'books', 'automotive', 'toys', 'health', 'tech'];
@@ -195,26 +194,21 @@ export default function AIChatbot() {
       if (allUserInput.includes(cat)) hasCategory = true;
     });
     
-    // Check for budget mentions
-    if (allUserInput.includes('$') || allUserInput.includes('budget') || allUserInput.includes('price') || allUserInput.includes('cheap') || allUserInput.includes('expensive')) {
-      hasBudget = true;
-    }
-    
     // Check for use case mentions
     if (allUserInput.includes('for') || allUserInput.includes('need') || allUserInput.includes('want') || allUserInput.includes('use') || allUserInput.includes('help')) {
       hasUseCase = true;
     }
     
-    // Check for specific features
-    if (allUserInput.includes('feature') || allUserInput.includes('quality') || allUserInput.includes('brand') || allUserInput.includes('size') || allUserInput.includes('color')) {
-      hasFeatures = true;
+    // Check for specific features or details
+    if (allUserInput.includes('feature') || allUserInput.includes('quality') || allUserInput.includes('brand') || allUserInput.includes('size') || allUserInput.includes('color') || allUserInput.split(' ').length > 3) {
+      hasSpecifics = true;
     }
     
     // Count how much information we have
-    const infoGathered = [hasCategory, hasBudget, hasUseCase, hasFeatures].filter(Boolean).length;
+    const infoGathered = [hasCategory, hasUseCase, hasSpecifics].filter(Boolean).length;
     
-    // ONLY RECOMMEND PRODUCT AFTER GATHERING SUFFICIENT DETAILED INFORMATION
-    if (infoGathered >= 3 || userMessages.length >= 4) {
+    // RECOMMEND PRODUCT when user provides enough context OR asks for something specific
+    if (infoGathered >= 2 || userMessages.length >= 2 || lowerQuery.length > 10) {
       // NOW find the best matching product based on gathered information
       let bestProduct = null;
       let matchScore = 0;
@@ -232,10 +226,12 @@ export default function AIChatbot() {
           if (allUserInput.includes(cat) && (category.includes(cat) || title.includes(cat))) score += 60;
         });
         
-        // Budget matching
-        if (product.price && hasBudget) {
-          if (allUserInput.includes('cheap') && product.price < 50) score += 30;
-          if (allUserInput.includes('premium') && product.price > 100) score += 30;
+        // Price sensitivity matching (without asking about budget)
+        if (allUserInput.includes('cheap') || allUserInput.includes('affordable') || allUserInput.includes('budget')) {
+          if (product.price && product.price < 50) score += 20;
+        }
+        if (allUserInput.includes('premium') || allUserInput.includes('high quality') || allUserInput.includes('best')) {
+          if (product.price && product.price > 50) score += 20;
         }
         
         // Feature matching
@@ -268,74 +264,32 @@ export default function AIChatbot() {
         setShowPitchButton(true);
       }, 100);
 
-      return `After carefully analyzing everything you've shared, I found the PERFECT match for your specific needs:
+      return `I found something that might be exactly what you're looking for:
 
-🎯 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
+**${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
 
-💰 ${priceText}${originalPriceText}
-📂 Category: ${bestProduct.category || 'Featured'}
-${stockText ? `⚡ ${stockText}` : ''}
+${bestProduct.description || 'This seems like a great match for what you described.'}
 
-${bestProduct.description || 'This matches exactly what you described!'}
+${priceText !== 'Great price' ? `It's ${priceText}${originalPriceText}` : ''} ${stockText ? `and ${stockText.toLowerCase()}` : ''}
 
-Here's why this is perfect for you based on your requirements:
-${hasCategory ? `✓ Matches your ${bestProduct.category} category need` : ''}
-${hasBudget ? `✓ Fits within your specified budget range` : ''}
-${hasUseCase ? `✓ Perfect for your specific use case` : ''}
-${hasFeatures ? `✓ Has the features you mentioned` : ''}
-
-This is my #1 recommendation based on your detailed requirements. Ready for the full pitch?`;
+This caught my attention because it seems to match what you mentioned. Would you like me to tell you more about it?`;
     }
     
-    // GATHER MORE INFORMATION - Ask very specific, detailed questions
+    // GATHER MORE INFORMATION - Ask natural, helpful questions
     if (!hasCategory) {
-      return `Hi! I'm here to find you the perfect deal. I need to understand exactly what you're looking for.
-
-What specific type of product do you need? Please be detailed - for example:
-• Electronics (phone, laptop, headphones, etc.)
-• Fashion (clothing, shoes, accessories, etc.) 
-• Home items (kitchen, furniture, decor, etc.)
-• Beauty/health (skincare, makeup, fitness, etc.)
-• Other category?
-
-The more specific you are, the better I can help you!`;
+      return `What kind of product are you looking for? I can help you find something great.`;
     }
     
     if (!hasUseCase) {
-      return `Great! Now I need to understand your specific situation:
-
-• What exactly will you be using this for?
-• Who is this for? (yourself, gift, family, etc.)
-• What problem are you trying to solve?
-• Any specific requirements or must-haves?
-
-Please share as many details as possible so I can find the perfect match.`;
+      return `Tell me a bit more about what you need this for. That way I can point you toward something that'll work well for you.`;
     }
     
-    if (!hasBudget) {
-      return `Perfect! Now let's talk budget so I can show you the right options:
-
-• What's your budget range? (be specific - $10-50, $50-100, $100+, etc.)
-• Are you looking for the cheapest option or willing to pay more for quality?
-• Any price you absolutely won't go over?
-
-This helps me filter to exactly what works for you.`;
-    }
-    
-    if (!hasFeatures) {
-      return `Excellent! Just a few more specifics to nail down the perfect recommendation:
-
-• Any brand preferences or brands to avoid?
-• Size, color, or style preferences?
-• Quality level you're expecting?
-• Any features that are absolutely essential?
-• Anything you definitely DON'T want?
-
-These details ensure I recommend exactly what you need.`;
+    if (!hasSpecifics) {
+      return `Any particular features or details that matter to you? Just want to make sure I find something you'll actually like.`;
     }
 
     // Fallback - shouldn't normally reach here
-    return `Thank you for all those details! Let me analyze everything you've shared and find the perfect product match...`;
+    return `Let me see what I can find for you...`;
 
     // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
@@ -965,7 +919,7 @@ These details ensure I recommend exactly what you need.`;
     const resetMessages = [
       {
         id: '1',
-        content: "Hey! 👋 I'm your personal deal hunter. I need to understand exactly what you're looking for to find the perfect deal. What specific type of product do you need? Please be detailed!",
+        content: "Hey! I'm here to help you find what you're looking for. What kind of product do you need?",
         isBot: true,
         timestamp: new Date()
       }
