@@ -146,13 +146,16 @@ export default function AIChatbot() {
       return `That's outside my area of expertise. I specialize in finding great deals on products. What type of items are you interested in purchasing?`;
     }
 
-    // Handle progressive information gathering - only ask about what user specifically inquires about
+    // Handle progressive information gathering with Search Now button
     if (intent && !intent.confirmed && (intent.category || intent.features?.length)) {
       const parts = [];
       if (intent.category) parts.push(`Looking for ${intent.category} products`);
       if (intent.features?.length) parts.push(`with ${intent.features.join(', ')} features`);
-      parts.push("Should I search the creator dashboard for available deals?");
-      return parts.join('. ') + '';
+      
+      // Add Search Now button HTML
+      const searchButton = `<div style="margin-top: 12px;"><button onclick="window.triggerChatSearch && window.triggerChatSearch()" style="background: linear-gradient(45deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 14px;">🔍 Search Now</button></div>`;
+      
+      return parts.join('. ') + '. Ready to find the perfect deals for you!' + searchButton;
     }
 
     // Handle confirmed search with real product data
@@ -169,7 +172,7 @@ export default function AIChatbot() {
       
       if (mentionedProducts.length > 0) {
         const product = affiliateLinks.find((link: any) => link.title === mentionedProducts[0]);
-        return `I found "${product.title}" which matches your search. ${product.description.slice(0, 60)}... This appears to be a quality option for your needs.`;
+        return `I found "${product.title}" which matches your search. ${product.description.slice(0, 60)}... This appears to be a quality deal for your needs.`;
       }
       
       if (lowerQuery.includes('more') || lowerQuery.includes('other') || lowerQuery.includes('different')) {
@@ -185,7 +188,7 @@ export default function AIChatbot() {
       
       if (lowerQuery.includes('best') || lowerQuery.includes('recommend') || lowerQuery.includes('top')) {
         const topProducts = productNames.slice(0, 3);
-        return `Based on current availability, my top recommendations are: ${topProducts.join(', ')}. Would you like more details about any of these?`;
+        return `Based on current deals available, my top recommendations are: ${topProducts.join(', ')}. Would you like more details about any of these?`;
       }
       
       // Contextual response based on conversation history
@@ -221,7 +224,7 @@ export default function AIChatbot() {
     }
     
     // Fallback when no products are available  
-    return "The creator dashboard doesn't have any affiliate link products available right now. Please check back later when new deals have been added to the system.";
+    return "The creator dashboard doesn't have any products available right now. Please check back later when new deals have been added to the system.";
   };
 
   const generateBotResponse = (userMessage: string): string => {
@@ -353,7 +356,7 @@ export default function AIChatbot() {
           let botResponseContent: string;
           
           if (!hasProducts) {
-            botResponseContent = "I searched the creator dashboard but there aren't any affiliate link products available right now. The dashboard appears empty at the moment. Please check back later when new deals have been added.";
+            botResponseContent = "I searched the creator dashboard but there aren't any products available right now. The dashboard appears empty at the moment. Please check back later when new deals have been added.";
           } else {
             botResponseContent = generateContextualResponse(messageToProcess, newHistory, newIntentData);
           }
@@ -508,6 +511,70 @@ export default function AIChatbot() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Add global search trigger function for Search Now button
+  useEffect(() => {
+    (window as any).triggerChatSearch = () => {
+      setUserIntent(prev => ({ ...prev, confirmed: true }));
+      
+      // Trigger search immediately
+      const searchMessage = "yes";
+      const newHistory = [...conversationHistory, { role: 'user' as const, content: searchMessage }];
+      setConversationHistory(newHistory);
+      
+      // Add user confirmation message
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        content: "Search Now",
+        isBot: false,
+        timestamp: new Date()
+      };
+      setMessages(prev => [...prev, userMessage]);
+      
+      // Start search process
+      setIsSearching(true);
+      setSearchProducts([]);
+      
+      const searchTerms = ['Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Books', 'Beauty', 'Automotive', 'Toys'];
+      let searchIndex = 0;
+      const searchInterval = setInterval(() => {
+        if (searchIndex < searchTerms.length) {
+          setSearchProducts(prev => [...prev, searchTerms[searchIndex]]);
+          searchIndex++;
+        } else {
+          clearInterval(searchInterval);
+        }
+      }, 300);
+
+      setTimeout(() => {
+        setIsSearching(false);
+        setSearchProducts([]);
+        
+        const hasProducts = affiliateLinks && affiliateLinks.length > 0;
+        let botResponseContent: string;
+        
+        if (!hasProducts) {
+          botResponseContent = "I searched the creator dashboard but there aren't any products available right now. The dashboard appears empty at the moment. Please check back later when new deals have been added.";
+        } else {
+          botResponseContent = generateContextualResponse("search", newHistory, { ...userIntent, confirmed: true });
+        }
+        
+        const botResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          content: botResponseContent,
+          isBot: true,
+          timestamp: new Date()
+        };
+
+        setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponseContent }]);
+        setMessages(prev => [...prev, botResponse]);
+      }, 2000);
+    };
+    
+    return () => {
+      delete (window as any).triggerChatSearch;
+    };
+  }, [conversationHistory, userIntent, affiliateLinks]);
 
   // Chat button visibility logic
   useEffect(() => {
