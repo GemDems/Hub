@@ -196,34 +196,33 @@ export default function AIChatbot() {
     
     // ALWAYS SEARCH PRODUCTS when user provides any specific input
     if (hasSpecificRequest && lowerQuery.trim().length > 3) {
-      // DEEP ANALYSIS of ALL products against user's specific request
-      let bestProduct = null;
-      let matchScore = 0;
-      let analysisDetails = '';
+      // DEEP ANALYSIS of ALL products - find MULTIPLE relevant matches
+      let productMatches = [];
 
       affiliateLinks.forEach(product => {
         let score = 0;
         let reasons = [];
         
-        // Extract ALL product details for thorough analysis
+        // Extract ALL product details for thorough analysis including private AI info
         const title = product.title?.toLowerCase() || '';
         const description = product.description?.toLowerCase() || '';
         const category = product.category?.toLowerCase() || '';
-        const price = product.price || 0;
-        const originalPrice = product.originalPrice || 0;
-        const isElite = product.isElitePick || false;
-        const isVerified = product.isVerified || false;
-        const stockCount = product.stockCount || 0;
+        const price = parseInt(product.price) || 0;
+        const clicks = product.clicks || 0;
+        const stock = product.stock || 0;
+        const isElite = product.isElitePick === 1;
+        const isVerified = product.isVerified === 1;
+        const aiPrivateInfo = product.aiPrivateInfo?.toLowerCase() || '';
         
         // COMPREHENSIVE keyword matching against user's current request
         userWords.forEach(word => {
-          // Check title matches
+          // Check title matches (high priority)
           if (title.includes(word)) {
             score += 50;
             reasons.push(`title matches "${word}"`);
           }
           
-          // Check description matches (most important)
+          // Check description matches (highest priority)
           if (description.includes(word)) {
             score += 60;
             reasons.push(`description contains "${word}"`);
@@ -234,89 +233,122 @@ export default function AIChatbot() {
             score += 40;
             reasons.push(`category fits "${word}"`);
           }
+          
+          // Check AI private info (secret detailed analysis)
+          if (aiPrivateInfo.includes(word)) {
+            score += 70;
+            reasons.push(`matches specific details`);
+          }
         });
         
         // Semantic analysis for better understanding
-        if (lowerQuery.includes('cheap') || lowerQuery.includes('affordable')) {
+        if (lowerQuery.includes('cheap') || lowerQuery.includes('affordable') || lowerQuery.includes('budget')) {
           if (price > 0 && price < 50) {
             score += 30;
-            reasons.push('affordable price point');
+            reasons.push('affordable pricing');
           }
         }
         
         if (lowerQuery.includes('best') || lowerQuery.includes('quality') || lowerQuery.includes('premium')) {
           if (isElite || isVerified || price > 50) {
             score += 35;
-            reasons.push('high quality/premium option');
+            reasons.push('high quality/premium');
           }
         }
         
-        if (lowerQuery.includes('popular') || lowerQuery.includes('trending')) {
-          if (isElite) {
+        if (lowerQuery.includes('popular') || lowerQuery.includes('trending') || lowerQuery.includes('hot')) {
+          if (isElite || clicks > 10) {
             score += 25;
-            reasons.push('elite/popular pick');
+            reasons.push('popular/trending');
           }
         }
         
-        // Update best match if this product scores higher
-        if (score > matchScore) {
-          matchScore = score;
-          bestProduct = product;
-          analysisDetails = reasons.join(', ');
+        // Add to matches if it has any relevance
+        if (score > 0) {
+          productMatches.push({
+            product,
+            score,
+            reasons: reasons.join(', ')
+          });
         }
       });
 
-      // If no good match, pick elite or first product
-      if (!bestProduct) {
-        bestProduct = affiliateLinks.find(p => p.isElitePick) || affiliateLinks[0];
-      }
+      // Sort by score and get top matches
+      productMatches.sort((a, b) => b.score - a.score);
+      const topMatches = productMatches.slice(0, 3); // Top 3 products
 
-      // Generate recommendation with gathered user info
-      const priceText = bestProduct.price ? `$${bestProduct.price}` : 'Great price';
-      const originalPriceText = bestProduct.originalPrice ? ` (was $${bestProduct.originalPrice} - save $${bestProduct.originalPrice - bestProduct.price}!)` : '';
-      const verifiedBadge = bestProduct.isVerified ? '✅ VERIFIED' : '';
-      const eliteBadge = bestProduct.isElitePick ? '⭐ ELITE PICK' : '';
-      const stockText = bestProduct.stockCount ? `Only ${bestProduct.stockCount} left!` : '';
-      
-      // Enable pitch button for this specific recommendation
-      setTimeout(() => {
-        setFoundProduct(bestProduct);
-        setShowPitchButton(true);
-      }, 100);
+      // If we found matches, show them
+      if (topMatches.length > 0) {
+        const bestMatch = topMatches[0];
+        
+        // Set found product for pitch button
+        setTimeout(() => {
+          setFoundProduct(bestMatch.product);
+          setShowPitchButton(true);
+        }, 100);
 
-      // Generate unique response based on actual analysis
-      const responses = [
-        `I looked through all our products and found this one that caught my attention for you:`,
-        `After checking our entire catalog, here's what stood out based on what you mentioned:`,
-        `I found something interesting that seems to match what you're looking for:`,
-        `This product came up when I analyzed your request against our full inventory:`,
-        `Based on your specific needs, this one looks promising:`
-      ];
-      
-      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-      
-      // Generate contextual response based on previous conversation
-      let contextualResponse = randomResponse;
-      if (aiAskedQuestion) {
-        const contextResponses = [
-          `Perfect! Based on what you just told me, here's what I found:`,
-          `Great info! I searched through everything and this caught my attention:`,
-          `Thanks for clarifying! This product seems to match exactly what you described:`,
-          `Excellent! After analyzing your response, I found this:`,
-          `Got it! Here's what stood out when I searched for what you mentioned:`
+        // Generate unique response templates
+        const responses = [
+          `I analyzed every product we have and found some great matches:`,
+          `After searching through our entire catalog, here's what caught my attention:`,
+          `I found something that seems perfect based on what you mentioned:`,
+          `This came up when I analyzed your request against all available products:`,
+          `Based on your needs, I discovered these options:`
         ];
-        contextualResponse = contextResponses[Math.floor(Math.random() * contextResponses.length)];
+        
+        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+
+        // Generate contextual response based on previous conversation
+        let contextualResponse = randomResponse;
+        if (aiAskedQuestion) {
+          const contextResponses = [
+            `Perfect! Based on what you just told me, I analyzed every product and found matches:`,
+            `Excellent! I searched our entire inventory and here's what stood out:`,
+            `Thanks for the details! After reviewing all products, I found these recommendations:`,
+            `Got it! I went through everything and here's what fits your requirements:`,
+            `Based on your response, I found these options after checking all available products:`
+          ];
+          contextualResponse = contextResponses[Math.floor(Math.random() * contextResponses.length)];
+        }
+
+        // Format multiple products if we have more than one good match
+        if (topMatches.length === 1) {
+          const product = bestMatch.product;
+          const eliteBadge = product.isElitePick === 1 ? '⭐ ELITE PICK' : '';
+          const verifiedBadge = product.isVerified === 1 ? '✓ VERIFIED' : '';
+          const price = parseInt(product.price) || 0;
+          const priceText = price > 0 ? `$${price}` : '';
+          const stockText = product.stock > 0 ? `Only ${product.stock} left!` : '';
+
+          return `${contextualResponse}
+
+**${product.title}** ${eliteBadge} ${verifiedBadge}
+
+${product.description || `This matches exactly what you're looking for.`}
+
+${price > 0 ? priceText : ''} ${stockText ? ` • ${stockText}` : ''}
+
+${bestMatch.reasons ? `Why I picked this: ${bestMatch.reasons}.` : 'This was the best match from all available products.'} Want to know more?`;
+        } else {
+          // Multiple products - show top recommendations
+          let productList = '';
+          topMatches.forEach((match, index) => {
+            const product = match.product;
+            const eliteBadge = product.isElitePick === 1 ? '⭐' : '';
+            const verifiedBadge = product.isVerified === 1 ? '✓' : '';
+            const price = parseInt(product.price) || 0;
+            const priceText = price > 0 ? `$${price}` : '';
+            
+            productList += `\n${index + 1}. **${product.title}** ${eliteBadge}${verifiedBadge} ${priceText}\n   ${product.description?.substring(0, 80) || 'Perfect for your needs'}...\n`;
+          });
+
+          return `${contextualResponse}
+
+Here are my top ${topMatches.length} recommendations:${productList}
+
+I analyzed every product detail including private specifications and these stood out based on your request. Which one interests you most?`;
+        }
       }
-
-      return `${contextualResponse}
-
-**${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
-
-${bestProduct.description || `This product seems relevant to your request.`}
-
-${priceText !== 'Great price' ? `${priceText}${originalPriceText}` : ''} ${stockText ? ` • ${stockText}` : ''}
-
-${analysisDetails ? `I selected this because: ${analysisDetails}.` : 'This seemed like the best match from our available products.'} Want to know more about it?`;
     }
     
     // Generate unique helpful response when no specific request is detected

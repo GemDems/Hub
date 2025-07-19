@@ -38,6 +38,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     isDraft: false,
     scheduledPublishAt: undefined,
     scheduledDeleteAt: undefined,
+    aiPrivateInfo: "",
   });
 
   const [schedulingProduct, setSchedulingProduct] = useState<{ id: number; title: string; type: 'publish' | 'delete' } | null>(null);
@@ -397,6 +398,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       isDraft: false,
       scheduledPublishAt: undefined,
       scheduledDeleteAt: undefined,
+      aiPrivateInfo: "",
     });
     setAdditionalImages([]);
   };
@@ -600,6 +602,21 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               rows={3}
               className="mt-1"
             />
+          </div>
+
+          <div>
+            <Label htmlFor="aiPrivateInfo">AI Assistant Info (Private)</Label>
+            <Textarea
+              id="aiPrivateInfo"
+              value={formData.aiPrivateInfo || ""}
+              onChange={(e) => setFormData({ ...formData, aiPrivateInfo: e.target.value })}
+              placeholder="Additional details for AI: specific features, compatibility, technical specs, target audience, unique selling points..."
+              rows={3}
+              className="mt-1 border-orange-200 bg-orange-50/30"
+            />
+            <p className="text-xs text-orange-600 mt-1 font-medium">
+              🤖 Private field - Only the AI chatbot can see this information to help users find products faster and more accurately
+            </p>
           </div>
 
           <div>
