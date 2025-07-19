@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { MessageCircle, Phone, X, RotateCcw, MousePointer, Move } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
+import AnimatedMessage from "./animated-message";
 
 interface Message {
   id: string;
@@ -33,6 +34,7 @@ export default function AIChatbot() {
   const [isResizing, setIsResizing] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
+  const [resizeDirection, setResizeDirection] = useState('');
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -133,11 +135,21 @@ export default function AIChatbot() {
       return getRandomResponse('greeting');
     }
     
+    // General questions and uncertainty handling
+    if (message.includes('weather') || message.includes('news') || message.includes('stock') || message.includes('crypto')) {
+      return "I focus on finding you the best deals and products! 🎯 I don't have access to live weather/news/stocks, but I can definitely help you find what you're shopping for. What kind of deals are you hunting today?";
+    }
+    
+    // Complex questions beyond scope
+    if (message.includes('quantum') || message.includes('physics') || message.includes('medical') || message.includes('legal')) {
+      return "That's outside my expertise! 🤖 I'm specialized in finding killer deals and helping you choose the right products. What can I help you shop for instead?";
+    }
+    
     // Default response with conversion focus
     if (hasProducts) {
       return `Interesting! 🤔 You know what might be perfect for that? "${randomProduct?.title}" has been crushing it lately 🔥 Want me to show you why everyone's obsessed with it?`;
     }
-    return "Interesting! 🤔 You know what might be perfect for that? Let me show you our top pick that's been crushing it lately 🔥 Want the details?";
+    return "I'm here to help you find amazing deals! 🛍️ What kind of products are you looking for? I can point you toward the best value picks.";
   };
 
   const handleSendMessage = async () => {
@@ -151,6 +163,7 @@ export default function AIChatbot() {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const messageToProcess = inputValue;
     setInputValue("");
     setIsTyping(true);
 
@@ -158,7 +171,7 @@ export default function AIChatbot() {
     setTimeout(() => {
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: generateBotResponse(inputValue),
+        content: generateBotResponse(messageToProcess),
         isBot: true,
         timestamp: new Date()
       };
@@ -197,9 +210,10 @@ export default function AIChatbot() {
     setIsResizing(false);
   };
 
-  const handleResizeStart = (e: React.MouseEvent) => {
+  const handleResizeStart = (e: React.MouseEvent, direction: string) => {
     e.stopPropagation();
     setIsResizing(true);
+    setResizeDirection(direction);
     setResizeStart({
       x: e.clientX,
       y: e.clientY,
@@ -212,10 +226,29 @@ export default function AIChatbot() {
     if (isResizing) {
       const deltaX = e.clientX - resizeStart.x;
       const deltaY = e.clientY - resizeStart.y;
-      setSize({
-        width: Math.max(300, resizeStart.width + deltaX),
-        height: Math.max(400, resizeStart.height + deltaY)
-      });
+      
+      let newWidth = size.width;
+      let newHeight = size.height;
+      let newX = position.x;
+      let newY = position.y;
+
+      if (resizeDirection.includes('right')) {
+        newWidth = Math.max(300, resizeStart.width + deltaX);
+      }
+      if (resizeDirection.includes('left')) {
+        newWidth = Math.max(300, resizeStart.width - deltaX);
+        newX = position.x + (size.width - newWidth);
+      }
+      if (resizeDirection.includes('bottom')) {
+        newHeight = Math.max(400, resizeStart.height + deltaY);
+      }
+      if (resizeDirection.includes('top')) {
+        newHeight = Math.max(400, resizeStart.height - deltaY);
+        newY = position.y + (size.height - newHeight);
+      }
+
+      setSize({ width: newWidth, height: newHeight });
+      setPosition({ x: newX, y: newY });
     }
   };
 
@@ -320,7 +353,7 @@ export default function AIChatbot() {
                   fontWeight: message.isBot ? 300 : 400
                 }}
               >
-                {message.content}
+                <AnimatedMessage content={message.content} isBot={message.isBot} />
               </div>
             </div>
           ))}
@@ -362,10 +395,22 @@ export default function AIChatbot() {
         </div>
       </div>
       
-      {/* Resize handle */}
+      {/* Resize handles - all 4 corners */}
+      <div
+        className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+        onMouseDown={(e) => handleResizeStart(e, 'top-left')}
+      />
+      <div
+        className="absolute top-0 right-0 w-4 h-4 cursor-ne-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+        onMouseDown={(e) => handleResizeStart(e, 'top-right')}
+      />
+      <div
+        className="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+        onMouseDown={(e) => handleResizeStart(e, 'bottom-left')}
+      />
       <div
         className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize bg-gray-600 hover:bg-gray-500 transition-colors"
-        onMouseDown={handleResizeStart}
+        onMouseDown={(e) => handleResizeStart(e, 'bottom-right')}
         style={{
           clipPath: 'polygon(100% 0%, 0% 100%, 100% 100%)'
         }}
