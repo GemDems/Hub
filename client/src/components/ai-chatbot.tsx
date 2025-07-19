@@ -396,8 +396,8 @@ Can I help you find something excellent in one of these available categories?`
         return gracefulResponses[Math.floor(Math.random() * gracefulResponses.length)];
       }
 
-      // If we found matches, show them
-      if (topMatches.length > 0) {
+      // If we found matches with HIGH scores (meaning REAL matches), show them
+      if (topMatches.length > 0 && topMatches[0].score >= 50) { // Only show if score is REALLY high
         const bestMatch = topMatches[0];
         
         // Set found product for pitch button
@@ -406,58 +406,7 @@ Can I help you find something excellent in one of these available categories?`
           setShowPitchButton(true);
         }, 100);
 
-        // Generate unique response templates
-        const responses = [
-          `I analyzed every product we have and found some great matches:`,
-          `After searching through our entire catalog, here's what caught my attention:`,
-          `I found something that seems perfect based on what you mentioned:`,
-          `This came up when I analyzed your request against all available products:`,
-          `Based on your needs, I discovered these options:`
-        ];
-        
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-
-        // Generate contextual response based on previous conversation
-        let contextualResponse = randomResponse;
-        if (aiAskedQuestion) {
-          const contextResponses = [
-            `Perfect! Based on what you just told me, I analyzed every product and found matches:`,
-            `Excellent! I searched our entire inventory and here's what stood out:`,
-            `Thanks for the details! After reviewing all products, I found these recommendations:`,
-            `Got it! I went through everything and here's what fits your requirements:`,
-            `Based on your response, I found these options after checking all available products:`
-          ];
-          contextualResponse = contextResponses[Math.floor(Math.random() * contextResponses.length)];
-        }
-
-        // ALWAYS show only 1 product - secret master sales manipulator approach
-        const product = bestMatch.product;
-        const eliteBadge = product.isElitePick === 1 ? '⭐ ELITE PICK' : '';
-        const verifiedBadge = product.isVerified === 1 ? '✓ VERIFIED' : '';
-        const stockText = product.stock > 0 ? `Only ${product.stock} left!` : '';
-
-        // Secret manipulation: Focus on quality and scarcity, no money talk
-        const manipulativeResponses = [
-          `I found something exceptional: **${product.title}** ${eliteBadge} ${verifiedBadge}
-
-${product.description || 'This is genuinely impressive quality.'} ${stockText ? `${stockText} ` : ''}I rarely see products this well-made. ${product.aiPrivateInfo || 'The craftsmanship really stands out.'} 
-
-<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${product.title} →</a>`,
-
-          `Perfect match: **${product.title}** ${eliteBadge} ${verifiedBadge}
-
-${product.description || 'The quality here is remarkable.'} ${stockText ? `${stockText} ` : ''}Honestly, this is one of those products that just works. ${product.aiPrivateInfo || 'Built to last.'} 
-
-<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${product.title} →</a>`,
-
-          `Found it: **${product.title}** ${eliteBadge} ${verifiedBadge}
-
-${product.description || 'This delivers exactly what you need.'} ${stockText ? `${stockText} ` : ''}I'm impressed by the attention to detail. ${product.aiPrivateInfo || 'Solid construction throughout.'} 
-
-<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${product.title} →</a>`
-        ];
-
-        // Use the new ChatGPT-style response instead
+        // Use the new ChatGPT-style response for legitimate high-score matches
         return generateChatGPTStyleResponse(userMessage, bestMatch, history, allUserInput);
       }
     }
