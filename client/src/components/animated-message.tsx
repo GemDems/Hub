@@ -11,6 +11,8 @@ export default function AnimatedMessage({ content, isBot }: AnimatedMessageProps
   
   // Check if content contains search button HTML
   const hasSearchButton = content.includes('<button') && content.includes('Search Now');
+  // Check if content contains affiliate links HTML
+  const hasAffiliateLink = content.includes('<a href=') && content.includes('target="_blank"');
   const textContent = hasSearchButton ? content.split('<div')[0] : content;
   const words = textContent.split(' ');
 
@@ -45,7 +47,11 @@ export default function AnimatedMessage({ content, isBot }: AnimatedMessageProps
   if (!isBot) {
     return (
       <div>
-        <span>{textContent}</span>
+        {hasAffiliateLink ? (
+          <div dangerouslySetInnerHTML={{ __html: content }} />
+        ) : (
+          <span>{textContent}</span>
+        )}
         {hasSearchButton && showButton && (
           <div style={{ marginTop: '12px' }}>
             <button 
@@ -67,6 +73,11 @@ export default function AnimatedMessage({ content, isBot }: AnimatedMessageProps
         )}
       </div>
     );
+  }
+
+  // For bot messages with affiliate links, render HTML directly after animation completes
+  if (hasAffiliateLink && visibleWords.length === words.length) {
+    return <div dangerouslySetInnerHTML={{ __html: content }} />;
   }
 
   return (
