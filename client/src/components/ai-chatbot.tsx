@@ -914,8 +914,12 @@ export default function AIChatbot() {
                 setGlowTimer(null);
               }
             }}
-            className={`p-1 hover:bg-gray-600 rounded transition-all duration-300 cursor-pointer relative ${
-              isButtonGlowing ? 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse' : ''
+            className={`p-1 rounded transition-all duration-300 cursor-pointer relative ${
+              isButtonGlowing 
+                ? isHoveringReset 
+                  ? 'bg-blue-500' 
+                  : 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse hover:bg-gray-600'
+                : 'hover:bg-gray-600'
             }`}
             title="Reset chat and start new conversation"
             onMouseDown={(e) => e.stopPropagation()}
@@ -934,7 +938,11 @@ export default function AIChatbot() {
             }}
           >
             <RotateCcw className={`w-4 h-4 transition-all duration-300 ${
-              isButtonGlowing ? 'text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]' : 'text-gray-300'
+              isButtonGlowing 
+                ? isHoveringReset 
+                  ? 'text-white' 
+                  : 'text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]'
+                : 'text-gray-300'
             }`} />
           </button>
           <button
