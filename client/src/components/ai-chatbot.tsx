@@ -135,21 +135,38 @@ export default function AIChatbot() {
       return getRandomResponse('greeting');
     }
     
-    // General questions and uncertainty handling
+    // General life/fun chat - SMART WINGMAN MODE
+    if (message.includes('joke') || message.includes('funny') || message.includes('laugh')) {
+      return "Haha! 😄 You know what's NOT a joke? The insane savings I've got lined up for you! Want to see something that'll actually make you smile - like 70% off deals?";
+    }
+    
+    if (message.includes('how are you') || message.includes('how\'s your day') || message.includes('what\'s up')) {
+      return "I'm doing great! 🔥 Just helped someone save $300 on their wishlist today! Speaking of which, what's on your shopping radar? I love playing deal matchmaker!";
+    }
+    
+    if (message.includes('motivat') || message.includes('productiv') || message.includes('focus') || message.includes('energy')) {
+      return "I feel you! 💪 You know what's motivating? Getting exactly what you want for half the price! That rush hits different. What goals are you working on? I might have tools that can help!";
+    }
+    
+    // General knowledge with pivot
+    if (message.includes('recipe') || message.includes('cook') || message.includes('food')) {
+      return "Nice! 🍳 I'm more of a deal chef than a food chef, but I can definitely hook you up with kitchen gadgets that'll make cooking way easier! Want to see some game-changing kitchen tools?";
+    }
+    
     if (message.includes('weather') || message.includes('news') || message.includes('stock') || message.includes('crypto')) {
-      return "I focus on finding you the best deals and products! 🎯 I don't have access to live weather/news/stocks, but I can definitely help you find what you're shopping for. What kind of deals are you hunting today?";
+      return "I stay focused on deals rather than live data! 🎯 But if you're looking to invest in yourself with some solid purchases, I've got the insider track on what's worth buying!";
     }
     
-    // Complex questions beyond scope
+    // Complex questions with friendly redirect
     if (message.includes('quantum') || message.includes('physics') || message.includes('medical') || message.includes('legal')) {
-      return "That's outside my expertise! 🤖 I'm specialized in finding killer deals and helping you choose the right products. What can I help you shop for instead?";
+      return "That's way above my pay grade! 🤓 I'm more like your personal shopping genius. But hey, if you need tools for studying, work, or life upgrades, I'm your guy!";
     }
     
-    // Default response with conversion focus
+    // Default smart wingman response
     if (hasProducts) {
-      return `Interesting! 🤔 You know what might be perfect for that? "${randomProduct?.title}" has been crushing it lately 🔥 Want me to show you why everyone's obsessed with it?`;
+      return `I love the curiosity! 🧠 BTW, speaking of interesting stuff - "${randomProduct?.title}" has been absolutely crushing it with our community. Want me to show you why everyone's going crazy for it?`;
     }
-    return "I'm here to help you find amazing deals! 🛍️ What kind of products are you looking for? I can point you toward the best value picks.";
+    return "I'm always down to chat! 😊 But real talk - I'm basically a deal-hunting machine. What kind of products make your life better? I've got some fire recommendations!";
   };
 
   const handleSendMessage = async () => {
@@ -274,15 +291,40 @@ export default function AIChatbot() {
 
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
-      >
-        <MessageCircle className="w-5 h-5" />
-        <Phone className="w-4 h-4" />
-        <span className="text-sm font-medium">Chat Assistant</span>
-        <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
-      </button>
+      <div className="fixed top-4 left-4 z-50">
+        {/* Background Question Mark - Large, Blurred, Low Opacity */}
+        <div 
+          className="absolute -top-3 -left-3 text-7xl opacity-15 animate-fadeInGlow"
+          style={{ 
+            filter: 'blur(1px)',
+            color: '#3b82f6',
+            transform: 'rotate(-15deg)',
+            animationDelay: '0.5s'
+          }}
+        >
+          ❓
+        </div>
+        
+        {/* Main Chat Button */}
+        <button
+          onClick={() => setIsOpen(true)}
+          className="relative flex items-center gap-2 bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-700 hover:from-blue-700 hover:via-blue-800 hover:to-indigo-800 text-white px-4 py-3 rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105 group animate-fadeInGlow"
+          style={{
+            boxShadow: `
+              0 0 25px rgba(59, 130, 246, 0.4),
+              inset 2px 2px 8px rgba(255, 255, 255, 0.2),
+              inset -2px -2px 8px rgba(0, 0, 0, 0.2)
+            `
+          }}
+        >
+          <MessageCircle className="w-5 h-5" />
+          <Phone className="w-4 h-4" />
+          <span className="text-sm font-medium">Deal Hunter AI</span>
+          
+          {/* Floating glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-blue-400 rounded-full blur-sm opacity-20 group-hover:opacity-40 transition-all duration-500 animate-pulse"></div>
+        </button>
+      </div>
     );
   }
 
