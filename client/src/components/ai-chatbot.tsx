@@ -833,19 +833,25 @@ export default function AIChatbot() {
       {/* Reset Button Tooltip */}
       {showResetTooltip && isOpen && (
         <div 
-          className="fixed z-[1000] pointer-events-none"
+          className="fixed z-[1000] pointer-events-auto"
           style={{
-            left: position.x + size.width - 120,
-            top: position.y - 35
+            left: position.x + size.width - 110,
+            top: position.y - 28
           }}
         >
-          <div className="bg-black/90 text-white text-xs px-2 py-1 rounded shadow-lg">
-            Click to reset chat history
+          <div className="bg-black/90 text-white text-xs px-2 py-1 rounded shadow-lg flex items-center gap-2">
+            <span>Reset chat</span>
+            <button
+              onClick={dismissTooltip}
+              className="hover:bg-white/20 rounded p-0.5 transition-colors"
+            >
+              <X className="w-2.5 h-2.5" />
+            </button>
             <div 
               className="absolute w-2 h-2 bg-black/90 transform rotate-45"
               style={{
                 bottom: '-4px',
-                right: '45px'
+                right: '40px'
               }}
             ></div>
           </div>
