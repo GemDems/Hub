@@ -1007,15 +1007,17 @@ export default function AIChatbot() {
 
   const handleSnapToDefault = () => {
     if (isCollapsed) {
-      // If collapsed, expand back to normal
+      // If collapsed, expand back to normal - preserve all chat state
       setIsCollapsed(false);
       setPosition({ x: window.innerWidth - 420, y: 100 });
       setSize({ width: 400, height: 500 });
+      // Don't reset any chat state - messages, history, typing status should remain
     } else {
-      // If normal, collapse to show only top bar
+      // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
       setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 60 });
       setSize({ width: 400, height: 60 });
+      // Don't reset any chat state - messages, history, typing status should remain
     }
   };
 
@@ -1034,6 +1036,9 @@ export default function AIChatbot() {
         setSize({ width: 400, height: 500 });
         setPosition({ x: window.innerWidth - 420, y: Math.max(50, e.clientY - 250) });
         setIsDragging(false);
+        
+        // Preserve chat state when expanding - don't reset anything
+        // Messages, conversation history, and all state should remain intact
       }
     }
   };
@@ -1376,15 +1381,17 @@ export default function AIChatbot() {
         </div>
       </div>
 
-      {/* Messages area - hidden when collapsed */}
-      {!isCollapsed && (
-        <div className="flex flex-col" style={{ height: 'calc(100% - 60px)' }}>
-          <div 
-            className="flex-1 overflow-y-auto p-4 space-y-4" 
-            style={{ maxHeight: 'calc(100% - 80px)' }}
-            onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
-          >
+      {/* Messages area - hidden when collapsed but state preserved */}
+      <div 
+        className={`flex flex-col transition-all duration-300 ${isCollapsed ? 'hidden' : 'block'}`} 
+        style={{ height: 'calc(100% - 60px)' }}
+      >
+        <div 
+          className="flex-1 overflow-y-auto p-4 space-y-4" 
+          style={{ maxHeight: 'calc(100% - 80px)' }}
+          onMouseDown={(e) => e.stopPropagation()}
+          onClick={(e) => e.stopPropagation()}
+        >
           {messages.map((message) => (
             <div
               key={message.id}
@@ -1559,9 +1566,8 @@ export default function AIChatbot() {
               Send
             </button>
           </div>
-          </div>
         </div>
-      )}
+      </div>
       
       {/* Resize handles - all 4 corners */}
       <div
