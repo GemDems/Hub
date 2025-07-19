@@ -45,6 +45,9 @@ export default function AIChatbot() {
   const [showControlButton, setShowControlButton] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
   const [fadeTimer, setFadeTimer] = useState<NodeJS.Timeout | null>(null);
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchProducts, setSearchProducts] = useState<string[]>([]);
+  const [conversationHistory, setConversationHistory] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -86,6 +89,70 @@ export default function AIChatbot() {
   const getRandomResponse = (category: keyof typeof botResponses) => {
     const responses = botResponses[category];
     return responses[Math.floor(Math.random() * responses.length)];
+  };
+
+  const generateContextualResponse = (userMessage: string, history: Array<{role: 'user' | 'assistant', content: string}>): string => {
+    const lowerQuery = userMessage.toLowerCase();
+    
+    // Check conversation context for better responses
+    const previousMessages = history.slice(-4); // Last 4 messages for context
+    const hasDiscussedProducts = previousMessages.some(msg => 
+      msg.content.toLowerCase().includes('product') || 
+      msg.content.toLowerCase().includes('deal') || 
+      msg.content.toLowerCase().includes('buy')
+    );
+
+    // Check if user is asking about specific topics outside our scope
+    if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
+      return "I focus on finding you the best deals and products! While I can't check the weather, I can help you find great deals on weather gear, outdoor equipment, or anything else you might need. What are you shopping for?";
+    } else if (lowerQuery.includes('news') || lowerQuery.includes('politics') || lowerQuery.includes('election')) {
+      return "I focus on finding you the best deals and products! I don't cover news or politics, but I'm amazing at finding killer deals and products you'll love. What can I help you find today?";
+    } else if (lowerQuery.includes('stock') || lowerQuery.includes('crypto') || lowerQuery.includes('bitcoin') || lowerQuery.includes('investment')) {
+      return "I focus on finding you the best deals and products! While I can't give financial advice, I can help you find great deals on anything you're shopping for. What products are you interested in?";
+    } else if (lowerQuery.includes('quantum') || lowerQuery.includes('physics') || lowerQuery.includes('medical') || lowerQuery.includes('legal') || lowerQuery.includes('doctor')) {
+      return "That's outside my expertise! I'm specialized in finding killer deals and helping you discover amazing products. What are you looking to buy or find deals on?";
+    }
+
+    // Use affiliate links data if available
+    const hasProducts = affiliateLinks.length > 0;
+    if (hasProducts) {
+      const categories = [...new Set(affiliateLinks.map((link: any) => link.category))];
+      const productNames = affiliateLinks.map((link: any) => link.title);
+      
+      // Look for specific product mentions in query
+      const mentionedProducts = productNames.filter(name => 
+        lowerQuery.includes(name.toLowerCase()) || 
+        name.toLowerCase().includes(lowerQuery)
+      );
+      
+      if (mentionedProducts.length > 0) {
+        const product = affiliateLinks.find((link: any) => link.title === mentionedProducts[0]);
+        return `Perfect! I found "${product.title}" in our ${product.category} section. ${product.description} This looks like exactly what you're looking for! Want me to show you this deal?`;
+      } else if (lowerQuery.includes('more') || lowerQuery.includes('other') || lowerQuery.includes('different')) {
+        if (hasDiscussedProducts) {
+          const randomProducts = productNames.sort(() => 0.5 - Math.random()).slice(0, 3);
+          return `Here are some other great options I found: ${randomProducts.join(', ')}. Each of these has excellent reviews and competitive pricing. Which one interests you most?`;
+        } else {
+          return `I have ${affiliateLinks.length} products across ${categories.length} categories. Popular items include ${productNames.slice(0, 3).join(', ')}. What type of product are you most interested in?`;
+        }
+      } else if (categories.some(cat => lowerQuery.includes(cat.toLowerCase()))) {
+        const matchedCategory = categories.find(cat => lowerQuery.includes(cat.toLowerCase()));
+        const categoryProducts = affiliateLinks.filter((link: any) => link.category === matchedCategory);
+        return `Excellent choice! I found ${categoryProducts.length} ${matchedCategory} products. Top recommendations: ${categoryProducts.slice(0, 3).map((p: any) => p.title).join(', ')}. These are all highly rated with great affiliate commission rates. Which catches your eye?`;
+      } else if (lowerQuery.includes('best') || lowerQuery.includes('recommend') || lowerQuery.includes('top')) {
+        const topProducts = productNames.slice(0, 3);
+        return `Based on current trends and affiliate performance, my top recommendations are: ${topProducts.join(', ')}. These products have excellent conversion rates and customer satisfaction. Want details on any of these?`;
+      } else {
+        // Contextual response based on conversation
+        if (hasDiscussedProducts) {
+          return `Building on our conversation, I can also help you find ${categories.slice(0, 2).join(' and ')} products. I have ${affiliateLinks.length} items total with competitive affiliate rates. What specific features are you looking for?`;
+        } else {
+          return `I'm here to help you find the perfect products! I have access to ${affiliateLinks.length} items across categories like ${categories.slice(0, 3).join(', ')}. What are you shopping for today?`;
+        }
+      }
+    } else {
+      return "I'm your personal product discovery assistant! I can browse affiliate links and help you find amazing deals. I don't have any products loaded in the system right now, but feel free to come back later and I'll help you find exactly what you're looking for with the best affiliate commissions!";
+    }
   };
 
   const generateBotResponse = (userMessage: string): string => {
@@ -172,23 +239,66 @@ export default function AIChatbot() {
       timestamp: new Date()
     };
 
+    // Add to conversation history
+    const newHistory = [...conversationHistory, { role: 'user' as const, content: inputValue }];
+    setConversationHistory(newHistory);
     setMessages(prev => [...prev, userMessage]);
+    
     const messageToProcess = inputValue;
     setInputValue("");
     setIsTyping(true);
+    
+    try {
+      // Start product search animation
+      setIsSearching(true);
+      setSearchProducts([]);
+      
+      // Simulate searching animation with product names
+      const searchTerms = ['Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Books', 'Beauty', 'Automotive', 'Toys'];
+      let searchIndex = 0;
+      const searchInterval = setInterval(() => {
+        if (searchIndex < searchTerms.length) {
+          setSearchProducts(prev => [...prev, searchTerms[searchIndex]]);
+          searchIndex++;
+        } else {
+          clearInterval(searchInterval);
+        }
+      }, 300);
 
-    // Simulate thinking time
-    setTimeout(() => {
-      const botResponse: Message = {
+      // Generate contextual AI response based on conversation history and available products
+      setTimeout(() => {
+        setIsSearching(false);
+        setSearchProducts([]);
+        setIsTyping(false);
+        
+        const botResponse: Message = {
+          id: (Date.now() + 1).toString(),
+          content: generateContextualResponse(messageToProcess, newHistory),
+          isBot: true,
+          timestamp: new Date()
+        };
+
+        // Add bot response to conversation history
+        setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponse.content }]);
+        setMessages(prev => [...prev, botResponse]);
+      }, 2000); // 2 second search animation
+      
+    } catch (error) {
+      console.error('Error sending message:', error);
+      setIsSearching(false);
+      setSearchProducts([]);
+      setIsTyping(false);
+      
+      const errorResponse: Message = {
         id: (Date.now() + 1).toString(),
-        content: generateBotResponse(messageToProcess),
+        content: "I'm having trouble accessing the product database right now. Please try again in a moment!",
         isBot: true,
         timestamp: new Date()
       };
-
-      setMessages(prev => [...prev, botResponse]);
-      setIsTyping(false);
-    }, 1500);
+      
+      setConversationHistory(prev => [...prev, { role: 'assistant', content: errorResponse.content }]);
+      setMessages(prev => [...prev, errorResponse]);
+    }
   };
 
   const handleReset = () => {
@@ -319,35 +429,25 @@ export default function AIChatbot() {
         clearTimeout(scrollTimeout);
       }
       
-      // If scrolling down, slide up and fade out
-      if (scrollY > 100) {
-        setIsSlideUp(true);
-        setIsButtonFading(false);
-        setScrollTimeout(null);
-      } 
-      // If near top, set timeout to show after user stops scrolling
-      else if (scrollY <= 100) {
-        setIsSlideUp(false);
+      // Keep fade features active throughout the site - no scrolling restrictions
+      if (!isAnimationPaused && !isHovering) {
+        const timeout = setTimeout(() => {
+          // Wait 4 seconds after user stops scrolling anywhere
+          setTimeout(() => {
+            setIsButtonFading(true);
+            
+            // Auto fade out after 7 seconds
+            const fadeOutTimer = setTimeout(() => {
+              if (!isHovering) {
+                setIsButtonFading(false);
+              }
+            }, 7000);
+            
+            setFadeTimer(fadeOutTimer);
+          }, 4000);
+        }, 100); // Small delay to detect stop scrolling
         
-        if (!isAnimationPaused && !isHovering) {
-          const timeout = setTimeout(() => {
-            // Wait 4 seconds after user stops scrolling near top
-            setTimeout(() => {
-              setIsButtonFading(true);
-              
-              // Auto fade out after 7 seconds
-              const fadeOutTimer = setTimeout(() => {
-                if (!isHovering) {
-                  setIsButtonFading(false);
-                }
-              }, 7000);
-              
-              setFadeTimer(fadeOutTimer);
-            }, 4000);
-          }, 100); // Small delay to detect stop scrolling
-          
-          setScrollTimeout(timeout);
-        }
+        setScrollTimeout(timeout);
       }
     };
 
@@ -505,7 +605,25 @@ export default function AIChatbot() {
             </div>
           ))}
           
-          {isTyping && (
+          {isSearching && (
+            <div className="flex justify-start">
+              <div className="bg-gradient-to-r from-purple-600 to-blue-600 bg-opacity-40 border border-purple-500 border-opacity-30 text-white px-4 py-3 rounded-lg min-w-60">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span className="text-sm font-medium">Searching products...</span>
+                </div>
+                <div className="text-xs text-gray-300 max-h-16 overflow-hidden">
+                  {searchProducts.map((product, index) => (
+                    <div key={index} className="animate-pulse mb-1">
+                      Checking {product}...
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
+
+          {isTyping && !isSearching && (
             <div className="flex justify-start">
               <div className="bg-blue-600 bg-opacity-40 border border-blue-500 border-opacity-30 text-white px-4 py-2 rounded-lg">
                 <div className="flex space-x-1">
