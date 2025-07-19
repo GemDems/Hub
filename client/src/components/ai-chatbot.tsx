@@ -572,19 +572,28 @@ export default function AIChatbot() {
     localStorage.setItem(`chatMessages-${sessionId}`, JSON.stringify(messages));
   }, [messages, sessionId]);
 
-  // Track chat opens and enable button glowing after 2 opens
+  // Track chat opens and enable button glowing only after second reopening after close
   useEffect(() => {
     if (isOpen) {
       const openCount = parseInt(localStorage.getItem(`chatOpenCount-${sessionId}`) || '0') + 1;
       setChatOpenCount(openCount);
       localStorage.setItem(`chatOpenCount-${sessionId}`, openCount.toString());
       
-      // Start glowing when chat opened twice
-      if (openCount >= 2) {
-        setIsButtonGlowing(true);
+      const hasBeenClosed = localStorage.getItem(`chatClosed-${sessionId}`) === 'true';
+      const reopenCount = parseInt(localStorage.getItem(`chatReopenCount-${sessionId}`) || '0');
+      
+      // Count reopens only after first close
+      if (hasBeenClosed) {
+        const newReopenCount = reopenCount + 1;
+        localStorage.setItem(`chatReopenCount-${sessionId}`, newReopenCount.toString());
+        
+        // Start glowing only on the second reopen after closing
+        if (newReopenCount === 2) {
+          setIsButtonGlowing(true);
+        }
       }
       
-      console.log('Chat opened, count:', openCount);
+      console.log('Chat opened, count:', openCount, 'hasBeenClosed:', hasBeenClosed, 'reopenCount:', reopenCount);
     } else {
       // When chat closes, track that it was closed
       const hasBeenClosed = localStorage.getItem(`chatClosed-${sessionId}`) === 'true';
@@ -602,12 +611,12 @@ export default function AIChatbot() {
       setMousePosition({ x: e.clientX, y: e.clientY });
       setShowResetTooltip(true);
       
-      // Start 5-second timer to stop glowing
-      if (chatOpenCount >= 2 && !glowTimer) {
+      // Start 3-second timer to stop glowing
+      if (isButtonGlowing && !glowTimer) {
         const timer = setTimeout(() => {
           setIsButtonGlowing(false);
           setGlowTimer(null);
-        }, 5000);
+        }, 3000);
         setGlowTimer(timer);
       }
     } else {
