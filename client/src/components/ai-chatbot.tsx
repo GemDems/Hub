@@ -1347,7 +1347,13 @@ export default function AIChatbot() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleReset();
+              if (isCollapsed) {
+                // When collapsed, reposition to original location instead of resetting
+                setPosition({ x: window.innerWidth - 420, y: 100 });
+              } else {
+                // When not collapsed, reset the chat
+                handleReset();
+              }
               setIsHoveringReset(false);
               setShowResetTooltip(false);
               // Stop glowing immediately when clicked
@@ -1364,7 +1370,7 @@ export default function AIChatbot() {
                   : 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse hover:bg-gray-600'
                 : 'hover:bg-gray-600'
             }`}
-            title="Reset chat and start new conversation"
+            title={isCollapsed ? "Reposition chat to original location" : "Reset chat and start new conversation"}
             onMouseDown={(e) => e.stopPropagation()}
             onMouseEnter={(e) => {
               if (isButtonGlowing) {
@@ -1656,15 +1662,15 @@ export default function AIChatbot() {
         </>
       )}
       
-      {/* Horizontal resize handles for collapsed state - only left and right */}
+      {/* Horizontal resize handles for collapsed state - only left and right - INVISIBLE but functional */}
       {isCollapsed && (
         <>
           <div
-            className="absolute top-0 left-0 w-2 h-full cursor-w-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+            className="absolute top-0 left-0 w-2 h-full cursor-w-resize opacity-0"
             onMouseDown={(e) => handleResizeStart(e, 'left')}
           />
           <div
-            className="absolute top-0 right-0 w-2 h-full cursor-e-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+            className="absolute top-0 right-0 w-2 h-full cursor-e-resize opacity-0"
             onMouseDown={(e) => handleResizeStart(e, 'right')}
           />
         </>
