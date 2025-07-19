@@ -352,8 +352,8 @@ export default function AIChatbot() {
           if (product.isElitePick === 1) similarityScore += 10;
           if (product.isVerified === 1) similarityScore += 5;
           
-          // Add products with any similarity
-          if (similarityScore > 0) {
+          // Only add products with meaningful similarity (threshold)
+          if (similarityScore >= 25) { // Minimum threshold to avoid weak matches
             broadMatches.push({ product, score: similarityScore });
           }
         });
@@ -395,30 +395,36 @@ ${bestMatch.description || 'Superior quality and performance.'} ${bestMatch.stoc
           return relatedResponses[Math.floor(Math.random() * relatedResponses.length)];
         }
 
-        // If no related matches either, show what's actually available with helpful context
+        // If no related matches either, gracefully explain and ask for alternatives
         const availableCategories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
-        const randomAvailableProduct = affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
         
-        setTimeout(() => {
-          setFoundProduct(randomAvailableProduct);
-          setShowPitchButton(true);
-        }, 100);
+        const gracefulResponses = [
+          `I searched thoroughly through all available products, but I don't currently have anything that matches "${lowerQuery}". That specific item isn't available in our current inventory.
 
-        const helpfulResponses = [
-          `I searched thoroughly but don't have anything matching that description. However, let me show you what's currently available that might interest you: **${randomAvailableProduct.title}** ${randomAvailableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${randomAvailableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+The categories we do have available right now are: ${availableCategories.slice(0, 4).join(', ')}${availableCategories.length > 4 ? ', and others' : ''}. 
 
-${randomAvailableProduct.description || 'Quality product currently in stock.'} ${randomAvailableProduct.stock > 0 ? `Only ${randomAvailableProduct.stock} left! ` : ''}Current categories available: ${availableCategories.slice(0, 3).join(', ')}${availableCategories.length > 3 ? ', and more' : ''}. ${randomAvailableProduct.aiPrivateInfo || 'Built to high standards.'}
+Is there something else you're looking for that might be in one of these categories? I'd be happy to find you the best options from what's actually available.`,
 
-<a href="${randomAvailableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${randomAvailableProduct.title} →</a>`,
+          `I understand you're looking for something related to "${lowerQuery}", but I don't see anything matching that description in our current product catalog. That particular item isn't stocked right now.
 
-          `I couldn't find anything matching your specific request, but here's something from our current live inventory that might catch your attention: **${randomAvailableProduct.title}** ${randomAvailableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${randomAvailableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+Our current inventory focuses on: ${availableCategories.slice(0, 4).join(', ')}${availableCategories.length > 4 ? ', plus more' : ''}.
 
-${randomAvailableProduct.description || 'Currently featured product.'} ${randomAvailableProduct.stock > 0 ? `Only ${randomAvailableProduct.stock} left! ` : ''}Available categories right now: ${availableCategories.slice(0, 3).join(', ')}. ${randomAvailableProduct.aiPrivateInfo || 'Reliable quality.'}
+What other types of products might interest you? I can check what quality options are currently available in any of these areas.`,
 
-<a href="${randomAvailableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${randomAvailableProduct.title} →</a>`
+          `I've analyzed all available products and unfortunately don't have anything matching your request for "${lowerQuery}". The current selection doesn't include that specific item.
+
+Available product categories: ${availableCategories.slice(0, 4).join(', ')}${availableCategories.length > 4 ? ', and additional ones' : ''}.
+
+Would you like me to suggest the best quality products from any of these categories instead?`,
+
+          `After checking our entire product database, I don't have what you're asking about regarding "${lowerQuery}". That type of product hasn't been added to our catalog yet.
+
+Currently available: ${availableCategories.slice(0, 4).join(', ')}${availableCategories.length > 4 ? ', among others' : ''}.
+
+Can I help you find something excellent in one of these available categories?`
         ];
 
-        return helpfulResponses[Math.floor(Math.random() * helpfulResponses.length)];
+        return gracefulResponses[Math.floor(Math.random() * gracefulResponses.length)];
       }
 
       // If we found matches, show them
