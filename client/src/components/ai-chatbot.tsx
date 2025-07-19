@@ -99,6 +99,7 @@ export default function AIChatbot() {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
+  const [shouldGlowRestoreButton, setShouldGlowRestoreButton] = useState(false);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -1011,12 +1012,19 @@ export default function AIChatbot() {
       setIsCollapsed(false);
       setPosition({ x: window.innerWidth - 420, y: 100 });
       setSize({ width: 400, height: 500 });
+      setShouldGlowRestoreButton(false); // Stop glowing when restored
       // Don't reset any chat state - messages, history, typing status should remain
     } else {
       // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
       setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 60 });
       setSize({ width: 400, height: 60 });
+      // Start glowing animation after 2 seconds to notify user they can restore
+      setTimeout(() => {
+        if (messages.length > 1) { // Only glow if there are messages to restore
+          setShouldGlowRestoreButton(true);
+        }
+      }, 2000);
       // Don't reset any chat state - messages, history, typing status should remain
     }
   };
@@ -1036,6 +1044,7 @@ export default function AIChatbot() {
         setSize({ width: 400, height: 500 });
         setPosition({ x: window.innerWidth - 420, y: Math.max(50, e.clientY - 250) });
         setIsDragging(false);
+        setShouldGlowRestoreButton(false); // Stop glowing when restored
         
         // Preserve chat state when expanding - don't reset anything
         // Messages, conversation history, and all state should remain intact
@@ -1361,11 +1370,19 @@ export default function AIChatbot() {
               e.stopPropagation();
               handleSnapToDefault();
             }}
-            className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
-            title={isCollapsed ? "Expand chat" : "Collapse to bottom"}
+            className={`p-1 rounded transition-all duration-300 cursor-pointer ${
+              shouldGlowRestoreButton && isCollapsed
+                ? 'bg-blue-500 ring-2 ring-blue-400 ring-opacity-75 animate-pulse hover:bg-blue-600'
+                : 'hover:bg-gray-600'
+            }`}
+            title={isCollapsed ? "Restore chat messages" : "Collapse to bottom"}
             onMouseDown={(e) => e.stopPropagation()}
           >
-            <MousePointer className="w-4 h-4 text-gray-300" />
+            <MousePointer className={`w-4 h-4 transition-colors ${
+              shouldGlowRestoreButton && isCollapsed
+                ? 'text-white drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]'
+                : 'text-gray-300'
+            }`} />
           </button>
           <button
             onClick={(e) => {
