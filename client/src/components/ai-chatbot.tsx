@@ -144,28 +144,28 @@ export default function AIChatbot() {
 
     // Check if user is asking about specific topics outside our scope
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
-      return "I focus on finding you the best deals and products! While I can't check the weather, I can help you find great deals on weather gear, outdoor equipment, or anything else you might need. What are you shopping for?";
+      return "I find deals, not weather! Need weather gear or outdoor equipment?";
     } else if (lowerQuery.includes('news') || lowerQuery.includes('politics') || lowerQuery.includes('election')) {
-      return "I focus on finding you the best deals and products! I don't cover news or politics, but I'm amazing at finding killer deals and products you'll love. What can I help you find today?";
+      return "I find deals, not news! What can I help you shop for?";
     } else if (lowerQuery.includes('stock') || lowerQuery.includes('crypto') || lowerQuery.includes('bitcoin') || lowerQuery.includes('investment')) {
-      return "I focus on finding you the best deals and products! While I can't give financial advice, I can help you find great deals on anything you're shopping for. What products are you interested in?";
+      return "I find product deals, not financial advice! What are you shopping for?";
     } else if (lowerQuery.includes('quantum') || lowerQuery.includes('physics') || lowerQuery.includes('medical') || lowerQuery.includes('legal') || lowerQuery.includes('doctor')) {
-      return "That's outside my expertise! I'm specialized in finding killer deals and helping you discover amazing products. What are you looking to buy or find deals on?";
+      return "That's outside my expertise! I find deals. What products do you need?";
     }
 
     // Check if we should ask for more information or proceed with search
     if (intent && !intent.confirmed && (intent.category || intent.features?.length)) {
-      let response = "I'm gathering some details to help you better. ";
+      let response = "";
       if (intent.category) {
-        response += `You're interested in ${intent.category} products. `;
+        response += `Got it - ${intent.category}. `;
       }
       if (intent.features?.length) {
-        response += `You want features like: ${intent.features.join(', ')}. `;
+        response += `Features: ${intent.features.join(', ')}. `;
       }
       if (!intent.budget) {
-        response += "What's your budget range? ";
+        response += "Budget? ";
       }
-      response += "Should I search our affiliate products for the best matches?";
+      response += "Search deals now?";
       return response;
     }
 
@@ -183,35 +183,35 @@ export default function AIChatbot() {
       
       if (mentionedProducts.length > 0) {
         const product = affiliateLinks.find((link: any) => link.title === mentionedProducts[0]);
-        return `Perfect! I found "${product.title}" in our ${product.category} section. ${product.description} This looks like exactly what you're looking for! Want me to show you this deal?`;
+        return `Found "${product.title}" - ${product.description.slice(0, 50)}... Great deal!`;
       } else if (lowerQuery.includes('more') || lowerQuery.includes('other') || lowerQuery.includes('different')) {
         if (hasDiscussedProducts) {
           const randomProducts = productNames.sort(() => 0.5 - Math.random()).slice(0, 3);
-          return `Here are some other great options I found: ${randomProducts.join(', ')}. Each of these has excellent reviews and competitive pricing. Which one interests you most?`;
+          return `Other options: ${randomProducts.join(', ')}. Which interests you?`;
         } else {
-          return `I have ${affiliateLinks.length} products across ${categories.length} categories. Popular items include ${productNames.slice(0, 3).join(', ')}. What type of product are you most interested in?`;
+          return `${affiliateLinks.length} deals available. Popular: ${productNames.slice(0, 3).join(', ')}. What type?`;
         }
       } else if (categories.some(cat => lowerQuery.includes(cat.toLowerCase()))) {
         const matchedCategory = categories.find(cat => lowerQuery.includes(cat.toLowerCase()));
         const categoryProducts = affiliateLinks.filter((link: any) => link.category === matchedCategory);
-        return `Excellent choice! I found ${categoryProducts.length} ${matchedCategory} products. Top recommendations: ${categoryProducts.slice(0, 3).map((p: any) => p.title).join(', ')}. These are all highly rated with great affiliate commission rates. Which catches your eye?`;
+        return `${categoryProducts.length} ${matchedCategory} deals found. Top picks: ${categoryProducts.slice(0, 3).map((p: any) => p.title).join(', ')}. Which one?`;
       } else if (lowerQuery.includes('best') || lowerQuery.includes('recommend') || lowerQuery.includes('top')) {
         const topProducts = productNames.slice(0, 3);
-        return `Based on current trends and affiliate performance, my top recommendations are: ${topProducts.join(', ')}. These products have excellent conversion rates and customer satisfaction. Want details on any of these?`;
+        return `Top deals: ${topProducts.join(', ')}. Want details?`;
       } else {
         // Contextual response based on conversation
         if (hasDiscussedProducts) {
-          return `Building on our conversation, I can also help you find ${categories.slice(0, 2).join(' and ')} products. I have ${affiliateLinks.length} items total with competitive affiliate rates. What specific features are you looking for?`;
+          return `Also have ${categories.slice(0, 2).join(' and ')} deals. ${affiliateLinks.length} total. What features?`;
         } else {
-          return `I'm here to help you find the perfect products! I have access to ${affiliateLinks.length} items across categories like ${categories.slice(0, 3).join(', ')}. What are you shopping for today?`;
+          return `${affiliateLinks.length} deals across ${categories.slice(0, 3).join(', ')}. What are you shopping for?`;
         }
       }
     } else if (hasProducts) {
       // Products available but not confirmed search yet
       const categories = [...new Set(affiliateLinks.map((link: any) => link.category))];
-      return `I'm here to help you find the perfect products! I have access to ${affiliateLinks.length} items across categories like ${categories.slice(0, 3).join(', ')}. What are you shopping for today?`;
+      return `${affiliateLinks.length} deals available in ${categories.slice(0, 3).join(', ')}. What are you shopping for?`;
     } else {
-      return "I'm your personal product discovery assistant! I can browse affiliate links and help you find amazing deals. I don't have any products loaded in the system right now, but feel free to come back later and I'll help you find exactly what you're looking for with the best affiliate commissions!";
+      return "I help find deals! No products loaded right now, but check back soon for amazing deals!";
     }
   };
 
