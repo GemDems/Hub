@@ -40,6 +40,9 @@ export default function AIChatbot() {
   const [showChatButton, setShowChatButton] = useState(false);
   const [isButtonFading, setIsButtonFading] = useState(false);
   const [scrollTimeout, setScrollTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isSlideUp, setIsSlideUp] = useState(false);
+  const [isAnimationPaused, setIsAnimationPaused] = useState(false);
+  const [showControlButton, setShowControlButton] = useState(false);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -279,7 +282,9 @@ export default function AIChatbot() {
 
   // Chat button visibility logic
   useEffect(() => {
-    // Initial fade in after 5 seconds
+    if (isAnimationPaused) return;
+    
+    // Initial fade in after 2 seconds with faster animation
     const initialTimer = setTimeout(() => {
       setShowChatButton(true);
       setIsButtonFading(true);
@@ -291,10 +296,10 @@ export default function AIChatbot() {
       }, 5000);
       
       return () => clearTimeout(fadeOutTimer);
-    }, 5000);
+    }, 2000);
 
     return () => clearTimeout(initialTimer);
-  }, []);
+  }, [isAnimationPaused]);
 
   // Scroll behavior
   useEffect(() => {
@@ -306,27 +311,32 @@ export default function AIChatbot() {
         clearTimeout(scrollTimeout);
       }
       
-      // If scrolling down, fade out smoothly
+      // If scrolling down, slide up and fade out
       if (scrollY > 100) {
+        setIsSlideUp(true);
         setIsButtonFading(false);
         setScrollTimeout(null);
       } 
       // If near top, set timeout to show after user stops scrolling
       else if (scrollY <= 100) {
-        const timeout = setTimeout(() => {
-          // Wait 5 seconds after user stops scrolling near top
-          setTimeout(() => {
-            setShowChatButton(true);
-            setIsButtonFading(true);
-            
-            // Auto fade out after 5 seconds
-            setTimeout(() => {
-              setIsButtonFading(false);
-            }, 5000);
-          }, 5000);
-        }, 100); // Small delay to detect stop scrolling
+        setIsSlideUp(false);
         
-        setScrollTimeout(timeout);
+        if (!isAnimationPaused) {
+          const timeout = setTimeout(() => {
+            // Wait 5 seconds after user stops scrolling near top
+            setTimeout(() => {
+              setShowChatButton(true);
+              setIsButtonFading(true);
+              
+              // Auto fade out after 5 seconds
+              setTimeout(() => {
+                setIsButtonFading(false);
+              }, 5000);
+            }, 5000);
+          }, 100); // Small delay to detect stop scrolling
+          
+          setScrollTimeout(timeout);
+        }
       }
     };
 
@@ -343,11 +353,13 @@ export default function AIChatbot() {
         {/* Animated Chat Button - Always in DOM for smooth transitions */}
         <button
           onClick={() => setIsOpen(true)}
+          onMouseEnter={() => setShowControlButton(true)}
+          onMouseLeave={() => setShowControlButton(false)}
           className={`fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:scale-105 group ${
             isButtonFading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          }`}
+          } ${isSlideUp ? 'transform -translate-y-20' : 'transform translate-y-0'}`}
           style={{
-            transition: 'opacity 5s ease-in-out, transform 0.3s ease'
+            transition: 'opacity 1s ease-in-out, transform 0.5s ease-in-out'
           }}
         >
           <MessageCircle className="w-5 h-5" />
@@ -355,6 +367,28 @@ export default function AIChatbot() {
           <span className="text-sm font-medium">Chat Assistant</span>
           <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
         </button>
+
+        {/* Mini Glass Control Button */}
+        <div
+          className={`fixed bottom-4 left-2 z-50 transition-opacity duration-300 ${
+            showControlButton ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+        >
+          <button
+            onClick={() => setIsAnimationPaused(!isAnimationPaused)}
+            className="w-8 h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 shadow-lg"
+          >
+            {isAnimationPaused ? (
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M8 5v14l11-7z"/>
+              </svg>
+            ) : (
+              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+              </svg>
+            )}
+          </button>
+        </div>
       </>
     );
   }
