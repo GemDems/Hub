@@ -340,6 +340,13 @@ export default function AIChatbot() {
     // Product-specific responses with real data
     if (message.includes('best') || message.includes('recommend') || message.includes('which')) {
       if (hasProducts && randomProduct) {
+        // Enable pitch button for product recommendations
+        setTimeout(() => {
+          setFoundProduct(randomProduct);
+          setShowPitchButton(true);
+          console.log('Product recommendation found, enabling pitch button:', randomProduct.title);
+        }, 100);
+        
         return `Perfect timing! 🎯 I'd recommend "${randomProduct.title}" - it's been absolutely crushing it with our users! ${randomProduct.description.slice(0, 100)}... Want the exclusive link?`;
       }
       return getRandomResponse('product');
@@ -350,17 +357,34 @@ export default function AIChatbot() {
       if (hasProducts) {
         const topDeals = affiliateLinks.slice(0, 3);
         const dealsList = topDeals.map(deal => `• ${deal.title} (${deal.category})`).join('\n');
+        
+        // Enable pitch button when showing deals
+        if (affiliateLinks.length > 0) {
+          setTimeout(() => {
+            setFoundProduct(affiliateLinks[0]);
+            setShowPitchButton(true);
+            console.log('Deal list shown, enabling pitch button for:', affiliateLinks[0].title);
+          }, 100);
+        }
+        
         return `Here are our hottest deals right now! 🔥\n\n${dealsList}\n\nWhich one catches your eye? I can hook you up with the best price! 💰`;
       }
       return "We're loading up some incredible deals right now! 🚀 Check back in a few minutes for the latest drops. Want me to notify you when they're live?";
     }
     
     // Category-specific recommendations
-    affiliateLinks.forEach(link => {
+    for (const link of affiliateLinks) {
       if (message.includes(link.category.toLowerCase()) || message.includes(link.title.toLowerCase())) {
+        // Enable pitch button for specific product matches
+        setTimeout(() => {
+          setFoundProduct(link);
+          setShowPitchButton(true);
+          console.log('Category/product match found, enabling pitch button:', link.title);
+        }, 100);
+        
         return `YES! "${link.title}" is exactly what you need! 🎯 ${link.description.slice(0, 80)}... This is flying off the shelves. Ready to grab it?`;
       }
-    });
+    }
     
     // Comparison questions
     if (message.includes('compare') || message.includes('difference') || message.includes('vs') || message.includes('better')) {
@@ -474,12 +498,14 @@ export default function AIChatbot() {
             // Check if we found a specific product to enable pitch button
             const foundSpecificProduct = affiliateLinks.find(link => 
               messageToProcess.toLowerCase().includes(link.title.toLowerCase()) ||
-              messageToProcess.toLowerCase().includes(link.category.toLowerCase())
+              messageToProcess.toLowerCase().includes(link.category.toLowerCase()) ||
+              botResponseContent.toLowerCase().includes(link.title.toLowerCase())
             );
             
             if (foundSpecificProduct) {
               setFoundProduct(foundSpecificProduct);
               setShowPitchButton(true);
+              console.log('Product found, enabling pitch button:', foundSpecificProduct.title);
             }
           }
           
@@ -499,9 +525,27 @@ export default function AIChatbot() {
         setTimeout(() => {
           setIsTyping(false);
           
+          const botResponseContent = generateContextualResponse(messageToProcess, newHistory, newIntentData);
+          
+          // Check for product mentions in non-search responses too
+          const hasProducts = affiliateLinks && affiliateLinks.length > 0;
+          if (hasProducts) {
+            const foundSpecificProduct = affiliateLinks.find(link => 
+              messageToProcess.toLowerCase().includes(link.title.toLowerCase()) ||
+              messageToProcess.toLowerCase().includes(link.category.toLowerCase()) ||
+              botResponseContent.toLowerCase().includes(link.title.toLowerCase())
+            );
+            
+            if (foundSpecificProduct) {
+              setFoundProduct(foundSpecificProduct);
+              setShowPitchButton(true);
+              console.log('Product found in regular response, enabling pitch button:', foundSpecificProduct.title);
+            }
+          }
+          
           const botResponse: Message = {
             id: (Date.now() + 1).toString(),
-            content: generateContextualResponse(messageToProcess, newHistory, newIntentData),
+            content: botResponseContent,
             isBot: true,
             timestamp: new Date()
           };
@@ -548,6 +592,8 @@ export default function AIChatbot() {
     setIsSearching(false);
     setSearchProducts([]);
     setShowResetTooltip(false);
+    setFoundProduct(null);
+    setShowPitchButton(false);
     
     // Clear saved messages and reset open count for this session
     localStorage.setItem(`chatMessages-${sessionId}`, JSON.stringify(resetMessages));
@@ -641,9 +687,15 @@ export default function AIChatbot() {
     return cleanup;
   }, [isDragging, isResizing, dragOffset.x, dragOffset.y, position.x, position.y, resizeStart]);
 
+  // Auto-scroll to bottom when new messages are added
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    // Save messages to localStorage whenever they change
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
+
+  // Save messages to localStorage whenever they change
+  useEffect(() => {
     localStorage.setItem(`chatMessages-${sessionId}`, JSON.stringify(messages));
   }, [messages, sessionId]);
 
