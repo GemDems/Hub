@@ -282,78 +282,143 @@ export default function AIChatbot() {
         // Try broader keyword matching first
         let broadMatches = [];
         
-        // Enhanced keyword analysis - check for broader categories
-        const broadKeywords = {
-          'tech': ['electronics', 'gadget', 'device', 'smart', 'digital'],
-          'home': ['house', 'room', 'kitchen', 'living', 'furniture'],
-          'health': ['wellness', 'fitness', 'medical', 'body', 'care'],
-          'outdoor': ['garden', 'camping', 'sports', 'adventure', 'nature'],
-          'fashion': ['clothing', 'style', 'wear', 'dress', 'accessories'],
-          'food': ['cooking', 'recipe', 'meal', 'nutrition', 'kitchen'],
-          'beauty': ['skincare', 'makeup', 'cosmetic', 'appearance', 'face'],
-          'education': ['learning', 'course', 'skill', 'training', 'knowledge']
+        // Enhanced similarity matching - find most related products based on keywords and context
+        const userKeywords = lowerQuery.split(' ').filter(word => word.length > 2);
+        
+        // Create comprehensive keyword mapping for better matching
+        const conceptKeywords = {
+          // Tech & Electronics
+          'phone': ['mobile', 'smartphone', 'device', 'gadget', 'electronics', 'tech'],
+          'computer': ['laptop', 'pc', 'tech', 'device', 'electronics', 'digital'],
+          'watch': ['time', 'smartwatch', 'wearable', 'tech', 'accessory'],
+          'camera': ['photo', 'video', 'lens', 'tech', 'device', 'digital'],
+          
+          // Home & Living
+          'kitchen': ['cooking', 'food', 'home', 'appliance', 'utensil'],
+          'bedroom': ['sleep', 'bed', 'home', 'furniture', 'room'],
+          'bathroom': ['shower', 'bath', 'home', 'hygiene', 'care'],
+          'furniture': ['home', 'living', 'room', 'house', 'decor'],
+          
+          // Health & Wellness
+          'fitness': ['exercise', 'workout', 'health', 'body', 'wellness'],
+          'nutrition': ['food', 'health', 'diet', 'wellness', 'supplement'],
+          'medical': ['health', 'care', 'wellness', 'body', 'treatment'],
+          
+          // Fashion & Style
+          'clothing': ['fashion', 'wear', 'style', 'dress', 'apparel'],
+          'shoes': ['footwear', 'fashion', 'style', 'wear'],
+          'jewelry': ['accessory', 'fashion', 'style', 'wear'],
+          
+          // Outdoor & Sports
+          'sports': ['fitness', 'exercise', 'outdoor', 'activity', 'game'],
+          'camping': ['outdoor', 'nature', 'adventure', 'gear'],
+          'garden': ['outdoor', 'plant', 'nature', 'home', 'yard'],
+          
+          // Beauty & Personal Care
+          'skincare': ['beauty', 'face', 'care', 'cosmetic', 'health'],
+          'makeup': ['beauty', 'cosmetic', 'face', 'style'],
+          'hair': ['beauty', 'care', 'style', 'personal'],
+          
+          // Learning & Skills
+          'education': ['learning', 'skill', 'knowledge', 'training', 'course'],
+          'book': ['learning', 'education', 'knowledge', 'reading'],
+          'tool': ['work', 'craft', 'build', 'repair', 'utility']
         };
 
-        // Check if user query matches any broad categories
-        for (const [category, keywords] of Object.entries(broadKeywords)) {
-          if (keywords.some(keyword => lowerQuery.includes(keyword)) || lowerQuery.includes(category)) {
-            // Find products that might relate to this category
-            affiliateLinks.forEach(product => {
-              const productText = `${product.title} ${product.description} ${product.category} ${product.aiPrivateInfo}`.toLowerCase();
-              if (keywords.some(keyword => productText.includes(keyword)) || productText.includes(category)) {
-                broadMatches.push(product);
+        // Calculate similarity scores for all products
+        affiliateLinks.forEach(product => {
+          let similarityScore = 0;
+          const productText = `${product.title} ${product.description} ${product.category} ${product.aiPrivateInfo}`.toLowerCase();
+          
+          // Check direct keyword matches in user query
+          userKeywords.forEach(userWord => {
+            if (productText.includes(userWord)) {
+              similarityScore += 40; // Strong match for direct keywords
+            }
+            
+            // Check concept-based matching
+            Object.entries(conceptKeywords).forEach(([concept, relatedWords]) => {
+              if (userWord.includes(concept) || concept.includes(userWord)) {
+                relatedWords.forEach(relatedWord => {
+                  if (productText.includes(relatedWord)) {
+                    similarityScore += 25; // Good match for related concepts
+                  }
+                });
               }
             });
-            break;
+          });
+          
+          // Boost score for verified/elite products
+          if (product.isElitePick === 1) similarityScore += 10;
+          if (product.isVerified === 1) similarityScore += 5;
+          
+          // Add products with any similarity
+          if (similarityScore > 0) {
+            broadMatches.push({ product, score: similarityScore });
           }
-        }
+        });
+        
+        // Sort by similarity score and get best matches
+        broadMatches.sort((a, b) => b.score - a.score);
 
-        // If we found broad matches, show the best one
+        // If we found related matches, show the most relevant ones
         if (broadMatches.length > 0) {
-          const bestBroadMatch = broadMatches[0];
+          const bestMatch = broadMatches[0].product;
+          const topMatches = broadMatches.slice(0, 3); // Get top 3 most related
           
           setTimeout(() => {
-            setFoundProduct(bestBroadMatch);
+            setFoundProduct(bestMatch);
             setShowPitchButton(true);
           }, 100);
 
-          const broadResponses = [
-            `I searched for exactly what you mentioned but didn't find a direct match. However, I found something in a related category that might interest you: **${bestBroadMatch.title}** ${bestBroadMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestBroadMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
+          // Show single best match with explanation of why it's related
+          const relatedResponses = [
+            `I searched for exactly what you mentioned but didn't find a direct match. However, I found something closely related that might work even better: **${bestMatch.title}** ${bestMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
 
-${bestBroadMatch.description || 'Quality craftsmanship and reliable performance.'} ${bestBroadMatch.stock > 0 ? `Only ${bestBroadMatch.stock} left! ` : ''}${bestBroadMatch.aiPrivateInfo || 'Built to professional standards.'}
+${bestMatch.description || 'Quality craftsmanship and reliable performance.'} ${bestMatch.stock > 0 ? `Only ${bestMatch.stock} left! ` : ''}This is the most relevant match from our current live inventory. ${bestMatch.aiPrivateInfo || 'Built to professional standards.'}
 
-<a href="${bestBroadMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestBroadMatch.title} →</a>`,
+<a href="${bestMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestMatch.title} →</a>`,
 
-            `I don't have exactly what you're looking for, but I found something related that caught my attention: **${bestBroadMatch.title}** ${bestBroadMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestBroadMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
+            `I don't have the exact item you mentioned, but I found the closest alternative currently available: **${bestMatch.title}** ${bestMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
 
-${bestBroadMatch.description || 'Exceptional attention to detail.'} ${bestBroadMatch.stock > 0 ? `Only ${bestBroadMatch.stock} left! ` : ''}${bestBroadMatch.aiPrivateInfo || 'Designed for reliability.'}
+${bestMatch.description || 'Exceptional attention to detail.'} ${bestMatch.stock > 0 ? `Only ${bestMatch.stock} left! ` : ''}This is the most related product I could find in our live catalog. ${bestMatch.aiPrivateInfo || 'Designed for reliability.'}
 
-<a href="${bestBroadMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestBroadMatch.title} →</a>`
+<a href="${bestMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestMatch.title} →</a>`,
+
+            `While I don't have exactly what you're looking for, I discovered the most similar item currently live on the site: **${bestMatch.title}** ${bestMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
+
+${bestMatch.description || 'Superior quality and performance.'} ${bestMatch.stock > 0 ? `Only ${bestMatch.stock} left! ` : ''}This is the closest match to your request from what's currently available. ${bestMatch.aiPrivateInfo || 'Expertly crafted.'}
+
+<a href="${bestMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestMatch.title} →</a>`
           ];
 
-          return broadResponses[Math.floor(Math.random() * broadResponses.length)];
+          return relatedResponses[Math.floor(Math.random() * relatedResponses.length)];
         }
 
-        // If no broad matches either, gracefully decline with helpful responses
-        const gracefulResponses = [
-          `I searched thoroughly through all available products, but I don't currently have anything that matches what you're looking for. The creator dashboard doesn't have that specific item right now. 
+        // If no related matches either, show what's actually available with helpful context
+        const availableCategories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
+        const randomAvailableProduct = affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
+        
+        setTimeout(() => {
+          setFoundProduct(randomAvailableProduct);
+          setShowPitchButton(true);
+        }, 100);
 
-Is there something else you need help finding? I might have related products available.`,
+        const helpfulResponses = [
+          `I searched thoroughly but don't have anything matching that description. However, let me show you what's currently available that might interest you: **${randomAvailableProduct.title}** ${randomAvailableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${randomAvailableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
 
-          `I understand what you're looking for, but I don't see anything matching that description in the current product catalog. The inventory seems focused on different categories right now.
+${randomAvailableProduct.description || 'Quality product currently in stock.'} ${randomAvailableProduct.stock > 0 ? `Only ${randomAvailableProduct.stock} left! ` : ''}Current categories available: ${availableCategories.slice(0, 3).join(', ')}${availableCategories.length > 3 ? ', and more' : ''}. ${randomAvailableProduct.aiPrivateInfo || 'Built to high standards.'}
 
-What other types of products might interest you? I could check what's actually available.`,
+<a href="${randomAvailableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${randomAvailableProduct.title} →</a>`,
 
-          `I've analyzed all available products and unfortunately don't have a match for your specific request. The current selection doesn't include that particular item.
+          `I couldn't find anything matching your specific request, but here's something from our current live inventory that might catch your attention: **${randomAvailableProduct.title}** ${randomAvailableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${randomAvailableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
 
-Would you like me to suggest what types of products are currently available instead?`,
+${randomAvailableProduct.description || 'Currently featured product.'} ${randomAvailableProduct.stock > 0 ? `Only ${randomAvailableProduct.stock} left! ` : ''}Available categories right now: ${availableCategories.slice(0, 3).join(', ')}. ${randomAvailableProduct.aiPrivateInfo || 'Reliable quality.'}
 
-          `After checking the entire product database, I don't have what you're asking about. The creator hasn't added that type of product to the catalog yet.
-
-Can I help you find something else that might meet your needs?`
+<a href="${randomAvailableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${randomAvailableProduct.title} →</a>`
         ];
 
-        return gracefulResponses[Math.floor(Math.random() * gracefulResponses.length)];
+        return helpfulResponses[Math.floor(Math.random() * helpfulResponses.length)];
       }
 
       // If we found matches, show them
