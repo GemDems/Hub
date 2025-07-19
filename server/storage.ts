@@ -92,7 +92,8 @@ export class DatabaseStorage implements IStorage {
         isVerified: insertLink.isVerified || 0,
         isDraft: insertLink.isDraft || 0,
         scheduledPublishAt: insertLink.scheduledPublishAt || null,
-        scheduledDeleteAt: insertLink.scheduledDeleteAt || null
+        scheduledDeleteAt: insertLink.scheduledDeleteAt || null,
+        aiPrivateInfo: insertLink.aiPrivateInfo || null
       })
       .returning();
     return link;

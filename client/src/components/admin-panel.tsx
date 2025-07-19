@@ -380,7 +380,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       // Convert boolean values to integers for database compatibility
       isVerified: formData.isVerified ? 1 : 0,
       isElitePick: formData.isElitePick ? 1 : 0,
-      stock: formData.stock || 0
+      stock: formData.stock || 0,
+      aiPrivateInfo: formData.aiPrivateInfo || null
     };
     createLinkMutation.mutate(submissionData);
   };
