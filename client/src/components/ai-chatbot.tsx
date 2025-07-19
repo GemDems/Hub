@@ -18,14 +18,36 @@ interface ChatPosition {
 
 export default function AIChatbot() {
   const [isOpen, setIsOpen] = useState(false);
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: '1',
-      content: "Hey! 👋 I'm your personal deal hunter. What are you looking to score today?",
-      isBot: true,
-      timestamp: new Date()
+  const [messages, setMessages] = useState<Message[]>(() => {
+    // Load saved messages from localStorage or use default
+    const savedMessages = localStorage.getItem('chatMessages');
+    if (savedMessages) {
+      try {
+        return JSON.parse(savedMessages).map((msg: any) => ({
+          ...msg,
+          timestamp: new Date(msg.timestamp)
+        }));
+      } catch {
+        // If parsing fails, use default
+        return [
+          {
+            id: '1',
+            content: "Hey! 👋 I'm your personal deal hunter. What are you looking to score today?",
+            isBot: true,
+            timestamp: new Date()
+          }
+        ];
+      }
     }
-  ]);
+    return [
+      {
+        id: '1',
+        content: "Hey! 👋 I'm your personal deal hunter. What are you looking to score today?",
+        isBot: true,
+        timestamp: new Date()
+      }
+    ];
+  });
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const [position, setPosition] = useState<ChatPosition>({ x: window.innerWidth - 420, y: window.innerHeight - 500 });
@@ -49,6 +71,8 @@ export default function AIChatbot() {
   const [searchProducts, setSearchProducts] = useState<string[]>([]);
   const [conversationHistory, setConversationHistory] = useState<Array<{role: 'user' | 'assistant', content: string}>>([]);
   const [userIntent, setUserIntent] = useState<{category?: string, budget?: string, features?: string[], confirmed?: boolean}>({});
+  const [chatOpenCount, setChatOpenCount] = useState(0);
+  const [showResetTooltip, setShowResetTooltip] = useState(false);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -410,13 +434,27 @@ export default function AIChatbot() {
 
   const handleReset = () => {
     // Reset chat completely
-    setMessages([]);
+    const resetMessages = [
+      {
+        id: '1',
+        content: "Hey! 👋 I'm your personal deal hunter. What are you looking to score today?",
+        isBot: true,
+        timestamp: new Date()
+      }
+    ];
+    setMessages(resetMessages);
     setConversationHistory([]);
     setUserIntent({});
     setInputValue("");
     setIsTyping(false);
     setIsSearching(false);
     setSearchProducts([]);
+    setShowResetTooltip(false);
+    
+    // Clear saved messages and reset open count
+    localStorage.setItem('chatMessages', JSON.stringify(resetMessages));
+    localStorage.setItem('chatOpenCount', '0');
+    setChatOpenCount(0);
     
     // Reset size and position
     setSize({ width: 380, height: 480 });
@@ -510,7 +548,24 @@ export default function AIChatbot() {
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Save messages to localStorage whenever they change
+    localStorage.setItem('chatMessages', JSON.stringify(messages));
   }, [messages]);
+
+  // Track chat opens and show reset tooltip on second open
+  useEffect(() => {
+    if (isOpen) {
+      const currentCount = parseInt(localStorage.getItem('chatOpenCount') || '0') + 1;
+      setChatOpenCount(currentCount);
+      localStorage.setItem('chatOpenCount', currentCount.toString());
+      
+      // Show tooltip on second open (after first conversation)
+      if (currentCount === 2 && messages.length > 1) {
+        setTimeout(() => setShowResetTooltip(true), 1000);
+        setTimeout(() => setShowResetTooltip(false), 8000); // Hide after 8 seconds
+      }
+    }
+  }, [isOpen, messages.length]);
 
   // Add global search trigger function for Search Now button
   useEffect(() => {
@@ -759,13 +814,23 @@ export default function AIChatbot() {
           <span className="text-white font-medium text-sm">Elite Deal Assistant</span>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative">
+          {/* Reset Tooltip */}
+          {showResetTooltip && (
+            <div className="absolute -bottom-12 left-0 z-50 bg-black/90 backdrop-blur-sm text-white text-xs px-3 py-2 rounded-lg border border-white/20 shadow-xl pointer-events-none">
+              <div className="flex items-center gap-1">
+                <span>Click here to reset chat</span>
+                <div className="absolute -top-1 left-4 w-2 h-2 bg-black/90 border-l border-t border-white/20 transform rotate-45"></div>
+              </div>
+            </div>
+          )}
+          
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleReset();
             }}
-            className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
+            className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer relative"
             title="Reset chat and start new conversation"
             onMouseDown={(e) => e.stopPropagation()}
           >
