@@ -1256,8 +1256,9 @@ Can I help you find something excellent in one of these available categories?`
     } else {
       // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
-      // Keep same X position, move down to bottom of screen
-      setPosition({ x: position.x, y: window.innerHeight - 60 });
+      // Keep same X position, move down to bottom but leave space for mobile tab bars
+      const mobileTabBarSpace = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) ? 80 : 20;
+      setPosition({ x: position.x, y: window.innerHeight - 60 - mobileTabBarSpace });
       setSize({ width: 400, height: 60 });
       setShouldGlowRestoreButton(false); // Don't auto-glow, only on hover
       // Don't reset any chat state - messages, history, typing status should remain
