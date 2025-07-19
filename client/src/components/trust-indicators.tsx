@@ -70,7 +70,7 @@ export default function TrustIndicators() {
     <>
       <div 
         ref={containerRef}
-        className="mt-16 bg-white rounded-xl shadow-lg p-8"
+        className="mt-16 mb-2 bg-white rounded-xl shadow-lg p-8"
         onClick={addGoldPopup}
         onTouchStart={addGoldPopup}
       >
