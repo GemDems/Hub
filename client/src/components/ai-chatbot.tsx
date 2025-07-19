@@ -226,7 +226,7 @@ export default function AIChatbot() {
     }
     
     // Fallback when no products are available
-    return generateDynamicResponse(userMessage, { hasProducts: false, conversationLength: history.length });
+    return "I don't see any deals available in our system right now. The creator dashboard appears to be empty at the moment. Please check back later when new products have been added, or contact the site administrator if this seems like an error.";
   };
 
   const generateBotResponse = (userMessage: string): string => {
@@ -353,15 +353,25 @@ export default function AIChatbot() {
           setSearchProducts([]);
           setIsTyping(false);
           
+          // Check if products are available before generating response
+          const hasProducts = affiliateLinks && affiliateLinks.length > 0;
+          let botResponseContent: string;
+          
+          if (!hasProducts) {
+            botResponseContent = "I searched through our current deals inventory but don't see any products available right now. The creator dashboard appears to be empty at the moment. You might want to check back later when new deals have been added to the system.";
+          } else {
+            botResponseContent = generateContextualResponse(messageToProcess, newHistory, newIntentData);
+          }
+          
           const botResponse: Message = {
             id: (Date.now() + 1).toString(),
-            content: generateContextualResponse(messageToProcess, newHistory, newIntentData),
+            content: botResponseContent,
             isBot: true,
             timestamp: new Date()
           };
 
           // Add bot response to conversation history
-          setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponse.content }]);
+          setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponseContent }]);
           setMessages(prev => [...prev, botResponse]);
         }, 2000); // 2 second search animation
       } else {
@@ -670,29 +680,35 @@ export default function AIChatbot() {
         
         <div className="flex items-center gap-2">
           <button
-            onClick={handleReset}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleReset();
+            }}
             className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
             title="Reset size"
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
           >
             <RotateCcw className="w-4 h-4 text-gray-300" />
           </button>
           <button
-            onClick={handleReset}
+            onClick={(e) => {
+              e.stopPropagation();
+              handleReset();
+            }}
             className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
             title="Snap to default"
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
           >
             <MousePointer className="w-4 h-4 text-gray-300" />
           </button>
           <button
-            onClick={() => setIsOpen(false)}
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsOpen(false);
+            }}
             className="p-1 hover:bg-red-600 rounded transition-colors cursor-pointer"
             title="Close chat"
             onMouseDown={(e) => e.stopPropagation()}
-            onClick={(e) => e.stopPropagation()}
           >
             <X className="w-4 h-4 text-gray-300" />
           </button>
@@ -777,10 +793,12 @@ export default function AIChatbot() {
               onClick={(e) => e.stopPropagation()}
             />
             <button
-              onClick={handleSendMessage}
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSendMessage();
+              }}
               className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors cursor-pointer"
               onMouseDown={(e) => e.stopPropagation()}
-              onClick={(e) => e.stopPropagation()}
             >
               Send
             </button>
