@@ -1347,12 +1347,14 @@ export default function AIChatbot() {
             }
           }
         } : undefined}
-        onMouseDown={isCollapsed ? undefined : handleMouseDown}
+        onMouseDown={!isCollapsed ? handleMouseDown : undefined}
       >
       {/* Header with controls */}
       <div 
-        className="bg-gray-800 bg-opacity-50 p-3 flex items-center justify-between cursor-grab"
-        onMouseDown={handleDragStart}
+        className={`bg-gray-800 bg-opacity-50 p-3 flex items-center justify-between ${
+          isCollapsed ? 'cursor-pointer' : 'cursor-grab'
+        }`}
+        onMouseDown={!isCollapsed ? handleDragStart : undefined}
       >
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
