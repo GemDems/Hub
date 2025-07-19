@@ -602,9 +602,11 @@ export default function AIChatbot() {
     };
   }, []); // Only run once on mount
 
-  // Scroll behavior
+  // Scroll behavior - slide up animation when scrolling down
   useEffect(() => {
     if (isOpen) return; // Don't handle scroll when chat is open
+    
+    let lastScrollY = 0;
     
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -614,19 +616,22 @@ export default function AIChatbot() {
         clearTimeout(scrollTimeout);
       }
       
-      // If scrolling down, slide up and fade out
-      if (scrollY > 100) {
+      // If scrolling down (moved down more than 50px), slide up and fade out completely
+      if (scrollY > lastScrollY && scrollY > 50) {
         setIsSlideUp(true);
         setIsButtonFading(false);
-        setScrollTimeout(null);
+        if (fadeTimer) {
+          clearTimeout(fadeTimer);
+          setFadeTimer(null);
+        }
       } 
-      // If near top, set timeout to show after user stops scrolling
-      else if (scrollY <= 100) {
+      // If scrolling up or near top, show button again
+      else if (scrollY <= 50 || scrollY < lastScrollY) {
         setIsSlideUp(false);
         
         if (!isAnimationPaused && !isHovering) {
           const timeout = setTimeout(() => {
-            // Wait 4 seconds after user stops scrolling near top
+            // Wait 2 seconds after user stops scrolling to show button
             setTimeout(() => {
               setIsButtonFading(true);
               
@@ -638,12 +643,14 @@ export default function AIChatbot() {
               }, 7000);
               
               setFadeTimer(fadeOutTimer);
-            }, 4000);
-          }, 100); // Small delay to detect stop scrolling
+            }, 2000);
+          }, 100);
           
           setScrollTimeout(timeout);
         }
       }
+      
+      lastScrollY = scrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -679,12 +686,9 @@ export default function AIChatbot() {
               setFadeTimer(fadeOutTimer);
             }
           }}
-          className={`fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:scale-105 group ${
-            isButtonFading ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          } ${isSlideUp ? 'transform -translate-y-20' : 'transform translate-y-0'}`}
-          style={{
-            transition: 'opacity 1s ease-in-out, transform 0.5s ease-in-out'
-          }}
+          className={`fixed top-4 left-4 z-50 flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-4 py-2 rounded-full shadow-lg hover:shadow-xl hover:scale-105 group transition-all duration-700 ease-out ${
+            isButtonFading && !isSlideUp ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          } ${isSlideUp ? 'transform -translate-y-32' : 'transform translate-y-0'}`}
         >
           <MessageCircle className="w-5 h-5" />
           <Phone className="w-4 h-4" />
