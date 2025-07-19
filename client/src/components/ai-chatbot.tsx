@@ -73,6 +73,10 @@ export default function AIChatbot() {
   const [userIntent, setUserIntent] = useState<{category?: string, budget?: string, features?: string[], confirmed?: boolean}>({});
   const [chatOpenCount, setChatOpenCount] = useState(0);
   const [showResetTooltip, setShowResetTooltip] = useState(false);
+  const [tooltipDismissed, setTooltipDismissed] = useState(() => {
+    return localStorage.getItem('resetTooltipDismissed') === 'true';
+  });
+  const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -328,20 +332,28 @@ export default function AIChatbot() {
   const handleSendMessage = async () => {
     if (!inputValue.trim()) return;
 
+    let messageContent = inputValue;
+    
+    // If replying to a message, include context
+    if (replyingTo) {
+      messageContent = `Regarding your message "${replyingTo.content.substring(0, 100)}${replyingTo.content.length > 100 ? '...' : ''}": ${inputValue}`;
+    }
+
     const userMessage: Message = {
       id: Date.now().toString(),
-      content: inputValue,
+      content: inputValue, // Show user's original message
       isBot: false,
       timestamp: new Date()
     };
 
-    // Add to conversation history
-    const newHistory = [...conversationHistory, { role: 'user' as const, content: inputValue }];
+    // Add to conversation history with full context
+    const newHistory = [...conversationHistory, { role: 'user' as const, content: messageContent }];
     setConversationHistory(newHistory);
     setMessages(prev => [...prev, userMessage]);
     
-    const messageToProcess = inputValue;
+    const messageToProcess = messageContent; // Use full context for processing
     setInputValue("");
+    setReplyingTo(null); // Clear reply state
     setIsTyping(true);
     
     try {
@@ -461,6 +473,14 @@ export default function AIChatbot() {
     setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 500 });
   };
 
+  const dismissTooltip = (permanent = false) => {
+    setShowResetTooltip(false);
+    if (permanent) {
+      localStorage.setItem('resetTooltipDismissed', 'true');
+      setTooltipDismissed(true);
+    }
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!chatRef.current) return;
@@ -570,13 +590,13 @@ export default function AIChatbot() {
       
       console.log('Chat open count:', currentCount, 'Saved messages exist:', savedMessagesExist);
       
-      if (currentCount >= 2 || savedMessagesExist) {
+      if ((currentCount >= 2 || savedMessagesExist) && !tooltipDismissed) {
         console.log('Showing reset tooltip...');
         setTimeout(() => {
           setShowResetTooltip(true);
           console.log('Tooltip should be visible now');
         }, 1000);
-        setTimeout(() => setShowResetTooltip(false), 10000); // Hide after 10 seconds
+        setTimeout(() => setShowResetTooltip(false), 15000); // Hide after 15 seconds
       }
     }
   }, [isOpen]);
@@ -806,19 +826,70 @@ export default function AIChatbot() {
   }
 
   return (
-    <div
-      ref={chatRef}
-      className="fixed z-50 bg-gray-900 rounded-lg shadow-2xl border border-gray-700 overflow-hidden cursor-move"
-      style={{
-        left: position.x,
-        top: position.y,
-        width: size.width,
-        height: size.height,
-        backgroundColor: 'rgba(34, 38, 50, 0.95)',
-        backdropFilter: 'blur(10px)'
-      }}
-      onMouseDown={handleMouseDown}
-    >
+    <>
+      {/* External Reset Tooltip */}
+      {showResetTooltip && isOpen && (
+        <div 
+          className="fixed z-[1000] pointer-events-auto"
+          style={{
+            left: position.x + size.width - 100,
+            top: position.y - 80
+          }}
+        >
+          <div className="bg-black/95 backdrop-blur-md text-white p-4 rounded-xl border border-white/30 shadow-2xl max-w-[280px]">
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div className="flex-1">
+                <h4 className="font-semibold text-sm mb-1">💡 Reset Chat</h4>
+                <p className="text-xs text-gray-200 leading-relaxed">
+                  This will clear your conversation history and start fresh. Your saved messages will be deleted.
+                </p>
+              </div>
+              <button
+                onClick={() => dismissTooltip(false)}
+                className="p-1 hover:bg-white/20 rounded transition-colors"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={() => dismissTooltip(true)}
+                className="flex-1 text-xs px-3 py-2 bg-gray-700 hover:bg-gray-600 rounded transition-colors"
+              >
+                Don't show again
+              </button>
+              <button
+                onClick={() => dismissTooltip(false)}
+                className="flex-1 text-xs px-3 py-2 bg-blue-600 hover:bg-blue-500 rounded transition-colors"
+              >
+                Got it
+              </button>
+            </div>
+            {/* Arrow pointing to reset button */}
+            <div 
+              className="absolute w-3 h-3 bg-black/95 border-r border-b border-white/30 transform rotate-45"
+              style={{
+                bottom: '-6px',
+                right: '80px'
+              }}
+            ></div>
+          </div>
+        </div>
+      )}
+
+      <div
+        ref={chatRef}
+        className="fixed z-50 bg-gray-900 rounded-lg shadow-2xl border border-gray-700 overflow-hidden cursor-move"
+        style={{
+          left: position.x,
+          top: position.y,
+          width: size.width,
+          height: size.height,
+          backgroundColor: 'rgba(34, 38, 50, 0.95)',
+          backdropFilter: 'blur(10px)'
+        }}
+        onMouseDown={handleMouseDown}
+      >
       {/* Header with controls */}
       <div 
         className="bg-gray-800 bg-opacity-50 p-3 flex items-center justify-between"
@@ -829,26 +900,20 @@ export default function AIChatbot() {
         </div>
         
         <div className="flex items-center gap-2 relative">
-          {/* Reset Tooltip */}
-          {showResetTooltip && (
-            <div className="absolute -bottom-14 left-0 z-[999] bg-black/95 backdrop-blur-md text-white text-sm px-4 py-3 rounded-lg border border-white/30 shadow-2xl pointer-events-none animate-pulse">
-              <div className="flex items-center gap-2">
-                <span className="whitespace-nowrap">👆 Click here to reset chat</span>
-                <div className="absolute -top-1.5 left-6 w-3 h-3 bg-black/95 border-l border-t border-white/30 transform rotate-45"></div>
-              </div>
-            </div>
-          )}
-          
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleReset();
             }}
-            className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer relative"
+            className={`p-1 hover:bg-gray-600 rounded transition-all duration-300 cursor-pointer relative ${
+              showResetTooltip ? 'ring-2 ring-blue-400 ring-opacity-75 animate-pulse' : ''
+            }`}
             title="Reset chat and start new conversation"
             onMouseDown={(e) => e.stopPropagation()}
           >
-            <RotateCcw className="w-4 h-4 text-gray-300" />
+            <RotateCcw className={`w-4 h-4 transition-all duration-300 ${
+              showResetTooltip ? 'text-blue-300 drop-shadow-[0_0_4px_rgba(59,130,246,0.8)]' : 'text-gray-300'
+            }`} />
           </button>
           <button
             onClick={(e) => {
@@ -886,20 +951,31 @@ export default function AIChatbot() {
           {messages.map((message) => (
             <div
               key={message.id}
-              className={`flex ${message.isBot ? 'justify-start' : 'justify-end'}`}
+              className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} group`}
             >
-              <div
-                className={`max-w-xs px-4 py-2 rounded-lg ${
-                  message.isBot
-                    ? 'bg-blue-600 bg-opacity-40 text-white border border-blue-500 border-opacity-30'
-                    : 'bg-gray-700 text-white'
-                }`}
-                style={{
-                  fontFamily: 'Inter, sans-serif',
-                  fontWeight: message.isBot ? 300 : 400
-                }}
-              >
-                <AnimatedMessage content={message.content} isBot={message.isBot} />
+              <div className="flex flex-col max-w-xs">
+                <div
+                  className={`px-4 py-2 rounded-lg ${
+                    message.isBot
+                      ? 'bg-blue-600 bg-opacity-40 text-white border border-blue-500 border-opacity-30'
+                      : 'bg-gray-700 text-white'
+                  }`}
+                  style={{
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: message.isBot ? 300 : 400
+                  }}
+                >
+                  <AnimatedMessage content={message.content} isBot={message.isBot} />
+                </div>
+                {/* Reply button */}
+                <button
+                  onClick={() => setReplyingTo(message)}
+                  className={`mt-1 text-xs text-gray-400 hover:text-blue-400 transition-colors opacity-0 group-hover:opacity-100 ${
+                    message.isBot ? 'text-left' : 'text-right'
+                  }`}
+                >
+                  Reply to this
+                </button>
               </div>
             </div>
           ))}
@@ -939,13 +1015,35 @@ export default function AIChatbot() {
 
         {/* Input area */}
         <div className="border-t border-gray-700 p-4 mt-auto">
+          {/* Reply indicator */}
+          {replyingTo && (
+            <div className="mb-3 p-2 bg-gray-800 rounded border-l-4 border-blue-500">
+              <div className="flex items-center justify-between">
+                <div className="flex-1">
+                  <div className="text-xs text-gray-400 mb-1">
+                    Replying to {replyingTo.isBot ? 'Assistant' : 'You'}:
+                  </div>
+                  <div className="text-sm text-gray-300 truncate">
+                    {replyingTo.content.substring(0, 60)}...
+                  </div>
+                </div>
+                <button
+                  onClick={() => setReplyingTo(null)}
+                  className="ml-2 text-gray-400 hover:text-white"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          )}
+          
           <div className="flex gap-2">
             <input
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-              placeholder="Ask me anything about deals..."
+              placeholder={replyingTo ? `Reply to message...` : "Ask me anything about deals..."}
               className="flex-1 bg-gray-800 text-white px-3 py-2 rounded-lg border border-gray-600 focus:border-blue-500 focus:outline-none text-sm cursor-text"
               style={{ fontFamily: 'Inter, sans-serif' }}
               onMouseDown={(e) => e.stopPropagation()}
@@ -986,6 +1084,7 @@ export default function AIChatbot() {
           clipPath: 'polygon(100% 0%, 0% 100%, 100% 100%)'
         }}
       />
-    </div>
+      </div>
+    </>
   );
 }
