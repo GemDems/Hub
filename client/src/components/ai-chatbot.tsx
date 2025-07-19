@@ -59,7 +59,7 @@ export default function AIChatbot() {
   const [isTyping, setIsTyping] = useState(false);
   const [position, setPosition] = useState<ChatPosition>({ x: window.innerWidth - 420, y: window.innerHeight - 500 });
   const [size, setSize] = useState({ width: 380, height: 480 });
-  const [isDragging, setIsDragging] = useState(false);
+  const [isDraggingWindow, setIsDraggingWindow] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0, width: 0, height: 0 });
@@ -96,6 +96,9 @@ export default function AIChatbot() {
   const [showCancelButton, setShowCancelButton] = useState(false);
   const [pitchTimeout, setPitchTimeout] = useState<NodeJS.Timeout | null>(null);
   const [countdownInterval, setCountdownInterval] = useState<NodeJS.Timeout | null>(null);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -851,7 +854,7 @@ export default function AIChatbot() {
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     if (!chatRef.current) return;
-    setIsDragging(true);
+    setIsDraggingWindow(true);
     setDragOffset({
       x: e.clientX - position.x,
       y: e.clientY - position.y
@@ -859,8 +862,9 @@ export default function AIChatbot() {
   };
 
   const handleMouseUp = () => {
-    setIsDragging(false);
+    setIsDraggingWindow(false);
     setIsResizing(false);
+    setIsDragging(false);
   };
 
   const handleResizeStart = (e: React.MouseEvent, direction: string) => {
@@ -922,7 +926,7 @@ export default function AIChatbot() {
     }
     
     return cleanup;
-  }, [isDragging, isResizing, dragOffset.x, dragOffset.y, position.x, position.y, resizeStart]);
+  }, [isDraggingWindow, isDragging, isResizing, dragOffset.x, dragOffset.y, position.x, position.y, resizeStart]);
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
@@ -990,7 +994,7 @@ export default function AIChatbot() {
 
   // Track mouse movement for tooltip positioning
   const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
+    if (isDraggingWindow) {
       setPosition({
         x: e.clientX - dragOffset.x,
         y: e.clientY - dragOffset.y
@@ -999,6 +1003,43 @@ export default function AIChatbot() {
     if (isHoveringReset) {
       setMousePosition({ x: e.clientX, y: e.clientY });
     }
+  };
+
+  const handleSnapToDefault = () => {
+    if (isCollapsed) {
+      // If collapsed, expand back to normal
+      setIsCollapsed(false);
+      setPosition({ x: window.innerWidth - 420, y: 100 });
+      setSize({ width: 400, height: 500 });
+    } else {
+      // If normal, collapse to show only top bar
+      setIsCollapsed(true);
+      setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 60 });
+      setSize({ width: 400, height: 60 });
+    }
+  };
+
+  const handleDragStart = (e: React.MouseEvent) => {
+    if (isCollapsed) {
+      setIsDragging(true);
+      setDragStartY(e.clientY);
+    }
+  };
+
+  const handleDragMove = (e: React.MouseEvent) => {
+    if (isDragging && isCollapsed) {
+      const deltaY = dragStartY - e.clientY;
+      if (deltaY > 50) { // Threshold to expand
+        setIsCollapsed(false);
+        setSize({ width: 400, height: 500 });
+        setPosition({ x: window.innerWidth - 420, y: Math.max(50, e.clientY - 250) });
+        setIsDragging(false);
+      }
+    }
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
   };
 
   // Add global search trigger function for Search Now button
@@ -1257,7 +1298,8 @@ export default function AIChatbot() {
       >
       {/* Header with controls */}
       <div 
-        className="bg-gray-800 bg-opacity-50 p-3 flex items-center justify-between"
+        className="bg-gray-800 bg-opacity-50 p-3 flex items-center justify-between cursor-grab"
+        onMouseDown={handleDragStart}
       >
         <div className="flex items-center gap-2">
           <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
@@ -1312,10 +1354,10 @@ export default function AIChatbot() {
           <button
             onClick={(e) => {
               e.stopPropagation();
-              handleReset();
+              handleSnapToDefault();
             }}
             className="p-1 hover:bg-gray-600 rounded transition-colors cursor-pointer"
-            title="Snap to default"
+            title={isCollapsed ? "Expand chat" : "Collapse to bottom"}
             onMouseDown={(e) => e.stopPropagation()}
           >
             <MousePointer className="w-4 h-4 text-gray-300" />
@@ -1334,14 +1376,15 @@ export default function AIChatbot() {
         </div>
       </div>
 
-      {/* Messages area */}
-      <div className="flex flex-col" style={{ height: 'calc(100% - 60px)' }}>
-        <div 
-          className="flex-1 overflow-y-auto p-4 space-y-4" 
-          style={{ maxHeight: 'calc(100% - 80px)' }}
-          onMouseDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
-        >
+      {/* Messages area - hidden when collapsed */}
+      {!isCollapsed && (
+        <div className="flex flex-col" style={{ height: 'calc(100% - 60px)' }}>
+          <div 
+            className="flex-1 overflow-y-auto p-4 space-y-4" 
+            style={{ maxHeight: 'calc(100% - 80px)' }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onClick={(e) => e.stopPropagation()}
+          >
           {messages.map((message) => (
             <div
               key={message.id}
@@ -1516,8 +1559,9 @@ export default function AIChatbot() {
               Send
             </button>
           </div>
+          </div>
         </div>
-      </div>
+      )}
       
       {/* Resize handles - all 4 corners */}
       <div
