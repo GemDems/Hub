@@ -1704,13 +1704,13 @@ Can I help you find something excellent in one of these available categories?`
         </div>
       </div>
 
-      {/* Clean background extension when collapsed - matches chat background */}
+      {/* Clean background extension when collapsed - extends infinitely downward */}
       {isCollapsed && (
         <div 
           className="absolute left-0 right-0 border border-gray-700 border-t-0"
           style={{
             top: '60px',
-            bottom: '0px',
+            height: '200vh', // Extends far beyond viewport
             backgroundColor: 'rgba(34, 38, 50, 0.95)',
             backdropFilter: 'blur(10px)',
             borderBottomLeftRadius: '8px',
