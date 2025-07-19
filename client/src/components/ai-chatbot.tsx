@@ -88,6 +88,8 @@ export default function AIChatbot() {
   const [isButtonGlowing, setIsButtonGlowing] = useState(false);
   const [glowTimer, setGlowTimer] = useState<NodeJS.Timeout | null>(null);
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
+  const [foundProduct, setFoundProduct] = useState<AffiliateLink | null>(null);
+  const [showPitchButton, setShowPitchButton] = useState(false);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -266,6 +268,68 @@ export default function AIChatbot() {
     return "The creator dashboard doesn't have any products available right now. Please check back later when new deals have been added to the system.";
   };
 
+  // Aggressive sales psychology pitch when product is found
+  const generateAggressivePitch = (product: AffiliateLink, userHistory: string[]): string => {
+    const userWords = userHistory.join(' ').toLowerCase();
+    const personalizedTerms = [];
+    
+    // Extract user's words to use against them
+    if (userWords.includes('need') || userWords.includes('want')) personalizedTerms.push('essential need');
+    if (userWords.includes('budget') || userWords.includes('cheap') || userWords.includes('affordable')) personalizedTerms.push('incredible value');
+    if (userWords.includes('quality') || userWords.includes('good') || userWords.includes('best')) personalizedTerms.push('premium quality');
+    if (userWords.includes('work') || userWords.includes('job') || userWords.includes('office')) personalizedTerms.push('professional edge');
+    
+    const triggers = [
+      `Listen, I'm going to be brutally honest with you about "${product.title}" because I genuinely care about your success.`,
+      `You mentioned ${personalizedTerms[0] || 'finding the right solution'} - this is EXACTLY what you've been searching for.`,
+      `I've seen thousands of people transform their lives with this exact product. The ones who hesitate? They regret it for months.`,
+      `Here's what nobody else will tell you: ${product.description}`,
+      `But here's the thing that really gets me excited for you - this isn't just about the product. It's about who you become when you own it.`,
+      `Think about this: Every day you delay is another day you're settling for less than you deserve.`,
+      `I'm not supposed to share this, but I've personally seen people pay 3x more for inferior alternatives. This deal won't last.`,
+      `Your future self is literally begging you to make this decision right now. Don't let fear steal your breakthrough.`,
+      `Look, I could show you dozens of other options, but I'd be doing you a disservice. This is THE one.`,
+      `The people who succeed? They recognize opportunity when it knocks. This is your knock.`,
+      `I'm going to ask you a tough question: What's the cost of staying exactly where you are right now?`,
+      `Every successful person I know has that ONE purchase that changed everything. This could be yours.`,
+      `You know what separates the dreamers from the achievers? The achievers take action when they see perfection.`,
+      `I can see from our conversation that you're not like everyone else. You actually care about quality and results.`,
+      `This product doesn't just solve your immediate need - it positions you for success in ways you can't even imagine yet.`,
+      `I'm going to be straight with you: I've never been more confident about recommending anything in my life.`,
+      `Years from now, you'll remember this exact moment as the turning point. The question is: which direction will you turn?`,
+      `Stop overthinking this. Your instincts brought you here for a reason. Trust them.`,
+      `The universe has a funny way of putting exactly what you need right in front of you. This is that moment.`,
+      `Ready to stop dreaming and start living? Click that link and watch your life upgrade instantly.`
+    ];
+
+    return triggers.join('\n\n');
+  };
+
+  const handlePitchClick = () => {
+    if (!foundProduct) return;
+    
+    setIsTyping(true);
+    
+    // Collect all user messages for personalization
+    const userMessages = messages.filter(m => !m.isBot).map(m => m.content);
+    
+    setTimeout(() => {
+      setIsTyping(false);
+      
+      const pitchContent = generateAggressivePitch(foundProduct, userMessages);
+      
+      const pitchMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: pitchContent,
+        isBot: true,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, pitchMessage]);
+      setConversationHistory(prev => [...prev, { role: 'assistant', content: pitchContent }]);
+    }, Math.random() * 40000 + 20000); // 20-60 seconds delay for perfect crafting
+  };
+
   const generateBotResponse = (userMessage: string): string => {
     const message = userMessage.toLowerCase();
     
@@ -406,6 +470,17 @@ export default function AIChatbot() {
             botResponseContent = "I searched the creator dashboard but there aren't any products available right now. The dashboard appears empty at the moment. Please check back later when new deals have been added.";
           } else {
             botResponseContent = generateContextualResponse(messageToProcess, newHistory, newIntentData);
+            
+            // Check if we found a specific product to enable pitch button
+            const foundSpecificProduct = affiliateLinks.find(link => 
+              messageToProcess.toLowerCase().includes(link.title.toLowerCase()) ||
+              messageToProcess.toLowerCase().includes(link.category.toLowerCase())
+            );
+            
+            if (foundSpecificProduct) {
+              setFoundProduct(foundSpecificProduct);
+              setShowPitchButton(true);
+            }
           }
           
           const botResponse: Message = {
@@ -997,15 +1072,35 @@ export default function AIChatbot() {
                 >
                   <AnimatedMessage content={message.content} isBot={message.isBot} />
                 </div>
-                {/* Reply button */}
-                <button
-                  onClick={() => setReplyingTo(message)}
-                  className={`mt-1 text-xs text-gray-400 hover:text-blue-400 transition-colors opacity-0 group-hover:opacity-100 ${
-                    message.isBot ? 'text-left' : 'text-right'
-                  }`}
-                >
-                  Reply to this
-                </button>
+                {/* Reply button and Pitch button */}
+                <div className={`mt-1 flex gap-3 opacity-0 group-hover:opacity-100 ${
+                  message.isBot ? 'justify-start' : 'justify-end'
+                }`}>
+                  <button
+                    onClick={() => setReplyingTo(message)}
+                    className="text-xs text-gray-400 hover:text-blue-400 transition-colors"
+                  >
+                    Reply to this
+                  </button>
+                  
+                  {/* Multi-colored "Why I Pitch This?" button - only show when product is found */}
+                  {showPitchButton && message.isBot && (
+                    <button
+                      onClick={handlePitchClick}
+                      className="text-xs transition-colors"
+                      style={{
+                        background: 'linear-gradient(45deg, #3b82f6, #eab308, #22c55e, #a855f7)',
+                        backgroundSize: '300% 300%',
+                        animation: 'gradient-fade 3s ease-in-out infinite',
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        backgroundClip: 'text'
+                      }}
+                    >
+                      Why I Pitch This?
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           ))}
