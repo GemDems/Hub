@@ -174,29 +174,78 @@ export default function AIChatbot() {
   const generateContextualResponse = (userMessage: string, history: Array<{role: 'user' | 'assistant', content: string}>, intent?: any): string => {
     const lowerQuery = userMessage.toLowerCase();
     
-    // Check conversation context for better responses
-    const previousMessages = history.slice(-4);
-    const hasDiscussedProducts = previousMessages.some(msg => 
-      msg.content.toLowerCase().includes('product') || 
-      msg.content.toLowerCase().includes('deal') || 
-      msg.content.toLowerCase().includes('buy')
-    );
+    // INSTANT PRODUCT RECOMMENDATIONS using real data from creator dashboard
+    if (!affiliateLinks || affiliateLinks.length === 0) {
+      return "I don't see any products available in the creator dashboard right now. Please check back when new deals have been added!";
+    }
 
-    // Handle off-topic queries with direct, helpful responses
+    // Smart product matching based on user query
+    let bestProduct = null;
+    let matchScore = 0;
+
+    affiliateLinks.forEach(product => {
+      let score = 0;
+      const title = product.title.toLowerCase();
+      const description = product.description?.toLowerCase() || '';
+      const category = product.category?.toLowerCase() || '';
+      
+      // High score for direct title/name matches
+      if (lowerQuery.includes(title) || title.includes(lowerQuery)) score += 100;
+      
+      // Category matching
+      const categories = ['electronics', 'fashion', 'home', 'beauty', 'sports', 'books', 'automotive', 'toys', 'health', 'tech'];
+      categories.forEach(cat => {
+        if (lowerQuery.includes(cat) && (category.includes(cat) || title.includes(cat))) score += 50;
+      });
+      
+      // Keyword matching in description
+      const keywords = lowerQuery.split(' ').filter(word => word.length > 2);
+      keywords.forEach(keyword => {
+        if (title.includes(keyword) || description.includes(keyword)) score += 20;
+      });
+      
+      // General shopping intent
+      if (lowerQuery.includes('buy') || lowerQuery.includes('deal') || lowerQuery.includes('product') || lowerQuery.includes('need')) {
+        score += 10;
+      }
+      
+      if (score > matchScore) {
+        matchScore = score;
+        bestProduct = product;
+      }
+    });
+
+    // If no good match, pick featured/elite product or first available
+    if (!bestProduct) {
+      bestProduct = affiliateLinks.find(p => p.isElitePick) || affiliateLinks[0];
+    }
+
+    // Generate instant recommendation with ALL real product data
+    const priceText = bestProduct.price ? `$${bestProduct.price}` : 'Great price';
+    const originalPriceText = bestProduct.originalPrice ? ` (was $${bestProduct.originalPrice} - save $${bestProduct.originalPrice - bestProduct.price}!)` : '';
+    const verifiedBadge = bestProduct.isVerified ? '✅ VERIFIED' : '';
+    const eliteBadge = bestProduct.isElitePick ? '⭐ ELITE PICK' : '';
+    const stockText = bestProduct.stockCount ? `Only ${bestProduct.stockCount} left!` : '';
+    
+    // Set this as the found product for instant pitch button
+    setTimeout(() => {
+      setFoundProduct(bestProduct);
+      setShowPitchButton(true);
+    }, 100);
+
+    return `🎯 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
+
+💰 ${priceText}${originalPriceText}
+📂 Category: ${bestProduct.category || 'Featured'}
+${stockText ? `⚡ ${stockText}` : ''}
+
+${bestProduct.description || 'This is one of our top-performing deals!'}
+
+${bestProduct.isElitePick ? 'This is our #1 recommended product based on customer results!' : 'Highly rated by our community!'} Ready to grab this deal?`;
+
+    // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
       return `I specialize in product deals rather than weather updates. However, if you need weather-related gear like jackets, umbrellas, or outdoor equipment, I can help you find those deals.`;
-    } 
-    
-    if (lowerQuery.includes('news') || lowerQuery.includes('politics') || lowerQuery.includes('election')) {
-      return `I focus on finding product deals rather than current events. Is there anything specific you'd like to shop for today?`;
-    }
-    
-    if (lowerQuery.includes('stock') || lowerQuery.includes('crypto') || lowerQuery.includes('bitcoin') || lowerQuery.includes('investment')) {
-      return `I help with product deals rather than financial markets. Are you looking for any specific products or electronics today?`;
-    }
-    
-    if (lowerQuery.includes('quantum') || lowerQuery.includes('physics') || lowerQuery.includes('medical') || lowerQuery.includes('legal') || lowerQuery.includes('doctor')) {
-      return `That's outside my area of expertise. I specialize in finding great deals on products. What type of items are you interested in purchasing?`;
     }
 
     // Handle progressive information gathering with Search Now button
@@ -1062,9 +1111,12 @@ export default function AIChatbot() {
         y: e.clientY - position.y
       });
     } else {
-      // For collapsed state, use existing drag logic
-      setIsDragging(true);
-      setDragStartY(e.clientY);
+      // For collapsed state, enable dragging to move it anywhere
+      setIsDraggingWindow(true);
+      setDragOffset({
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      });
     }
   };
 
@@ -1351,13 +1403,16 @@ export default function AIChatbot() {
         onClick={isCollapsed ? (e) => {
           e.stopPropagation();
           // Only expand if clicking in the center area, not corners (resize handles)
-          const rect = chatRef.current?.getBoundingClientRect();
-          if (rect) {
-            const clickX = e.clientX - rect.left;
-            const clickY = e.clientY - rect.top;
-            // Exclude corner areas (first/last 20px of width, any height)
-            if (clickX > 20 && clickX < rect.width - 20) {
-              handleSnapToDefault();
+          // And only if not dragging
+          if (!isDraggingWindow) {
+            const rect = chatRef.current?.getBoundingClientRect();
+            if (rect) {
+              const clickX = e.clientX - rect.left;
+              const clickY = e.clientY - rect.top;
+              // Exclude corner areas (first/last 20px of width, any height)
+              if (clickX > 20 && clickX < rect.width - 20) {
+                handleSnapToDefault();
+              }
             }
           }
         } : undefined}
