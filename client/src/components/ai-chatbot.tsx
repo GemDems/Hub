@@ -277,38 +277,83 @@ export default function AIChatbot() {
       productMatches.sort((a, b) => b.score - a.score);
       const topMatches = productMatches.slice(0, 3); // Top 3 products
 
-      // Handle no matches found - secret manipulation to redirect to available products
+      // Handle no matches found - graceful responses without random products
       if (topMatches.length === 0) {
-        // Secret strategy: Acknowledge request but redirect to what we actually have
-        const availableProduct = affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
+        // Try broader keyword matching first
+        let broadMatches = [];
         
-        // Set a random product for pitch button
-        setTimeout(() => {
-          setFoundProduct(availableProduct);
-          setShowPitchButton(true);
-        }, 100);
+        // Enhanced keyword analysis - check for broader categories
+        const broadKeywords = {
+          'tech': ['electronics', 'gadget', 'device', 'smart', 'digital'],
+          'home': ['house', 'room', 'kitchen', 'living', 'furniture'],
+          'health': ['wellness', 'fitness', 'medical', 'body', 'care'],
+          'outdoor': ['garden', 'camping', 'sports', 'adventure', 'nature'],
+          'fashion': ['clothing', 'style', 'wear', 'dress', 'accessories'],
+          'food': ['cooking', 'recipe', 'meal', 'nutrition', 'kitchen'],
+          'beauty': ['skincare', 'makeup', 'cosmetic', 'appearance', 'face'],
+          'education': ['learning', 'course', 'skill', 'training', 'knowledge']
+        };
 
-        const redirectResponses = [
-          `I understand you're looking for that specifically. While I don't have an exact match, I found something that caught my attention: **${availableProduct.title}** ${availableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${availableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+        // Check if user query matches any broad categories
+        for (const [category, keywords] of Object.entries(broadKeywords)) {
+          if (keywords.some(keyword => lowerQuery.includes(keyword)) || lowerQuery.includes(category)) {
+            // Find products that might relate to this category
+            affiliateLinks.forEach(product => {
+              const productText = `${product.title} ${product.description} ${product.category} ${product.aiPrivateInfo}`.toLowerCase();
+              if (keywords.some(keyword => productText.includes(keyword)) || productText.includes(category)) {
+                broadMatches.push(product);
+              }
+            });
+            break;
+          }
+        }
 
-${availableProduct.description || 'This is genuinely impressive quality.'} ${availableProduct.stock > 0 ? `Only ${availableProduct.stock} left! ` : ''}I rarely see products with this level of craftsmanship. ${availableProduct.aiPrivateInfo || 'Built to exceptional standards.'} 
+        // If we found broad matches, show the best one
+        if (broadMatches.length > 0) {
+          const bestBroadMatch = broadMatches[0];
+          
+          setTimeout(() => {
+            setFoundProduct(bestBroadMatch);
+            setShowPitchButton(true);
+          }, 100);
 
-<a href="${availableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${availableProduct.title} →</a>`,
+          const broadResponses = [
+            `I searched for exactly what you mentioned but didn't find a direct match. However, I found something in a related category that might interest you: **${bestBroadMatch.title}** ${bestBroadMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestBroadMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
 
-          `That's a great question! I searched thoroughly and while I don't have exactly what you mentioned, I discovered something even better: **${availableProduct.title}** ${availableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${availableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+${bestBroadMatch.description || 'Quality craftsmanship and reliable performance.'} ${bestBroadMatch.stock > 0 ? `Only ${bestBroadMatch.stock} left! ` : ''}${bestBroadMatch.aiPrivateInfo || 'Built to professional standards.'}
 
-${availableProduct.description || 'The quality here is remarkable.'} ${availableProduct.stock > 0 ? `Only ${availableProduct.stock} left! ` : ''}This actually solves the same need in a superior way. ${availableProduct.aiPrivateInfo || 'Expertly designed and built to last.'} 
+<a href="${bestBroadMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestBroadMatch.title} →</a>`,
 
-<a href="${availableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${availableProduct.title} →</a>`,
+            `I don't have exactly what you're looking for, but I found something related that caught my attention: **${bestBroadMatch.title}** ${bestBroadMatch.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${bestBroadMatch.isVerified === 1 ? '✓ VERIFIED' : ''}
 
-          `Interesting request! I don't have exactly what you described, but here's something that might be even better for your needs: **${availableProduct.title}** ${availableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${availableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+${bestBroadMatch.description || 'Exceptional attention to detail.'} ${bestBroadMatch.stock > 0 ? `Only ${bestBroadMatch.stock} left! ` : ''}${bestBroadMatch.aiPrivateInfo || 'Designed for reliability.'}
 
-${availableProduct.description || 'This delivers exceptional value.'} ${availableProduct.stock > 0 ? `Only ${availableProduct.stock} left! ` : ''}The attention to detail is impressive. ${availableProduct.aiPrivateInfo || 'Solid construction and reliable performance.'} 
+<a href="${bestBroadMatch.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${bestBroadMatch.title} →</a>`
+          ];
 
-<a href="${availableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${availableProduct.title} →</a>`
+          return broadResponses[Math.floor(Math.random() * broadResponses.length)];
+        }
+
+        // If no broad matches either, gracefully decline with helpful responses
+        const gracefulResponses = [
+          `I searched thoroughly through all available products, but I don't currently have anything that matches what you're looking for. The creator dashboard doesn't have that specific item right now. 
+
+Is there something else you need help finding? I might have related products available.`,
+
+          `I understand what you're looking for, but I don't see anything matching that description in the current product catalog. The inventory seems focused on different categories right now.
+
+What other types of products might interest you? I could check what's actually available.`,
+
+          `I've analyzed all available products and unfortunately don't have a match for your specific request. The current selection doesn't include that particular item.
+
+Would you like me to suggest what types of products are currently available instead?`,
+
+          `After checking the entire product database, I don't have what you're asking about. The creator hasn't added that type of product to the catalog yet.
+
+Can I help you find something else that might meet your needs?`
         ];
 
-        return redirectResponses[Math.floor(Math.random() * redirectResponses.length)];
+        return gracefulResponses[Math.floor(Math.random() * gracefulResponses.length)];
       }
 
       // If we found matches, show them
@@ -853,31 +898,19 @@ ${product.description || 'This delivers exactly what you need.'} ${stockText ? `
       return "That's outside my expertise! 🤖 I'm specialized in finding killer deals and helping you choose the right products. What can I help you shop for instead?";
     }
     
-    // Default response with conversion focus - secret redirection strategy
+    // Default response - helpful without forcing unrelated products
     if (hasProducts) {
-      const redirectProduct = randomProduct;
-      
-      // Set product for pitch button
-      setTimeout(() => {
-        setFoundProduct(redirectProduct);
-        setShowPitchButton(true);
-      }, 100);
+      const helpfulResponses = [
+        `That's an interesting question! I'm here to help you find great deals and quality products. What specific type of item are you looking for? I can check what's currently available in our catalog.`,
 
-      const fallbackResponses = [
-        `That's an interesting question! You know what might actually be perfect for you? **${redirectProduct?.title}** ${redirectProduct?.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${redirectProduct?.isVerified === 1 ? '✓ VERIFIED' : ''}
+        `I'd love to help you with that! To give you the best recommendations, could you tell me more about what you need? I can search through all available products to find the perfect match.`,
 
-${redirectProduct?.description || 'This has exceptional quality craftsmanship.'} ${redirectProduct?.stock > 0 ? `Only ${redirectProduct?.stock} left! ` : ''}The attention to detail here is remarkable. ${redirectProduct?.aiPrivateInfo || 'Built to professional standards.'}
+        `Great question! I specialize in finding quality deals and products that deliver real value. What category of products interests you most? I can check what's currently in stock.`,
 
-<a href="${redirectProduct?.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${redirectProduct?.title} →</a>`,
-
-        `Interesting point! While I don't have exactly what you mentioned, I discovered something that caught my attention: **${redirectProduct?.title}** ${redirectProduct?.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${redirectProduct?.isVerified === 1 ? '✓ VERIFIED' : ''}
-
-${redirectProduct?.description || 'The quality here is genuinely impressive.'} ${redirectProduct?.stock > 0 ? `Only ${redirectProduct?.stock} left! ` : ''}This actually delivers superior value. ${redirectProduct?.aiPrivateInfo || 'Expertly designed and reliable.'}
-
-<a href="${redirectProduct?.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${redirectProduct?.title} →</a>`
+        `I'm here to help you discover amazing products and deals! What kind of item are you shopping for? I can analyze our entire catalog to find exactly what you need.`
       ];
 
-      return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
+      return helpfulResponses[Math.floor(Math.random() * helpfulResponses.length)];
     }
     return "I'm here to help you find amazing deals! 🛍️ What kind of products are you looking for? I can point you toward the best value picks.";
   };
