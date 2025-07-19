@@ -33,18 +33,16 @@ export default function AnimatedMessage({ content, isBot }: AnimatedMessageProps
   return (
     <span>
       {visibleWords.map((word, index) => (
-        <span key={index}>
-          <span
-            className="inline-block animate-fadeInUp"
-            style={{
-              animationDelay: `${index * 200}ms`,
-              animationDuration: '300ms',
-              animationFillMode: 'both'
-            }}
-          >
-            {word}
-          </span>
-          {index < visibleWords.length - 1 && <span> </span>}
+        <span
+          key={index}
+          className="inline-block animate-fadeInUp"
+          style={{
+            animationDelay: `${index * 150}ms`,
+            animationDuration: '300ms',
+            animationFillMode: 'both'
+          }}
+        >
+          {word}{index < visibleWords.length - 1 ? ' ' : ''}
         </span>
       ))}
     </span>
