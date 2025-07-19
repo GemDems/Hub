@@ -90,6 +90,8 @@ export default function AIChatbot() {
   const [replyingTo, setReplyingTo] = useState<Message | null>(null);
   const [foundProduct, setFoundProduct] = useState<AffiliateLink | null>(null);
   const [showPitchButton, setShowPitchButton] = useState(false);
+  const [countdown, setCountdown] = useState(0);
+  const [showNewMessagePopup, setShowNewMessagePopup] = useState(false);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -310,11 +312,29 @@ export default function AIChatbot() {
     
     setIsTyping(true);
     
+    // Set initial countdown for pitch response (20-60 seconds)
+    const pitchDelay = Math.random() * 40000 + 20000;
+    const initialCountdown = Math.ceil(pitchDelay / 1000);
+    setCountdown(initialCountdown);
+    
+    // Countdown timer
+    const countdownInterval = setInterval(() => {
+      setCountdown(prev => {
+        if (prev <= 1) {
+          clearInterval(countdownInterval);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+    
     // Collect all user messages for personalization
     const userMessages = messages.filter(m => !m.isBot).map(m => m.content);
     
     setTimeout(() => {
       setIsTyping(false);
+      setCountdown(0);
+      clearInterval(countdownInterval);
       
       const pitchContent = generateAggressivePitch(foundProduct, userMessages);
       
@@ -327,7 +347,15 @@ export default function AIChatbot() {
       
       setMessages(prev => [...prev, pitchMessage]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: pitchContent }]);
-    }, Math.random() * 40000 + 20000); // 20-60 seconds delay for perfect crafting
+      
+      // Show popup notification for new message
+      setShowNewMessagePopup(true);
+      
+      // Auto-hide popup after 5 seconds
+      setTimeout(() => {
+        setShowNewMessagePopup(false);
+      }, 5000);
+    }, pitchDelay);
   };
 
   const generateBotResponse = (userMessage: string): string => {
@@ -481,10 +509,26 @@ export default function AIChatbot() {
         }, 300);
 
         // Generate contextual AI response with search
+        // Set countdown for search response
+        const searchDelay = 2000;
+        setCountdown(Math.ceil(searchDelay / 1000));
+        
+        const countdownInterval = setInterval(() => {
+          setCountdown(prev => {
+            if (prev <= 1) {
+              clearInterval(countdownInterval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
         setTimeout(() => {
           setIsSearching(false);
           setSearchProducts([]);
           setIsTyping(false);
+          setCountdown(0);
+          clearInterval(countdownInterval);
           
           // Check if products are available before generating response
           const hasProducts = affiliateLinks && affiliateLinks.length > 0;
@@ -519,11 +563,34 @@ export default function AIChatbot() {
           // Add bot response to conversation history
           setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponseContent }]);
           setMessages(prev => [...prev, botResponse]);
-        }, 2000); // 2 second search animation
+          
+          // Show popup notification for new message
+          setShowNewMessagePopup(true);
+          
+          // Auto-hide popup after 5 seconds
+          setTimeout(() => {
+            setShowNewMessagePopup(false);
+          }, 5000);
+        }, searchDelay);
       } else {
         // Generate response without search animation
+        const normalDelay = 1500;
+        setCountdown(Math.ceil(normalDelay / 1000));
+        
+        const countdownInterval = setInterval(() => {
+          setCountdown(prev => {
+            if (prev <= 1) {
+              clearInterval(countdownInterval);
+              return 0;
+            }
+            return prev - 1;
+          });
+        }, 1000);
+        
         setTimeout(() => {
           setIsTyping(false);
+          setCountdown(0);
+          clearInterval(countdownInterval);
           
           const botResponseContent = generateContextualResponse(messageToProcess, newHistory, newIntentData);
           
@@ -553,7 +620,15 @@ export default function AIChatbot() {
           // Add bot response to conversation history
           setConversationHistory(prev => [...prev, { role: 'assistant', content: botResponse.content }]);
           setMessages(prev => [...prev, botResponse]);
-        }, 1500); // Normal response time
+          
+          // Show popup notification for new message
+          setShowNewMessagePopup(true);
+          
+          // Auto-hide popup after 5 seconds
+          setTimeout(() => {
+            setShowNewMessagePopup(false);
+          }, 5000);
+        }, normalDelay);
       }
       
     } catch (error) {
@@ -1178,10 +1253,18 @@ export default function AIChatbot() {
           {isTyping && !isSearching && (
             <div className="flex justify-start">
               <div className="bg-blue-600 bg-opacity-40 border border-blue-500 border-opacity-30 text-white px-4 py-2 rounded-lg">
-                <div className="flex space-x-1">
-                  <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                  <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                <div className="flex items-center space-x-3">
+                  <div className="flex space-x-1">
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce"></div>
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                    <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  </div>
+                  <div className="text-sm text-gray-300">
+                    Crafting perfect response... {countdown > 0 ? `~${countdown}s` : ''}
+                  </div>
+                </div>
+                <div className="text-xs text-gray-400 mt-1">
+                  You can still send messages while I'm thinking
                 </div>
               </div>
             </div>
@@ -1189,6 +1272,19 @@ export default function AIChatbot() {
           
           <div ref={messagesEndRef} />
         </div>
+
+        {/* New message popup notification */}
+        {showNewMessagePopup && (
+          <div className="absolute top-12 left-4 right-4 bg-blue-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center justify-between z-50">
+            <span className="text-sm">New message ready! 👆</span>
+            <button
+              onClick={() => setShowNewMessagePopup(false)}
+              className="ml-2 text-white hover:text-gray-300"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
 
         {/* Input area */}
         <div className="border-t border-gray-700 p-4 mt-auto">
