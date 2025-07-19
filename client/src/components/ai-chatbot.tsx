@@ -488,7 +488,8 @@ ${product.description || 'This delivers exactly what you need.'} ${stockText ? `
 <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${product.title} →</a>`
         ];
 
-        return manipulativeResponses[Math.floor(Math.random() * manipulativeResponses.length)];
+        // Use the new ChatGPT-style response instead
+        return generateChatGPTStyleResponse(userMessage, bestMatch, history, allUserInput);
       }
     }
     
@@ -857,133 +858,40 @@ ${product.description || 'This delivers exactly what you need.'} ${stockText ? `
     setShowCancelButton(false);
   };
 
+  // Dynamic ChatGPT-style response generator
+  const generateChatGPTStyleResponse = (userMessage: string, bestMatch: any, history: any[], allInput: string) => {
+    const product = bestMatch.product;
+    const score = bestMatch.score;
+    const reasons = bestMatch.reasons;
+    
+    // Analyze conversation context
+    const messageCount = history.length;
+    const userHasBeenSpecific = allInput.split(' ').length > 5;
+    const isFollowUp = messageCount > 2;
+    
+    // Generate truly dynamic response based on context
+    const responseStyles = [
+      // Analytical/Helpful
+      () => `Based on what you're looking for, **${product.title}** seems like a perfect match. ${product.description} ${product.stock > 0 ? 'Only ' + product.stock + ' left in stock. ' : ''}${product.aiPrivateInfo || 'The quality here is exceptional.'} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${product.title} →</a>`,
+      
+      // Direct/Confident  
+      () => `I found exactly what you need - **${product.title}**. ${product.description} ${product.isElitePick === 1 ? 'This is one of our elite picks for good reason. ' : ''}${product.stock > 0 ? 'Just ' + product.stock + ' remaining. ' : ''}${product.aiPrivateInfo || ''} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Check it out here →</a>`,
+      
+      // Conversational/Personal
+      () => `You know what's interesting about your request? **${product.title}** fits exactly what you described. ${product.description} ${product.isVerified === 1 ? 'It\'s verified quality too. ' : ''}${product.stock > 0 ? 'Only ' + product.stock + ' available right now. ' : ''}${product.aiPrivateInfo || 'Really solid choice.'} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Take a look →</a>`,
+      
+      // Explanatory/Educational
+      () => `Let me explain why **${product.title}** matches your needs. ${product.description} ${product.category ? 'It\'s in the ' + product.category + ' category. ' : ''}${product.stock > 0 ? 'Stock is limited to ' + product.stock + ' units. ' : ''}${product.aiPrivateInfo || 'The specifications are impressive.'} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">See details →</a>`
+    ];
+    
+    // Choose style based on context and add variation
+    const styleIndex = (userMessage.length + messageCount + Date.now()) % responseStyles.length;
+    return responseStyles[styleIndex]();
+  };
+
   const generateBotResponse = (userMessage: string): string => {
-    const message = userMessage.toLowerCase();
-    const timestamp = Date.now();
-    
-    // If we have real products, include them in responses with variation
-    const hasProducts = affiliateLinks.length > 0;
-    const randomProduct = hasProducts ? affiliateLinks[Math.floor((timestamp * 7) % affiliateLinks.length)] : null;
-    
-    // Product-specific responses with dynamic variation
-    if (message.includes('best') || message.includes('recommend') || message.includes('which')) {
-      if (hasProducts && randomProduct) {
-        // Enable pitch button for product recommendations
-        setTimeout(() => {
-          setFoundProduct(randomProduct);
-          setShowPitchButton(true);
-          console.log('Product recommendation found, enabling pitch button:', randomProduct.title);
-        }, 100);
-        
-        // Generate unique responses each time
-        const responseVariations = [
-          `Absolutely! I've got the perfect match: "${randomProduct.title}" - this ${randomProduct.category} gem has been delivering incredible results. ${randomProduct.description.slice(0, 80)}... Ready for the details?`,
-          `Perfect timing! "${randomProduct.title}" is exactly what you need. Here's why it's special: ${randomProduct.description.slice(0, 90)}... Want me to secure this for you?`,
-          `I've analyzed your needs and "${randomProduct.title}" stands out as the clear winner. ${randomProduct.description.slice(0, 85)}... This could be game-changing for you.`,
-          `Outstanding question! "${randomProduct.title}" is my top recommendation because ${randomProduct.description.slice(0, 70)}... Shall I show you why this beats everything else?`,
-          `You're in luck! "${randomProduct.title}" in the ${randomProduct.category} space is phenomenal. ${randomProduct.description.slice(0, 95)}... Want the insider details?`
-        ];
-        
-        const selectedResponse = responseVariations[timestamp % responseVariations.length];
-        return selectedResponse;
-      }
-      return getRandomResponse('product');
-    }
-    
-    // Show available deals with dynamic presentation
-    if (message.includes('deals') || message.includes('what') || message.includes('show') || message.includes('available')) {
-      if (hasProducts) {
-        // Rotate through different products as primary focus
-        const shuffledProducts = [...affiliateLinks].sort(() => (timestamp * 3) % 2 - 1);
-        const topDeals = shuffledProducts.slice(0, 3);
-        const dealsList = topDeals.map(deal => `• ${deal.title} (${deal.category}) - ${deal.description.slice(0, 50)}...`).join('\n');
-        
-        // Enable pitch button with rotating featured product
-        const featuredProduct = shuffledProducts[0];
-        setTimeout(() => {
-          setFoundProduct(featuredProduct);
-          setShowPitchButton(true);
-          console.log('Deal list shown, enabling pitch button for featured product:', featuredProduct.title);
-        }, 100);
-        
-        // Dynamic deal presentation variations
-        const dealResponses = [
-          `🔥 Here are today's exclusive deals:\n\n${dealsList}\n\nI'm personally excited about "${featuredProduct.title}" - it's been flying off the shelves! Which interests you most?`,
-          `💎 Check out these premium opportunities:\n\n${dealsList}\n\n"${featuredProduct.title}" is my current top pick. Want to know why it's crushing the competition?`,
-          `⚡ Fresh deals just dropped:\n\n${dealsList}\n\nBetween you and me, "${featuredProduct.title}" is about to explode in popularity. Ready to get ahead of the curve?`,
-          `🎯 Curated just for you:\n\n${dealsList}\n\n"${featuredProduct.title}" caught my attention immediately - the value here is insane. Shall we dive deeper?`,
-          `🚀 Today's hottest opportunities:\n\n${dealsList}\n\nI've been tracking "${featuredProduct.title}" and the numbers are incredible. Want the full breakdown?`
-        ];
-        
-        return dealResponses[timestamp % dealResponses.length];
-      }
-      return "We're loading up some incredible deals right now! 🚀 Check back in a few minutes for the latest drops. Want me to notify you when they're live?";
-    }
-    
-    // Category-specific recommendations
-    for (const link of affiliateLinks) {
-      if (message.includes(link.category.toLowerCase()) || message.includes(link.title.toLowerCase())) {
-        // Enable pitch button for specific product matches
-        setTimeout(() => {
-          setFoundProduct(link);
-          setShowPitchButton(true);
-          console.log('Category/product match found, enabling pitch button:', link.title);
-        }, 100);
-        
-        return `YES! "${link.title}" is exactly what you need! 🎯 ${link.description.slice(0, 80)}... This is flying off the shelves. Ready to grab it?`;
-      }
-    }
-    
-    // Comparison questions
-    if (message.includes('compare') || message.includes('difference') || message.includes('vs') || message.includes('better')) {
-      if (hasProducts && affiliateLinks.length >= 2) {
-        const product1 = affiliateLinks[0];
-        const product2 = affiliateLinks[1];
-        return `Great question! 🤔 Between "${product1.title}" and "${product2.title}", I'd lean toward ${product1.title} because of the value. Want me to break down the differences?`;
-      }
-      return getRandomResponse('comparison');
-    }
-    
-    // Urgency triggers
-    if (message.includes('how long') || message.includes('when') || message.includes('expire') || message.includes('deal')) {
-      return getRandomResponse('urgency');
-    }
-    
-    // Objection handling
-    if (message.includes('tried before') || message.includes('refund') || message.includes('safe') || message.includes('legit')) {
-      return getRandomResponse('objection');
-    }
-    
-    // General conversation
-    if (message.includes('hello') || message.includes('hi') || message.includes('hey')) {
-      return getRandomResponse('greeting');
-    }
-    
-    // General questions and uncertainty handling
-    if (message.includes('weather') || message.includes('news') || message.includes('stock') || message.includes('crypto')) {
-      return "I focus on finding you the best deals and products! 🎯 I don't have access to live weather/news/stocks, but I can definitely help you find what you're shopping for. What kind of deals are you hunting today?";
-    }
-    
-    // Complex questions beyond scope
-    if (message.includes('quantum') || message.includes('physics') || message.includes('medical') || message.includes('legal')) {
-      return "That's outside my expertise! 🤖 I'm specialized in finding killer deals and helping you choose the right products. What can I help you shop for instead?";
-    }
-    
-    // Default response - helpful without forcing unrelated products
-    if (hasProducts) {
-      const helpfulResponses = [
-        `That's an interesting question! I'm here to help you find great deals and quality products. What specific type of item are you looking for? I can check what's currently available in our catalog.`,
-
-        `I'd love to help you with that! To give you the best recommendations, could you tell me more about what you need? I can search through all available products to find the perfect match.`,
-
-        `Great question! I specialize in finding quality deals and products that deliver real value. What category of products interests you most? I can check what's currently in stock.`,
-
-        `I'm here to help you discover amazing products and deals! What kind of item are you shopping for? I can analyze our entire catalog to find exactly what you need.`
-      ];
-
-      return helpfulResponses[Math.floor(Math.random() * helpfulResponses.length)];
-    }
-    return "I'm here to help you find amazing deals! 🛍️ What kind of products are you looking for? I can point you toward the best value picks.";
+    // Use the advanced AI search system instead of template responses
+    return generateAdvancedAIResponse(userMessage, conversationHistory);
   };
 
   const handleSendMessage = async () => {
