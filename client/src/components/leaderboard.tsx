@@ -128,8 +128,8 @@ export default function Leaderboard() {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8" data-leaderboard>
-      <div className="text-center mb-6">
-        <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 bg-clip-text text-transparent mb-3">
+      <div className="text-center mb-3">
+        <h2 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 via-yellow-500 to-yellow-600 bg-clip-text text-transparent mb-2">
           Elite Performance Leaderboard
         </h2>
         <p className="text-gray-600 text-lg">
@@ -137,7 +137,7 @@ export default function Leaderboard() {
         </p>
       </div>
 
-      <div className="grid md:grid-cols-1 gap-8 max-w-3xl mx-auto px-4">
+      <div className="grid md:grid-cols-1 gap-8 max-w-3xl mx-auto px-4 mt-2">
         {/* Top Savers */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6">
