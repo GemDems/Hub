@@ -1038,7 +1038,8 @@ export default function AIChatbot() {
     } else {
       // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
-      setPosition({ x: Math.max(0, window.innerWidth - 420), y: Math.max(0, window.innerHeight - 70) }); // Ensure it's visible and not cut off
+      // Position slightly off-screen to the right to look like it "left the site"
+      setPosition({ x: window.innerWidth - 350, y: window.innerHeight - 65 }); // Extends 50px beyond screen
       setSize({ width: 400, height: 60 });
       setShouldGlowRestoreButton(false); // Don't auto-glow, only on hover
       // Don't reset any chat state - messages, history, typing status should remain
@@ -1324,8 +1325,8 @@ export default function AIChatbot() {
           isCollapsed ? 'cursor-pointer' : 'cursor-move'
         } ${isCollapsed ? 'rounded-b-none' : ''}`}
         style={{
-          left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)),
-          top: Math.max(0, Math.min(position.y, window.innerHeight - size.height)),
+          left: isCollapsed ? position.x : Math.max(0, Math.min(position.x, window.innerWidth - size.width)),
+          top: isCollapsed ? position.y : Math.max(0, Math.min(position.y, window.innerHeight - size.height)),
           width: size.width,
           height: size.height,
           backgroundColor: 'rgba(34, 38, 50, 0.95)',
@@ -1334,8 +1335,16 @@ export default function AIChatbot() {
         }}
         onClick={isCollapsed ? (e) => {
           e.stopPropagation();
-          // When collapsed, clicking anywhere on the popup expands back to normal
-          handleSnapToDefault();
+          // Only expand if clicking in the center area, not corners (resize handles)
+          const rect = chatRef.current?.getBoundingClientRect();
+          if (rect) {
+            const clickX = e.clientX - rect.left;
+            const clickY = e.clientY - rect.top;
+            // Exclude corner areas (first/last 20px of width, any height)
+            if (clickX > 20 && clickX < rect.width - 20) {
+              handleSnapToDefault();
+            }
+          }
         } : undefined}
         onMouseDown={isCollapsed ? undefined : handleMouseDown}
       >
@@ -1672,12 +1681,18 @@ export default function AIChatbot() {
       {isCollapsed && (
         <>
           <div
-            className="absolute top-0 left-0 w-2 h-full cursor-w-resize opacity-0"
-            onMouseDown={(e) => handleResizeStart(e, 'left')}
+            className="absolute top-0 left-0 w-5 h-full cursor-w-resize opacity-0"
+            onMouseDown={(e) => {
+              e.stopPropagation(); // Prevent expansion click
+              handleResizeStart(e, 'left');
+            }}
           />
           <div
-            className="absolute top-0 right-0 w-2 h-full cursor-e-resize opacity-0"
-            onMouseDown={(e) => handleResizeStart(e, 'right')}
+            className="absolute top-0 right-0 w-5 h-full cursor-e-resize opacity-0"
+            onMouseDown={(e) => {
+              e.stopPropagation(); // Prevent expansion click
+              handleResizeStart(e, 'right');
+            }}
           />
         </>
       )}
