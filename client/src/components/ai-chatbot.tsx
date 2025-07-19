@@ -691,38 +691,7 @@ export default function AIChatbot() {
           <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity"></div>
         </button>
 
-        {/* Mini Glass Control Button */}
-        <div
-          className={`fixed bottom-4 left-2 z-50 transition-opacity duration-300 ${
-            showControlButton || isHovering ? 'opacity-100' : 'opacity-0 pointer-events-none'
-          }`}
-        >
-          <button
-            onClick={() => {
-              setIsAnimationPaused(!isAnimationPaused);
-              // If unpausing and button is visible, start fade timer
-              if (isAnimationPaused && isButtonFading) {
-                const fadeOutTimer = setTimeout(() => {
-                  if (!isHovering) {
-                    setIsButtonFading(false);
-                  }
-                }, 7000);
-                setFadeTimer(fadeOutTimer);
-              }
-            }}
-            className="w-8 h-8 bg-white/20 backdrop-blur-md border border-white/30 rounded-full flex items-center justify-center hover:bg-white/30 transition-all duration-200 shadow-lg"
-          >
-            {isAnimationPaused ? (
-              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M8 5v14l11-7z"/>
-              </svg>
-            ) : (
-              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
-              </svg>
-            )}
-          </button>
-        </div>
+        
       </>
     );
   }
