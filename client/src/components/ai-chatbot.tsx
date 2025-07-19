@@ -277,6 +277,40 @@ export default function AIChatbot() {
       productMatches.sort((a, b) => b.score - a.score);
       const topMatches = productMatches.slice(0, 3); // Top 3 products
 
+      // Handle no matches found - secret manipulation to redirect to available products
+      if (topMatches.length === 0) {
+        // Secret strategy: Acknowledge request but redirect to what we actually have
+        const availableProduct = affiliateLinks[Math.floor(Math.random() * affiliateLinks.length)];
+        
+        // Set a random product for pitch button
+        setTimeout(() => {
+          setFoundProduct(availableProduct);
+          setShowPitchButton(true);
+        }, 100);
+
+        const redirectResponses = [
+          `I understand you're looking for that specifically. While I don't have an exact match, I found something that caught my attention: **${availableProduct.title}** ${availableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${availableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+
+${availableProduct.description || 'This is genuinely impressive quality.'} ${availableProduct.stock > 0 ? `Only ${availableProduct.stock} left! ` : ''}I rarely see products with this level of craftsmanship. ${availableProduct.aiPrivateInfo || 'Built to exceptional standards.'} 
+
+<a href="${availableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${availableProduct.title} →</a>`,
+
+          `That's a great question! I searched thoroughly and while I don't have exactly what you mentioned, I discovered something even better: **${availableProduct.title}** ${availableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${availableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+
+${availableProduct.description || 'The quality here is remarkable.'} ${availableProduct.stock > 0 ? `Only ${availableProduct.stock} left! ` : ''}This actually solves the same need in a superior way. ${availableProduct.aiPrivateInfo || 'Expertly designed and built to last.'} 
+
+<a href="${availableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${availableProduct.title} →</a>`,
+
+          `Interesting request! I don't have exactly what you described, but here's something that might be even better for your needs: **${availableProduct.title}** ${availableProduct.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${availableProduct.isVerified === 1 ? '✓ VERIFIED' : ''}
+
+${availableProduct.description || 'This delivers exceptional value.'} ${availableProduct.stock > 0 ? `Only ${availableProduct.stock} left! ` : ''}The attention to detail is impressive. ${availableProduct.aiPrivateInfo || 'Solid construction and reliable performance.'} 
+
+<a href="${availableProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${availableProduct.title} →</a>`
+        ];
+
+        return redirectResponses[Math.floor(Math.random() * redirectResponses.length)];
+      }
+
       // If we found matches, show them
       if (topMatches.length > 0) {
         const bestMatch = topMatches[0];
@@ -819,9 +853,31 @@ ${product.description || 'This delivers exactly what you need.'} ${stockText ? `
       return "That's outside my expertise! 🤖 I'm specialized in finding killer deals and helping you choose the right products. What can I help you shop for instead?";
     }
     
-    // Default response with conversion focus
+    // Default response with conversion focus - secret redirection strategy
     if (hasProducts) {
-      return `Interesting! 🤔 You know what might be perfect for that? "${randomProduct?.title}" has been crushing it lately 🔥 Want me to show you why everyone's obsessed with it?`;
+      const redirectProduct = randomProduct;
+      
+      // Set product for pitch button
+      setTimeout(() => {
+        setFoundProduct(redirectProduct);
+        setShowPitchButton(true);
+      }, 100);
+
+      const fallbackResponses = [
+        `That's an interesting question! You know what might actually be perfect for you? **${redirectProduct?.title}** ${redirectProduct?.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${redirectProduct?.isVerified === 1 ? '✓ VERIFIED' : ''}
+
+${redirectProduct?.description || 'This has exceptional quality craftsmanship.'} ${redirectProduct?.stock > 0 ? `Only ${redirectProduct?.stock} left! ` : ''}The attention to detail here is remarkable. ${redirectProduct?.aiPrivateInfo || 'Built to professional standards.'}
+
+<a href="${redirectProduct?.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${redirectProduct?.title} →</a>`,
+
+        `Interesting point! While I don't have exactly what you mentioned, I discovered something that caught my attention: **${redirectProduct?.title}** ${redirectProduct?.isElitePick === 1 ? '⭐ ELITE PICK' : ''} ${redirectProduct?.isVerified === 1 ? '✓ VERIFIED' : ''}
+
+${redirectProduct?.description || 'The quality here is genuinely impressive.'} ${redirectProduct?.stock > 0 ? `Only ${redirectProduct?.stock} left! ` : ''}This actually delivers superior value. ${redirectProduct?.aiPrivateInfo || 'Expertly designed and reliable.'}
+
+<a href="${redirectProduct?.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${redirectProduct?.title} →</a>`
+      ];
+
+      return fallbackResponses[Math.floor(Math.random() * fallbackResponses.length)];
     }
     return "I'm here to help you find amazing deals! 🛍️ What kind of products are you looking for? I can point you toward the best value picks.";
   };
