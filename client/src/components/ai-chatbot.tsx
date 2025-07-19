@@ -183,32 +183,38 @@ export default function AIChatbot() {
     const userMessages = history.filter(msg => msg.role === 'user').map(msg => msg.content.toLowerCase());
     const allUserInput = userMessages.join(' ') + ' ' + lowerQuery;
     
-    // Track what information we've gathered
+    // Track what information we've gathered - need COMPREHENSIVE details
     let hasCategory = false;
     let hasUseCase = false;
     let hasSpecifics = false;
+    let hasContext = false;
     
-    // Check for category mentions
-    const categories = ['electronics', 'fashion', 'home', 'beauty', 'sports', 'books', 'automotive', 'toys', 'health', 'tech'];
+    // Check for category mentions - must be specific
+    const categories = ['electronics', 'fashion', 'home', 'beauty', 'sports', 'books', 'automotive', 'toys', 'health', 'tech', 'phone', 'laptop', 'headphones', 'clothing', 'shoes', 'kitchen', 'furniture'];
     categories.forEach(cat => {
       if (allUserInput.includes(cat)) hasCategory = true;
     });
     
-    // Check for use case mentions
-    if (allUserInput.includes('for') || allUserInput.includes('need') || allUserInput.includes('want') || allUserInput.includes('use') || allUserInput.includes('help')) {
+    // Check for use case mentions - need detailed context
+    if ((allUserInput.includes('for') || allUserInput.includes('need') || allUserInput.includes('want') || allUserInput.includes('use') || allUserInput.includes('help')) && allUserInput.split(' ').length > 4) {
       hasUseCase = true;
     }
     
-    // Check for specific features or details
-    if (allUserInput.includes('feature') || allUserInput.includes('quality') || allUserInput.includes('brand') || allUserInput.includes('size') || allUserInput.includes('color') || allUserInput.split(' ').length > 3) {
+    // Check for specific features or requirements - need details
+    if (allUserInput.includes('feature') || allUserInput.includes('quality') || allUserInput.includes('brand') || allUserInput.includes('size') || allUserInput.includes('color') || allUserInput.includes('type') || allUserInput.includes('specific')) {
       hasSpecifics = true;
     }
     
-    // Count how much information we have
-    const infoGathered = [hasCategory, hasUseCase, hasSpecifics].filter(Boolean).length;
+    // Check for sufficient context and detail
+    if (allUserInput.split(' ').length > 8 && userMessages.length >= 2) {
+      hasContext = true;
+    }
     
-    // RECOMMEND PRODUCT when user provides enough context OR asks for something specific
-    if (infoGathered >= 2 || userMessages.length >= 2 || lowerQuery.length > 10) {
+    // Count how much information we have - need COMPREHENSIVE details
+    const infoGathered = [hasCategory, hasUseCase, hasSpecifics, hasContext].filter(Boolean).length;
+    
+    // ONLY RECOMMEND PRODUCT when user has provided COMPREHENSIVE information
+    if (infoGathered >= 4 && userMessages.length >= 3 && allUserInput.length > 25) {
       // NOW find the best matching product based on gathered information
       let bestProduct = null;
       let matchScore = 0;
@@ -234,10 +240,16 @@ export default function AIChatbot() {
           if (product.price && product.price > 50) score += 20;
         }
         
-        // Feature matching
-        const keywords = allUserInput.split(' ').filter(word => word.length > 3);
+        // DEEP feature matching - thorough analysis of product descriptions
+        const keywords = allUserInput.split(' ').filter(word => word.length > 2);
         keywords.forEach(keyword => {
-          if (title.includes(keyword) || description.includes(keyword)) score += 15;
+          // Higher scores for description matches (deeper product understanding)
+          if (description.includes(keyword)) score += 40;
+          if (title.includes(keyword)) score += 25;
+          // Check for semantic matches
+          if (keyword.includes('good') && (description.includes('quality') || description.includes('premium'))) score += 20;
+          if (keyword.includes('cheap') && (description.includes('affordable') || description.includes('budget'))) score += 20;
+          if (keyword.includes('fast') && (description.includes('quick') || description.includes('speed'))) score += 20;
         });
         
         if (score > matchScore) {
@@ -264,32 +276,36 @@ export default function AIChatbot() {
         setShowPitchButton(true);
       }, 100);
 
-      return `I found something that might be exactly what you're looking for:
+      return `After carefully analyzing all the details you've shared and browsing through our entire product catalog, I found something that matches your specific requirements:
 
 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
 
-${bestProduct.description || 'This seems like a great match for what you described.'}
+${bestProduct.description || 'This appears to be an excellent match based on everything you\'ve told me.'}
 
-${priceText !== 'Great price' ? `It's ${priceText}${originalPriceText}` : ''} ${stockText ? `and ${stockText.toLowerCase()}` : ''}
+${priceText !== 'Great price' ? `Price: ${priceText}${originalPriceText}` : ''} ${stockText ? ` | ${stockText}` : ''}
 
-This caught my attention because it seems to match what you mentioned. Would you like me to tell you more about it?`;
+Based on our conversation, this product aligns with what you're looking for. Would you like me to share more details about why I think this is a great fit for your needs?`;
     }
     
-    // GATHER MORE INFORMATION - Ask natural, helpful questions
+    // GATHER MORE INFORMATION - Ask natural, helpful questions for COMPREHENSIVE understanding
     if (!hasCategory) {
-      return `What kind of product are you looking for? I can help you find something great.`;
+      return `What kind of product are you looking for? I want to make sure I understand exactly what you need.`;
     }
     
     if (!hasUseCase) {
-      return `Tell me a bit more about what you need this for. That way I can point you toward something that'll work well for you.`;
+      return `Tell me more about what you'll be using this for. Understanding your situation helps me find the right fit.`;
     }
     
     if (!hasSpecifics) {
-      return `Any particular features or details that matter to you? Just want to make sure I find something you'll actually like.`;
+      return `What specific features or qualities are important to you? Any particular requirements or preferences?`;
+    }
+    
+    if (!hasContext) {
+      return `I want to make sure I fully understand your needs. Can you share a bit more detail about your situation or what you're hoping to accomplish?`;
     }
 
     // Fallback - shouldn't normally reach here
-    return `Let me see what I can find for you...`;
+    return `Let me carefully analyze everything you've shared and browse through all our products to find the perfect match...`;
 
     // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
