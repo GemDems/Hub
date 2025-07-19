@@ -15,6 +15,7 @@ import ReferralSystem from "@/components/referral-system";
 import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
+import AIChatbot from "@/components/ai-chatbot";
 
 
 import { Button } from "@/components/ui/button";
@@ -374,6 +375,9 @@ export default function Home() {
           setShowAdmin(false);
         }}
       />
+      
+      {/* AI Chatbot */}
+      <AIChatbot />
     </div>
   );
 }
