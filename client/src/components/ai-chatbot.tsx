@@ -100,6 +100,8 @@ export default function AIChatbot() {
   const [isDragging, setIsDragging] = useState(false);
   const [dragStartY, setDragStartY] = useState(0);
   const [shouldGlowRestoreButton, setShouldGlowRestoreButton] = useState(false);
+  const [isHoveringRestoreButton, setIsHoveringRestoreButton] = useState(false);
+  const [hoverTimer, setHoverTimer] = useState<NodeJS.Timeout | null>(null);
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -890,19 +892,33 @@ export default function AIChatbot() {
       let newX = position.x;
       let newY = position.y;
 
-      if (resizeDirection.includes('right')) {
-        newWidth = Math.max(300, resizeStart.width + deltaX);
-      }
-      if (resizeDirection.includes('left')) {
-        newWidth = Math.max(300, resizeStart.width - deltaX);
-        newX = position.x + (size.width - newWidth);
-      }
-      if (resizeDirection.includes('bottom')) {
-        newHeight = Math.max(400, resizeStart.height + deltaY);
-      }
-      if (resizeDirection.includes('top')) {
-        newHeight = Math.max(400, resizeStart.height - deltaY);
-        newY = position.y + (size.height - newHeight);
+      if (isCollapsed) {
+        // Collapsed state: only horizontal resizing, keep Y position fixed at bottom
+        if (resizeDirection === 'right') {
+          newWidth = Math.max(300, resizeStart.width + deltaX);
+        }
+        if (resizeDirection === 'left') {
+          newWidth = Math.max(300, resizeStart.width - deltaX);
+          newX = position.x + (size.width - newWidth);
+        }
+        // Keep Y position fixed at bottom edge
+        newY = window.innerHeight - size.height;
+      } else {
+        // Normal state: full resizing
+        if (resizeDirection.includes('right')) {
+          newWidth = Math.max(300, resizeStart.width + deltaX);
+        }
+        if (resizeDirection.includes('left')) {
+          newWidth = Math.max(300, resizeStart.width - deltaX);
+          newX = position.x + (size.width - newWidth);
+        }
+        if (resizeDirection.includes('bottom')) {
+          newHeight = Math.max(400, resizeStart.height + deltaY);
+        }
+        if (resizeDirection.includes('top')) {
+          newHeight = Math.max(400, resizeStart.height - deltaY);
+          newY = position.y + (size.height - newHeight);
+        }
       }
 
       setSize({ width: newWidth, height: newHeight });
@@ -1013,18 +1029,18 @@ export default function AIChatbot() {
       setPosition({ x: window.innerWidth - 420, y: 100 });
       setSize({ width: 400, height: 500 });
       setShouldGlowRestoreButton(false); // Stop glowing when restored
+      setIsHoveringRestoreButton(false);
+      if (hoverTimer) {
+        clearTimeout(hoverTimer);
+        setHoverTimer(null);
+      }
       // Don't reset any chat state - messages, history, typing status should remain
     } else {
       // If normal, collapse to show only top bar - preserve all chat state
       setIsCollapsed(true);
-      setPosition({ x: window.innerWidth - 420, y: window.innerHeight - 60 });
+      setPosition({ x: window.innerWidth - 420, y: window.innerHeight }); // Position at bottom edge
       setSize({ width: 400, height: 60 });
-      // Start glowing animation after 2 seconds to notify user they can restore
-      setTimeout(() => {
-        if (messages.length > 1) { // Only glow if there are messages to restore
-          setShouldGlowRestoreButton(true);
-        }
-      }, 2000);
+      setShouldGlowRestoreButton(false); // Don't auto-glow, only on hover
       // Don't reset any chat state - messages, history, typing status should remain
     }
   };
@@ -1045,6 +1061,11 @@ export default function AIChatbot() {
         setPosition({ x: window.innerWidth - 420, y: Math.max(50, e.clientY - 250) });
         setIsDragging(false);
         setShouldGlowRestoreButton(false); // Stop glowing when restored
+        setIsHoveringRestoreButton(false);
+        if (hoverTimer) {
+          clearTimeout(hoverTimer);
+          setHoverTimer(null);
+        }
         
         // Preserve chat state when expanding - don't reset anything
         // Messages, conversation history, and all state should remain intact
@@ -1299,7 +1320,9 @@ export default function AIChatbot() {
 
       <div
         ref={chatRef}
-        className="fixed z-50 bg-gray-900 rounded-lg shadow-2xl border border-gray-700 overflow-hidden cursor-move"
+        className={`fixed z-50 bg-gray-900 rounded-lg shadow-2xl border border-gray-700 overflow-hidden ${
+          isCollapsed ? 'cursor-default' : 'cursor-move'
+        } ${isCollapsed ? 'rounded-b-none' : ''}`}
         style={{
           left: position.x,
           top: position.y,
@@ -1308,7 +1331,7 @@ export default function AIChatbot() {
           backgroundColor: 'rgba(34, 38, 50, 0.95)',
           backdropFilter: 'blur(10px)'
         }}
-        onMouseDown={handleMouseDown}
+        onMouseDown={isCollapsed ? undefined : handleMouseDown}
       >
       {/* Header with controls */}
       <div 
@@ -1377,6 +1400,28 @@ export default function AIChatbot() {
             }`}
             title={isCollapsed ? "Restore chat messages" : "Collapse to bottom"}
             onMouseDown={(e) => e.stopPropagation()}
+            onMouseEnter={() => {
+              if (isCollapsed && messages.length > 1) {
+                setIsHoveringRestoreButton(true);
+                setShouldGlowRestoreButton(true);
+                
+                // Auto-expand after 6 seconds of hovering
+                const timer = setTimeout(() => {
+                  if (isHoveringRestoreButton) {
+                    handleSnapToDefault();
+                  }
+                }, 6000);
+                setHoverTimer(timer);
+              }
+            }}
+            onMouseLeave={() => {
+              setIsHoveringRestoreButton(false);
+              setShouldGlowRestoreButton(false);
+              if (hoverTimer) {
+                clearTimeout(hoverTimer);
+                setHoverTimer(null);
+              }
+            }}
           >
             <MousePointer className={`w-4 h-4 transition-colors ${
               shouldGlowRestoreButton && isCollapsed
@@ -1586,26 +1631,44 @@ export default function AIChatbot() {
         </div>
       </div>
       
-      {/* Resize handles - all 4 corners */}
-      <div
-        className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
-        onMouseDown={(e) => handleResizeStart(e, 'top-left')}
-      />
-      <div
-        className="absolute top-0 right-0 w-4 h-4 cursor-ne-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
-        onMouseDown={(e) => handleResizeStart(e, 'top-right')}
-      />
-      <div
-        className="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
-        onMouseDown={(e) => handleResizeStart(e, 'bottom-left')}
-      />
-      <div
-        className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize bg-gray-600 hover:bg-gray-500 transition-colors"
-        onMouseDown={(e) => handleResizeStart(e, 'bottom-right')}
-        style={{
-          clipPath: 'polygon(100% 0%, 0% 100%, 100% 100%)'
-        }}
-      />
+      {/* Resize handles - only show when not collapsed */}
+      {!isCollapsed && (
+        <>
+          <div
+            className="absolute top-0 left-0 w-4 h-4 cursor-nw-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+            onMouseDown={(e) => handleResizeStart(e, 'top-left')}
+          />
+          <div
+            className="absolute top-0 right-0 w-4 h-4 cursor-ne-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+            onMouseDown={(e) => handleResizeStart(e, 'top-right')}
+          />
+          <div
+            className="absolute bottom-0 left-0 w-4 h-4 cursor-sw-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+            onMouseDown={(e) => handleResizeStart(e, 'bottom-left')}
+          />
+          <div
+            className="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize bg-gray-600 hover:bg-gray-500 transition-colors"
+            onMouseDown={(e) => handleResizeStart(e, 'bottom-right')}
+            style={{
+              clipPath: 'polygon(100% 0%, 0% 100%, 100% 100%)'
+            }}
+          />
+        </>
+      )}
+      
+      {/* Horizontal resize handles for collapsed state - only left and right */}
+      {isCollapsed && (
+        <>
+          <div
+            className="absolute top-0 left-0 w-2 h-full cursor-w-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+            onMouseDown={(e) => handleResizeStart(e, 'left')}
+          />
+          <div
+            className="absolute top-0 right-0 w-2 h-full cursor-e-resize bg-gray-600 hover:bg-gray-500 transition-colors opacity-50"
+            onMouseDown={(e) => handleResizeStart(e, 'right')}
+          />
+        </>
+      )}
       </div>
     </>
   );
