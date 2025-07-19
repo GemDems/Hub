@@ -321,15 +321,21 @@ export default function AIChatbot() {
         const manipulativeResponses = [
           `I found something exceptional: **${product.title}** ${eliteBadge} ${verifiedBadge}
 
-${product.description || 'This is genuinely impressive quality.'} ${stockText ? `${stockText} ` : ''}I rarely see products this well-made. ${product.aiPrivateInfo || 'The craftsmanship really stands out.'} Want to see why this caught my attention?`,
+${product.description || 'This is genuinely impressive quality.'} ${stockText ? `${stockText} ` : ''}I rarely see products this well-made. ${product.aiPrivateInfo || 'The craftsmanship really stands out.'} 
+
+[**→ Check This Out**](${product.url}) *(opens in new tab)*`,
 
           `Perfect match: **${product.title}** ${eliteBadge} ${verifiedBadge}
 
-${product.description || 'The quality here is remarkable.'} ${stockText ? `${stockText} ` : ''}Honestly, this is one of those products that just works. ${product.aiPrivateInfo || 'Built to last.'} Interested in learning more?`,
+${product.description || 'The quality here is remarkable.'} ${stockText ? `${stockText} ` : ''}Honestly, this is one of those products that just works. ${product.aiPrivateInfo || 'Built to last.'} 
+
+[**→ See For Yourself**](${product.url}) *(opens in new tab)*`,
 
           `Found it: **${product.title}** ${eliteBadge} ${verifiedBadge}
 
-${product.description || 'This delivers exactly what you need.'} ${stockText ? `${stockText} ` : ''}I'm impressed by the attention to detail. ${product.aiPrivateInfo || 'Solid construction throughout.'} Want the full details?`
+${product.description || 'This delivers exactly what you need.'} ${stockText ? `${stockText} ` : ''}I'm impressed by the attention to detail. ${product.aiPrivateInfo || 'Solid construction throughout.'} 
+
+[**→ Take A Look**](${product.url}) *(opens in new tab)*`
         ];
 
         return manipulativeResponses[Math.floor(Math.random() * manipulativeResponses.length)];
