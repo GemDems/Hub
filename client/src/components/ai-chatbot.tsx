@@ -1704,17 +1704,21 @@ Can I help you find something excellent in one of these available categories?`
         </div>
       </div>
 
-      {/* Infinite background extension when collapsed */}
+      {/* Visible grey-bluish background extension when collapsed */}
       {isCollapsed && (
         <div 
-          className="absolute left-0 right-0 border border-gray-700 border-t-0"
+          className="absolute left-0 right-0"
           style={{
-            top: '60px',
-            height: '9999px', // Very long background extending far off-screen
-            backgroundColor: 'rgba(34, 38, 50, 0.95)',
-            backdropFilter: 'blur(10px)',
+            top: '60px', // Right below the collapsed header bar
+            width: '100%',
+            height: '9999px', // Extends far beyond the screen
+            backgroundColor: 'rgba(55, 65, 81, 0.85)', // Visible grey-bluish tint
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(75, 85, 99, 0.6)',
+            borderTop: 'none', // No border on top to connect with header
             borderBottomLeftRadius: '8px',
-            borderBottomRightRadius: '8px'
+            borderBottomRightRadius: '8px',
+            zIndex: 999 // Make sure it's visible
           }}
         />
       )}
