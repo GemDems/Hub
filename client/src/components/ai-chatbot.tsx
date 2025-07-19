@@ -39,7 +39,7 @@ export default function AIChatbot() {
         return [
           {
             id: '1',
-            content: "Hey! 👋 I'm your personal deal hunter. What are you looking to score today?",
+            content: "Hey! 👋 I'm your personal deal hunter. What type of product are you looking for today?",
             isBot: true,
             timestamp: new Date()
           }
@@ -49,7 +49,7 @@ export default function AIChatbot() {
     return [
       {
         id: '1',
-        content: "Hey! 👋 I'm your personal deal hunter. What are you looking to score today?",
+        content: "Hey! 👋 I'm your personal deal hunter. What type of product are you looking for today?",
         isBot: true,
         timestamp: new Date()
       }
@@ -174,74 +174,128 @@ export default function AIChatbot() {
   const generateContextualResponse = (userMessage: string, history: Array<{role: 'user' | 'assistant', content: string}>, intent?: any): string => {
     const lowerQuery = userMessage.toLowerCase();
     
-    // INSTANT PRODUCT RECOMMENDATIONS using real data from creator dashboard
+    // Check if products are available
     if (!affiliateLinks || affiliateLinks.length === 0) {
       return "I don't see any products available in the creator dashboard right now. Please check back when new deals have been added!";
     }
 
-    // Smart product matching based on user query
-    let bestProduct = null;
-    let matchScore = 0;
-
-    affiliateLinks.forEach(product => {
-      let score = 0;
-      const title = product.title.toLowerCase();
-      const description = product.description?.toLowerCase() || '';
-      const category = product.category?.toLowerCase() || '';
-      
-      // High score for direct title/name matches
-      if (lowerQuery.includes(title) || title.includes(lowerQuery)) score += 100;
-      
-      // Category matching
-      const categories = ['electronics', 'fashion', 'home', 'beauty', 'sports', 'books', 'automotive', 'toys', 'health', 'tech'];
-      categories.forEach(cat => {
-        if (lowerQuery.includes(cat) && (category.includes(cat) || title.includes(cat))) score += 50;
-      });
-      
-      // Keyword matching in description
-      const keywords = lowerQuery.split(' ').filter(word => word.length > 2);
-      keywords.forEach(keyword => {
-        if (title.includes(keyword) || description.includes(keyword)) score += 20;
-      });
-      
-      // General shopping intent
-      if (lowerQuery.includes('buy') || lowerQuery.includes('deal') || lowerQuery.includes('product') || lowerQuery.includes('need')) {
-        score += 10;
-      }
-      
-      if (score > matchScore) {
-        matchScore = score;
-        bestProduct = product;
-      }
-    });
-
-    // If no good match, pick featured/elite product or first available
-    if (!bestProduct) {
-      bestProduct = affiliateLinks.find(p => p.isElitePick) || affiliateLinks[0];
-    }
-
-    // Generate instant recommendation with ALL real product data
-    const priceText = bestProduct.price ? `$${bestProduct.price}` : 'Great price';
-    const originalPriceText = bestProduct.originalPrice ? ` (was $${bestProduct.originalPrice} - save $${bestProduct.originalPrice - bestProduct.price}!)` : '';
-    const verifiedBadge = bestProduct.isVerified ? '✅ VERIFIED' : '';
-    const eliteBadge = bestProduct.isElitePick ? '⭐ ELITE PICK' : '';
-    const stockText = bestProduct.stockCount ? `Only ${bestProduct.stockCount} left!` : '';
+    // GATHER USER INFORMATION FIRST - Progressive information collection
+    const userMessages = history.filter(msg => msg.role === 'user').map(msg => msg.content.toLowerCase());
+    const allUserInput = userMessages.join(' ') + ' ' + lowerQuery;
     
-    // Set this as the found product for instant pitch button
-    setTimeout(() => {
-      setFoundProduct(bestProduct);
-      setShowPitchButton(true);
-    }, 100);
+    // Track what information we've gathered
+    let hasCategory = false;
+    let hasBudget = false;
+    let hasUseCase = false;
+    let hasFeatures = false;
+    
+    // Check for category mentions
+    const categories = ['electronics', 'fashion', 'home', 'beauty', 'sports', 'books', 'automotive', 'toys', 'health', 'tech'];
+    categories.forEach(cat => {
+      if (allUserInput.includes(cat)) hasCategory = true;
+    });
+    
+    // Check for budget mentions
+    if (allUserInput.includes('$') || allUserInput.includes('budget') || allUserInput.includes('price') || allUserInput.includes('cheap') || allUserInput.includes('expensive')) {
+      hasBudget = true;
+    }
+    
+    // Check for use case mentions
+    if (allUserInput.includes('for') || allUserInput.includes('need') || allUserInput.includes('want') || allUserInput.includes('use') || allUserInput.includes('help')) {
+      hasUseCase = true;
+    }
+    
+    // Check for specific features
+    if (allUserInput.includes('feature') || allUserInput.includes('quality') || allUserInput.includes('brand') || allUserInput.includes('size') || allUserInput.includes('color')) {
+      hasFeatures = true;
+    }
+    
+    // Count how much information we have
+    const infoGathered = [hasCategory, hasBudget, hasUseCase, hasFeatures].filter(Boolean).length;
+    
+    // ONLY RECOMMEND PRODUCT AFTER GATHERING SUFFICIENT INFORMATION
+    if (infoGathered >= 2 || userMessages.length >= 2) {
+      // NOW find the best matching product based on gathered information
+      let bestProduct = null;
+      let matchScore = 0;
 
-    return `🎯 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
+      affiliateLinks.forEach(product => {
+        let score = 0;
+        const title = product.title.toLowerCase();
+        const description = product.description?.toLowerCase() || '';
+        const category = product.category?.toLowerCase() || '';
+        
+        // Score based on all user input (not just current message)
+        if (allUserInput.includes(title) || title.includes(allUserInput)) score += 100;
+        
+        categories.forEach(cat => {
+          if (allUserInput.includes(cat) && (category.includes(cat) || title.includes(cat))) score += 60;
+        });
+        
+        // Budget matching
+        if (product.price && hasBudget) {
+          if (allUserInput.includes('cheap') && product.price < 50) score += 30;
+          if (allUserInput.includes('premium') && product.price > 100) score += 30;
+        }
+        
+        // Feature matching
+        const keywords = allUserInput.split(' ').filter(word => word.length > 3);
+        keywords.forEach(keyword => {
+          if (title.includes(keyword) || description.includes(keyword)) score += 15;
+        });
+        
+        if (score > matchScore) {
+          matchScore = score;
+          bestProduct = product;
+        }
+      });
+
+      // If no good match, pick elite or first product
+      if (!bestProduct) {
+        bestProduct = affiliateLinks.find(p => p.isElitePick) || affiliateLinks[0];
+      }
+
+      // Generate recommendation with gathered user info
+      const priceText = bestProduct.price ? `$${bestProduct.price}` : 'Great price';
+      const originalPriceText = bestProduct.originalPrice ? ` (was $${bestProduct.originalPrice} - save $${bestProduct.originalPrice - bestProduct.price}!)` : '';
+      const verifiedBadge = bestProduct.isVerified ? '✅ VERIFIED' : '';
+      const eliteBadge = bestProduct.isElitePick ? '⭐ ELITE PICK' : '';
+      const stockText = bestProduct.stockCount ? `Only ${bestProduct.stockCount} left!` : '';
+      
+      // Enable pitch button for this specific recommendation
+      setTimeout(() => {
+        setFoundProduct(bestProduct);
+        setShowPitchButton(true);
+      }, 100);
+
+      return `Based on what you've told me, I have the PERFECT recommendation:
+
+🎯 **${bestProduct.title}** ${eliteBadge} ${verifiedBadge}
 
 💰 ${priceText}${originalPriceText}
 📂 Category: ${bestProduct.category || 'Featured'}
 ${stockText ? `⚡ ${stockText}` : ''}
 
-${bestProduct.description || 'This is one of our top-performing deals!'}
+${bestProduct.description || 'This matches exactly what you described!'}
 
-${bestProduct.isElitePick ? 'This is our #1 recommended product based on customer results!' : 'Highly rated by our community!'} Ready to grab this deal?`;
+This is my #1 recommendation based on your specific needs. Want the full details?`;
+    }
+    
+    // GATHER MORE INFORMATION - Ask progressive questions
+    if (!hasCategory) {
+      return `Hi! I'm here to find you the perfect deal. What type of product are you looking for? (electronics, fashion, home goods, beauty, sports, books, etc.)`;
+    }
+    
+    if (!hasUseCase && !hasBudget) {
+      return `Great choice! What will you be using this for? And do you have a budget range in mind?`;
+    }
+    
+    if (!hasFeatures) {
+      return `Perfect! Any specific features or requirements I should know about? (brand preferences, size, quality level, etc.)`;
+    }
+
+    // Fallback if we somehow get here
+    return `Let me find the perfect match for you based on what you've shared...`;
 
     // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
@@ -871,7 +925,7 @@ ${bestProduct.isElitePick ? 'This is our #1 recommended product based on custome
     const resetMessages = [
       {
         id: '1',
-        content: "Hey! 👋 I'm your personal deal hunter. What are you looking to score today?",
+        content: "Hey! 👋 I'm your personal deal hunter. What type of product are you looking for today?",
         isBot: true,
         timestamp: new Date()
       }
