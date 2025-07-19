@@ -179,6 +179,53 @@ export default function AIChatbot() {
       return "I don't see any products available in the creator dashboard right now. Please check back when new deals have been added!";
     }
 
+    // Handle popular generic questions first - before complex product matching
+    if (lowerQuery.includes('popular') || lowerQuery.includes('trending') || lowerQuery.includes('hot')) {
+      const popularProducts = affiliateLinks
+        .filter(p => p.isElitePick === 1 || p.clicks > 5)
+        .sort((a, b) => (b.clicks || 0) - (a.clicks || 0))
+        .slice(0, 3);
+      
+      if (popularProducts.length > 0) {
+        const topPick = popularProducts[0];
+        const eliteBadge = topPick.isElitePick === 1 ? '⭐ ELITE PICK' : '';
+        const verifiedBadge = topPick.isVerified === 1 ? '✓ VERIFIED' : '';
+        
+        setTimeout(() => {
+          setFoundProduct(topPick);
+          setShowPitchButton(true);
+        }, 100);
+
+        const stockText = topPick.stock > 0 ? `Only ${topPick.stock} left! ` : '';
+        return `Right now, the most popular item is **${topPick.title}** ${eliteBadge} ${verifiedBadge}
+
+${topPick.description || 'Everyone\'s been talking about this one.'} ${stockText}This is definitely trending for good reason. ${topPick.aiPrivateInfo || 'The quality really speaks for itself.'}
+
+<a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
+      } else {
+        return "I'd love to show you what's popular, but I need to see more activity on the current products first. What specific type of product are you interested in? I can find you some great options.";
+      }
+    }
+
+    // Handle general browsing questions
+    if (lowerQuery.includes('what do you have') || (lowerQuery.includes('show me') && !lowerQuery.includes('specific'))) {
+      const categories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
+      return `I have deals across several categories: ${categories.slice(0, 4).join(', ')}${categories.length > 4 ? ', and more' : ''}. 
+
+What type of product interests you most? I can find you the best options in any of these areas.`;
+    }
+
+    // Handle "what's new" or similar
+    if (lowerQuery.includes('new') || lowerQuery.includes('latest') || lowerQuery.includes('recent')) {
+      const newestProducts = affiliateLinks.slice(-3);
+      if (newestProducts.length > 0) {
+        const newest = newestProducts[newestProducts.length - 1];
+        return `The latest addition is **${newest.title}**. ${newest.description || 'Fresh inventory just added.'} 
+
+What specific type of product are you looking for? I can show you the newest options in that category.`;
+      }
+    }
+
     // GATHER USER INFORMATION FIRST - Progressive information collection
     const userMessages = history.filter(msg => msg.role === 'user').map(msg => msg.content.toLowerCase());
     const allUserInput = userMessages.join(' ') + ' ' + lowerQuery;
