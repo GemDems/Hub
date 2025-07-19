@@ -933,6 +933,10 @@ export default function AIChatbot() {
       document.removeEventListener('mouseup', handleMouseUp);
     };
 
+    if (isDraggingWindow) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
     if (isDragging) {
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
@@ -1048,7 +1052,17 @@ export default function AIChatbot() {
   };
 
   const handleDragStart = (e: React.MouseEvent) => {
-    if (isCollapsed) {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!isCollapsed) {
+      // For expanded state, enable full window dragging
+      setIsDraggingWindow(true);
+      setDragOffset({
+        x: e.clientX - position.x,
+        y: e.clientY - position.y
+      });
+    } else {
+      // For collapsed state, use existing drag logic
       setIsDragging(true);
       setDragStartY(e.clientY);
     }
