@@ -288,28 +288,35 @@ input, textarea, [contenteditable="true"] {
   
   /* Custom scrollbar styles for chat */
   .scrollbar-thin::-webkit-scrollbar {
-    width: 8px;
+    width: 12px;
   }
   
   .scrollbar-thin::-webkit-scrollbar-track {
-    background: #1f2937;
-    border-radius: 4px;
+    background: #374151;
+    border-radius: 6px;
+    border: 1px solid #4b5563;
   }
   
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #4b5563;
-    border-radius: 4px;
-    transition: background 0.2s ease;
+    background: #6b7280;
+    border-radius: 6px;
+    border: 1px solid #4b5563;
+    transition: all 0.2s ease;
   }
   
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: #6b7280;
+    background: #9ca3af;
+    border-color: #6b7280;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb:active {
+    background: #d1d5db;
   }
   
   /* Firefox scrollbar */
   .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: #4b5563 #1f2937;
+    scrollbar-width: auto;
+    scrollbar-color: #6b7280 #374151;
   }
 
   /* Gold popup animation */
