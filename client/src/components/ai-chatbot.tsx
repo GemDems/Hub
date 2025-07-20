@@ -179,6 +179,263 @@ export default function AIChatbot() {
       return "I don't see any products available in the creator dashboard right now. Please check back when new deals have been added!";
     }
 
+    // ===== ELITE AI BRAIN: DEEP PRODUCT ANALYSIS SYSTEM =====
+    const analyzeProductMeaning = (product: AffiliateLink) => {
+      const title = product.title?.toLowerCase() || '';
+      const description = product.description?.toLowerCase() || '';
+      const category = product.category?.toLowerCase() || '';
+      const privateInfo = product.aiPrivateInfo?.toLowerCase() || '';
+      const allText = `${title} ${description} ${category} ${privateInfo}`;
+      
+      // Advanced semantic understanding
+      const meanings = {
+        isGame: /\b(game|gaming|play|player|console|xbox|playstation|nintendo|steam|pc gaming|video game|board game|card game|puzzle|strategy|rpg|action|adventure|simulation|sports game|racing game|arcade|retro|indie|multiplayer|single player|co-op|competitive|esports|gamer|gameplay)\b/i.test(allText),
+        isTech: /\b(tech|technology|electronic|digital|smart|app|software|computer|laptop|phone|tablet|device|gadget|ai|robot|automation|wireless|bluetooth|usb|hdmi|led|lcd|4k|hd|monitor|speaker|headphone|camera|drone)\b/i.test(allText),
+        isClothing: /\b(shirt|dress|pants|jacket|shoes|sneakers|boots|hat|cap|clothing|apparel|fashion|style|outfit|wear|cotton|polyester|fabric|size|fit|casual|formal|sporty|trendy|vintage)\b/i.test(allText),
+        isHealth: /\b(health|fitness|wellness|medical|supplement|vitamin|nutrition|exercise|workout|gym|muscle|weight|diet|protein|organic|natural|therapy|relief|pain|recovery|sleep|energy|immune)\b/i.test(allText),
+        isHome: /\b(home|house|kitchen|bedroom|bathroom|living room|furniture|decor|decoration|interior|design|lamp|light|chair|table|bed|sofa|storage|organization|cleaning|appliance|tool|diy)\b/i.test(allText),
+        isFood: /\b(food|snack|drink|beverage|coffee|tea|water|juice|protein|bar|meal|cooking|recipe|ingredient|spice|sauce|organic|healthy|gourmet|fresh|frozen|canned)\b/i.test(allText),
+        isBeauty: /\b(beauty|makeup|skincare|cosmetic|lipstick|foundation|mascara|perfume|fragrance|lotion|cream|serum|anti-aging|moisturizer|cleanser|shampoo|conditioner|hair|nail|spa)\b/i.test(allText),
+        isSports: /\b(sport|athletic|fitness|exercise|gym|workout|training|running|cycling|swimming|yoga|basketball|football|soccer|tennis|golf|baseball|hiking|camping|outdoor|bike|equipment)\b/i.test(allText),
+        isAuto: /\b(car|auto|vehicle|automotive|driving|engine|tire|oil|gas|mechanic|repair|maintenance|dashboard|steering|brake|battery|headlight|seat cover|floor mat|charger)\b/i.test(allText),
+        isToy: /\b(toy|kids|children|baby|infant|toddler|educational|learning|play|fun|creative|building|blocks|doll|action figure|puzzle|craft|art|coloring|story|book|plush)\b/i.test(allText)
+      };
+      
+      // Advanced feature detection
+      const features = {
+        isWireless: /\b(wireless|bluetooth|cordless|no wire|cable-free|wifi|wi-fi)\b/i.test(allText),
+        isPortable: /\b(portable|travel|compact|lightweight|handheld|pocket|small|mini|foldable|collapsible)\b/i.test(allText),
+        isWaterproof: /\b(waterproof|water resistant|splash proof|submersible|weatherproof|outdoor)\b/i.test(allText),
+        isFast: /\b(fast|quick|rapid|speed|instant|immediate|high-speed|turbo|express|efficient)\b/i.test(allText),
+        isDurable: /\b(durable|strong|sturdy|robust|heavy-duty|long-lasting|reliable|tough|reinforced|military-grade)\b/i.test(allText),
+        isPremium: /\b(premium|luxury|high-end|professional|pro|deluxe|elite|advanced|superior|top-quality|commercial-grade)\b/i.test(allText),
+        isRechargeable: /\b(rechargeable|battery|usb charging|wireless charging|power bank|solar|long battery)\b/i.test(allText),
+        isSmart: /\b(smart|intelligent|ai|automated|app control|voice control|alexa|google|connected|iot)\b/i.test(allText),
+        isEcoFriendly: /\b(eco|green|sustainable|organic|natural|biodegradable|recycled|environment|earth-friendly)\b/i.test(allText),
+        isAdjustable: /\b(adjustable|customizable|flexible|variable|modular|multi-position|ergonomic)\b/i.test(allText)
+      };
+      
+      // Quality indicators
+      const quality = {
+        isHighQuality: /\b(quality|premium|professional|commercial|industrial|medical-grade|certified|tested|approved|warranty|guarantee)\b/i.test(allText),
+        hasWarranty: /\b(warranty|guarantee|lifetime|year|month|protection|coverage|replacement|refund)\b/i.test(allText),
+        isCertified: /\b(certified|approved|fda|ce|ul|iso|tested|verified|authentic|genuine|official)\b/i.test(allText),
+        isPopular: /\b(popular|bestseller|top-rated|award|winner|trending|viral|recommended|favorite|loved)\b/i.test(allText)
+      };
+      
+      return { meanings, features, quality };
+    };
+
+    // Deep semantic search with AI understanding
+    const findBestProductMatch = (query: string) => {
+      const queryWords = query.toLowerCase().split(/\s+/);
+      const matches = [];
+      
+      for (const product of affiliateLinks) {
+        const analysis = analyzeProductMeaning(product);
+        let score = 0;
+        let reasons = [];
+        
+        // Check semantic meaning matches
+        if (query.includes('game') && analysis.meanings.isGame) {
+          score += 100;
+          reasons.push('This is a gaming product');
+        }
+        if (query.includes('tech') && analysis.meanings.isTech) {
+          score += 90;
+          reasons.push('This is technology/electronics');
+        }
+        if (query.includes('cloth') && analysis.meanings.isClothing) {
+          score += 90;
+          reasons.push('This is clothing/fashion');
+        }
+        if (query.includes('health') && analysis.meanings.isHealth) {
+          score += 90;
+          reasons.push('This is health/fitness related');
+        }
+        if (query.includes('home') && analysis.meanings.isHome) {
+          score += 90;
+          reasons.push('This is for home/house use');
+        }
+        
+        // Feature matching with high intelligence
+        if (query.includes('wireless') && analysis.features.isWireless) {
+          score += 80;
+          reasons.push('Has wireless capabilities');
+        }
+        if (query.includes('portable') && analysis.features.isPortable) {
+          score += 80;
+          reasons.push('Designed for portability');
+        }
+        if (query.includes('waterproof') && analysis.features.isWaterproof) {
+          score += 80;
+          reasons.push('Waterproof/water-resistant');
+        }
+        if (query.includes('fast') && analysis.features.isFast) {
+          score += 75;
+          reasons.push('Built for speed/efficiency');
+        }
+        if (query.includes('durable') && analysis.features.isDurable) {
+          score += 75;
+          reasons.push('Engineered for durability');
+        }
+        if (query.includes('premium') && analysis.features.isPremium) {
+          score += 85;
+          reasons.push('Premium quality construction');
+        }
+        
+        // Deep text analysis for exact keyword matches
+        const productText = `${product.title} ${product.description} ${product.category} ${product.aiPrivateInfo}`.toLowerCase();
+        for (const word of queryWords) {
+          if (word.length > 2 && productText.includes(word)) {
+            score += word.length * 10;
+            reasons.push(`Matches "${word}"`);
+          }
+        }
+        
+        if (score > 0) {
+          matches.push({
+            product,
+            score,
+            reasons,
+            analysis
+          });
+        }
+      }
+      
+      return matches.sort((a, b) => b.score - a.score);
+    };
+
+    // MASTER SALES AI: Elite manipulation and psychological understanding
+    const generateEliteSalesResponse = (match: any, userQuery: string): string => {
+      const product = match.product;
+      const analysis = match.analysis;
+      const reasons = match.reasons;
+      
+      // Advanced user psychology profiling
+      const userProfile = {
+        isQualitySeeker: /\b(quality|premium|best|good|reliable|durable|professional)\b/i.test(userQuery),
+        isSpeedSeeker: /\b(fast|quick|speed|rapid|instant|immediate)\b/i.test(userQuery),
+        isConvenienceSeeker: /\b(easy|simple|convenient|portable|wireless|automatic)\b/i.test(userQuery),
+        isTechSavvy: /\b(tech|smart|app|digital|ai|bluetooth|wifi)\b/i.test(userQuery),
+        isHealthConscious: /\b(health|natural|organic|safe|wellness|fitness)\b/i.test(userQuery),
+        isTrendSeeker: /\b(new|latest|trending|popular|modern|innovative)\b/i.test(userQuery)
+      };
+      
+      // Elite psychological hooks based on user profile
+      let psychHook = '';
+      if (userProfile.isQualitySeeker) {
+        psychHook = 'You have excellent taste - most people settle for mediocre, but you understand the value of true craftsmanship.';
+      } else if (userProfile.isSpeedSeeker) {
+        psychHook = 'I can tell you value efficiency. Time is your most precious resource, and this product respects that.';
+      } else if (userProfile.isConvenienceSeeker) {
+        psychHook = 'Smart choice looking for convenience. Life\'s complicated enough - why make it harder?';
+      } else if (userProfile.isTechSavvy) {
+        psychHook = 'You clearly understand technology better than most. This product will impress you on a technical level.';
+      } else if (userProfile.isHealthConscious) {
+        psychHook = 'Your health-conscious approach shows real wisdom. This product aligns with that intelligent mindset.';
+      } else {
+        psychHook = 'I can tell you\'re someone who makes thoughtful decisions. This product rewards that kind of intelligence.';
+      }
+      
+      // Product analysis insights for deep selling
+      let productInsights = [];
+      if (analysis.meanings.isGame) {
+        productInsights.push('This gaming experience will transform your entertainment completely');
+      }
+      if (analysis.meanings.isTech) {
+        productInsights.push('The technology here is genuinely breakthrough-level');
+      }
+      if (analysis.features.isPremium) {
+        productInsights.push('The premium construction shows in every detail');
+      }
+      if (analysis.features.isDurable) {
+        productInsights.push('Built to last for years, not months like cheaper alternatives');
+      }
+      if (analysis.features.isSmart) {
+        productInsights.push('The intelligent features adapt to your specific needs');
+      }
+      if (analysis.quality.hasWarranty) {
+        productInsights.push('Backed by warranty because they know it\'s bulletproof');
+      }
+      
+      // Advanced scarcity and urgency psychology  
+      const urgencyTriggers = [
+        `Stock levels are dropping in real-time as we speak`,
+        `This exact model has sold out 3 times this month alone`,
+        `The current pricing expires without warning`,
+        `Only available while current inventory lasts`,
+        `Demand is outpacing supply by 300%`
+      ];
+      
+      // Elite social proof statements
+      const socialProofElements = [
+        `Customers report this changed their perspective completely`,
+        `Reviews consistently mention "wish I bought this sooner"`,
+        `Industry experts specifically recommend this model`,
+        `User satisfaction rates exceed 97% consistently`,
+        `Repeat purchase rate shows incredible customer loyalty`
+      ];
+      
+      // Dynamic pricing psychology
+      const priceText = product.price 
+        ? `At $${product.price}, this represents exceptional value for what you're getting` 
+        : 'The pricing is structured to reward smart decision-makers';
+      
+      // Stock pressure (if available)
+      const stockPressure = product.stock && product.stock > 0 
+        ? `Only ${product.stock} units remaining at this price point. ` 
+        : '';
+      
+      // Elite brain pick psychology
+      const eliteBadge = product.isElitePick === 1 
+        ? '🧠 **Elite Brain Pick** - Our algorithm identified this as top-tier quality. ' 
+        : '';
+      
+      // Verified trust signal
+      const verifiedBadge = product.isVerified === 1 ? '✅ Verified Premium Quality. ' : '';
+      
+      // Private AI insights (exclusive information)
+      const privateInsights = product.aiPrivateInfo 
+        ? `Here's what makes this special: ${product.aiPrivateInfo}` 
+        : 'The engineering behind this is genuinely impressive.';
+      
+      // Master manipulation response structure
+      const masterResponse = `${psychHook}
+      
+**${product.title}** is exactly what someone with your standards should have. ${reasons.slice(0, 2).join('. ')}.
+
+${eliteBadge}${verifiedBadge}${product.description}
+
+${productInsights.slice(0, 2).join('. ')}. ${privateInsights}
+
+${socialProofElements[Math.floor(Math.random() * socialProofElements.length)]}. ${priceText}.
+
+${stockPressure}${urgencyTriggers[Math.floor(Math.random() * urgencyTriggers.length)]}.
+
+<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline; font-size: 16px;">Get ${product.title} Now →</a>`;
+
+      return masterResponse;
+    };
+
+    // ===== ELITE AI BRAIN ACTIVATION - MASTER INTELLIGENCE SYSTEM =====
+    
+    // First, try elite AI product analysis for ALL queries
+    const productMatches = findBestProductMatch(lowerQuery);
+    
+    if (productMatches.length > 0 && productMatches[0].score >= 40) {
+      const bestMatch = productMatches[0];
+      
+      // Set found product for interaction
+      setTimeout(() => {
+        setFoundProduct(bestMatch.product);
+        setShowPitchButton(true);
+      }, 100);
+      
+      // Generate elite sales response with master manipulation
+      return generateEliteSalesResponse(bestMatch, lowerQuery);
+    }
+    
     // === PURE GENERIC QUESTIONS - SEPARATED FROM PRODUCT BROWSING ===
     if (lowerQuery.includes('popular') || lowerQuery.includes('trending') || lowerQuery.includes('hot') || 
         (lowerQuery.includes('what') && lowerQuery.includes('popular'))) {
@@ -196,21 +453,17 @@ export default function AIChatbot() {
                      affiliateLinks[0];
       
       if (topPick) {
-        const clickText = topPick.clicks > 0 ? `(${topPick.clicks} people clicked "Get Deal Now")` : '';
-        const eliteBadge = topPick.isElitePick === 1 ? '🧠 **Elite Brain Pick**' : '';
-        const verifiedBadge = topPick.isVerified === 1 ? '✅' : '';
+        // Use elite AI analysis for popular products too
+        const analysis = analyzeProductMeaning(topPick);
         
         setTimeout(() => {
           setFoundProduct(topPick);
           setShowPitchButton(true);
         }, 100);
 
-        const stockText = topPick.stock > 0 ? `Only ${topPick.stock} left! ` : '';
-        return `The most popular deal right now is **${topPick.title}** ${clickText} ${eliteBadge} ${verifiedBadge}
-
-${topPick.description || 'This is the one everyone\'s been checking out.'} ${stockText}This is trending for good reason. ${topPick.aiPrivateInfo || 'The quality definitely speaks for itself.'}
-
-<a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
+        // Generate elite response for popular product
+        const mockMatch = { product: topPick, analysis, reasons: ['Most popular product'], score: 100 };
+        return generateEliteSalesResponse(mockMatch, 'popular trending product');
       } else {
         return "I'd love to show you what's popular, but no products are available right now. Check back when new deals are added!";
       }
@@ -501,17 +754,71 @@ Can I help you find something excellent in one of these available categories?`
       }
     }
     
-    // Generate unique helpful response when no specific request is detected
-    const helpfulResponses = [
-      `What are you looking for today? I can help you find something specific.`,
-      `Tell me what you need and I'll search through our products for you.`,
-      `What kind of product do you have in mind? I'll find options for you.`,
-      `Share what you're shopping for and I'll look for the best matches.`,
-      `What can I help you find? Just describe what you need.`,
-      `Looking for anything particular? I can browse our inventory for you.`
-    ];
+    // Elite AI fallback when no specific matches found
+    // Try to identify any product category mentioned and sell that
+    const categoryMatches = [];
+    const categories = ['electronics', 'tech', 'fashion', 'clothing', 'health', 'fitness', 'home', 'kitchen', 'beauty', 'sports', 'games', 'toys'];
     
-    return helpfulResponses[Math.floor(Math.random() * helpfulResponses.length)];
+    for (const category of categories) {
+      if (lowerQuery.includes(category) || lowerQuery.includes(category.slice(0, -1))) {
+        const categoryProducts = affiliateLinks.filter(p => 
+          p.category?.toLowerCase().includes(category) || 
+          p.title?.toLowerCase().includes(category) ||
+          p.description?.toLowerCase().includes(category)
+        );
+        
+        if (categoryProducts.length > 0) {
+          // Get best product from category (Elite pick first, then highest clicks)
+          const bestProduct = categoryProducts.find(p => p.isElitePick === 1) || 
+                            categoryProducts.sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0];
+          
+          const analysis = analyzeProductMeaning(bestProduct);
+          const mockMatch = { 
+            product: bestProduct, 
+            analysis, 
+            reasons: [`Top ${category} product`], 
+            score: 70 
+          };
+          
+          setTimeout(() => {
+            setFoundProduct(bestProduct);
+            setShowPitchButton(true);
+          }, 100);
+          
+          return generateEliteSalesResponse(mockMatch, lowerQuery);
+        }
+      }
+    }
+    
+    // Ultimate fallback with intelligent category suggestion
+    const availableCategories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
+    if (availableCategories.length > 0) {
+      // Pick the best category product to showcase
+      const eliteProducts = affiliateLinks.filter(p => p.isElitePick === 1);
+      const showcaseProduct = eliteProducts.length > 0 ? eliteProducts[0] : affiliateLinks[0];
+      
+      if (showcaseProduct) {
+        const analysis = analyzeProductMeaning(showcaseProduct);
+        const mockMatch = { 
+          product: showcaseProduct, 
+          analysis, 
+          reasons: ['Featured recommendation'], 
+          score: 60 
+        };
+        
+        setTimeout(() => {
+          setFoundProduct(showcaseProduct);
+          setShowPitchButton(true);
+        }, 100);
+        
+        return `I have some incredible deals across ${availableCategories.slice(0, 3).join(', ')} and more. Let me show you something that's been getting amazing results:
+
+${generateEliteSalesResponse(mockMatch, 'quality product recommendation')}`;
+      }
+    }
+    
+    // Final fallback
+    return "I have access to incredible deals, but I'd love to understand what you're looking for specifically. What type of product interests you?";
 
     // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
@@ -839,7 +1146,7 @@ Can I help you find something excellent in one of these available categories?`
 
   const generateBotResponse = (userMessage: string): string => {
     // Use the advanced AI search system instead of template responses
-    return generateAdvancedAIResponse(userMessage, conversationHistory);
+    return generateContextualResponse(userMessage, conversationHistory);
   };
 
   const handleSendMessage = async () => {
