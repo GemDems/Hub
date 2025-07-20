@@ -184,7 +184,7 @@ export default function Leaderboard() {
       <div className="max-w-md mx-auto px-4 py-2">
         <SavingsProgress />
       </div>
-      <div className="grid md:grid-cols-1 gap-8 max-w-3xl mx-auto px-4">
+      <div className="grid md:grid-cols-1 gap-8 max-w-3xl mx-auto px-4 pl-[6px] pr-[6px]">
         {/* Top VIP Referrers */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white p-6">
