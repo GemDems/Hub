@@ -18,6 +18,8 @@ Preferred communication style: Simple, everyday language.
   - **Cost Optimization**: Switched from OpenAI's expensive quota system to Cohere's more affordable pricing
   - **Zero Downtime**: Migration completed without breaking existing chatbot functionality
   - **Updated Logging**: All console messages now reflect Cohere integration instead of OpenAI
+  - **Improved Response Strategy**: AI now asks questions first to gather user information before making recommendations
+  - **Shorter Responses**: Reduced response length for better user experience (1-2 sentences max)
 - **MAJOR AI Enhancement (July 19, 2025)**: Completely transformed AI chatbot capabilities
   - **Single Product Focus**: AI now recommends only 1 product per conversation for maximum conversion focus
   - **Secret Sales Manipulation**: AI is secretly a master sales manipulator disguised as helpful assistant
