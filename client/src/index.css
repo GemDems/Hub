@@ -321,31 +321,68 @@ input, textarea, [contenteditable="true"] {
     background: #374151 !important;
   }
   
-  /* Mobile iPhone/iPad specific scrollbar */
+  /* Mobile iPhone/iPad specific scrollbar - FORCE VISIBLE */
   @media (max-width: 768px) {
     .chat-scrollable {
       overflow-y: scroll !important;
       -webkit-overflow-scrolling: touch !important;
       scrollbar-width: auto !important;
+      scrollbar-gutter: stable !important;
     }
     
     .chat-scrollable::-webkit-scrollbar {
-      width: 12px !important;
-      background: #374151 !important;
+      width: 14px !important;
+      height: 14px !important;
+      background-color: #374151 !important;
       -webkit-appearance: none !important;
+      display: block !important;
     }
     
     .chat-scrollable::-webkit-scrollbar-track {
-      background: #374151 !important;
-      border-radius: 6px !important;
-      border: 1px solid #4b5563 !important;
+      background-color: #374151 !important;
+      border-radius: 7px !important;
+      border: 2px solid #4b5563 !important;
     }
     
     .chat-scrollable::-webkit-scrollbar-thumb {
-      background: #6b7280 !important;
-      border-radius: 6px !important;
-      border: 1px solid #4b5563 !important;
-      min-height: 30px !important;
+      background-color: #6b7280 !important;
+      border-radius: 7px !important;
+      border: 2px solid #4b5563 !important;
+      min-height: 40px !important;
+      min-width: 40px !important;
+    }
+    
+    .chat-scrollable::-webkit-scrollbar-thumb:active {
+      background-color: #9ca3af !important;
+    }
+  }
+  
+  /* iOS Safari specific fixes */
+  @supports (-webkit-touch-callout: none) {
+    .chat-scrollable {
+      overflow-y: scroll !important;
+      -webkit-overflow-scrolling: auto !important;
+      scrollbar-width: auto !important;
+    }
+    
+    .chat-scrollable::-webkit-scrollbar {
+      width: 14px !important;
+      background-color: #374151 !important;
+      -webkit-appearance: none !important;
+      display: block !important;
+    }
+    
+    .chat-scrollable::-webkit-scrollbar-track {
+      background-color: #374151 !important;
+      border-radius: 7px !important;
+      border: 2px solid #4b5563 !important;
+    }
+    
+    .chat-scrollable::-webkit-scrollbar-thumb {
+      background-color: #6b7280 !important;
+      border-radius: 7px !important;
+      border: 2px solid #4b5563 !important;
+      min-height: 40px !important;
     }
   }
 

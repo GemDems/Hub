@@ -1883,7 +1883,9 @@ Can I help you find something excellent in one of these available categories?`
             height: 'calc(100% - 80px)',
             overflowY: 'scroll',
             scrollbarWidth: 'auto',
-            scrollbarColor: '#6b7280 #374151'
+            scrollbarColor: '#6b7280 #374151',
+            WebkitOverflowScrolling: 'auto',
+            scrollbarGutter: 'stable'
           }}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
