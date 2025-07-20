@@ -133,6 +133,7 @@ export default function AIChatbot() {
   
   const chatRef = useRef<HTMLDivElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const chatContainerRef = useRef<HTMLDivElement>(null);
   
   // Fetch real affiliate links data
   const { data: affiliateLinks = [] } = useQuery<AffiliateLink[]>({
@@ -1878,17 +1879,19 @@ Can I help you find something excellent in one of these available categories?`
         style={{ height: 'calc(100% - 60px)' }}
       >
         <div 
-          className="flex-1 p-4 space-y-4 chat-scrollable" 
+          ref={chatContainerRef}
+          className="flex-1 overflow-y-scroll p-4 space-y-4 chat-messages-container" 
           style={{ 
             height: 'calc(100% - 80px)',
             overflowY: 'scroll',
             scrollbarWidth: 'auto',
             scrollbarColor: '#6b7280 #374151',
-            WebkitOverflowScrolling: 'auto',
-            scrollbarGutter: 'stable'
+            WebkitOverflowScrolling: 'touch'
           }}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
         >
           {messages.map((message) => (
             <div

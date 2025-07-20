@@ -286,103 +286,93 @@ input, textarea, [contenteditable="true"] {
   
 
   
-  /* FORCE VISIBLE SCROLLBAR FOR CHAT - ALL DEVICES */
-  .chat-scrollable {
-    overflow-y: scroll !important;
-    scrollbar-width: auto !important;
-    scrollbar-color: #6b7280 #374151 !important;
-    -webkit-overflow-scrolling: touch !important;
-  }
-  
-  /* Desktop/Laptop scrollbar */
-  .chat-scrollable::-webkit-scrollbar {
+  /* CHAT MESSAGES SCROLLBAR - DESKTOP */
+  .chat-messages-container::-webkit-scrollbar {
     width: 16px !important;
     background: #374151 !important;
   }
   
-  .chat-scrollable::-webkit-scrollbar-track {
+  .chat-messages-container::-webkit-scrollbar-track {
     background: #374151 !important;
     border-radius: 8px !important;
     border: 1px solid #4b5563 !important;
   }
   
-  .chat-scrollable::-webkit-scrollbar-thumb {
+  .chat-messages-container::-webkit-scrollbar-thumb {
     background: #6b7280 !important;
     border-radius: 8px !important;
     border: 1px solid #4b5563 !important;
     min-height: 40px !important;
   }
   
-  .chat-scrollable::-webkit-scrollbar-thumb:hover {
+  .chat-messages-container::-webkit-scrollbar-thumb:hover {
     background: #9ca3af !important;
   }
   
-  .chat-scrollable::-webkit-scrollbar-corner {
-    background: #374151 !important;
-  }
-  
-  /* Mobile iPhone/iPad specific scrollbar - FORCE VISIBLE */
+  /* MOBILE SCROLLBAR - ALWAYS VISIBLE */
   @media (max-width: 768px) {
-    .chat-scrollable {
+    .chat-messages-container {
       overflow-y: scroll !important;
       -webkit-overflow-scrolling: touch !important;
       scrollbar-width: auto !important;
-      scrollbar-gutter: stable !important;
+      padding-right: 16px !important;
     }
     
-    .chat-scrollable::-webkit-scrollbar {
-      width: 14px !important;
-      height: 14px !important;
-      background-color: #374151 !important;
-      -webkit-appearance: none !important;
-      display: block !important;
+    .chat-messages-container::-webkit-scrollbar {
+      width: 12px !important;
+      background: #374151 !important;
+      border-radius: 6px !important;
     }
     
-    .chat-scrollable::-webkit-scrollbar-track {
-      background-color: #374151 !important;
-      border-radius: 7px !important;
-      border: 2px solid #4b5563 !important;
+    .chat-messages-container::-webkit-scrollbar-track {
+      background: #374151 !important;
+      border-radius: 6px !important;
+      border: 1px solid #4b5563 !important;
     }
     
-    .chat-scrollable::-webkit-scrollbar-thumb {
-      background-color: #6b7280 !important;
-      border-radius: 7px !important;
-      border: 2px solid #4b5563 !important;
+    .chat-messages-container::-webkit-scrollbar-thumb {
+      background: #6b7280 !important;
+      border-radius: 6px !important;
+      border: 1px solid #4b5563 !important;
       min-height: 40px !important;
-      min-width: 40px !important;
     }
     
-    .chat-scrollable::-webkit-scrollbar-thumb:active {
-      background-color: #9ca3af !important;
+    .chat-messages-container::-webkit-scrollbar-thumb:active {
+      background: #9ca3af !important;
     }
   }
   
-  /* iOS Safari specific fixes */
+  /* FORCE SCROLLBAR ON iOS SAFARI */
   @supports (-webkit-touch-callout: none) {
-    .chat-scrollable {
+    .chat-messages-container {
       overflow-y: scroll !important;
-      -webkit-overflow-scrolling: auto !important;
+      -webkit-overflow-scrolling: touch !important;
       scrollbar-width: auto !important;
     }
     
-    .chat-scrollable::-webkit-scrollbar {
-      width: 14px !important;
-      background-color: #374151 !important;
+    .chat-messages-container::-webkit-scrollbar {
+      width: 12px !important;
+      background: #374151 !important;
       -webkit-appearance: none !important;
       display: block !important;
+      border-radius: 6px !important;
     }
     
-    .chat-scrollable::-webkit-scrollbar-track {
-      background-color: #374151 !important;
-      border-radius: 7px !important;
-      border: 2px solid #4b5563 !important;
+    .chat-messages-container::-webkit-scrollbar-track {
+      background: #374151 !important;
+      border-radius: 6px !important;
+      border: 1px solid #4b5563 !important;
     }
     
-    .chat-scrollable::-webkit-scrollbar-thumb {
-      background-color: #6b7280 !important;
-      border-radius: 7px !important;
-      border: 2px solid #4b5563 !important;
+    .chat-messages-container::-webkit-scrollbar-thumb {
+      background: #6b7280 !important;
+      border-radius: 6px !important;
+      border: 1px solid #4b5563 !important;
       min-height: 40px !important;
+    }
+    
+    .chat-messages-container::-webkit-scrollbar-thumb:active {
+      background: #9ca3af !important;
     }
   }
 
