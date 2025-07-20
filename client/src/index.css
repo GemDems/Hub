@@ -286,37 +286,39 @@ input, textarea, [contenteditable="true"] {
   
 
   
-  /* Custom scrollbar styles for chat */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 12px;
+  /* Custom scrollbar styles for chat - force visibility */
+  .overflow-y-scroll::-webkit-scrollbar {
+    width: 14px !important;
+    display: block !important;
   }
   
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: #374151;
-    border-radius: 6px;
-    border: 1px solid #4b5563;
+  .overflow-y-scroll::-webkit-scrollbar-track {
+    background: #374151 !important;
+    border-radius: 7px !important;
+    border: 2px solid #4b5563 !important;
   }
   
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: #6b7280;
-    border-radius: 6px;
-    border: 1px solid #4b5563;
-    transition: all 0.2s ease;
+  .overflow-y-scroll::-webkit-scrollbar-thumb {
+    background: #6b7280 !important;
+    border-radius: 7px !important;
+    border: 2px solid #4b5563 !important;
+    transition: all 0.2s ease !important;
   }
   
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: #9ca3af;
-    border-color: #6b7280;
+  .overflow-y-scroll::-webkit-scrollbar-thumb:hover {
+    background: #9ca3af !important;
+    border-color: #6b7280 !important;
   }
   
-  .scrollbar-thin::-webkit-scrollbar-thumb:active {
-    background: #d1d5db;
+  .overflow-y-scroll::-webkit-scrollbar-thumb:active {
+    background: #d1d5db !important;
   }
   
-  /* Firefox scrollbar */
-  .scrollbar-thin {
-    scrollbar-width: auto;
-    scrollbar-color: #6b7280 #374151;
+  /* Force scrollbar always visible */
+  .overflow-y-scroll {
+    scrollbar-width: auto !important;
+    scrollbar-color: #6b7280 #374151 !important;
+    overflow-y: scroll !important;
   }
 
   /* Gold popup animation */
