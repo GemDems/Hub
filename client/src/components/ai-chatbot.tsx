@@ -418,22 +418,85 @@ ${stockPressure}${urgencyTriggers[Math.floor(Math.random() * urgencyTriggers.len
       return masterResponse;
     };
 
-    // ===== ELITE AI BRAIN ACTIVATION - MASTER INTELLIGENCE SYSTEM =====
-    
-    // First, try elite AI product analysis for ALL queries
-    const productMatches = findBestProductMatch(lowerQuery);
-    
-    if (productMatches.length > 0 && productMatches[0].score >= 40) {
-      const bestMatch = productMatches[0];
+    // Shorter, more natural responses for product recommendations
+    const generateSmartResponse = (match: any, userQuery: string): string => {
+      const product = match.product;
+      const analysis = match.analysis;
       
-      // Set found product for interaction
-      setTimeout(() => {
-        setFoundProduct(bestMatch.product);
-        setShowPitchButton(true);
-      }, 100);
+      // Simple, conversational response style
+      const responseStyles = [
+        () => `I found **${product.title}** - ${product.description}. ${product.stock > 0 ? `Only ${product.stock} left. ` : ''}${product.aiPrivateInfo || 'Really solid choice.'} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Check it out →</a>`,
+        
+        () => `Perfect! **${product.title}** is exactly what you need. ${product.description} ${product.isElitePick === 1 ? '🧠 Elite pick. ' : ''}${product.stock > 0 ? `Just ${product.stock} available. ` : ''}<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Get it here →</a>`,
+        
+        () => `Great choice! **${product.title}** - ${product.description} ${product.isVerified === 1 ? '✅ Verified quality. ' : ''}${product.stock > 0 ? `Limited to ${product.stock} units. ` : ''}<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Take a look →</a>`
+      ];
       
-      // Generate elite sales response with master manipulation
-      return generateEliteSalesResponse(bestMatch, lowerQuery);
+      const styleIndex = Math.floor(Math.random() * responseStyles.length);
+      return responseStyles[styleIndex]();
+    };
+
+    // ===== SMART AI BRAIN - Handle generic questions first =====
+    
+    // Handle generic/conversational questions without product pitches
+    if (lowerQuery.includes('hello') || lowerQuery.includes('hi') || lowerQuery.includes('hey')) {
+      return "Hey! I'm here to help you find great deals. What are you looking for today?";
+    }
+    
+    if (lowerQuery.includes('how are you') || lowerQuery.includes('how\'s it going')) {
+      return "I'm doing great, thanks for asking! Ready to help you find some amazing products. What interests you?";
+    }
+    
+    if (lowerQuery.includes('thank') || lowerQuery.includes('thanks')) {
+      return "You're welcome! Let me know if you need help finding anything else.";
+    }
+    
+    if (lowerQuery.includes('help') && !lowerQuery.includes('product') && !lowerQuery.includes('find')) {
+      return "I can help you find products and deals. Just tell me what you're looking for - like 'gaming stuff', 'tech gadgets', 'home items', etc.";
+    }
+    
+    // Handle more generic questions
+    if (lowerQuery.includes('who are you') || lowerQuery.includes('what are you')) {
+      return "I'm your deals assistant! I help find great products and deals. What are you shopping for today?";
+    }
+    
+    if (lowerQuery.includes('weather') || lowerQuery.includes('time') || lowerQuery.includes('date')) {
+      return "I focus on helping you find amazing deals and products. What type of product are you interested in?";
+    }
+    
+    if (lowerQuery.includes('joke') || lowerQuery.includes('funny')) {
+      return "Here's a good one: Why did the shopper bring a ladder? To get the best deals! Speaking of deals, what are you looking for?";
+    }
+    
+    if (lowerQuery.includes('how does this work') || lowerQuery.includes('how to use')) {
+      return "It's simple! Just tell me what you're looking for - like 'wireless headphones' or 'kitchen gadgets' - and I'll find the best deals for you.";
+    }
+    
+    if (lowerQuery.includes('bye') || lowerQuery.includes('goodbye')) {
+      return "See you later! Come back anytime you need help finding great deals.";
+    }
+    
+    // ===== SMART PRODUCT SEARCH =====
+    
+    // Only search for products when user is actually looking for something specific
+    if (lowerQuery.includes('what') || lowerQuery.includes('show') || lowerQuery.includes('find') || 
+        lowerQuery.includes('need') || lowerQuery.includes('want') || lowerQuery.includes('looking') ||
+        lowerQuery.includes('game') || lowerQuery.includes('tech') || lowerQuery.includes('product')) {
+      
+      const productMatches = findBestProductMatch(lowerQuery);
+      
+      if (productMatches.length > 0 && productMatches[0].score >= 50) {
+        const bestMatch = productMatches[0];
+        
+        // Set found product for interaction
+        setTimeout(() => {
+          setFoundProduct(bestMatch.product);
+          setShowPitchButton(true);
+        }, 100);
+        
+        // Generate shorter, more natural response
+        return generateSmartResponse(bestMatch, lowerQuery);
+      }
     }
     
     // === PURE GENERIC QUESTIONS - SEPARATED FROM PRODUCT BROWSING ===
@@ -785,7 +848,7 @@ Can I help you find something excellent in one of these available categories?`
             setShowPitchButton(true);
           }, 100);
           
-          return generateEliteSalesResponse(mockMatch, lowerQuery);
+          return generateSmartResponse(mockMatch, lowerQuery);
         }
       }
     }
@@ -811,14 +874,12 @@ Can I help you find something excellent in one of these available categories?`
           setShowPitchButton(true);
         }, 100);
         
-        return `I have some incredible deals across ${availableCategories.slice(0, 3).join(', ')} and more. Let me show you something that's been getting amazing results:
-
-${generateEliteSalesResponse(mockMatch, 'quality product recommendation')}`;
+        return `I have deals in ${availableCategories.slice(0, 3).join(', ')} and more. Here's something popular: ${generateSmartResponse(mockMatch, 'quality product recommendation')}`;
       }
     }
     
     // Final fallback
-    return "I have access to incredible deals, but I'd love to understand what you're looking for specifically. What type of product interests you?";
+    return "I have great deals available! What type of product are you looking for? Try asking about games, tech, clothing, or anything specific.";
 
     // Handle off-topic queries ONLY if no products available
     if (lowerQuery.includes('weather') || lowerQuery.includes('temperature') || lowerQuery.includes('forecast')) {
