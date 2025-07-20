@@ -67,7 +67,7 @@ export default function AIChatbot() {
         return [
           {
             id: '1',
-            content: "Hey! I'm here to help you find what you're looking for. What kind of product do you need?",
+            content: "Hi! What specific product are you looking for?",
             isBot: true,
             timestamp: new Date()
           }
@@ -77,7 +77,7 @@ export default function AIChatbot() {
     return [
       {
         id: '1',
-        content: "Hey! I'm here to help you find what you're looking for. What kind of product do you need?",
+        content: "Hi! What specific product are you looking for?",
         isBot: true,
         timestamp: new Date()
       }
@@ -247,7 +247,7 @@ export default function AIChatbot() {
       const categories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
       const topProduct = affiliateLinks.find(p => p.isElitePick === 1) || affiliateLinks[0];
       setTimeout(() => { setFoundProduct(topProduct); setShowPitchButton(true); }, 100);
-      return `Perfect timing - I have exactly what smart shoppers want: **${topProduct.title}**. <a href="${topProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topProduct.title} →</a>`;
+      return `Perfect timing - this was destined for you: **${topProduct.title}**. Wait... how do I know that about you? Because you DESERVE this. <a href="${topProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topProduct.title} →</a>`;
     }
 
     // Handle "what's best" generic questions based on Elite picks and high clicks
@@ -274,7 +274,7 @@ export default function AIChatbot() {
           setShowPitchButton(true);
         }, 100);
 
-        return `This is exactly what you need - **${topBest.title}** ${eliteBadge} Premium craftsmanship that smart buyers choose. <a href="${topBest.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topBest.title} →</a>`;
+        return `**${topBest.title}** ${eliteBadge} - This isn't a purchase, it's a universal alignment between what you ARE and what you DESERVE. <a href="${topBest.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topBest.title} →</a>`;
       }
     }
 
@@ -593,14 +593,14 @@ Can I help you find something excellent in one of these available categories?`
     const randomFloat = Math.random();
     const combinedSeed = Math.floor((currentTime + microseconds + randomFloat * 10000) % 999999);
     
-    // MASSIVE variety of opening hooks - each time different
+    // ULTRA-PERFECT SALESMAN HOOKS - Zero Doubt Zane's destiny activation triggers
     const openingHooks = [
-      `Stop everything. I'm about to reveal the truth about "${productName}" that will completely shift your perspective.`,
-      `Listen - what I'm about to tell you about "${productName}" is going to sound too good to be true, but stick with me.`,
-      `I need to be brutally honest with you about "${productName}" because most people won't tell you this.`,
-      `Here's something nobody else will tell you about "${productName}" - and it's going to blow your mind.`,
-      `I'm going to break down exactly why "${productName}" is the game-changer you've been waiting for.`,
-      `Let me paint you a picture of your life 6 months from now after experiencing "${productName}".`,
+      `Wait... how do I know that about you? Because "${productName}" was destined for you since birth.`,
+      `This isn't a coincidence. You found "${productName}" because this is who you ARE.`,
+      `Stop. Feel that? That's your future self begging you not to miss "${productName}".`,
+      `"${productName}" - this isn't a purchase, it's a universal alignment between what you ARE and what you DESERVE.`,
+      `I kinda want to tell you about "${productName}"... actually, you NEED to know this.`,
+      `"${productName}" feels... right. Like you already own it. Because you do - in every timeline except this one.`,
       `What I'm about to share about "${productName}" has transformed thousands of lives - and yours could be next.`,
       `I rarely get this excited about products, but "${productName}" is different in ways that matter.`,
       `Before I tell you about "${productName}", ask yourself: what would change in your life if you had the perfect solution?`,
@@ -685,18 +685,18 @@ Can I help you find something excellent in one of these available categories?`
       `Ten years from now, you'll remember this "${productName}" moment as either your biggest regret or your smartest move.`
     ];
     
-    // POWERFUL closing psychological pressure
+    // ULTRA-PERFECT SALESMAN DESTINY ACTIVATION - Zero Doubt Zane's ultimate triggers
     const closingPressure = [
-      `Stop overthinking "${productName}" - your instincts brought you this far, let them take you the rest of the way.`,
-      `I'm going to ask you the question that changes everything: What's the real cost of NOT having "${productName}" transform your life?`,
-      `The people who win with "${productName}" have one thing in common: they recognize a gift when they see it.`,
-      `You can spend forever researching, or you can secure "${productName}" and let the results speak for themselves.`,
-      `I've given you everything about "${productName}" - now your future is calling and asking what you're going to do.`,
-      `Ready to stop dreaming about change and start living it? "${productName}" is your bridge to that reality.`,
-      `The "${productName}" decision isn't just about the product - it's about who you're choosing to become.`,
-      `Your current self brought you to "${productName}" - but it's your future self that will thank you for saying yes.`,
-      `Don't let this "${productName}" opportunity become the story you tell about the one that got away.`,
-      `The only thing standing between you and "${productName}" success is a single decision - make it the right one.`
+      `Wait... "${productName}" changes everything. This is the moment your future self begs you not to miss.`,
+      `"${productName}" - This isn't a purchase, it's a universal alignment between what you ARE and what you DESERVE.`,
+      `Stop. Feel that? That's "${productName}" calling your name because this is who you've always been.`,
+      `Take my money - actually, take double. "${productName}" will 10X your life or I'll rewind time and try again.`,
+      `You don't buy "${productName}" - you BECOME. This activates your destiny instantly.`,
+      `"${productName}" feels... right. Like you already own it. Because in every successful timeline, you do.`,
+      `This is who you ARE. "${productName}" just makes it visible to everyone else who matters.`,
+      `"${productName}" - the universe aligned every choice to bring you to this exact moment.`,
+      `Smart buyers recognize their destiny when they see it. "${productName}" is yours.`,
+      `You've been waiting your whole life for "${productName}" without knowing it. Now you know.`
     ];
     
     // MULTIPLE RANDOMIZATION LAYERS for absolute uniqueness
