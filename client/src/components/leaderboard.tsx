@@ -6,16 +6,16 @@ import SavingsProgress from "./savings-progress";
 // Realistic static leaderboard data that persists
 const STATIC_LEADERBOARD_DATA = {
   topSavers: [
-    { name: "Michael R.", savings: 2847, location: "California", isVip: true },
-    { name: "Sarah K.", savings: 2634, location: "Texas", isVip: true },
-    { name: "David L.", savings: 2291, location: "New York", isVip: true },
-    { name: "Jennifer M.", savings: 2156, location: "Florida", isVip: false },
-    { name: "Robert P.", savings: 2089, location: "Illinois", isVip: true },
-    { name: "Lisa W.", savings: 1967, location: "Arizona", isVip: false },
-    { name: "James T.", savings: 1834, location: "Ohio", isVip: true },
-    { name: "Amanda S.", savings: 1723, location: "Georgia", isVip: false },
-    { name: "Chris B.", savings: 1645, location: "Michigan", isVip: false },
-    { name: "Maria G.", savings: 1589, location: "Nevada", isVip: true }
+    { name: "Michael R.", savings: 2857, location: "California", isVip: true },
+    { name: "Sarah K.", savings: 2652, location: "Texas", isVip: true },
+    { name: "David L.", savings: 2309, location: "New York", isVip: true },
+    { name: "Jennifer M.", savings: 2171, location: "Florida", isVip: false },
+    { name: "Robert P.", savings: 2107, location: "Illinois", isVip: true },
+    { name: "Lisa W.", savings: 1979, location: "Arizona", isVip: false },
+    { name: "James T.", savings: 1843, location: "Ohio", isVip: true },
+    { name: "Amanda S.", savings: 1728, location: "Georgia", isVip: false },
+    { name: "Chris B.", savings: 1651, location: "Michigan", isVip: false },
+    { name: "Maria G.", savings: 1605, location: "Nevada", isVip: true }
   ],
   topReferrers: [
     { name: "Sarah K.", referrals: 47, earnings: 1420, location: "Texas" },
@@ -136,8 +136,7 @@ export default function Leaderboard() {
           Top performers this month • Updates live every few minutes
         </p>
       </div>
-
-      <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto px-4 mt-2">
+      <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto px-4 mt-2 pl-[4px] pr-[4px]">
         {/* Top Savers */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6">
@@ -181,12 +180,10 @@ export default function Leaderboard() {
           </div>
         </div>
       </div>
-
       {/* Money Saved Tracker - Minimal Design */}
       <div className="max-w-md mx-auto px-4 py-2">
         <SavingsProgress />
       </div>
-
       <div className="grid md:grid-cols-1 gap-8 max-w-3xl mx-auto px-4">
         {/* Top VIP Referrers */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
