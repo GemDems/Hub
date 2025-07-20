@@ -16,12 +16,7 @@ interface ChatPosition {
   y: number;
 }
 
-interface AIChatbotProps {
-  isOpen?: boolean;
-  onClose?: () => void;
-}
-
-export default function AIChatbot({ isOpen: externalIsOpen, onClose: externalOnClose }: AIChatbotProps = {}) {
+export default function AIChatbot() {
   // Function to format message links - converts raw URLs to clean clickable links
   const formatMessageLinks = (content: string): string => {
     // Pattern to match raw URLs like (https://example.com) or just https://example.com
@@ -57,11 +52,7 @@ export default function AIChatbot({ isOpen: externalIsOpen, onClose: externalOnC
     return `${deviceId}-${tabId}`;
   });
 
-  const [internalIsOpen, setInternalIsOpen] = useState(false);
-  
-  // Use external state if provided, otherwise use internal state
-  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
-  const setIsOpen = externalOnClose ? () => externalOnClose() : setInternalIsOpen;
+  const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => {
     // Load saved messages from localStorage or use default
     const savedMessages = localStorage.getItem(`chatMessages-${sessionId}`);
@@ -1617,10 +1608,7 @@ Can I help you find something excellent in one of these available categories?`
       <>
         {/* Animated Chat Button - Always in DOM for smooth transitions */}
         <button
-          onClick={() => {
-            console.log('Chat button clicked, externalOnClose:', !!externalOnClose);
-            setInternalIsOpen(true);
-          }}
+          onClick={() => setIsOpen(true)}
           onMouseEnter={() => {
             setIsHovering(true);
             setShowControlButton(true);
@@ -1641,7 +1629,9 @@ Can I help you find something excellent in one of these available categories?`
               setFadeTimer(fadeOutTimer);
             }
           }}
-          className="fixed bottom-6 right-6 z-50 flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 group transition-all duration-300 opacity-100 pointer-events-auto"
+          className={`fixed bottom-6 right-6 z-50 flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 group transition-all duration-700 ease-out ${
+            isButtonFading && !isSlideUp ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          } ${isSlideUp ? 'transform translate-y-32' : 'transform translate-y-0'}`}
           style={{
             boxShadow: '0 10px 30px rgba(59, 130, 246, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset',
             background: 'linear-gradient(135deg, #3b82f6 0%, #6366f1 50%, #8b5cf6 100%)'

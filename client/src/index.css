@@ -95,47 +95,6 @@ input, textarea, [contenteditable="true"] {
   -webkit-user-select: none !important;
 }
 
-/* ======== AI ASSISTANCE BUTTON POWERFUL PSYCHOLOGY ======== */
-@keyframes ai-glow-pulse {
-  0%, 100% { 
-    box-shadow: 0 0 20px rgba(102, 126, 234, 0.6), 0 0 30px rgba(118, 75, 162, 0.4), 0 0 40px rgba(102, 126, 234, 0.2);
-  }
-  50% { 
-    box-shadow: 0 0 30px rgba(102, 126, 234, 0.8), 0 0 50px rgba(118, 75, 162, 0.6), 0 0 70px rgba(102, 126, 234, 0.4);
-  }
-}
-
-@keyframes ai-shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
-}
-
-.ai-assistance-glow {
-  animation: ai-glow-pulse 2s ease-in-out infinite;
-}
-
-.ai-assistance-glow::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-  animation: ai-shimmer 3s ease-in-out infinite;
-  border-radius: 16px;
-}
-
-/* Magnetic hover effect */
-.ai-assistance-magnetic {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.ai-assistance-magnetic:hover {
-  transform: translateY(-3px) scale(1.05);
-  filter: brightness(1.1) saturate(1.2);
-}
-
 @keyframes rainbow-cycle {
   0% { color: #ef4444; }
   16.66% { color: #f59e0b; }

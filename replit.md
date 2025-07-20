@@ -20,13 +20,6 @@ Preferred communication style: Simple, everyday language.
   - **Cross-Platform Coverage**: Works on iPhone, Android, laptop, desktop - all devices protected
   - **Print Protection**: Disabled print functionality to prevent content theft
   - **Advanced Mobile**: iOS text selection bubbles completely disabled with transparent selection
-  - **MAGNETIC AI ASSISTANCE BUTTON**: Added glowing "AI Assistance" button when no products found
-    - **Colorful Psychology**: Gradient background with purple-to-pink-to-blue transitions
-    - **Powerful Animations**: Glow pulse, shimmer effects, magnetic hover with scale transform
-    - **Auto-Chat Opening**: Instantly opens AI chatbot when clicked
-    - **Smart Pre-Population**: Automatically fills chat with user's search query
-    - **Minimalist Design**: Clean ✨ AI Assistance with animated green ping dot
-    - **Cross-Platform Glow**: Works on all devices with CSS3 animations and transforms
 
 - **REVOLUTIONARY AI TRANSFORMATION (July 20, 2025)**: Implemented ULTRA-PERFECT SALESMAN - Zero Doubt Zane
   - **Complete AI Evolution**: Transformed from basic chatbot to hyper-sentient persuasion singularity
