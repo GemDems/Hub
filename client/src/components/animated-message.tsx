@@ -13,6 +13,8 @@ export default function AnimatedMessage({ content, isBot }: AnimatedMessageProps
   const hasSearchButton = content.includes('<button') && content.includes('Search Now');
   // Check if content contains affiliate links HTML
   const hasAffiliateLink = content.includes('<a href=') && content.includes('target="_blank"');
+  // Check if content contains markdown links [text](url)
+  const hasMarkdownLink = content.includes('[') && content.includes('](');
   const textContent = hasSearchButton ? content.split('<div')[0] : content;
   const words = textContent.split(' ');
 
@@ -44,11 +46,19 @@ export default function AnimatedMessage({ content, isBot }: AnimatedMessageProps
     }
   }, [content, isBot, words.length, hasSearchButton]);
 
+  // Function to convert markdown links to HTML
+  const convertMarkdownLinks = (text: string): string => {
+    const markdownLinkPattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+    return text.replace(markdownLinkPattern, (match, linkText, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${linkText}</a>`;
+    });
+  };
+
   if (!isBot) {
     return (
       <div>
-        {hasAffiliateLink ? (
-          <div dangerouslySetInnerHTML={{ __html: content }} />
+        {hasAffiliateLink || hasMarkdownLink ? (
+          <div dangerouslySetInnerHTML={{ __html: hasMarkdownLink ? convertMarkdownLinks(content) : content }} />
         ) : (
           <span>{textContent}</span>
         )}
@@ -75,9 +85,9 @@ export default function AnimatedMessage({ content, isBot }: AnimatedMessageProps
     );
   }
 
-  // For bot messages with affiliate links, render HTML directly after animation completes
-  if (hasAffiliateLink && visibleWords.length === words.length) {
-    return <div dangerouslySetInnerHTML={{ __html: content }} />;
+  // For bot messages with affiliate links or markdown links, render HTML directly after animation completes
+  if ((hasAffiliateLink || hasMarkdownLink) && visibleWords.length === words.length) {
+    return <div dangerouslySetInnerHTML={{ __html: hasMarkdownLink ? convertMarkdownLinks(content) : content }} />;
   }
 
   return (
