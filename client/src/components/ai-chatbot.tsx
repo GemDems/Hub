@@ -1878,8 +1878,12 @@ Can I help you find something excellent in one of these available categories?`
         style={{ height: 'calc(100% - 60px)' }}
       >
         <div 
-          className="flex-1 overflow-y-auto p-4 space-y-4" 
-          style={{ maxHeight: 'calc(100% - 80px)' }}
+          className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 hover:scrollbar-thumb-gray-500" 
+          style={{ 
+            maxHeight: 'calc(100% - 80px)',
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#4b5563 #1f2937'
+          }}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         >
