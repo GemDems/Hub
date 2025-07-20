@@ -2,6 +2,99 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ======== COPY-PASTE PROTECTION - ALL PLATFORMS & DEVICES ======== */
+/* Disable text selection across entire site */
+* {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Disable text selection on mobile devices */
+body, html {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
+/* Disable highlighting and context menus */
+body {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+  -khtml-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Disable text selection for input fields (except actual form inputs) */
+div, span, p, h1, h2, h3, h4, h5, h6, a, button {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+
+/* Hide text selection cursors */
+body * {
+  cursor: default !important;
+}
+
+/* Disable image dragging */
+img {
+  -webkit-user-drag: none !important;
+  -khtml-user-drag: none !important;
+  -moz-user-drag: none !important;
+  -o-user-drag: none !important;
+  user-drag: none !important;
+  pointer-events: none !important;
+}
+
+/* Re-enable selection only for actual input fields */
+input, textarea, [contenteditable="true"] {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+  cursor: text !important;
+  pointer-events: auto !important;
+}
+
+/* Additional mobile protection */
+@media (max-width: 768px) {
+  * {
+    -webkit-touch-callout: none !important;
+    -webkit-user-select: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  
+  /* Disable iOS text selection bubble */
+  *::selection {
+    background: transparent !important;
+  }
+  
+  *::-moz-selection {
+    background: transparent !important;
+  }
+}
+
+/* Disable print functionality */
+@media print {
+  body { display: none !important; }
+}
+
+/* Disable long press on mobile */
+* {
+  -webkit-touch-callout: none !important;
+  -webkit-user-select: none !important;
+}
+
 @keyframes rainbow-cycle {
   0% { color: #ef4444; }
   16.66% { color: #f59e0b; }
