@@ -136,7 +136,7 @@ export default function Leaderboard() {
           Top performers this month • Updates live every few minutes
         </p>
       </div>
-      <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto px-4 mt-2 pl-[4px] pr-[4px]">
+      <div className="grid md:grid-cols-1 gap-8 max-w-2xl mx-auto px-4 mt-2 pl-[0px] pr-[0px]">
         {/* Top Savers */}
         <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
           <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white p-6">
