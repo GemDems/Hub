@@ -442,7 +442,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("AI Chat Error:", error);
       res.status(500).json({ 
-        message: "AI service temporarily unavailable",
+        error: "OpenAI service unavailable",
         hasOpenAI: false,
         fallback: true
       });

@@ -131,10 +131,8 @@ Always respond with natural conversation, product recommendations, and include c
 
   } catch (error) {
     console.error('OpenAI API Error:', error);
-    return {
-      response: "I'm having some technical difficulties right now. Let me help you the traditional way - what kind of product are you looking for?",
-      confidence: 0
-    };
+    // Return null to indicate fallback should be used
+    throw new Error(`OpenAI API unavailable: ${error.message}`);
   }
 }
 

@@ -871,10 +871,11 @@ Can I help you find something excellent in one of these available categories?`
           confidence: aiResult.confidence
         };
       } else {
-        throw new Error('OpenAI API failed');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`OpenAI API failed: ${response.status} ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.log('⚠️ Falling back to local AI system:', error.message);
+      console.log('⚠️ OpenAI unavailable, using local AI system:', error.message);
       // Fallback to the existing advanced AI system
       const fallbackResponse = generateAdvancedAIResponse(userMessage, conversationHistory);
       return {
@@ -942,9 +943,38 @@ Can I help you find something excellent in one of these available categories?`
       }
 
     } catch (error) {
-      console.error('Error in handleSendMessage:', error);
-      // Fallback to original system
-      handleOriginalMessageFlow(messageToProcess, newHistory);
+      console.log('🔄 OpenAI unavailable, using local AI system');
+      // Since OpenAI failed, directly use the local advanced AI system
+      setIsTyping(false);
+      
+      const localResponse = generateAdvancedAIResponse(messageToProcess, conversationHistory);
+      
+      const botResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        content: localResponse,
+        isBot: true,
+        timestamp: new Date()
+      };
+
+      // Update conversation history and messages
+      setConversationHistory(prev => [...prev, { role: 'assistant', content: localResponse }]);
+      setMessages(prev => [...prev, botResponse]);
+      
+      // Check for product recommendations in local response
+      const hasProducts = affiliateLinks && affiliateLinks.length > 0;
+      if (hasProducts) {
+        const foundSpecificProduct = affiliateLinks.find(link => 
+          messageToProcess.toLowerCase().includes(link.title.toLowerCase()) ||
+          messageToProcess.toLowerCase().includes(link.category?.toLowerCase() || '') ||
+          localResponse.toLowerCase().includes(link.title.toLowerCase())
+        );
+        
+        if (foundSpecificProduct) {
+          setFoundProduct(foundSpecificProduct);
+          setShowPitchButton(true);
+          console.log('🎯 Product found by local system:', foundSpecificProduct.title);
+        }
+      }
     }
   };
 
