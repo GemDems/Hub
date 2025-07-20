@@ -837,8 +837,55 @@ Can I help you find something excellent in one of these available categories?`
     return responseStyles[styleIndex]();
   };
 
+  // OpenAI Integration - Enhanced AI Response Generation
+  const generateAIResponse = async (userMessage: string): Promise<{
+    response: string;
+    recommendedProduct?: any;
+    confidence: number;
+  }> => {
+    try {
+      // Try OpenAI first
+      const response = await fetch('/api/ai-chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userMessage,
+          conversationHistory: conversationHistory.map(msg => ({
+            role: msg.role,
+            content: msg.content
+          }))
+        })
+      });
+
+      if (response.ok) {
+        const aiResult = await response.json();
+        console.log('🤖 OpenAI Response:', aiResult.response);
+        console.log('🎯 Recommended Product:', aiResult.recommendedProduct?.title);
+        console.log('📊 Confidence:', aiResult.confidence);
+        
+        return {
+          response: aiResult.response,
+          recommendedProduct: aiResult.recommendedProduct,
+          confidence: aiResult.confidence
+        };
+      } else {
+        throw new Error('OpenAI API failed');
+      }
+    } catch (error) {
+      console.log('⚠️ Falling back to local AI system:', error.message);
+      // Fallback to the existing advanced AI system
+      const fallbackResponse = generateAdvancedAIResponse(userMessage, conversationHistory);
+      return {
+        response: fallbackResponse,
+        confidence: 0.5
+      };
+    }
+  };
+
   const generateBotResponse = (userMessage: string): string => {
-    // Use the advanced AI search system instead of template responses
+    // Use the advanced AI search system as fallback (kept for compatibility)
     return generateAdvancedAIResponse(userMessage, conversationHistory);
   };
 
@@ -868,6 +915,41 @@ Can I help you find something excellent in one of these available categories?`
     setInputValue("");
     setReplyingTo(null); // Clear reply state
     setIsTyping(true);
+
+    try {
+      // Use OpenAI-powered AI response generation
+      const aiResult = await generateAIResponse(messageToProcess);
+      
+      setIsTyping(false);
+      
+      // Create bot response message
+      const botResponse: Message = {
+        id: (Date.now() + 1).toString(),
+        content: aiResult.response,
+        isBot: true,
+        timestamp: new Date()
+      };
+
+      // Update conversation history and messages
+      setConversationHistory(prev => [...prev, { role: 'assistant', content: aiResult.response }]);
+      setMessages(prev => [...prev, botResponse]);
+      
+      // Handle product recommendations from OpenAI
+      if (aiResult.recommendedProduct && aiResult.confidence > 0.6) {
+        console.log('🎯 Setting recommended product from OpenAI:', aiResult.recommendedProduct.title);
+        setFoundProduct(aiResult.recommendedProduct);
+        setShowPitchButton(true);
+      }
+
+    } catch (error) {
+      console.error('Error in handleSendMessage:', error);
+      // Fallback to original system
+      handleOriginalMessageFlow(messageToProcess, newHistory);
+    }
+  };
+
+  // Keep original message flow as fallback
+  const handleOriginalMessageFlow = async (messageToProcess: string, newHistory: any[]) => {
     
     try {
       // Analyze user intent and gather information

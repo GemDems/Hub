@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertAffiliateLinkSchema } from "@shared/schema";
 import { z } from "zod";
+import { generateAIChatResponse } from "./openai-service";
 
 // Global live stats that persist across sessions
 let liveStats = {
@@ -409,6 +410,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error marking idea as reviewed:", error);
       res.status(500).json({ message: "Failed to mark idea as reviewed" });
+    }
+  });
+
+  // OpenAI Chat API endpoint
+  app.post("/api/ai-chat", async (req, res) => {
+    try {
+      const { message, conversationHistory } = req.body;
+      
+      if (!message || typeof message !== 'string') {
+        return res.status(400).json({ message: "Message is required" });
+      }
+
+      // Get available products for AI context
+      const availableProducts = await storage.getPublishedAffiliateLinks();
+      
+      // Generate AI response using OpenAI
+      const aiResult = await generateAIChatResponse(
+        message, 
+        conversationHistory || [], 
+        availableProducts
+      );
+
+      res.json({
+        response: aiResult.response,
+        recommendedProduct: aiResult.recommendedProduct,
+        confidence: aiResult.confidence,
+        hasOpenAI: true
+      });
+      
+    } catch (error) {
+      console.error("AI Chat Error:", error);
+      res.status(500).json({ 
+        message: "AI service temporarily unavailable",
+        hasOpenAI: false,
+        fallback: true
+      });
     }
   });
 
