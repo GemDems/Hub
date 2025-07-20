@@ -16,7 +16,12 @@ interface ChatPosition {
   y: number;
 }
 
-export default function AIChatbot() {
+interface AIChatbotProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export default function AIChatbot({ isOpen: externalIsOpen, onClose: externalOnClose }: AIChatbotProps = {}) {
   // Function to format message links - converts raw URLs to clean clickable links
   const formatMessageLinks = (content: string): string => {
     // Pattern to match raw URLs like (https://example.com) or just https://example.com
@@ -52,7 +57,11 @@ export default function AIChatbot() {
     return `${deviceId}-${tabId}`;
   });
 
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalIsOpen, setInternalIsOpen] = useState(false);
+  
+  // Use external state if provided, otherwise use internal state
+  const isOpen = externalIsOpen !== undefined ? externalIsOpen : internalIsOpen;
+  const setIsOpen = externalOnClose ? () => externalOnClose() : setInternalIsOpen;
   const [messages, setMessages] = useState<Message[]>(() => {
     // Load saved messages from localStorage or use default
     const savedMessages = localStorage.getItem(`chatMessages-${sessionId}`);
@@ -1608,7 +1617,13 @@ Can I help you find something excellent in one of these available categories?`
       <>
         {/* Animated Chat Button - Always in DOM for smooth transitions */}
         <button
-          onClick={() => setIsOpen(true)}
+          onClick={() => {
+            if (externalOnClose) {
+              // External control - do nothing, parent should manage
+            } else {
+              setInternalIsOpen(true);
+            }
+          }}
           onMouseEnter={() => {
             setIsHovering(true);
             setShowControlButton(true);

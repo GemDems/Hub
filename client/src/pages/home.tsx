@@ -31,6 +31,7 @@ export default function Home() {
   const [timerCount, setTimerCount] = useState(5);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [hasExpired, setHasExpired] = useState(false);
+  const [showChatbot, setShowChatbot] = useState(false);
 
 
 
@@ -420,7 +421,7 @@ export default function Home() {
       />
       
       {/* AI Chatbot */}
-      <AIChatbot />
+      <AIChatbot isOpen={showChatbot} onClose={() => setShowChatbot(false)} />
     </div>
   );
 }
