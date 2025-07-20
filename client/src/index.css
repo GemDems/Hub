@@ -286,13 +286,15 @@ input, textarea, [contenteditable="true"] {
   
 
   
-  /* FORCE VISIBLE SCROLLBAR FOR CHAT */
+  /* FORCE VISIBLE SCROLLBAR FOR CHAT - ALL DEVICES */
   .chat-scrollable {
     overflow-y: scroll !important;
     scrollbar-width: auto !important;
     scrollbar-color: #6b7280 #374151 !important;
+    -webkit-overflow-scrolling: touch !important;
   }
   
+  /* Desktop/Laptop scrollbar */
   .chat-scrollable::-webkit-scrollbar {
     width: 16px !important;
     background: #374151 !important;
@@ -317,6 +319,34 @@ input, textarea, [contenteditable="true"] {
   
   .chat-scrollable::-webkit-scrollbar-corner {
     background: #374151 !important;
+  }
+  
+  /* Mobile iPhone/iPad specific scrollbar */
+  @media (max-width: 768px) {
+    .chat-scrollable {
+      overflow-y: scroll !important;
+      -webkit-overflow-scrolling: touch !important;
+      scrollbar-width: auto !important;
+    }
+    
+    .chat-scrollable::-webkit-scrollbar {
+      width: 12px !important;
+      background: #374151 !important;
+      -webkit-appearance: none !important;
+    }
+    
+    .chat-scrollable::-webkit-scrollbar-track {
+      background: #374151 !important;
+      border-radius: 6px !important;
+      border: 1px solid #4b5563 !important;
+    }
+    
+    .chat-scrollable::-webkit-scrollbar-thumb {
+      background: #6b7280 !important;
+      border-radius: 6px !important;
+      border: 1px solid #4b5563 !important;
+      min-height: 30px !important;
+    }
   }
 
   /* Gold popup animation */
