@@ -262,9 +262,52 @@ export default function Home() {
                 <h3 className="text-2xl font-semibold text-gray-900 mb-4">
                   No deals found for "{searchQuery}"
                 </h3>
-                <p className="text-gray-600 mb-8">
+                <p className="text-gray-600 mb-6">
                   Try a different search term or browse our categories below
                 </p>
+                
+                {/* AI Assistance Button - Glowing Powerful Psychology */}
+                <div className="mb-8 flex flex-col items-center">
+                  <button
+                    onClick={() => {
+                      setShowChatbot(true);
+                      // Auto-populate chat with user's search query
+                      setTimeout(() => {
+                        const chatInput = document.querySelector('textarea[placeholder*="Ask me anything"]') as HTMLTextAreaElement;
+                        if (chatInput) {
+                          chatInput.value = `I'm looking for ${searchQuery}`;
+                          chatInput.focus();
+                        }
+                      }, 500);
+                    }}
+                    className="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white ai-assistance-glow ai-assistance-magnetic focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%)',
+                      borderRadius: '16px',
+                      boxShadow: '0 15px 35px rgba(102, 126, 234, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3)',
+                    }}
+                  >
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-600 to-pink-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 opacity-0 transition-opacity duration-300 group-hover:opacity-50 animate-pulse"></div>
+                    <span className="relative z-10 flex items-center text-lg font-semibold">
+                      ✨ AI Assistance
+                      <span className="ml-2 inline-block w-2 h-2 bg-green-400 rounded-full animate-ping"></span>
+                    </span>
+                    
+                    {/* Glowing effect */}
+                    <div className="absolute inset-0 rounded-2xl opacity-50 animate-pulse" 
+                         style={{ 
+                           background: 'linear-gradient(135deg, #667eea, #764ba2)',
+                           filter: 'blur(8px)',
+                           transform: 'scale(1.1)'
+                         }}></div>
+                  </button>
+                  
+                  <p className="text-sm text-gray-500 mt-3 animate-pulse">
+                    🧠 Get instant personalized recommendations
+                  </p>
+                </div>
+                
                 <button 
                   onClick={() => setSearchQuery("")}
                   className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
