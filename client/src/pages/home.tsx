@@ -269,7 +269,8 @@ export default function Home() {
                 
                 {/* DEBUG: Show current search and filter status */}
                 <div className="text-xs text-gray-400 mb-4 bg-gray-100 p-2 rounded">
-                  Debug: Query="{searchQuery}", Total Products={affiliateLinks.length}, Filtered={filteredAndSortedLinks.length}
+                  Debug: Query="{searchQuery}", Total={affiliateLinks.length}, Filtered={filteredAndSortedLinks.length}
+                  <br />Products: {affiliateLinks.map(l => l.title).join(', ')}
                 </div>
                 
                 {/* AI Assistance Button - Glowing Powerful Psychology */}
@@ -314,12 +315,31 @@ export default function Home() {
                   </p>
                 </div>
                 
-                <button 
-                  onClick={() => setSearchQuery("")}
-                  className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
-                >
-                  Clear Search
-                </button>
+                <div className="space-y-4">
+                  <button 
+                    onClick={() => setSearchQuery("")}
+                    className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium mr-4"
+                  >
+                    Clear Search
+                  </button>
+                  
+                  {/* Test buttons to demonstrate AI Assistance */}
+                  <div className="text-xs text-gray-500">
+                    Test searches that will show AI button: 
+                    <button 
+                      onClick={() => setSearchQuery("flying cars")}
+                      className="ml-2 px-3 py-1 bg-gray-200 rounded text-xs hover:bg-gray-300"
+                    >
+                      flying cars
+                    </button>
+                    <button 
+                      onClick={() => setSearchQuery("unicorn gadgets")}
+                      className="ml-2 px-3 py-1 bg-gray-200 rounded text-xs hover:bg-gray-300"
+                    >
+                      unicorn gadgets
+                    </button>
+                  </div>
+                </div>
               </>
             ) : (
               <>
