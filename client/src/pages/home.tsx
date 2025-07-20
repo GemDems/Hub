@@ -262,15 +262,40 @@ export default function Home() {
                 <h3 className="text-2xl font-semibold text-gray-900 mb-4">
                   No deals found for "{searchQuery}"
                 </h3>
-                <p className="text-gray-600 mb-8">
-                  Try a different search term or browse our categories below
+                <p className="text-gray-600 mb-6">
+                  Can't find what you're looking for? Let our AI assistant help you!
                 </p>
-                <button 
-                  onClick={() => setSearchQuery("")}
-                  className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
-                >
-                  Clear Search
-                </button>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                  <button 
+                    onClick={() => {
+                      // Open AI chat with the search query
+                      const chatButton = document.querySelector('[data-chat-button]') as HTMLButtonElement;
+                      if (chatButton) {
+                        chatButton.click();
+                        // Pre-fill the chat with user's search query
+                        setTimeout(() => {
+                          const chatInput = document.querySelector('[data-chat-input]') as HTMLInputElement;
+                          if (chatInput) {
+                            chatInput.value = `I'm looking for "${searchQuery}"`;
+                            chatInput.focus();
+                          }
+                        }, 500);
+                      }
+                    }}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-lg font-medium text-lg shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center gap-3"
+                  >
+                    🤖 Ask AI Assistant
+                  </button>
+                  <button 
+                    onClick={() => setSearchQuery("")}
+                    className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
+                  >
+                    Clear Search
+                  </button>
+                </div>
+                <p className="text-sm text-gray-500">
+                  Or try a different search term or browse our categories
+                </p>
               </>
             ) : (
               <>

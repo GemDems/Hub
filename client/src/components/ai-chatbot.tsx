@@ -1608,6 +1608,7 @@ Can I help you find something excellent in one of these available categories?`
       <>
         {/* Animated Chat Button - Always in DOM for smooth transitions */}
         <button
+          data-chat-button
           onClick={() => setIsOpen(true)}
           onMouseEnter={() => {
             setIsHovering(true);
@@ -2116,6 +2117,7 @@ Can I help you find something excellent in one of these available categories?`
           <div className="flex gap-2">
             <input
               type="text"
+              data-chat-input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
