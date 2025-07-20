@@ -267,6 +267,11 @@ export default function Home() {
                   Try a different search term or browse our categories below
                 </p>
                 
+                {/* DEBUG: Show current search and filter status */}
+                <div className="text-xs text-gray-400 mb-4 bg-gray-100 p-2 rounded">
+                  Debug: Query="{searchQuery}", Total Products={affiliateLinks.length}, Filtered={filteredAndSortedLinks.length}
+                </div>
+                
                 {/* AI Assistance Button - Glowing Powerful Psychology */}
                 <div className="mb-8 flex flex-col items-center">
                   <button
