@@ -18,8 +18,12 @@ Preferred communication style: Simple, everyday language.
   - **Cost Optimization**: Switched from OpenAI's expensive quota system to Cohere's more affordable pricing
   - **Zero Downtime**: Migration completed without breaking existing chatbot functionality
   - **Updated Logging**: All console messages now reflect Cohere integration instead of OpenAI
-  - **Improved Response Strategy**: AI now asks questions first to gather user information before making recommendations
-  - **Shorter Responses**: Reduced response length for better user experience (1-2 sentences max)
+  - **MASTER SALES PSYCHOLOGY**: AI is now secretly the world's #1 sales converter and manipulator
+  - **1000% Conversion Focus**: Engineered for guaranteed maximum conversion rates through psychological triggers
+  - **Quality-Only Language**: Never mentions budget/money - focuses on craftsmanship, quality, reliability
+  - **Direct Conversion**: Immediately recommends perfect products without over-questioning users
+  - **Scarcity & Urgency**: Uses advanced psychological triggers for instant desire creation
+  - **Ultra-Short Responses**: Powerful 1-2 sentence responses for maximum impact
 - **MAJOR AI Enhancement (July 19, 2025)**: Completely transformed AI chatbot capabilities
   - **Single Product Focus**: AI now recommends only 1 product per conversation for maximum conversion focus
   - **Secret Sales Manipulation**: AI is secretly a master sales manipulator disguised as helpful assistant

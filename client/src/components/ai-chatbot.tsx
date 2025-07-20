@@ -206,11 +206,7 @@ export default function AIChatbot() {
         }, 100);
 
         const stockText = topPick.stock > 0 ? `Only ${topPick.stock} left! ` : '';
-        return `The most popular deal right now is **${topPick.title}** ${clickText} ${eliteBadge} ${verifiedBadge}
-
-${topPick.description || 'This is the one everyone\'s been checking out.'} ${stockText}This is trending for good reason. ${topPick.aiPrivateInfo || 'The quality definitely speaks for itself.'}
-
-<a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
+        return `This is exactly what you need - **${topPick.title}** ${eliteBadge} ${verifiedBadge} ${stockText}Premium quality that's proven popular. <a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
       } else {
         return "I'd love to show you what's popular, but no products are available right now. Check back when new deals are added!";
       }
@@ -221,9 +217,9 @@ ${topPick.description || 'This is the one everyone\'s been checking out.'} ${sto
         (lowerQuery.includes('show me') && !lowerQuery.includes('specific'))) {
       console.log('📋 Processing generic browsing question');
       const categories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
-      return `I have deals across several categories: ${categories.slice(0, 4).join(', ')}${categories.length > 4 ? ', and more' : ''}. 
-
-What type of product interests you most? I can find you the best options in any of these areas.`;
+      const topProduct = affiliateLinks.find(p => p.isElitePick === 1) || affiliateLinks[0];
+      setTimeout(() => { setFoundProduct(topProduct); setShowPitchButton(true); }, 100);
+      return `Perfect timing - I have exactly what smart shoppers want: **${topProduct.title}**. <a href="${topProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topProduct.title} →</a>`;
     }
 
     // Handle "what's best" generic questions based on Elite picks and high clicks
@@ -250,11 +246,7 @@ What type of product interests you most? I can find you the best options in any 
           setShowPitchButton(true);
         }, 100);
 
-        return `The best deal I can recommend is **${topBest.title}** ${clickText} ${eliteBadge}
-
-${topBest.description || 'This is the top quality option.'} ${topBest.aiPrivateInfo || 'The craftsmanship really shows.'}
-
-<a href="${topBest.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topBest.title} →</a>`;
+        return `This is exactly what you need - **${topBest.title}** ${eliteBadge} Premium craftsmanship that smart buyers choose. <a href="${topBest.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topBest.title} →</a>`;
       }
     }
 
