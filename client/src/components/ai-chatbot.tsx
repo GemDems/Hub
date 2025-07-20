@@ -1963,7 +1963,7 @@ Can I help you find something excellent in one of these available categories?`
                     <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                   <div className="text-sm text-gray-300">
-                    Crafting... ~{countdown}s
+                    Crafting perfect pitch... ~{countdown}s
                   </div>
                   {showCancelButton && (
                     <button
