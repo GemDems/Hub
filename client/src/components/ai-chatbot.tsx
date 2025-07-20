@@ -1878,19 +1878,22 @@ Can I help you find something excellent in one of these available categories?`
         style={{ height: 'calc(100% - 60px)' }}
       >
         <div 
-          className="flex-1 p-4 space-y-4 chat-scrollable" 
-          style={{ 
-            height: 'calc(100% - 80px)',
-            overflowY: 'scroll',
-            scrollbarWidth: 'auto',
-            scrollbarColor: '#6b7280 #374151',
-            WebkitOverflowScrolling: 'auto',
-            scrollbarGutter: 'stable'
-          }}
+          className="flex-1 relative" 
+          style={{ height: 'calc(100% - 80px)' }}
           onMouseDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         >
-          {messages.map((message) => (
+          <div 
+            className="absolute inset-0 p-4 space-y-4 mobile-scroll-container"
+            style={{
+              overflowY: 'scroll',
+              overflowX: 'hidden',
+              scrollbarWidth: 'auto',
+              scrollbarColor: '#6b7280 #374151',
+              WebkitOverflowScrolling: 'touch'
+            }}
+          >
+            {messages.map((message) => (
             <div
               key={message.id}
               className={`flex ${message.isBot ? 'justify-start' : 'justify-end'} group`}
@@ -2000,7 +2003,8 @@ Can I help you find something excellent in one of these available categories?`
             </div>
           )}
           
-          <div ref={messagesEndRef} />
+            <div ref={messagesEndRef} />
+          </div>
         </div>
 
         {/* New message popup notification */}
