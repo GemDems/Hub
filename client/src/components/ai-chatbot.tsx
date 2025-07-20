@@ -756,10 +756,10 @@ Can I help you find something excellent in one of these available categories?`
       timeBasedElement,
       selectedEmotional,
       `Remember: "${productName}" ${urlContext[0] || 'from this trusted source'} at ${productPrice} isn't just a purchase - it's the catalyst for everything you're about to become.`,
-      selectedClosing,
-      `\n[Generated uniquely at ${currentTime} with seed ${combinedSeed}]` // Hidden uniqueness proof
+      selectedClosing
     ];
 
+    // Keep the seed for debugging but don't show to user
     console.log(`Generated unique pitch with seed: ${combinedSeed}, timestamp: ${currentTime}`);
     return uniquePitch.join('\n\n');
   };
@@ -1963,7 +1963,7 @@ Can I help you find something excellent in one of these available categories?`
                     <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
                   </div>
                   <div className="text-sm text-gray-300">
-                    Crafting perfect sales pitch... ~{countdown}s
+                    Crafting... ~{countdown}s
                   </div>
                   {showCancelButton && (
                     <button
