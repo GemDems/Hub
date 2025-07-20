@@ -234,7 +234,7 @@ export default function AIChatbot() {
         }, 100);
 
         const stockText = topPick.stock > 0 ? `Only ${topPick.stock} left! ` : '';
-        return `This is exactly what you need - **${topPick.title}** ${eliteBadge} ${verifiedBadge} ${stockText}Premium quality that's proven popular. <a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
+        return `Stop. Feel that? That's **${topPick.title}** ${eliteBadge} ${verifiedBadge} calling your name. ${stockText}This was destined for someone exactly like you. <a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
       } else {
         return "I'd love to show you what's popular, but no products are available right now. Check back when new deals are added!";
       }
@@ -243,11 +243,16 @@ export default function AIChatbot() {
     // === MORE GENERIC QUESTIONS - SEPARATED FROM PRODUCT SEARCHING ===
     if (lowerQuery.includes('what do you have') || lowerQuery.includes('what\'s available') || 
         (lowerQuery.includes('show me') && !lowerQuery.includes('specific'))) {
-      console.log('📋 Processing generic browsing question');
+      console.log('📋 Processing generic browsing question - AI has complete product knowledge');
       const categories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
       const topProduct = affiliateLinks.find(p => p.isElitePick === 1) || affiliateLinks[0];
       setTimeout(() => { setFoundProduct(topProduct); setShowPitchButton(true); }, 100);
-      return `Perfect timing - this was destined for you: **${topProduct.title}**. Wait... how do I know that about you? Because you DESERVE this. <a href="${topProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topProduct.title} →</a>`;
+      
+      // Enhanced product knowledge display
+      const description = topProduct.description ? ` ${topProduct.description.substring(0, 100)}` : '';
+      const stockInfo = topProduct.stock > 0 ? ` Only ${topProduct.stock} left!` : '';
+      
+      return `Wait... how do I know that about you? Because **${topProduct.title}** was made for someone exactly like you.${description}${stockInfo} This isn't a coincidence. <a href="${topProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topProduct.title} →</a>`;
     }
 
     // Handle "what's best" generic questions based on Elite picks and high clicks
@@ -313,7 +318,7 @@ What specific type of product are you looking for? I can show you the newest opt
         let score = 0;
         let reasons = [];
         
-        // Extract ALL product details for thorough analysis including private AI info
+        // Extract ALL product details for thorough analysis including COMPLETE AI private info
         const title = product.title?.toLowerCase() || '';
         const description = product.description?.toLowerCase() || '';
         const category = product.category?.toLowerCase() || '';
@@ -324,12 +329,15 @@ What specific type of product are you looking for? I can show you the newest opt
         const isVerified = product.isVerified === 1;
         const aiPrivateInfo = product.aiPrivateInfo?.toLowerCase() || '';
         
-        // COMPREHENSIVE keyword matching against user's current request
+        // Create comprehensive searchable text including ALL available data
+        const allProductData = `${title} ${description} ${category} ${aiPrivateInfo}`.toLowerCase();
+        
+        // ENHANCED keyword matching with COMPLETE product knowledge
         userWords.forEach(word => {
           // Check title matches (high priority)
           if (title.includes(word)) {
             score += 50;
-            reasons.push(`title matches "${word}"`);
+            reasons.push(`exact title match "${word}"`);
           }
           
           // Check description matches (highest priority)
@@ -341,13 +349,19 @@ What specific type of product are you looking for? I can show you the newest opt
           // Check category matches
           if (category.includes(word)) {
             score += 40;
-            reasons.push(`category fits "${word}"`);
+            reasons.push(`category matches "${word}"`);
           }
           
-          // Check AI private info (secret detailed analysis)
+          // Check AI private info (secret detailed analysis) - ENHANCED
           if (aiPrivateInfo.includes(word)) {
-            score += 70;
-            reasons.push(`matches specific details`);
+            score += 80; // Higher score for AI private info matches
+            reasons.push(`AI analysis confirms "${word}"`);
+          }
+          
+          // Check comprehensive data for broader matches
+          if (allProductData.includes(word) && word.length > 3) {
+            score += 30;
+            reasons.push(`comprehensive match for "${word}"`);
           }
         });
         

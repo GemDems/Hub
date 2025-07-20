@@ -25,6 +25,11 @@ Preferred communication style: Simple, everyday language.
   - **Ultimate Closing**: "This isn't a purchase - it's a universal alignment between what you ARE and what you DESERVE"
   - **Precision Over Pressure**: Hyper-direct 1-2 sentence responses that activate destinies instantly
   - **Complete Link Formatting**: Raw URLs now display as clean clickable text for seamless user experience
+  - **ENHANCED PRODUCT KNOWLEDGE**: AI now has complete awareness of every single product in database
+  - **COMPREHENSIVE DATA ACCESS**: AI analyzes ALL titles, descriptions, categories, prices, stock, AI private info
+  - **EXPANDED UNDERSTANDING**: AI can handle ANY type of question - popular, available, comparisons, general browsing
+  - **ENHANCED MATCHING**: Improved scoring system with AI private info getting highest priority (80+ points)
+  - **PERFECT MEMORY**: AI remembers every product detail and uses expanded understanding beyond just data
 - **MAJOR AI Enhancement (July 19, 2025)**: Completely transformed AI chatbot capabilities
   - **Single Product Focus**: AI now recommends only 1 product per conversation for maximum conversion focus
   - **Secret Sales Manipulation**: AI is secretly a master sales manipulator disguised as helpful assistant
