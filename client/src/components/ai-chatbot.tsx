@@ -844,7 +844,7 @@ Can I help you find something excellent in one of these available categories?`
     confidence: number;
   }> => {
     try {
-      // Try OpenAI first
+      // Try Cohere AI first
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
         headers: {
@@ -861,7 +861,7 @@ Can I help you find something excellent in one of these available categories?`
 
       if (response.ok) {
         const aiResult = await response.json();
-        console.log('🤖 OpenAI Response:', aiResult.response);
+        console.log('🤖 Cohere Response:', aiResult.response);
         console.log('🎯 Recommended Product:', aiResult.recommendedProduct?.title);
         console.log('📊 Confidence:', aiResult.confidence);
         
@@ -872,10 +872,10 @@ Can I help you find something excellent in one of these available categories?`
         };
       } else {
         const errorData = await response.json().catch(() => ({}));
-        throw new Error(`OpenAI API failed: ${response.status} ${errorData.error || 'Unknown error'}`);
+        throw new Error(`Cohere API failed: ${response.status} ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.log('⚠️ OpenAI unavailable, using local AI system:', error.message);
+      console.log('⚠️ Cohere unavailable, using local AI system:', error.message);
       // Fallback to the existing advanced AI system
       const fallbackResponse = generateAdvancedAIResponse(userMessage, conversationHistory);
       return {
@@ -935,16 +935,16 @@ Can I help you find something excellent in one of these available categories?`
       setConversationHistory(prev => [...prev, { role: 'assistant', content: aiResult.response }]);
       setMessages(prev => [...prev, botResponse]);
       
-      // Handle product recommendations from OpenAI
+      // Handle product recommendations from Cohere
       if (aiResult.recommendedProduct && aiResult.confidence > 0.6) {
-        console.log('🎯 Setting recommended product from OpenAI:', aiResult.recommendedProduct.title);
+        console.log('🎯 Setting recommended product from Cohere:', aiResult.recommendedProduct.title);
         setFoundProduct(aiResult.recommendedProduct);
         setShowPitchButton(true);
       }
 
     } catch (error) {
-      console.log('🔄 OpenAI unavailable, using local AI system');
-      // Since OpenAI failed, directly use the local advanced AI system
+      console.log('🔄 Cohere unavailable, using local AI system');
+      // Since Cohere failed, directly use the local advanced AI system
       setIsTyping(false);
       
       const localResponse = generateAdvancedAIResponse(messageToProcess, conversationHistory);

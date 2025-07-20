@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { insertAffiliateLinkSchema } from "@shared/schema";
 import { z } from "zod";
-import { generateAIChatResponse } from "./openai-service";
+import { generateAIChatResponse } from "./cohere-service";
 
 // Global live stats that persist across sessions
 let liveStats = {
@@ -425,7 +425,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get available products for AI context
       const availableProducts = await storage.getPublishedAffiliateLinks();
       
-      // Generate AI response using OpenAI
+      // Generate AI response using Cohere
       const aiResult = await generateAIChatResponse(
         message, 
         conversationHistory || [], 
@@ -436,14 +436,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         response: aiResult.response,
         recommendedProduct: aiResult.recommendedProduct,
         confidence: aiResult.confidence,
-        hasOpenAI: true
+        hasCohere: true
       });
       
     } catch (error) {
       console.error("AI Chat Error:", error);
       res.status(500).json({ 
-        error: "OpenAI service unavailable",
-        hasOpenAI: false,
+        error: "Cohere service unavailable",
+        hasCohere: false,
         fallback: true
       });
     }

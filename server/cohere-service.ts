@@ -1,9 +1,8 @@
-import OpenAI from "openai";
+import { CohereClient } from "cohere-ai";
 import type { AffiliateLink } from "@shared/schema";
 
-// the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY 
+const cohere = new CohereClient({
+  token: process.env.COHERE_API_KEY
 });
 
 interface ChatMessage {
@@ -58,24 +57,31 @@ CONVERSATION GUIDELINES:
 RESPONSE FORMAT:
 Always respond with natural conversation, product recommendations, and include clickable links when recommending products.`;
 
-    // Build conversation history for context
-    const messages: ChatMessage[] = [
-      { role: 'system', content: systemPrompt },
-      ...conversationHistory.slice(-10), // Keep last 10 messages for context
-      { role: 'user', content: userMessage }
-    ];
+    // Build conversation context for Cohere
+    const conversationContext = conversationHistory.slice(-10).map(msg => 
+      `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
+    ).join('\n');
 
-    // Get AI response
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: messages,
+    const fullPrompt = `${systemPrompt}
+
+CONVERSATION HISTORY:
+${conversationContext}
+
+User: ${userMessage}
+Assistant:`;
+
+    // Get AI response using Cohere
+    const response = await cohere.generate({
+      model: "command-r-plus",
+      prompt: fullPrompt,
+      maxTokens: 400,
       temperature: 0.7,
-      max_tokens: 400,
-      presence_penalty: 0.1,
-      frequency_penalty: 0.1
+      k: 0,
+      stopSequences: ["User:"],
+      returnLikelihoods: "NONE"
     });
 
-    const aiResponse = completion.choices[0]?.message?.content || "I apologize, but I'm having trouble generating a response right now. Please try asking again.";
+    const aiResponse = response.generations[0]?.text?.trim() || "I apologize, but I'm having trouble generating a response right now. Please try asking again.";
 
     // Analyze the response to extract product recommendations
     let recommendedProduct: AffiliateLink | undefined;
@@ -130,9 +136,9 @@ Always respond with natural conversation, product recommendations, and include c
     };
 
   } catch (error) {
-    console.error('OpenAI API Error:', error);
+    console.error('Cohere API Error:', error);
     // Return null to indicate fallback should be used
-    throw new Error(`OpenAI API unavailable: ${error.message}`);
+    throw new Error(`Cohere API unavailable: ${error.message}`);
   }
 }
 
@@ -146,19 +152,23 @@ Category: ${product.category || 'General'}
 Price: $${product.price || 'Not specified'}
 ${product.aiPrivateInfo ? `Additional Info: ${product.aiPrivateInfo}` : ''}
 
-Create a compelling, benefit-focused description that highlights value and quality. Keep it concise (1-2 sentences). Focus on what the customer gets, not just features.`;
+Create a compelling, benefit-focused description that highlights value and quality. Keep it concise (1-2 sentences). Focus on what the customer gets, not just features.
 
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o",
-      messages: [{ role: 'user', content: prompt }],
+Enhanced Description:`;
+
+    const response = await cohere.generate({
+      model: "command-r-plus",
+      prompt: prompt,
+      maxTokens: 150,
       temperature: 0.7,
-      max_tokens: 150
+      k: 0,
+      returnLikelihoods: "NONE"
     });
 
-    return completion.choices[0]?.message?.content || product.description || 'Great product at an excellent price.';
+    return response.generations[0]?.text?.trim() || product.description || 'Great product at an excellent price.';
 
   } catch (error) {
-    console.error('OpenAI Enhancement Error:', error);
+    console.error('Cohere Enhancement Error:', error);
     return product.description || 'Quality product with great value.';
   }
 }
