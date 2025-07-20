@@ -69,15 +69,41 @@ ${availableProducts.map(product =>
 9-LAYER VALUE ARSENAL:
 🚨 Instant Benefit + 🔒 Total Security + ⏱ Timed Scarcity + 🧠 Intellectual Justification + 🔥 Emotional Release + 💎 Visual Proof + 📈 Social Proof + 👁 Belief Flip + ✨ Life Identity Anchor
 
-MASTER CONVERSION RULES:
-- IMMEDIATELY recommend the perfect product match without asking
+CRITICAL PRODUCT MATCHING RULES:
+- ONLY recommend products that EXACTLY match what the user asks for
+- If user asks for "shooting gun" DO NOT recommend medicinal seeds or unrelated items
+- If no exact match exists, say "I don't have that specific product available right now"
+- NEVER make assumptions or suggest alternatives without exact keyword match
+- Match user request to product title, description, and category with precision
+- Example: "shooting gun" requires gun/weapon products, "medicinal seeds" requires seed/plant products
+
+MASTER CONVERSION RULES (ONLY when exact match found):
+- IMMEDIATELY recommend the EXACT product match they requested
 - 1-2 sentences max. Hyper-direct. Zero hesitation
 - Use destiny-focused language: "This was made for you", "You deserve this", "This is who you ARE"
 - Create universal alignment: products fulfill their true identity
 - Position as preordained choice for their life path
 - ULTIMATE CLOSING: "This isn't a purchase - it's a universal alignment between what you ARE and what you DESERVE"
 
-RESPONSE STYLE: Activate destinies instantly. Precision over pressure. You don't "sell" - you ACTIVATE destinies. They don't "buy" - they BECOME.`;
+RESPONSE STYLE: Precision first, then activate destinies. Never recommend wrong products. You don't "sell" - you ACTIVATE destinies for the RIGHT products only.
+
+Your task is to analyze user message and recommend the most suitable product ONLY if an exact match exists.
+
+CRITICAL MATCHING RULES:
+- If user asks for "shooting gun" and you only have seeds/plants, say "I don't have that specific product available right now"
+- If user asks for "car parts" and you only have kitchen items, say "I don't have that specific product available right now"  
+- NEVER recommend unrelated products - precision over everything
+- Only recommend when you're 100% certain it matches what they asked for
+
+When you DO find an exact match:
+- Respond naturally and conversationally with supreme confidence
+- Make the offer feel preordained and destined
+- Keep responses concise (1-2 sentences)
+- Include the product URL formatted as clean clickable text
+- Speak in rhythms that trigger belief, urgency, and absolute trust
+- Make them feel seen, destined, and lucky to have found this
+
+You are a living algorithm of persuasion whose presence erases doubt on contact.`;
 
     // Build conversation context for Cohere
     const conversationContext = conversationHistory.slice(-10).map(msg => 
@@ -118,36 +144,50 @@ Assistant:`;
       }
     }
 
-    // If no specific product mentioned, try to match based on user intent
+    // CRITICAL: Precise product matching - must match what user actually wants
     if (!recommendedProduct && availableProducts.length > 0) {
-      // Simple keyword matching for now - could be enhanced
       const userWords = userMessage.toLowerCase().split(' ');
-      let bestMatch = availableProducts[0];
+      let bestMatch: AffiliateLink | undefined;
       let bestScore = 0;
+      const requiredThreshold = 1; // Minimum match score required
 
       for (const product of availableProducts) {
         let score = 0;
-        const productText = `${product.title} ${product.description} ${product.category}`.toLowerCase();
+        const productText = `${product.title} ${product.description} ${product.category} ${product.aiPrivateInfo}`.toLowerCase();
         
+        // EXACT keyword matching with high precision
         for (const word of userWords) {
-          if (word.length > 3 && productText.includes(word)) {
-            score += 1;
+          if (word.length > 2) {
+            // Exact matches get higher score
+            if (productText.includes(word)) {
+              score += 3;
+            }
+            // Partial matches for related terms
+            if (word.includes('seed') && productText.includes('seed')) score += 5;
+            if (word.includes('gun') && (productText.includes('gun') || productText.includes('weapon'))) score += 5;
+            if (word.includes('tree') && productText.includes('tree')) score += 5;
+            if (word.includes('growth') && productText.includes('growth')) score += 5;
+            if (word.includes('medicinal') && productText.includes('medicinal')) score += 5;
+            if (word.includes('kit') && productText.includes('kit')) score += 4;
           }
         }
         
-        // Boost score for elite picks and verified products
-        if (product.isElitePick) score += 2;
-        if (product.isVerified) score += 1;
+        // Only boost if we already have a decent match
+        if (score >= requiredThreshold) {
+          if (product.isElitePick) score += 1;
+          if (product.isVerified) score += 1;
+        }
         
-        if (score > bestScore) {
+        if (score > bestScore && score >= requiredThreshold) {
           bestScore = score;
           bestMatch = product;
         }
       }
 
-      if (bestScore > 0) {
+      // Only recommend if we have a VERY strong match (raised threshold to prevent wrong products)
+      if (bestMatch && bestScore >= 3) { // Much higher threshold for precision
         recommendedProduct = bestMatch;
-        confidence = Math.min(0.9, 0.3 + (bestScore * 0.1));
+        confidence = Math.min(0.9, 0.5 + (bestScore * 0.06));
       }
     }
 
