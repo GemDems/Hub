@@ -1878,9 +1878,10 @@ Can I help you find something excellent in one of these available categories?`
         style={{ height: 'calc(100% - 60px)' }}
       >
         <div 
-          className="flex-1 overflow-y-scroll p-4 space-y-4" 
+          className="flex-1 p-4 space-y-4 chat-scrollable" 
           style={{ 
-            maxHeight: 'calc(100% - 80px)',
+            height: 'calc(100% - 80px)',
+            overflowY: 'scroll',
             scrollbarWidth: 'auto',
             scrollbarColor: '#6b7280 #374151'
           }}
