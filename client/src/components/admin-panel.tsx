@@ -636,20 +636,20 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Generate unique seed based on title + category + description
                     const seed = (formData.title + formData.category + originalText).length % 12;
                     
-                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES with psychological selling power
+                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES - detached, descriptive, 16 words max
                     const batmanTemplates = [
-                      (text) => `Master-engineered for perfectionists who won't compromise. ${text} outperforms everything you've tried before.`,
-                      (text) => `Feel the difference instantly. ${text} transforms your world in ways you never thought possible.`,
-                      (text) => `Crafted for winners. ${text} gives you the unfair advantage over everyone still settling.`,
-                      (text) => `Silent, deadly effective. ${text} works its magic while others struggle with cheap alternatives.`,
-                      (text) => `Laboratory-tested precision. ${text} delivers the breakthrough performance you've been desperately seeking all along.`,
-                      (text) => `Revolutionary breakthrough. ${text} is what happens when genius meets ruthless quality obsession.`,
-                      (text) => `Transcends all expectations. ${text} provides capabilities that make competitors look like toys.`,
-                      (text) => `Zero-defect execution. ${text} solves problems that weaker products can't even recognize exist.`,
-                      (text) => `Relentless excellence standard. ${text} designed exclusively for those who demand absolute perfection.`,
-                      (text) => `Competitive domination tool. ${text} delivers crushing results while others make weak excuses.`,
-                      (text) => `Military-grade superiority. ${text} unleashes capabilities your competition doesn't know are possible.`,
-                      (text) => `Life-changing upgrade. ${text} makes you question how you survived this long without it.`
+                      (text) => `Professional-grade ${text} features advanced engineering with precision manufacturing. Serious performance for serious applications.`,
+                      (text) => `Industrial-strength ${text} delivers consistent results. Built with premium materials and tested reliability standards.`,
+                      (text) => `High-performance ${text} offers superior functionality through innovative design. Engineered for maximum efficiency and durability.`,
+                      (text) => `Commercial-quality ${text} provides exceptional value with professional-grade construction. Reliable performance in demanding conditions.`,
+                      (text) => `Laboratory-tested ${text} meets strict quality standards. Advanced features deliver measurable improvements over alternatives.`,
+                      (text) => `Premium ${text} combines cutting-edge technology with robust construction. Designed for applications requiring superior performance.`,
+                      (text) => `Heavy-duty ${text} exceeds industry standards through rigorous testing. Built for long-term reliability and performance.`,
+                      (text) => `Precision-engineered ${text} offers advanced functionality with quality components. Delivers consistent results across all applications.`,
+                      (text) => `Enterprise-grade ${text} provides professional performance with enhanced durability. Tested for reliability in demanding environments.`,
+                      (text) => `High-capacity ${text} delivers superior results through advanced engineering. Built with quality materials for lasting performance.`,
+                      (text) => `Technical-grade ${text} features precision construction and tested reliability. Designed for applications requiring consistent performance.`,
+                      (text) => `Professional ${text} offers enhanced functionality through quality engineering. Built to exceed expectations in real-world applications.`
                     ];
                     
                     // Extract core product essence (remove common words)
@@ -664,18 +664,16 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Apply unique template based on seed
                     let enhanced = batmanTemplates[seed](productEssence);
                     
-                    // Ensure 18-20 words MAX
+                    // Ensure exactly 16 words MAX
                     const words = enhanced.split(/\s+/);
-                    if (words.length > 20) {
-                      enhanced = words.slice(0, 20).join(' ') + '.';
-                    } else if (words.length < 18) {
-                      enhanced = enhanced.replace(/\.$/, '') + '. Guaranteed superiority.';
+                    if (words.length > 16) {
+                      enhanced = words.slice(0, 16).join(' ') + '.';
                     }
                     
                     setFormData({ ...formData, description: enhanced });
                     toast({
                       title: "BATMAN-LEVEL PRECISION ACTIVATED!",
-                      description: `Unique template #${seed + 1} applied • 1000%+ conversion guaranteed • 18-20 words perfection`,
+                      description: `Detached template #${seed + 1} applied • Professional description • Max 16 words perfection`,
                     });
                   }}
                   variant="outline"
