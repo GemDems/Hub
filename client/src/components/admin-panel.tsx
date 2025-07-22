@@ -619,24 +619,35 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       return;
                     }
                     
-                    // Simple Batman-level enhancement based on category
-                    const fallbackEnhancements = {
-                      "Hot Deals": "The kind of quality that speaks for itself. Simple, powerful, undeniable—exactly what you've been looking for.",
-                      "Electronics": "Precision-engineered technology that transforms your daily experience. This isn't just another gadget—it's your upgrade to effortless excellence.",
-                      "Home & Garden": "Crafted for those who recognize quality. Every detail designed to elevate your space into something extraordinary.",
-                      "Fashion": "Style that makes a statement without saying a word. Clean lines, perfect fit, undeniable confidence.",
-                      "Books & Media": "Knowledge that changes how you see everything. Once you understand this, you can't unsee the advantage it gives you.",
-                      "Health & Beauty": "Pure transformation in every application. The difference is immediate, the confidence is permanent.",
-                      "Sports & Fitness": "Built for results, not promises. Your commitment meets our precision—together, they create unstoppable momentum."
-                    };
+                    // Enhance the actual text they entered, not replace it
+                    const originalText = formData.description.toLowerCase();
+                    let enhanced = formData.description;
                     
-                    const enhanced = fallbackEnhancements[formData.category as keyof typeof fallbackEnhancements] || 
-                                   fallbackEnhancements["Hot Deals"];
+                    // Add power words and psychological triggers to their existing text
+                    if (!originalText.includes('premium') && !originalText.includes('quality')) {
+                      enhanced = enhanced + ". Premium quality that delivers every time.";
+                    }
+                    
+                    if (!originalText.includes('limited') && !originalText.includes('exclusive')) {
+                      enhanced = "Limited availability - " + enhanced;
+                    }
+                    
+                    if (!originalText.includes('perfect') && !originalText.includes('ideal')) {
+                      enhanced = enhanced.replace(/\.$/, '') + " - perfect for those who demand excellence.";
+                    }
+                    
+                    // Clean up any double periods or spacing issues
+                    enhanced = enhanced.replace(/\.\./g, '.').replace(/\s+/g, ' ').trim();
+                    
+                    // If the enhancement didn't change much, add a powerful ending
+                    if (enhanced.length < formData.description.length + 20) {
+                      enhanced = enhanced.replace(/\.$/, '') + ". This is what you've been searching for.";
+                    }
                     
                     setFormData({ ...formData, description: enhanced });
                     toast({
                       title: "Description Enhanced!",
-                      description: "Batman-level precision applied with 1000%+ conversion guarantee",
+                      description: "Your text enhanced with conversion psychology while keeping your original message",
                     });
                   }}
                   variant="outline"
