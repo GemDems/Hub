@@ -636,20 +636,20 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Generate unique seed based on title + category + description
                     const seed = (formData.title + formData.category + originalText).length % 12;
                     
-                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES with subconscious manipulation
+                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES with psychological selling power
                     const batmanTemplates = [
-                      (text) => `Engineered for those who refuse to settle. ${text} delivers what others only promise.`,
-                      (text) => `The difference is immediate. ${text} transforms ordinary into extraordinary, every single time.`,
-                      (text) => `Built different. ${text} separates you from everyone else who's still searching.`,
-                      (text) => `Silent power. ${text} works while others wonder why they waited.`,
-                      (text) => `Precision-crafted for results. ${text} delivers the advantage you've been missing.`,
-                      (text) => `This changes everything. ${text} is what happens when quality meets obsession.`,
-                      (text) => `Beyond ordinary. ${text} gives you the edge others will never understand.`,
-                      (text) => `Flawless execution. ${text} solves what inferior products can't even address.`,
-                      (text) => `Uncompromising excellence. ${text} is designed for those who demand the impossible.`,
-                      (text) => `Pure advantage. ${text} delivers results while competitors deliver excuses.`,
-                      (text) => `Tactical superiority. ${text} gives you capabilities others don't even know exist.`,
-                      (text) => `Invisible upgrade. ${text} makes you wonder how you survived without it.`
+                      (text) => `Master-engineered for perfectionists who won't compromise. ${text} outperforms everything you've tried before.`,
+                      (text) => `Feel the difference instantly. ${text} transforms your world in ways you never thought possible.`,
+                      (text) => `Crafted for winners. ${text} gives you the unfair advantage over everyone still settling.`,
+                      (text) => `Silent, deadly effective. ${text} works its magic while others struggle with cheap alternatives.`,
+                      (text) => `Laboratory-tested precision. ${text} delivers the breakthrough performance you've been desperately seeking all along.`,
+                      (text) => `Revolutionary breakthrough. ${text} is what happens when genius meets ruthless quality obsession.`,
+                      (text) => `Transcends all expectations. ${text} provides capabilities that make competitors look like toys.`,
+                      (text) => `Zero-defect execution. ${text} solves problems that weaker products can't even recognize exist.`,
+                      (text) => `Relentless excellence standard. ${text} designed exclusively for those who demand absolute perfection.`,
+                      (text) => `Competitive domination tool. ${text} delivers crushing results while others make weak excuses.`,
+                      (text) => `Military-grade superiority. ${text} unleashes capabilities your competition doesn't know are possible.`,
+                      (text) => `Life-changing upgrade. ${text} makes you question how you survived this long without it.`
                     ];
                     
                     // Extract core product essence (remove common words)
