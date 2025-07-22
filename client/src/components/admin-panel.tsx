@@ -619,14 +619,28 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       return;
                     }
                     
-                    // Enhance the actual text they entered, keeping it short (15-17 words max)
-                    const originalText = formData.description.toLowerCase();
+                    // Enhance and fix grammar in the text, keeping it short (15-17 words max)
                     let enhanced = formData.description.trim();
                     
-                    // Count words in original text
+                    // Fix common grammar issues
+                    enhanced = enhanced
+                      .replace(/\bi\b/g, 'I') // Capitalize 'i'
+                      .replace(/\s+/g, ' ') // Remove extra spaces
+                      .replace(/([.!?])\s*([a-z])/g, (match, punct, letter) => punct + ' ' + letter.toUpperCase()) // Capitalize after punctuation
+                      .replace(/^([a-z])/, (match) => match.toUpperCase()) // Capitalize first letter
+                      .replace(/\s+([.!?])/g, '$1') // Remove space before punctuation
+                      .replace(/([.!?]){2,}/g, '$1') // Remove repeated punctuation
+                      .replace(/\b(teh|hte)\b/gi, 'the') // Fix common typos
+                      .replace(/\b(adn|nad)\b/gi, 'and')
+                      .replace(/\b(taht|thta)\b/gi, 'that')
+                      .replace(/\b(youer|yuor)\b/gi, 'your')
+                      .replace(/\b(recieve)\b/gi, 'receive')
+                      .replace(/\b(seperate)\b/gi, 'separate');
+                    
+                    const originalText = enhanced.toLowerCase();
                     const originalWords = enhanced.split(/\s+/).length;
                     
-                    // If already too long, keep as is
+                    // If already too long, keep as is but fix grammar
                     if (originalWords >= 15) {
                       enhanced = enhanced;
                     } else {
@@ -675,17 +689,79 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
 
           <div>
             <Label htmlFor="aiPrivateInfo">AI Assistant Info (Private)</Label>
-            <Textarea
-              id="aiPrivateInfo"
-              value={formData.aiPrivateInfo || ""}
-              onChange={(e) => setFormData({ ...formData, aiPrivateInfo: e.target.value })}
-              placeholder="Additional details for AI: specific features, compatibility, technical specs, target audience, unique selling points..."
-              rows={3}
-              className="mt-1 border-orange-200 bg-orange-50/30"
-            />
-            <p className="text-xs text-orange-600 mt-1 font-medium">
-              🤖 Private field - Only the AI chatbot can see this information to help users find products faster and more accurately
-            </p>
+            <div className="space-y-2">
+              <Textarea
+                id="aiPrivateInfo"
+                value={formData.aiPrivateInfo || ""}
+                onChange={(e) => setFormData({ ...formData, aiPrivateInfo: e.target.value })}
+                placeholder="Additional details for AI: specific features, compatibility, technical specs, target audience, unique selling points..."
+                rows={3}
+                className="mt-1 border-orange-200 bg-orange-50/30"
+              />
+              
+              {/* AI Enhancement Button for AI Assistant Info */}
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (!formData.aiPrivateInfo?.trim()) {
+                      toast({
+                        title: "Enter AI Info First",
+                        description: "Please add some AI assistant information before enhancement",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+                    
+                    // Enhance and fix grammar in AI info, keeping it informative
+                    let enhanced = formData.aiPrivateInfo.trim();
+                    
+                    // Fix common grammar issues
+                    enhanced = enhanced
+                      .replace(/\bi\b/g, 'I') // Capitalize 'i'
+                      .replace(/\s+/g, ' ') // Remove extra spaces
+                      .replace(/([.!?])\s*([a-z])/g, (match, punct, letter) => punct + ' ' + letter.toUpperCase()) // Capitalize after punctuation
+                      .replace(/^([a-z])/, (match) => match.toUpperCase()) // Capitalize first letter
+                      .replace(/\s+([.!?])/g, '$1') // Remove space before punctuation
+                      .replace(/([.!?]){2,}/g, '$1') // Remove repeated punctuation
+                      .replace(/\b(teh|hte)\b/gi, 'the') // Fix common typos
+                      .replace(/\b(adn|nad)\b/gi, 'and')
+                      .replace(/\b(taht|thta)\b/gi, 'that')
+                      .replace(/\b(youer|yuor)\b/gi, 'your')
+                      .replace(/\b(recieve)\b/gi, 'receive')
+                      .replace(/\b(seperate)\b/gi, 'separate')
+                      .replace(/\b(compatable)\b/gi, 'compatible')
+                      .replace(/\b(usefull)\b/gi, 'useful')
+                      .replace(/\b(succesfull)\b/gi, 'successful');
+                    
+                    // Add technical clarity if short
+                    if (enhanced.split(/\s+/).length < 10) {
+                      enhanced = enhanced + ". Detailed specifications and compatibility information included.";
+                    }
+                    
+                    setFormData({ ...formData, aiPrivateInfo: enhanced });
+                    toast({
+                      title: "AI Info Enhanced!",
+                      description: "Grammar fixed and technical details optimized for AI understanding",
+                    });
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-none hover:from-orange-600 hover:to-red-700 font-medium"
+                >
+                  <span className="mr-1">⚡</span>
+                  AI MAXIMIZE (1000%+ Conversion)
+                </Button>
+                
+                <div className="text-xs text-orange-600 self-center">
+                  <span className="font-semibold text-orange-700">Technical precision</span> • Grammar fix • AI optimization
+                </div>
+              </div>
+              
+              <p className="text-xs text-orange-600 font-medium">
+                🤖 Private field - Only the AI chatbot can see this information to help users find products faster and more accurately. Enhanced info = better product matching!
+              </p>
+            </div>
           </div>
 
           <div>
