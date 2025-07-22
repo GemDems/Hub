@@ -595,14 +595,64 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
 
           <div>
             <Label htmlFor="description">Description *</Label>
-            <Textarea
-              id="description"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Limited time offer - 50% off!"
-              rows={3}
-              className="mt-1"
-            />
+            <div className="space-y-2">
+              <Textarea
+                id="description"
+                value={formData.description}
+                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                placeholder="Limited time offer - 50% off!"
+                rows={3}
+                className="mt-1"
+              />
+              
+              {/* AI Description Editor - 1000% Conversion Optimizer */}
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  onClick={async () => {
+                    if (!formData.description.trim()) {
+                      alert('Please enter some description text first');
+                      return;
+                    }
+                    
+                    try {
+                      const response = await fetch('/api/ai/enhance-description', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                          description: formData.description,
+                          title: formData.title,
+                          category: formData.category
+                        })
+                      });
+                      
+                      if (response.ok) {
+                        const { enhancedDescription } = await response.json();
+                        setFormData({ ...formData, description: enhancedDescription });
+                      } else {
+                        alert('Failed to enhance description. Please try again.');
+                      }
+                    } catch (error) {
+                      alert('Error enhancing description. Please try again.');
+                    }
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="bg-gradient-to-r from-purple-500 to-blue-600 text-white border-none hover:from-purple-600 hover:to-blue-700 font-medium"
+                >
+                  <span className="mr-1">⚡</span>
+                  AI MAXIMIZE (1000%+ Conversion)
+                </Button>
+                
+                <div className="text-xs text-gray-600 self-center">
+                  <span className="font-semibold text-purple-600">Batman-level precision</span> • Minimalistic • Powerful • Subconscious triggers
+                </div>
+              </div>
+              
+              <p className="text-xs text-purple-600 font-medium">
+                🧠 AI will transform your description into a conversion masterpiece with infinite desire triggers and subconscious manipulation for maximum sales
+              </p>
+            </div>
           </div>
 
           <div>

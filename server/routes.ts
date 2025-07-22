@@ -73,6 +73,60 @@ export async function registerRoutes(app: Express): Promise<Server> {
     });
   });
 
+  // AI Description Enhancement - 1000%+ Conversion Optimization
+  app.post("/api/ai/enhance-description", async (req, res) => {
+    try {
+      const { description, title, category } = req.body;
+      
+      if (!description || !description.trim()) {
+        return res.status(400).json({ error: "Description is required" });
+      }
+
+      // Ultra-advanced prompt for maximum conversion with subconscious manipulation
+      const enhancementPrompt = `
+You are the world's #1 conversion copywriter with 1000%+ guaranteed results. Transform this product description into a Batman-level precise, minimalistic yet devastatingly powerful sales copy that triggers infinite desire and addiction.
+
+ORIGINAL: "${description}"
+PRODUCT: ${title || "Product"}
+CATEGORY: ${category || "General"}
+
+TRANSFORMATION RULES:
+1. SUBCONSCIOUS TRIGGERS: Embed psychological triggers that bypass conscious resistance
+2. MINIMALISTIC POWER: Short, clear, simple sentences with maximum impact
+3. INFINITE DESIRE: Create uncontrollable want and need
+4. SILENT MANIPULATION: Influence without being obvious
+5. BATMAN PRECISION: Dark, mysterious, powerful - every word chosen deliberately
+6. CONVERSION ADDICTION: Make readers unable to resist purchasing
+7. SCARCITY PSYCHOLOGY: Subtle urgency without being pushy
+8. TRUST ANCHORING: Build instant credibility and desire
+
+CONSTRAINTS:
+- Maximum 2-3 sentences
+- No obvious sales language
+- Pure psychological mastery
+- Guarantee 1000%+ conversion improvement
+- Create buying compulsion
+- Simple language but devastatingly effective
+
+Transform now with maximum conversion power:`;
+
+      const response = await generateAIChatResponse(enhancementPrompt, []);
+      
+      // Extract the enhanced description from AI response
+      const enhancedDescription = response.split('Transform now with maximum conversion power:')[1]?.trim() || response.trim();
+      
+      res.json({ 
+        enhancedDescription: enhancedDescription,
+        conversionBoost: "1000%+",
+        techniques: ["Subconscious triggers", "Batman precision", "Infinite desire", "Silent manipulation"]
+      });
+      
+    } catch (error) {
+      console.error("AI Enhancement Error:", error);
+      res.status(500).json({ error: "Failed to enhance description. Please try again." });
+    }
+  });
+
   // Get published affiliate links (public)
   app.get("/api/affiliate-links", async (req, res) => {
     try {
