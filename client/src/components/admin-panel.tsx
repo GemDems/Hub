@@ -619,29 +619,33 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       return;
                     }
                     
-                    // Enhance the actual text they entered, not replace it
+                    // Enhance the actual text they entered, keeping it short (15-17 words max)
                     const originalText = formData.description.toLowerCase();
-                    let enhanced = formData.description;
+                    let enhanced = formData.description.trim();
                     
-                    // Add power words and psychological triggers to their existing text
-                    if (!originalText.includes('premium') && !originalText.includes('quality')) {
-                      enhanced = enhanced + ". Premium quality that delivers every time.";
+                    // Count words in original text
+                    const originalWords = enhanced.split(/\s+/).length;
+                    
+                    // If already too long, keep as is
+                    if (originalWords >= 15) {
+                      enhanced = enhanced;
+                    } else {
+                      // Add short power words to reach 15-17 words
+                      const wordsToAdd = 15 - originalWords;
+                      
+                      if (wordsToAdd >= 3 && !originalText.includes('premium') && !originalText.includes('quality')) {
+                        enhanced = enhanced + ". Premium quality.";
+                      } else if (wordsToAdd >= 2 && !originalText.includes('limited') && !originalText.includes('exclusive')) {
+                        enhanced = "Limited time - " + enhanced;
+                      } else if (wordsToAdd >= 1) {
+                        enhanced = enhanced + " Guaranteed.";
+                      }
                     }
                     
-                    if (!originalText.includes('limited') && !originalText.includes('exclusive')) {
-                      enhanced = "Limited availability - " + enhanced;
-                    }
-                    
-                    if (!originalText.includes('perfect') && !originalText.includes('ideal')) {
-                      enhanced = enhanced.replace(/\.$/, '') + " - perfect for those who demand excellence.";
-                    }
-                    
-                    // Clean up any double periods or spacing issues
-                    enhanced = enhanced.replace(/\.\./g, '.').replace(/\s+/g, ' ').trim();
-                    
-                    // If the enhancement didn't change much, add a powerful ending
-                    if (enhanced.length < formData.description.length + 20) {
-                      enhanced = enhanced.replace(/\.$/, '') + ". This is what you've been searching for.";
+                    // Final word count check - trim if over 17 words
+                    const finalWords = enhanced.split(/\s+/);
+                    if (finalWords.length > 17) {
+                      enhanced = finalWords.slice(0, 17).join(' ') + '.';
                     }
                     
                     setFormData({ ...formData, description: enhanced });
