@@ -707,8 +707,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                 className="mt-1 border-orange-200 bg-orange-50/30"
               />
               
-              {/* AI Enhancement Button for AI Assistant Info */}
-              <div className="flex gap-2">
+              {/* AI Enhancement Button for AI Assistant Info - EXACT DUPLICATE */}
+              <div className="flex gap-2 items-center">
                 <Button
                   type="button"
                   onClick={() => {
@@ -721,50 +721,74 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       return;
                     }
                     
-                    // Enhance and fix grammar in AI info, keeping it informative
-                    let enhanced = formData.aiPrivateInfo.trim();
+                    // BATMAN-LEVEL AI: Generate comprehensive AI info (minimum 30 words) for chatbot understanding
+                    let originalText = formData.aiPrivateInfo.trim().toLowerCase();
                     
-                    // Fix common grammar issues
-                    enhanced = enhanced
-                      .replace(/\bi\b/g, 'I') // Capitalize 'i'
-                      .replace(/\s+/g, ' ') // Remove extra spaces
-                      .replace(/([.!?])\s*([a-z])/g, (match, punct, letter) => punct + ' ' + letter.toUpperCase()) // Capitalize after punctuation
-                      .replace(/^([a-z])/, (match) => match.toUpperCase()) // Capitalize first letter
-                      .replace(/\s+([.!?])/g, '$1') // Remove space before punctuation
-                      .replace(/([.!?]){2,}/g, '$1') // Remove repeated punctuation
-                      .replace(/\b(teh|hte)\b/gi, 'the') // Fix common typos
+                    // Fix grammar first
+                    let cleanText = formData.aiPrivateInfo.trim()
+                      .replace(/\bi\b/g, 'I')
+                      .replace(/\s+/g, ' ')
+                      .replace(/([.!?])\s*([a-z])/g, (match, punct, letter) => punct + ' ' + letter.toUpperCase())
+                      .replace(/^([a-z])/, (match) => match.toUpperCase())
+                      .replace(/\b(teh|hte)\b/gi, 'the')
                       .replace(/\b(adn|nad)\b/gi, 'and')
                       .replace(/\b(taht|thta)\b/gi, 'that')
                       .replace(/\b(youer|yuor)\b/gi, 'your')
-                      .replace(/\b(recieve)\b/gi, 'receive')
-                      .replace(/\b(seperate)\b/gi, 'separate')
                       .replace(/\b(compatable)\b/gi, 'compatible')
-                      .replace(/\b(usefull)\b/gi, 'useful')
-                      .replace(/\b(succesfull)\b/gi, 'successful');
+                      .replace(/\b(usefull)\b/gi, 'useful');
                     
-                    // Add technical clarity if short
-                    if (enhanced.split(/\s+/).length < 10) {
-                      enhanced = enhanced + ". Detailed specifications and compatibility information included.";
+                    // Generate unique seed for AI info expansion
+                    const seed = (formData.title + formData.category + originalText).length % 8;
+                    
+                    // 8 UNIQUE AI INFO EXPANSION TEMPLATES (minimum 30 words for chatbot understanding)
+                    const aiInfoTemplates = [
+                      (text) => `This product is specifically designed for ${text}. Features include advanced functionality, premium construction materials, and comprehensive user support. Compatible with multiple applications and environments. Includes detailed specifications, warranty coverage, and professional-grade performance standards suitable for demanding use cases.`,
+                      (text) => `Product details: ${text} offers superior performance through innovative engineering. Built with high-quality components and tested for reliability. Suitable for both professional and personal applications. Includes comprehensive documentation, technical support, and proven track record of customer satisfaction across various industries and use cases.`,
+                      (text) => `Comprehensive information: ${text} provides exceptional value through advanced features and robust construction. Designed for long-term reliability and consistent performance. Includes technical specifications, compatibility details, safety certifications, and comprehensive warranty coverage. Suitable for demanding applications requiring professional-grade performance and reliability standards.`,
+                      (text) => `Technical specifications: ${text} engineered for optimal performance and durability. Features premium materials, advanced manufacturing processes, and rigorous quality control. Includes detailed compatibility information, installation guidelines, maintenance requirements, and comprehensive support documentation for professional and consumer applications.`,
+                      (text) => `Product overview: ${text} delivers superior results through precision engineering and quality construction. Built to exceed industry standards with comprehensive testing and validation. Includes detailed specifications, compatibility matrices, performance metrics, and comprehensive warranty coverage suitable for professional and demanding personal applications.`,
+                      (text) => `Detailed analysis: ${text} offers advanced functionality through innovative design and premium components. Engineered for reliability and consistent performance across multiple applications. Includes comprehensive technical documentation, compatibility information, safety certifications, and professional-grade support services for optimal user experience and satisfaction.`,
+                      (text) => `Complete specifications: ${text} provides exceptional performance through advanced engineering and quality materials. Designed for professional applications with comprehensive testing and validation. Includes detailed compatibility information, installation requirements, maintenance guidelines, and comprehensive warranty coverage for demanding use cases and applications.`,
+                      (text) => `Professional details: ${text} engineered for superior performance and long-term reliability. Features advanced components, rigorous quality control, and comprehensive testing protocols. Includes detailed specifications, compatibility matrices, safety certifications, and professional support services suitable for demanding applications requiring consistent performance and reliability.`
+                    ];
+                    
+                    // Extract key terms from user input
+                    const keyTerms = cleanText
+                      .replace(/\b(the|a|an|and|or|but|in|on|at|to|for|of|with|by|is|are|was|were)\b/gi, '')
+                      .replace(/\s+/g, ' ')
+                      .trim();
+                    
+                    // Apply template based on seed
+                    let enhanced = aiInfoTemplates[seed](keyTerms);
+                    
+                    // Ensure minimum 30 words for AI chatbot understanding
+                    const words = enhanced.split(/\s+/);
+                    if (words.length < 30) {
+                      enhanced = enhanced + " Additional features include enhanced durability, professional-grade construction, comprehensive testing, and proven reliability standards.";
                     }
                     
                     setFormData({ ...formData, aiPrivateInfo: enhanced });
                     toast({
-                      title: "AI Info Enhanced!",
-                      description: "Grammar fixed and technical details optimized for AI understanding",
+                      title: "BATMAN-LEVEL PRECISION ACTIVATED!",
+                      description: `AI expansion template #${seed + 1} applied • 30+ words for chatbot • Complete product understanding`,
                     });
                   }}
                   variant="outline"
                   size="sm"
-                  className="bg-gradient-to-r from-orange-500 to-red-600 text-white border-none hover:from-orange-600 hover:to-red-700 font-medium"
+                  className="bg-gradient-to-r from-purple-500 to-blue-600 text-white border-none hover:from-purple-600 hover:to-blue-700 font-medium"
                 >
                   <span className="mr-1">⚡</span>
                   AI MAXIMIZE (1000%+ Conversion)
                 </Button>
                 
-                <div className="text-xs text-orange-600 self-center">
-                  <span className="font-semibold text-orange-700">Technical precision</span> • Grammar fix • AI optimization
+                <div className="text-xs text-gray-600 self-center">
+                  <span className="font-semibold text-purple-600">Batman-level precision</span> • Minimalistic • Powerful • Subconscious triggers
                 </div>
               </div>
+              
+              <p className="text-xs text-purple-600 font-medium">
+                🧠 AI will transform your info into comprehensive product details for perfect chatbot understanding and user matching
+              </p>
               
               <p className="text-xs text-orange-600 font-medium">
                 🤖 Private field - Only the AI chatbot can see this information to help users find products faster and more accurately. Enhanced info = better product matching!
