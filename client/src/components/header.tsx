@@ -58,8 +58,8 @@ export default function Header() {
           </h1>
           
           <p className="text-xl max-w-3xl mx-auto mb-6 leading-relaxed text-[#202120]">
-            <span className="font-bold text-trust-green">Curated deals</span> by industry experts. 
-            <span className="font-bold text-action-orange">Limited quantities</span> 
+            <span className="font-bold text-trust-green">Curated deals</span> by industry experts. {' '}
+            <span className="font-bold text-action-orange">Limited quantities</span> {' '}
             • <span className="font-bold text-urgency-red">Act fast!</span>
           </p>
           
