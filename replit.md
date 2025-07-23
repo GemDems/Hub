@@ -10,6 +10,12 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 2025)
 
+- **CRITICAL BUG FIX: AI CHATBOT CONNECTION (July 23, 2025)**: Fixed missing AI Assistant Info field in API
+  - **Root Cause**: POST /api/affiliate-links route was missing aiPrivateInfo field in linkData object
+  - **Solution**: Added aiPrivateInfo field to server/routes.ts line 300 to properly save creator dashboard input
+  - **Impact**: AI chatbot now has access to all creator dashboard information including AI Assistant Info
+  - **Result**: Enhanced AI responses with dedicated "🧠 AI Analysis" sections using private creator insights
+  - **Database**: AI Assistant Info now properly saves and populates for all new products
 - **AI ASSISTANT INTEGRATION FOR EMPTY SEARCH RESULTS (July 20, 2025)**: Enhanced user experience when no products found
   - **Smart Empty State**: When search yields no results, shows "Ask AI Assistant" button instead of just error message
   - **Seamless AI Launch**: Button automatically opens AI chatbot and pre-fills user's search query
