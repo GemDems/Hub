@@ -19,15 +19,15 @@ Preferred communication style: Simple, everyday language.
   - **Template System**: 12 unique templates for variety while maintaining Batman-level precision
   - **CLARIFIED LIMITS**: 9-13 words is MAXIMUM limit - shorter is better (aim for 6-8 words)
   - **Updated UI**: Button now shows "AI MAXIMIZE (Shorter Better)" to emphasize brevity preference
-- **NATURAL AI INSIGHTS INTEGRATION (July 23, 2025)**: Fixed AI chatbot to use private info naturally
-  - **Problem**: AI was copying/pasting private info with labels like "🔒 AI ANALYSIS:" and "Deep AI Assessment"
-  - **Backend Solution**: Updated cohere-service.ts to seamlessly weave private insights into natural conversation
-  - **Frontend Solution**: Removed ALL "AI Analysis" labels from client/src/components/ai-chatbot.tsx
-  - **Enhancement**: AI now uses specific details (age ranges, features, specs) naturally without revealing source
-  - **Result**: More authentic conversations where AI appears to naturally know product details
-  - **User Experience**: No more obvious copy-paste behavior - information flows naturally in conversation
-  - **Fixed Issues**: Eliminated "Deep AI Assessment", "🧠 AI Analysis", and "AI Intelligence" labels
-  - **Natural Flow**: AI now extracts relevant data points and uses them conversationally as needed
+- **STRATEGIC AI INTELLIGENCE INTEGRATION (July 23, 2025)**: AI now uses private info strategically, not copy-paste
+  - **Problem**: AI was copying/pasting private info with labels, treating it as luggage to carry instead of strategic advantage
+  - **Solution**: Complete intelligence extraction overhaul - AI now UNDERSTANDS private info rather than copying it
+  - **Strategic Approach**: AI uses ZERO intelligence data unless it specifically helps conversion in THAT conversation
+  - **Smart Usage**: If user asks about kids → AI might mention "perfect for little ones" (if age data supports it)
+  - **Minimal Extraction**: Most conversations need NO intelligence data - basic product info often enough
+  - **Conversion Advantage**: Intelligence data becomes AI's secret weapon for targeted responses, not content to display
+  - **Natural Knowledge**: When AI does use insights, they become casual knowledge, not quoted specifications
+  - **User Experience**: AI appears naturally knowledgeable without obvious information dumps or copy-paste behavior
 - **CRITICAL BUG FIX: AI CHATBOT CONNECTION (July 23, 2025)**: Fixed missing AI Assistant Info field in API
   - **Root Cause**: POST /api/affiliate-links route was missing aiPrivateInfo field in linkData object
   - **Solution**: Added aiPrivateInfo field to server/routes.ts line 300 to properly save creator dashboard input
