@@ -1667,21 +1667,23 @@ Can I help you find something excellent in one of these available categories?`
         </div>
       )}
 
-      {/* Smart background extension when collapsed - mobile-friendly */}
-      {isCollapsed && isOpen && position.y + 60 < window.innerHeight && (
+      {/* Instant background extension when collapsed - no delay on mobile */}
+      {isCollapsed && isOpen && (
         <div 
           className="fixed z-40"
           style={{
             left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)),
             top: position.y + 60,
             width: size.width,
-            height: Math.max(0, window.innerHeight - (position.y + 60)), // Only extend to bottom of screen, not infinite
+            height: window.innerHeight, // Always extend to full screen height for instant coverage
             backgroundColor: 'rgba(55, 65, 81, 0.85)',
             backdropFilter: 'blur(8px)',
             border: '1px solid rgba(75, 85, 99, 0.6)',
             borderTop: 'none',
             borderBottomLeftRadius: '8px',
-            borderBottomRightRadius: '8px'
+            borderBottomRightRadius: '8px',
+            transform: 'translateZ(0)', // Hardware acceleration for smooth rendering
+            willChange: 'transform, top' // Optimize for position changes
           }}
         />
       )}
