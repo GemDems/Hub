@@ -746,20 +746,20 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Generate unique seed for ultra-precise descriptions
                     const seed = (formData.title + formData.category + originalText).length % 12;
                     
-                    // 12 ULTRA-PRECISE AI DESCRIPTION TEMPLATES (9-13 words maximum)
+                    // 12 ULTRA-PRECISE AI DESCRIPTION TEMPLATES (shorter is better, max 9-13)
                     const aiTemplates = [
-                      (text) => `Premium ${text} engineered for exceptional performance and lasting reliability.`,
-                      (text) => `Advanced ${text} designed to exceed expectations with professional-grade precision.`,
-                      (text) => `Professional-grade ${text} built for demanding applications requiring superior results.`,
-                      (text) => `High-performance ${text} crafted with precision engineering and quality materials.`,
-                      (text) => `Superior ${text} featuring innovative design and proven performance standards.`,
-                      (text) => `Elite-quality ${text} delivering consistent results through advanced engineering excellence.`,
-                      (text) => `Precision-crafted ${text} engineered for reliability and exceptional user experience.`,
-                      (text) => `Professional ${text} built to industry-leading standards with superior performance.`,
-                      (text) => `Advanced ${text} featuring premium construction and proven reliability standards.`,
-                      (text) => `High-grade ${text} designed for optimal performance and long-term durability.`,
-                      (text) => `Superior-quality ${text} engineered with precision for demanding professional applications.`,
-                      (text) => `Premium ${text} delivering exceptional results through innovative design and engineering.`
+                      (text) => `Premium ${text} engineered for exceptional performance.`,
+                      (text) => `Advanced ${text} designed to exceed expectations.`,
+                      (text) => `Professional-grade ${text} built for superior results.`,
+                      (text) => `High-performance ${text} crafted with precision engineering.`,
+                      (text) => `Superior ${text} featuring innovative design standards.`,
+                      (text) => `Elite-quality ${text} delivering consistent results.`,
+                      (text) => `Precision-crafted ${text} engineered for reliability.`,
+                      (text) => `Professional ${text} built to industry standards.`,
+                      (text) => `Advanced ${text} featuring premium construction.`,
+                      (text) => `High-grade ${text} designed for optimal performance.`,
+                      (text) => `Superior-quality ${text} engineered with precision.`,
+                      (text) => `Premium ${text} delivering exceptional results.`
                     ];
                     
                     // Extract key product type/category
@@ -770,18 +770,17 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Apply template based on seed
                     let enhanced = aiTemplates[seed](productType);
                     
-                    // Count words and ensure 9-13 range
+                    // Count words and enforce maximum limit (shorter is better)
                     const words = enhanced.split(/\s+/);
                     if (words.length > 13) {
                       enhanced = words.slice(0, 13).join(' ');
-                    } else if (words.length < 9) {
-                      enhanced = enhanced + " with professional-grade construction and reliability.";
                     }
+                    // No minimum - shorter is better!
                     
                     setFormData({ ...formData, aiPrivateInfo: enhanced });
                     toast({
                       title: "BATMAN-LEVEL PRECISION ACTIVATED!",
-                      description: `${enhanced.split(' ').length} words • Maximum power • Minimum space • Perfect chatbot understanding`,
+                      description: `${enhanced.split(' ').length} words • Shorter = more powerful • Maximum impact • Perfect chatbot understanding`,
                     });
                   }}
                   variant="outline"
@@ -789,7 +788,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                   className="bg-gradient-to-r from-purple-500 to-blue-600 text-white border-none hover:from-purple-600 hover:to-blue-700 font-medium"
                 >
                   <span className="mr-1">⚡</span>
-                  AI MAXIMIZE (9-13 Words)
+                  AI MAXIMIZE (Shorter Better)
                 </Button>
                 
                 <div className="text-xs text-gray-600 self-center">
@@ -798,7 +797,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               </div>
               
               <p className="text-xs text-purple-600 font-medium">
-                🧠 AI will transform your info into ultra-precise 9-13 word descriptions for perfect chatbot understanding and user matching
+                🧠 AI will transform your info into ultra-precise descriptions (shorter is better, max 13 words) for perfect chatbot understanding
               </p>
               
               <p className="text-xs text-orange-600 font-medium">

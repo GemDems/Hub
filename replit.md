@@ -17,6 +17,8 @@ Preferred communication style: Simple, everyday language.
   - **Word Count Control**: Automatic word counting and trimming to stay within 9-13 range
   - **Power Focus**: Shorter descriptions with maximum psychological impact and conversion power
   - **Template System**: 12 unique templates for variety while maintaining Batman-level precision
+  - **CLARIFIED LIMITS**: 9-13 words is MAXIMUM limit - shorter is better (aim for 6-8 words)
+  - **Updated UI**: Button now shows "AI MAXIMIZE (Shorter Better)" to emphasize brevity preference
 - **CRITICAL BUG FIX: AI CHATBOT CONNECTION (July 23, 2025)**: Fixed missing AI Assistant Info field in API
   - **Root Cause**: POST /api/affiliate-links route was missing aiPrivateInfo field in linkData object
   - **Solution**: Added aiPrivateInfo field to server/routes.ts line 300 to properly save creator dashboard input

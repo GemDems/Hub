@@ -100,14 +100,14 @@ TRANSFORMATION RULES:
 6. CONVERSION ADDICTION: Maximum buying compulsion in minimum space
 
 CONSTRAINTS:
-- EXACTLY 9-13 words total (count them!)
+- MAXIMUM 9-13 words total - shorter is better!
 - No fluff or filler words
 - Every word must trigger desire
 - Pure psychological mastery
 - Simple but devastatingly effective
-- The shorter the better within the range
+- Aim for 6-8 words if possible, 9-13 is the upper limit
 
-Transform now with maximum conversion power in 9-13 words:`;
+Transform now with maximum conversion power in minimal words:`;
 
       const response = await generateAIChatResponse(enhancementPrompt, [], []);
       
@@ -134,14 +134,14 @@ Transform now with maximum conversion power in 9-13 words:`;
     } catch (error) {
       console.error("AI Enhancement Error:", error);
       
-      // Fallback enhancement system with Batman-level precision (9-13 words)
+      // Fallback enhancement system with Batman-level precision (shorter is better)
       const fallbackEnhancements = {
-        "electronics": "Precision-engineered technology that transforms your daily experience effortlessly.",
-        "home": "Crafted for those who recognize quality that elevates everything.",
-        "fitness": "Built for results, not promises. Your precision meets unstoppable momentum.",
-        "beauty": "Pure transformation in every application. Immediate difference, permanent confidence.",
-        "books": "Knowledge that changes how you see everything. Instant advantage.",
-        "default": "The quality that speaks for itself. Simple, powerful, undeniable."
+        "electronics": "Precision technology that transforms daily experience.",
+        "home": "Quality that elevates everything instantly.",
+        "fitness": "Built for results, not promises.",
+        "beauty": "Pure transformation. Immediate difference.",
+        "books": "Knowledge that changes everything.",
+        "default": "Quality that speaks for itself."
       };
       
       const categoryKey = category?.toLowerCase().includes('electronic') ? 'electronics' :
