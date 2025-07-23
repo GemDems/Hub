@@ -58,23 +58,24 @@ export default function Header() {
             Elite Deals Hub
           </h1>
           
-          <p className="text-xl max-w-3xl mx-auto mb-6 leading-relaxed tracking-wide nike-futura-text" 
+          <p className="max-w-4xl mx-auto mb-6 leading-relaxed tracking-wide nike-futura-text" 
              style={{ 
                fontFamily: '"Nike Futura ND", "Futura", "Trebuchet MS", Arial, sans-serif',
                fontWeight: '900',
+               fontSize: '30px',
                letterSpacing: '0.03em',
                fontFeatureSettings: '"kern" 1, "liga" 1',
                textRendering: 'optimizeLegibility',
                WebkitFontSmoothing: 'antialiased',
                MozOsxFontSmoothing: 'grayscale',
                color: 'white',
-               textShadow: '2px 2px 0px #202120, -1px -1px 0px #202120, 1px -1px 0px #202120, -1px 1px 0px #202120, 2px 0px 0px #202120, 0px 2px 0px #202120, -2px 0px 0px #202120, 0px -2px 0px #202120',
+               textShadow: '1px 1px 0px #202120, -1px -1px 0px #202120, 1px -1px 0px #202120, -1px 1px 0px #202120',
                transform: 'skewX(-3deg)',
                display: 'inline-block'
              }}>
-            <span style={{ color: '#22c55e', fontWeight: '900' }}>Curated deals</span> by industry experts. 
-            <span style={{ color: '#f97316', fontWeight: '900' }}>Limited quantities</span> 
-            • <span style={{ color: '#ef4444', fontWeight: '900' }}>Act fast!</span>
+            <span style={{ color: 'white', fontWeight: '900' }}>Curated deals</span> by industry experts. 
+            <span style={{ color: 'white', fontWeight: '900' }}>Limited quantities</span> 
+            • <span style={{ color: 'white', fontWeight: '900' }}>Act fast!</span>
           </p>
           
           {/* Enhanced Trust Ecosystem */}
