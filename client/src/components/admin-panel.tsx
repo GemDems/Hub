@@ -619,7 +619,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       return;
                     }
                     
-                    // BATMAN-LEVEL AI: Generate unique conversion-optimized descriptions (18-20 words MAX)
+                    // BATMAN-LEVEL AI: Generate unique conversion-optimized descriptions (12-14 words MAX)
                     let originalText = formData.description.trim().toLowerCase();
                     
                     // Fix grammar first
@@ -636,20 +636,20 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Generate unique seed based on title + category + description
                     const seed = (formData.title + formData.category + originalText).length % 12;
                     
-                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES - detached, descriptive, 16 words max
+                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES - detached, descriptive, 12-14 words max
                     const batmanTemplates = [
-                      (text) => `Professional-grade ${text} features advanced engineering with precision manufacturing. Serious performance for serious applications.`,
-                      (text) => `Industrial-strength ${text} delivers consistent results. Built with premium materials and tested reliability standards.`,
-                      (text) => `High-performance ${text} offers superior functionality through innovative design. Engineered for maximum efficiency and durability.`,
-                      (text) => `Commercial-quality ${text} provides exceptional value with professional-grade construction. Reliable performance in demanding conditions.`,
-                      (text) => `Laboratory-tested ${text} meets strict quality standards. Advanced features deliver measurable improvements over alternatives.`,
-                      (text) => `Premium ${text} combines cutting-edge technology with robust construction. Designed for applications requiring superior performance.`,
-                      (text) => `Heavy-duty ${text} exceeds industry standards through rigorous testing. Built for long-term reliability and performance.`,
-                      (text) => `Precision-engineered ${text} offers advanced functionality with quality components. Delivers consistent results across all applications.`,
-                      (text) => `Enterprise-grade ${text} provides professional performance with enhanced durability. Tested for reliability in demanding environments.`,
-                      (text) => `High-capacity ${text} delivers superior results through advanced engineering. Built with quality materials for lasting performance.`,
-                      (text) => `Technical-grade ${text} features precision construction and tested reliability. Designed for applications requiring consistent performance.`,
-                      (text) => `Professional ${text} offers enhanced functionality through quality engineering. Built to exceed expectations in real-world applications.`
+                      (text) => `Professional-grade ${text} features advanced engineering. Serious performance for demanding applications.`,
+                      (text) => `Industrial-strength ${text} delivers consistent results. Built with premium materials and reliability.`,
+                      (text) => `High-performance ${text} offers superior functionality through innovative design. Maximum efficiency and durability.`,
+                      (text) => `Commercial-quality ${text} provides exceptional value with professional-grade construction. Reliable demanding performance.`,
+                      (text) => `Laboratory-tested ${text} meets strict quality standards. Advanced features deliver measurable improvements.`,
+                      (text) => `Premium ${text} combines cutting-edge technology with robust construction. Superior performance applications.`,
+                      (text) => `Heavy-duty ${text} exceeds industry standards through rigorous testing. Long-term reliability performance.`,
+                      (text) => `Precision-engineered ${text} offers advanced functionality with quality components. Consistent results applications.`,
+                      (text) => `Enterprise-grade ${text} provides professional performance with enhanced durability. Demanding environment reliability.`,
+                      (text) => `High-capacity ${text} delivers superior results through advanced engineering. Quality materials performance.`,
+                      (text) => `Technical-grade ${text} features precision construction and tested reliability. Consistent performance applications.`,
+                      (text) => `Professional ${text} offers enhanced functionality through quality engineering. Exceeds expectations applications.`
                     ];
                     
                     // Extract core product essence (remove common words)
@@ -664,16 +664,22 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Apply unique template based on seed
                     let enhanced = batmanTemplates[seed](productEssence);
                     
-                    // Ensure exactly 16 words MAX
+                    // Ensure exactly 12-14 words MAX
                     const words = enhanced.split(/\s+/);
-                    if (words.length > 16) {
-                      enhanced = words.slice(0, 16).join(' ') + '.';
+                    if (words.length > 14) {
+                      enhanced = words.slice(0, 14).join(' ') + '.';
+                    } else if (words.length < 12) {
+                      enhanced = enhanced + ' Enhanced premium quality.';
+                      const newWords = enhanced.split(/\s+/);
+                      if (newWords.length > 14) {
+                        enhanced = newWords.slice(0, 14).join(' ') + '.';
+                      }
                     }
                     
                     setFormData({ ...formData, description: enhanced });
                     toast({
                       title: "BATMAN-LEVEL PRECISION ACTIVATED!",
-                      description: `Detached template #${seed + 1} applied • Professional description • Max 16 words perfection`,
+                      description: `Detached template #${seed + 1} applied • Professional description • Max 12-14 words perfection`,
                     });
                   }}
                   variant="outline"
