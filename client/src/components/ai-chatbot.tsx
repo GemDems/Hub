@@ -356,7 +356,7 @@ What specific type of product are you looking for? I can show you the newest opt
           // Check AI private info (secret detailed analysis) - ENHANCED
           if (aiPrivateInfo.includes(word)) {
             score += 80; // Higher score for AI private info matches
-            reasons.push(`AI analysis confirms "${word}"`);
+            reasons.push(`detailed match for "${word}"`);
           }
           
           // Check comprehensive data for broader matches
@@ -649,14 +649,14 @@ Can I help you find something excellent in one of these available categories?`
     
     // DYNAMIC value propositions with product analysis AND AI private insights
     const valueProps = [
-      `This ${productCategory} breakthrough "${productName}" isn't just another option - ${productDesc.slice(0, 100)}... but here's what really sets it apart. 🧠 AI Analysis reveals: ${aiPrivateDetails || 'Premium engineering with hidden advantages most competitors can\'t match'}.`,
-      `What makes "${productName}" revolutionary in the ${productCategory} space? ${productDesc.slice(0, 120)}... and that's just the beginning. 🧠 Deep AI Assessment: ${aiPrivateDetails || 'Advanced features that create exponential value beyond the obvious benefits'}.`,
-      `The "${productName}" represents a complete paradigm shift in ${productCategory} because ${productDesc.slice(0, 80)}... but the real power is in what happens next. 🧠 AI Intelligence: ${aiPrivateDetails || 'Sophisticated design elements that compound results over time'}.`,
-      `Here's why "${productName}" dominates every other ${productCategory} option: ${productDesc.slice(0, 90)}... plus something most people never discover. 🧠 AI Analysis: ${aiPrivateDetails || 'Hidden specifications that deliver superior performance'}.`,
-      `The secret behind "${productName}"'s success in ${productCategory} is ${productDesc.slice(0, 110)}... combined with an advantage others can't replicate. 🧠 AI Insight: ${aiPrivateDetails || 'Proprietary features that create unfair advantages'}.`,
-      `What you see with "${productName}" in ${productCategory} is ${productDesc.slice(0, 95)}... but what you don't see is where the real magic happens. 🧠 AI Analysis: ${aiPrivateDetails || 'Advanced engineering that exceeds industry standards'}.`,
-      `The engineering behind "${productName}" in the ${productCategory} market means ${productDesc.slice(0, 85)}... creating results that seem almost impossible. 🧠 AI Assessment: ${aiPrivateDetails || 'Technical innovations that redefine what\'s possible'}.`,
-      `Unlike every other ${productCategory} product, "${productName}" delivers ${productDesc.slice(0, 75)}... while simultaneously solving the hidden problem nobody talks about. 🧠 AI Intelligence: ${aiPrivateDetails || 'Multi-layered benefits that address both obvious and hidden needs'}.`
+      `This ${productCategory} breakthrough "${productName}" isn't just another option - ${productDesc.slice(0, 100)}... but here's what really sets it apart. ${aiPrivateDetails ? `With ${aiPrivateDetails.toLowerCase()}, it delivers` : 'Premium engineering delivers'} results most competitors can't match.`,
+      `What makes "${productName}" revolutionary in the ${productCategory} space? ${productDesc.slice(0, 120)}... and that's just the beginning. ${aiPrivateDetails ? `The ${aiPrivateDetails.toLowerCase()} creates` : 'Advanced features create'} exponential value beyond the obvious benefits.`,
+      `The "${productName}" represents a complete paradigm shift in ${productCategory} because ${productDesc.slice(0, 80)}... but the real power is in what happens next. ${aiPrivateDetails ? `Its ${aiPrivateDetails.toLowerCase()} means` : 'Sophisticated design means'} results compound over time.`,
+      `Here's why "${productName}" dominates every other ${productCategory} option: ${productDesc.slice(0, 90)}... plus something most people never discover. ${aiPrivateDetails ? `The ${aiPrivateDetails.toLowerCase()} delivers` : 'Hidden specifications deliver'} superior performance.`,
+      `The secret behind "${productName}"'s success in ${productCategory} is ${productDesc.slice(0, 110)}... combined with an advantage others can't replicate. ${aiPrivateDetails ? `With ${aiPrivateDetails.toLowerCase()}, you get` : 'Proprietary features give you'} unfair advantages.`,
+      `What you see with "${productName}" in ${productCategory} is ${productDesc.slice(0, 95)}... but what you don't see is where the real magic happens. ${aiPrivateDetails ? `The ${aiPrivateDetails.toLowerCase()} exceeds` : 'Advanced engineering exceeds'} industry standards.`,
+      `The engineering behind "${productName}" in the ${productCategory} market means ${productDesc.slice(0, 85)}... creating results that seem almost impossible. ${aiPrivateDetails ? `Its ${aiPrivateDetails.toLowerCase()} redefines` : 'Technical innovations redefine'} what's possible.`,
+      `Unlike every other ${productCategory} product, "${productName}" delivers ${productDesc.slice(0, 75)}... while simultaneously solving the hidden problem nobody talks about. ${aiPrivateDetails ? `The ${aiPrivateDetails.toLowerCase()} addresses` : 'Multi-layered benefits address'} both obvious and hidden needs.`
     ];
     
     // ESCALATED urgency and scarcity triggers
@@ -757,7 +757,7 @@ Can I help you find something excellent in one of these available categories?`
       selectedSocial,
       timeBasedElement,
       selectedEmotional,
-      `🧠 **Expert AI Analysis:** ${aiPrivateDetails || 'This product exceeds industry standards with advanced features that deliver exceptional long-term value'}.`,
+      aiPrivateDetails ? `Here's what makes this special: ${aiPrivateDetails.toLowerCase()}.` : 'This product exceeds industry standards with advanced features that deliver exceptional long-term value.',
       `Remember: "${productName}" ${urlContext[0] || 'from this trusted source'} at ${productPrice} isn't just a purchase - it's the catalyst for everything you're about to become.`,
       selectedClosing
     ];
@@ -856,7 +856,7 @@ Can I help you find something excellent in one of these available categories?`
     
     // Enhanced AI info presentation - make it more prominent and useful
     const aiInsight = product.aiPrivateInfo ? 
-      `🧠 **AI Analysis:** ${product.aiPrivateInfo}` : 
+      `${product.aiPrivateInfo}` : 
       'Premium quality product with excellent value';
     
     // Generate truly dynamic response based on context with enhanced AI info integration
