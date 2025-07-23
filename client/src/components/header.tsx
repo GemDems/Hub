@@ -58,11 +58,15 @@ export default function Header() {
             Elite Deals Hub
           </h1>
           
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed font-medium tracking-wide" 
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed font-medium tracking-wide nike-futura-text" 
              style={{ 
-               fontFamily: '"Montserrat", "Futura", "Century Gothic", system-ui, -apple-system, sans-serif',
+               fontFamily: '"Nike Futura ND", "Futura", "Trebuchet MS", Arial, sans-serif',
                fontWeight: '500',
-               letterSpacing: '0.02em'
+               letterSpacing: '0.02em',
+               fontFeatureSettings: '"kern" 1, "liga" 1',
+               textRendering: 'optimizeLegibility',
+               WebkitFontSmoothing: 'antialiased',
+               MozOsxFontSmoothing: 'grayscale'
              }}>
             <span className="font-bold text-trust-green">Curated deals</span> by industry experts. 
             <span className="font-bold text-action-orange">Limited quantities</span> 
