@@ -7,8 +7,6 @@ import { Crown, Users, Gift, Copy, Check, Trophy, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import UsernameModal from "./username-modal";
-// @ts-ignore - canvas-confetti types not needed for this simple usage
-import confetti from 'canvas-confetti';
 
 // Generate persistent device ID
 const getDeviceId = () => {
@@ -48,54 +46,7 @@ export default function ReferralSystem() {
     return `${formattedFirst} ${formattedLast}`;
   };
 
-  // Playful confetti animation for successful code generation
-  const triggerConfetti = () => {
-    // Multiple confetti bursts for extra celebration
-    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
-    
-    // First burst - from center
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-      colors: colors
-    });
-
-    // Second burst - left side
-    setTimeout(() => {
-      confetti({
-        particleCount: 50,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.7 },
-        colors: colors
-      });
-    }, 200);
-
-    // Third burst - right side
-    setTimeout(() => {
-      confetti({
-        particleCount: 50,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.7 },
-        colors: colors
-      });
-    }, 400);
-
-    // Final celebration burst
-    setTimeout(() => {
-      confetti({
-        particleCount: 80,
-        spread: 100,
-        origin: { y: 0.5 },
-        colors: colors,
-        shapes: ['star', 'circle']
-      });
-    }, 600);
-  };
-
-  // Generate referral code mutation with confetti celebration
+  // Generate referral code mutation
   const generateCodeMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest("POST", "/api/referral/generate", { userId: deviceId });
@@ -103,11 +54,9 @@ export default function ReferralSystem() {
     },
     onSuccess: () => {
       refetchStatus();
-      // Trigger playful confetti celebration
-      triggerConfetti();
       toast({
-        title: "🎉 Success!",
-        description: "Your exclusive referral code has been generated! Share it with friends!",
+        title: "Success!",
+        description: "Your exclusive referral code has been generated.",
       });
     },
     onError: () => {
