@@ -727,7 +727,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       return;
                     }
                     
-                    // BATMAN-LEVEL AI: Generate comprehensive AI info (minimum 30 words) for chatbot understanding
+                    // BATMAN-LEVEL AI: Generate ultra-precise 9-13 word descriptions with maximum power
                     let originalText = formData.aiPrivateInfo.trim().toLowerCase();
                     
                     // Fix grammar first
@@ -743,40 +743,45 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       .replace(/\b(compatable)\b/gi, 'compatible')
                       .replace(/\b(usefull)\b/gi, 'useful');
                     
-                    // Generate unique seed for AI info expansion
-                    const seed = (formData.title + formData.category + originalText).length % 8;
+                    // Generate unique seed for ultra-precise descriptions
+                    const seed = (formData.title + formData.category + originalText).length % 12;
                     
-                    // 8 UNIQUE AI INFO EXPANSION TEMPLATES (minimum 30 words for chatbot understanding)
-                    const aiInfoTemplates = [
-                      (text) => `This product is specifically designed for ${text}. Features include advanced functionality, premium construction materials, and comprehensive user support. Compatible with multiple applications and environments. Includes detailed specifications, warranty coverage, and professional-grade performance standards suitable for demanding use cases.`,
-                      (text) => `Product details: ${text} offers superior performance through innovative engineering. Built with high-quality components and tested for reliability. Suitable for both professional and personal applications. Includes comprehensive documentation, technical support, and proven track record of customer satisfaction across various industries and use cases.`,
-                      (text) => `Comprehensive information: ${text} provides exceptional value through advanced features and robust construction. Designed for long-term reliability and consistent performance. Includes technical specifications, compatibility details, safety certifications, and comprehensive warranty coverage. Suitable for demanding applications requiring professional-grade performance and reliability standards.`,
-                      (text) => `Technical specifications: ${text} engineered for optimal performance and durability. Features premium materials, advanced manufacturing processes, and rigorous quality control. Includes detailed compatibility information, installation guidelines, maintenance requirements, and comprehensive support documentation for professional and consumer applications.`,
-                      (text) => `Product overview: ${text} delivers superior results through precision engineering and quality construction. Built to exceed industry standards with comprehensive testing and validation. Includes detailed specifications, compatibility matrices, performance metrics, and comprehensive warranty coverage suitable for professional and demanding personal applications.`,
-                      (text) => `Detailed analysis: ${text} offers advanced functionality through innovative design and premium components. Engineered for reliability and consistent performance across multiple applications. Includes comprehensive technical documentation, compatibility information, safety certifications, and professional-grade support services for optimal user experience and satisfaction.`,
-                      (text) => `Complete specifications: ${text} provides exceptional performance through advanced engineering and quality materials. Designed for professional applications with comprehensive testing and validation. Includes detailed compatibility information, installation requirements, maintenance guidelines, and comprehensive warranty coverage for demanding use cases and applications.`,
-                      (text) => `Professional details: ${text} engineered for superior performance and long-term reliability. Features advanced components, rigorous quality control, and comprehensive testing protocols. Includes detailed specifications, compatibility matrices, safety certifications, and professional support services suitable for demanding applications requiring consistent performance and reliability.`
+                    // 12 ULTRA-PRECISE AI DESCRIPTION TEMPLATES (9-13 words maximum)
+                    const aiTemplates = [
+                      (text) => `Premium ${text} engineered for exceptional performance and lasting reliability.`,
+                      (text) => `Advanced ${text} designed to exceed expectations with professional-grade precision.`,
+                      (text) => `Professional-grade ${text} built for demanding applications requiring superior results.`,
+                      (text) => `High-performance ${text} crafted with precision engineering and quality materials.`,
+                      (text) => `Superior ${text} featuring innovative design and proven performance standards.`,
+                      (text) => `Elite-quality ${text} delivering consistent results through advanced engineering excellence.`,
+                      (text) => `Precision-crafted ${text} engineered for reliability and exceptional user experience.`,
+                      (text) => `Professional ${text} built to industry-leading standards with superior performance.`,
+                      (text) => `Advanced ${text} featuring premium construction and proven reliability standards.`,
+                      (text) => `High-grade ${text} designed for optimal performance and long-term durability.`,
+                      (text) => `Superior-quality ${text} engineered with precision for demanding professional applications.`,
+                      (text) => `Premium ${text} delivering exceptional results through innovative design and engineering.`
                     ];
                     
-                    // Extract key terms from user input
-                    const keyTerms = cleanText
-                      .replace(/\b(the|a|an|and|or|but|in|on|at|to|for|of|with|by|is|are|was|were)\b/gi, '')
-                      .replace(/\s+/g, ' ')
-                      .trim();
+                    // Extract key product type/category
+                    const productType = formData.category.toLowerCase() === 'hot deals' ? 
+                      (cleanText.split(' ')[0] || 'product') : 
+                      formData.category.toLowerCase();
                     
                     // Apply template based on seed
-                    let enhanced = aiInfoTemplates[seed](keyTerms);
+                    let enhanced = aiTemplates[seed](productType);
                     
-                    // Ensure minimum 30 words for AI chatbot understanding
+                    // Count words and ensure 9-13 range
                     const words = enhanced.split(/\s+/);
-                    if (words.length < 30) {
-                      enhanced = enhanced + " Additional features include enhanced durability, professional-grade construction, comprehensive testing, and proven reliability standards.";
+                    if (words.length > 13) {
+                      enhanced = words.slice(0, 13).join(' ');
+                    } else if (words.length < 9) {
+                      enhanced = enhanced + " with professional-grade construction and reliability.";
                     }
                     
                     setFormData({ ...formData, aiPrivateInfo: enhanced });
                     toast({
                       title: "BATMAN-LEVEL PRECISION ACTIVATED!",
-                      description: `AI expansion template #${seed + 1} applied • 30+ words for chatbot • Complete product understanding`,
+                      description: `${enhanced.split(' ').length} words • Maximum power • Minimum space • Perfect chatbot understanding`,
                     });
                   }}
                   variant="outline"
@@ -784,7 +789,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                   className="bg-gradient-to-r from-purple-500 to-blue-600 text-white border-none hover:from-purple-600 hover:to-blue-700 font-medium"
                 >
                   <span className="mr-1">⚡</span>
-                  AI MAXIMIZE (1000%+ Conversion)
+                  AI MAXIMIZE (9-13 Words)
                 </Button>
                 
                 <div className="text-xs text-gray-600 self-center">
@@ -793,7 +798,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               </div>
               
               <p className="text-xs text-purple-600 font-medium">
-                🧠 AI will transform your info into comprehensive product details for perfect chatbot understanding and user matching
+                🧠 AI will transform your info into ultra-precise 9-13 word descriptions for perfect chatbot understanding and user matching
               </p>
               
               <p className="text-xs text-orange-600 font-medium">

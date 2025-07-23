@@ -83,33 +83,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ error: "Description is required" });
       }
 
-      // Ultra-advanced prompt for maximum conversion with subconscious manipulation
+      // Ultra-advanced prompt for maximum conversion with extreme brevity and power
       const enhancementPrompt = `
-You are the world's #1 conversion copywriter with 1000%+ guaranteed results. Transform this product description into a Batman-level precise, minimalistic yet devastatingly powerful sales copy that triggers infinite desire and addiction.
+You are the world's #1 conversion copywriter with 1000%+ guaranteed results. Transform this product description into a Batman-level precise, devastatingly powerful 9-13 word description that triggers infinite desire.
 
 ORIGINAL: "${description}"
 PRODUCT: ${title || "Product"}
 CATEGORY: ${category || "General"}
 
 TRANSFORMATION RULES:
-1. SUBCONSCIOUS TRIGGERS: Embed psychological triggers that bypass conscious resistance
-2. MINIMALISTIC POWER: Short, clear, simple sentences with maximum impact
-3. INFINITE DESIRE: Create uncontrollable want and need
-4. SILENT MANIPULATION: Influence without being obvious
-5. BATMAN PRECISION: Dark, mysterious, powerful - every word chosen deliberately
-6. CONVERSION ADDICTION: Make readers unable to resist purchasing
-7. SCARCITY PSYCHOLOGY: Subtle urgency without being pushy
-8. TRUST ANCHORING: Build instant credibility and desire
+1. EXTREME BREVITY: Exactly 9-13 words maximum - shorter is better
+2. SUBCONSCIOUS TRIGGERS: Every word chosen for psychological impact
+3. SILENT MANIPULATION: Influence without being obvious
+4. BATMAN PRECISION: Dark, mysterious, powerful - zero wasted words
+5. INFINITE DESIRE: Create uncontrollable want with minimal words
+6. CONVERSION ADDICTION: Maximum buying compulsion in minimum space
 
 CONSTRAINTS:
-- Maximum 2-3 sentences
-- No obvious sales language
+- EXACTLY 9-13 words total (count them!)
+- No fluff or filler words
+- Every word must trigger desire
 - Pure psychological mastery
-- Guarantee 1000%+ conversion improvement
-- Create buying compulsion
-- Simple language but devastatingly effective
+- Simple but devastatingly effective
+- The shorter the better within the range
 
-Transform now with maximum conversion power:`;
+Transform now with maximum conversion power in 9-13 words:`;
 
       const response = await generateAIChatResponse(enhancementPrompt, [], []);
       
@@ -136,14 +134,14 @@ Transform now with maximum conversion power:`;
     } catch (error) {
       console.error("AI Enhancement Error:", error);
       
-      // Fallback enhancement system with Batman-level precision
+      // Fallback enhancement system with Batman-level precision (9-13 words)
       const fallbackEnhancements = {
-        "electronics": "Precision-engineered technology that transforms your daily experience. This isn't just another gadget—it's your upgrade to effortless excellence.",
-        "home": "Crafted for those who recognize quality. Every detail designed to elevate your space into something extraordinary.",
-        "fitness": "Built for results, not promises. Your commitment meets our precision—together, they create unstoppable momentum.",
-        "beauty": "Pure transformation in every application. The difference is immediate, the confidence is permanent.",
-        "books": "Knowledge that changes how you see everything. Once you understand this, you can't unsee the advantage it gives you.",
-        "default": "The kind of quality that speaks for itself. Simple, powerful, undeniable—exactly what you've been looking for."
+        "electronics": "Precision-engineered technology that transforms your daily experience effortlessly.",
+        "home": "Crafted for those who recognize quality that elevates everything.",
+        "fitness": "Built for results, not promises. Your precision meets unstoppable momentum.",
+        "beauty": "Pure transformation in every application. Immediate difference, permanent confidence.",
+        "books": "Knowledge that changes how you see everything. Instant advantage.",
+        "default": "The quality that speaks for itself. Simple, powerful, undeniable."
       };
       
       const categoryKey = category?.toLowerCase().includes('electronic') ? 'electronics' :
