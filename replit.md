@@ -11,7 +11,7 @@ Preferred communication style: Simple, everyday language.
 ## Recent Changes (July 2025)
 
 - **PROFESSIONAL TYPOGRAPHY ENHANCEMENT (July 23, 2025)**: Added Futura ND-inspired Nike typography
-  - **Font Upgrade**: Implemented Space Grotesk font to emulate Futura ND for Nike 365 professional look
+  - **Font Upgrade**: Implemented Montserrat font with Futura fallback to closely match Futura ND for Nike 365 professional look
   - **Reverted Design**: Removed pill-shaped badges and kept original clean text format per user preference
   - **Enhanced Spacing**: Applied professional letter spacing and font weight for trustworthy appearance
   - **Maintained Functionality**: Kept all original color coding and layout while upgrading typography
