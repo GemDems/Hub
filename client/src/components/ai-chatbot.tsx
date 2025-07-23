@@ -1520,39 +1520,6 @@ Can I help you find something excellent in one of these available categories?`
     };
   }, [conversationHistory, userIntent, affiliateLinks]);
 
-  // Smart mobile positioning - align with search bar when scrolling
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isCollapsed && isOpen && window.innerWidth <= 768) {
-        // On mobile, find search bar element and align collapsed chat with it
-        const searchBar = document.querySelector('[data-chat-input]')?.closest('.container') || 
-                          document.querySelector('.search-container') ||
-                          document.querySelector('input[placeholder*="search" i]')?.parentElement;
-        
-        if (searchBar) {
-          const searchRect = searchBar.getBoundingClientRect();
-          const newY = Math.max(20, searchRect.top - 10); // Position slightly above search bar
-          
-          // Only update if position changed significantly
-          if (Math.abs(position.y - newY) > 10) {
-            setPosition(prev => ({ ...prev, y: newY }));
-          }
-        } else {
-          // Fallback: position near top of screen when scrolled
-          const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-          if (scrollTop > 100) {
-            setPosition(prev => ({ ...prev, y: 20 })); // Near top
-          }
-        }
-      }
-    };
-
-    if (isCollapsed && isOpen) {
-      window.addEventListener('scroll', handleScroll, { passive: true });
-      return () => window.removeEventListener('scroll', handleScroll);
-    }
-  }, [isCollapsed, isOpen, position.y]);
-
   // Chat button visibility logic - initial fade in
   useEffect(() => {
     if (isOpen) return; // Don't show button when chat is open
@@ -1700,7 +1667,24 @@ Can I help you find something excellent in one of these available categories?`
         </div>
       )}
 
-      {/* NO background extension - clean mobile experience */}
+      {/* Smart background extension when collapsed - mobile-friendly */}
+      {isCollapsed && isOpen && position.y + 60 < window.innerHeight && (
+        <div 
+          className="fixed z-40"
+          style={{
+            left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)),
+            top: position.y + 60,
+            width: size.width,
+            height: Math.max(0, window.innerHeight - (position.y + 60)), // Only extend to bottom of screen, not infinite
+            backgroundColor: 'rgba(55, 65, 81, 0.85)',
+            backdropFilter: 'blur(8px)',
+            border: '1px solid rgba(75, 85, 99, 0.6)',
+            borderTop: 'none',
+            borderBottomLeftRadius: '8px',
+            borderBottomRightRadius: '8px'
+          }}
+        />
+      )}
 
       <div
         ref={chatRef}
