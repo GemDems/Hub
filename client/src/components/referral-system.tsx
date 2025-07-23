@@ -7,6 +7,8 @@ import { Crown, Users, Gift, Copy, Check, Trophy, Star } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
 import UsernameModal from "./username-modal";
+// @ts-ignore - canvas-confetti types not needed for this simple usage
+import confetti from 'canvas-confetti';
 
 // Generate persistent device ID
 const getDeviceId = () => {
@@ -36,8 +38,7 @@ export default function ReferralSystem() {
       return response.json();
     },
     refetchInterval: 5000, // Auto-refresh every 5 seconds for live updates
-    staleTime: 0, // Always consider data stale to force fresh fetches
-    cacheTime: 1000 // Short cache for performance
+    staleTime: 0 // Always consider data stale to force fresh fetches
   });
 
   // Format username properly: "John W" format - only first letters capitalized
@@ -47,7 +48,54 @@ export default function ReferralSystem() {
     return `${formattedFirst} ${formattedLast}`;
   };
 
-  // Generate referral code mutation
+  // Playful confetti animation for successful code generation
+  const triggerConfetti = () => {
+    // Multiple confetti bursts for extra celebration
+    const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8'];
+    
+    // First burst - from center
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 },
+      colors: colors
+    });
+
+    // Second burst - left side
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.7 },
+        colors: colors
+      });
+    }, 200);
+
+    // Third burst - right side
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.7 },
+        colors: colors
+      });
+    }, 400);
+
+    // Final celebration burst
+    setTimeout(() => {
+      confetti({
+        particleCount: 80,
+        spread: 100,
+        origin: { y: 0.5 },
+        colors: colors,
+        shapes: ['star', 'circle']
+      });
+    }, 600);
+  };
+
+  // Generate referral code mutation with confetti celebration
   const generateCodeMutation = useMutation({
     mutationFn: async () => {
       const response = await apiRequest("POST", "/api/referral/generate", { userId: deviceId });
@@ -55,9 +103,11 @@ export default function ReferralSystem() {
     },
     onSuccess: () => {
       refetchStatus();
+      // Trigger playful confetti celebration
+      triggerConfetti();
       toast({
-        title: "Success!",
-        description: "Your exclusive referral code has been generated.",
+        title: "🎉 Success!",
+        description: "Your exclusive referral code has been generated! Share it with friends!",
       });
     },
     onError: () => {
@@ -351,7 +401,7 @@ export default function ReferralSystem() {
             </div>
             
             <div className="space-y-2">
-              {referralStatus.rewardCodes.map((code, index) => (
+              {referralStatus.rewardCodes.map((code: any, index: number) => (
                 <div key={code.id} className="bg-white rounded-lg p-3 border border-yellow-300 space-y-2">
                   <div className="flex items-center justify-between">
                     <div>
