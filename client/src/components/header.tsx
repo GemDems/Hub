@@ -53,11 +53,11 @@ export default function Header() {
         <div className="text-center">
 
           
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3">
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3 tracking-tight leading-tight">
             Elite Deals Hub
           </h1>
           
-          <p className="text-xl max-w-3xl mx-auto mb-6 leading-relaxed text-[#202120]">
+          <p className="text-xl max-w-3xl mx-auto mb-6 leading-relaxed text-[#202120] font-medium tracking-wide">
             <span className="font-bold text-trust-green">Curated deals</span> by industry experts. 
             <span className="font-bold text-action-orange">Limited quantities</span> 
             • <span className="font-bold text-urgency-red">Act fast!</span>

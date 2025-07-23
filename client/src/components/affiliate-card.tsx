@@ -232,11 +232,11 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       </div>
       
       <CardContent className="p-6 space-y-4">
-        <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300">
+        <h3 className="affiliate-card text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300 tracking-tight leading-tight">
           {link.title}
         </h3>
         
-        <p className="text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed">
+        <p className="affiliate-card text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed tracking-wide font-medium">
           {link.description}
         </p>
         
@@ -295,7 +295,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         {/* Pricing */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="text-2xl font-bold text-trust-green">{price}</span>
+            <span className="stats-text text-2xl font-bold text-trust-green tracking-tight">{price}</span>
             <span className="text-lg text-gray-400 line-through ml-2">
               {(() => {
                 // Extract number from price for calculation
