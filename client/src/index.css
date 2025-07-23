@@ -1,191 +1,47 @@
-/* ======== PROFESSIONAL TYPOGRAPHY SYSTEM ======== */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+/* Futura ND for Nike 365 Typography - Exact Nike Font Implementation */
+@font-face {
+  font-family: "Nike Futura ND";
+  src: url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.eot");
+  src: url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.eot?#iefix") format("embedded-opentype"),
+       url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.woff2") format("woff2"),
+       url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.woff") format("woff"),
+       url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.ttf") format("truetype"),
+       url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.svg#Nike Futura ND") format("svg");
+  font-display: swap;
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* Nike Futura ND Bold variant */
+@font-face {
+  font-family: "Nike Futura ND";
+  src: url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 700;
+  font-style: normal;
+}
+
+/* Nike Futura ND Extra Bold variant */
+@font-face {
+  font-family: "Nike Futura ND";
+  src: url("https://db.onlinewebfonts.com/t/a8d7b985e4eb8c5d34f2302ffe83e917.woff2") format("woff2");
+  font-display: swap;
+  font-weight: 900;
+  font-style: normal;
+}
+
+/* Custom Futura ND styling to match Nike exactly */
+.nike-futura-text {
+  font-family: "Nike Futura ND", "Futura", "Trebuchet MS", Arial, sans-serif;
+  font-feature-settings: "kern" 1, "liga" 1;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  /* Professional font settings for maximum clarity */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
-}
-
-/* Enhanced body typography */
-body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-weight: 400;
-  line-height: 1.6;
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
-}
-
-/* Professional heading hierarchy */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-weight: 600;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* Enhanced button typography */
-button {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Professional input field typography */
-input, textarea, select {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-weight: 400;
-  letter-spacing: -0.005em;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Enhanced readability for small text */
-.text-xs, .text-sm {
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Professional label styling */
-label {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Enhanced professional card typography */
-.affiliate-card h3 {
-  font-weight: 600;
-  letter-spacing: -0.02em;
-  line-height: 1.3;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Professional description text */
-.affiliate-card p {
-  font-weight: 400;
-  letter-spacing: -0.005em;
-  line-height: 1.5;
-  -webkit-font-smoothing: antialiased;
-}
-
-/* Enhanced button readability */
-.btn-professional {
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
-}
-
-/* Improved small text readability */
-.text-xs {
-  font-weight: 500;
-  letter-spacing: 0.005em;
-}
-
-/* Professional stats and numbers */
-.stats-text {
-  font-variant-numeric: tabular-nums;
-  font-weight: 600;
-  letter-spacing: -0.01em;
-}
-
-/* Dynamic Color-Changing Glass Text Effects */
-@keyframes colorShift {
-  0% { background-position: 0% 50%; }
-  25% { background-position: 100% 50%; }
-  50% { background-position: 100% 100%; }
-  75% { background-position: 0% 100%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes glassShimmer {
-  0% { transform: translateX(-100%) rotate(45deg); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateX(300%) rotate(45deg); opacity: 0; }
-}
-
-.dynamic-glass-text {
-  background: linear-gradient(
-    45deg,
-    #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3, #54a0ff
-  );
-  background-size: 400% 400%;
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: colorShift 4s ease-in-out infinite;
-  position: relative;
-  overflow: hidden;
-  text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-}
-
-.dynamic-glass-text::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.4),
-    transparent
-  );
-  animation: glassShimmer 3s linear infinite;
-}
-
-.glass-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-  transition: all 0.3s ease;
-}
-
-.glass-card:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.5);
-}
-
-/* Mouse Movement Responsive Colors */
-.mouse-responsive {
-  transition: all 0.3s ease;
-}
-
-/* Enhanced Letter Spacing */
-.enhanced-spacing {
-  letter-spacing: 0.1em;
-  word-spacing: 0.2em;
-}
-
-.enhanced-spacing-tight {
-  letter-spacing: -0.02em;
-  word-spacing: 0.05em;
-}
-
-/* Professional spacing adjustments */
-.professional-spacing {
-  line-height: 1.7;
-  letter-spacing: 0.02em;
-}
 
 /* ======== COPY-PASTE PROTECTION - ALL PLATFORMS & DEVICES ======== */
 /* Disable text selection across entire site */
