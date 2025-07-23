@@ -58,33 +58,16 @@ export default function Header() {
             Elite Deals Hub
           </h1>
           
-          <div className="max-w-5xl mx-auto mb-8 px-4">
-            <p className="text-xl text-gray-800 leading-[1.7] font-medium tracking-[0.02em] text-center" 
-               style={{ 
-                 fontFamily: '"Inter", "Roboto", system-ui, -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
-                 fontWeight: '500',
-                 letterSpacing: '0.02em'
-               }}>
-              <span className="inline-block font-bold text-trust-green tracking-[0.01em] px-2 py-1 rounded-md bg-trust-green/5 border border-trust-green/20 mr-3 shadow-sm">
-                CURATED DEALS
-              </span>
-              <span className="text-gray-600 font-normal mx-2">BY INDUSTRY EXPERTS</span>
-              
-              <span className="block md:inline-block mt-3 md:mt-0">
-                <span className="mx-0 md:mx-4 text-gray-400 hidden md:inline">|</span>
-                <span className="inline-block font-bold text-action-orange tracking-[0.01em] px-2 py-1 rounded-md bg-action-orange/5 border border-action-orange/20 mr-3 shadow-sm">
-                  LIMITED QUANTITIES
-                </span>
-                <span className="text-gray-500 mx-2">•</span>
-                <span className="inline-block font-bold text-urgency-red tracking-[0.01em] px-2 py-1 rounded-md bg-urgency-red/5 border border-urgency-red/20 shadow-sm">
-                  ACT FAST
-                </span>
-              </span>
-            </p>
-            
-            {/* Professional spacing separator */}
-            <div className="w-24 h-0.5 bg-gradient-to-r from-transparent via-gray-300 to-transparent mx-auto mt-6"></div>
-          </div>
+          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed font-medium tracking-wide" 
+             style={{ 
+               fontFamily: '"Space Grotesk", "Inter", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif',
+               fontWeight: '500',
+               letterSpacing: '0.015em'
+             }}>
+            <span className="font-bold text-trust-green">Curated deals</span> by industry experts. 
+            <span className="font-bold text-action-orange">Limited quantities</span> 
+            • <span className="font-bold text-urgency-red">Act fast!</span>
+          </p>
           
           {/* Enhanced Trust Ecosystem */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
