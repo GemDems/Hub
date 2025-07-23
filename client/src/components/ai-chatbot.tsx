@@ -1667,19 +1667,19 @@ Can I help you find something excellent in one of these available categories?`
         </div>
       )}
 
-      {/* Visible grey-bluish background extension when collapsed */}
-      {isCollapsed && isOpen && (
+      {/* Smart background extension when collapsed - mobile-friendly */}
+      {isCollapsed && isOpen && position.y + 60 < window.innerHeight && (
         <div 
           className="fixed z-40"
           style={{
-            left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)), // Ensure it stays within screen bounds
-            top: position.y + 60, // Right below the collapsed header bar
+            left: Math.max(0, Math.min(position.x, window.innerWidth - size.width)),
+            top: position.y + 60,
             width: size.width,
-            height: '9999px', // Extends far beyond the screen
-            backgroundColor: 'rgba(55, 65, 81, 0.85)', // Visible grey-bluish tint
+            height: Math.max(0, window.innerHeight - (position.y + 60)), // Only extend to bottom of screen, not infinite
+            backgroundColor: 'rgba(55, 65, 81, 0.85)',
             backdropFilter: 'blur(8px)',
             border: '1px solid rgba(75, 85, 99, 0.6)',
-            borderTop: 'none', // No border on top to connect with header
+            borderTop: 'none',
             borderBottomLeftRadius: '8px',
             borderBottomRightRadius: '8px'
           }}
