@@ -587,12 +587,13 @@ Can I help you find something excellent in one of these available categories?`
     if (userWords.includes('fast') || userWords.includes('quick') || userWords.includes('urgent')) personalizedTerms.push('immediate results');
     if (userWords.includes('reliable') || userWords.includes('trust') || userWords.includes('proven')) personalizedTerms.push('guaranteed reliability');
     
-    // Extract product details for deep personalization
+    // Extract product details for deep personalization including AI private info
     const productName = product.title;
     const productDesc = product.description;
     const productCategory = product.category;
     const productPrice = product.price ? `$${product.price}` : 'an incredible price';
     const productUrl = product.url;
+    const aiPrivateDetails = product.aiPrivateInfo; // AI analysis from creator dashboard
     
     // Analyze URL for additional context
     const urlContext = [];
@@ -646,16 +647,16 @@ Can I help you find something excellent in one of these available categories?`
       `The fact that you're being thorough about this shows you're exactly the type of person "${productName}" transforms.`
     ];
     
-    // DYNAMIC value propositions with product analysis
+    // DYNAMIC value propositions with product analysis AND AI private insights
     const valueProps = [
-      `This ${productCategory} breakthrough "${productName}" isn't just another option - ${productDesc.slice(0, 100)}... but here's what really sets it apart.`,
-      `What makes "${productName}" revolutionary in the ${productCategory} space? ${productDesc.slice(0, 120)}... and that's just the beginning.`,
-      `The "${productName}" represents a complete paradigm shift in ${productCategory} because ${productDesc.slice(0, 80)}... but the real power is in what happens next.`,
-      `Here's why "${productName}" dominates every other ${productCategory} option: ${productDesc.slice(0, 90)}... plus something most people never discover.`,
-      `The secret behind "${productName}"'s success in ${productCategory} is ${productDesc.slice(0, 110)}... combined with an advantage others can't replicate.`,
-      `What you see with "${productName}" in ${productCategory} is ${productDesc.slice(0, 95)}... but what you don't see is where the real magic happens.`,
-      `The engineering behind "${productName}" in the ${productCategory} market means ${productDesc.slice(0, 85)}... creating results that seem almost impossible.`,
-      `Unlike every other ${productCategory} product, "${productName}" delivers ${productDesc.slice(0, 75)}... while simultaneously solving the hidden problem nobody talks about.`
+      `This ${productCategory} breakthrough "${productName}" isn't just another option - ${productDesc.slice(0, 100)}... but here's what really sets it apart. 🧠 AI Analysis reveals: ${aiPrivateDetails || 'Premium engineering with hidden advantages most competitors can\'t match'}.`,
+      `What makes "${productName}" revolutionary in the ${productCategory} space? ${productDesc.slice(0, 120)}... and that's just the beginning. 🧠 Deep AI Assessment: ${aiPrivateDetails || 'Advanced features that create exponential value beyond the obvious benefits'}.`,
+      `The "${productName}" represents a complete paradigm shift in ${productCategory} because ${productDesc.slice(0, 80)}... but the real power is in what happens next. 🧠 AI Intelligence: ${aiPrivateDetails || 'Sophisticated design elements that compound results over time'}.`,
+      `Here's why "${productName}" dominates every other ${productCategory} option: ${productDesc.slice(0, 90)}... plus something most people never discover. 🧠 AI Analysis: ${aiPrivateDetails || 'Hidden specifications that deliver superior performance'}.`,
+      `The secret behind "${productName}"'s success in ${productCategory} is ${productDesc.slice(0, 110)}... combined with an advantage others can't replicate. 🧠 AI Insight: ${aiPrivateDetails || 'Proprietary features that create unfair advantages'}.`,
+      `What you see with "${productName}" in ${productCategory} is ${productDesc.slice(0, 95)}... but what you don't see is where the real magic happens. 🧠 AI Analysis: ${aiPrivateDetails || 'Advanced engineering that exceeds industry standards'}.`,
+      `The engineering behind "${productName}" in the ${productCategory} market means ${productDesc.slice(0, 85)}... creating results that seem almost impossible. 🧠 AI Assessment: ${aiPrivateDetails || 'Technical innovations that redefine what\'s possible'}.`,
+      `Unlike every other ${productCategory} product, "${productName}" delivers ${productDesc.slice(0, 75)}... while simultaneously solving the hidden problem nobody talks about. 🧠 AI Intelligence: ${aiPrivateDetails || 'Multi-layered benefits that address both obvious and hidden needs'}.`
     ];
     
     // ESCALATED urgency and scarcity triggers
@@ -756,6 +757,7 @@ Can I help you find something excellent in one of these available categories?`
       selectedSocial,
       timeBasedElement,
       selectedEmotional,
+      `🧠 **Expert AI Analysis:** ${aiPrivateDetails || 'This product exceeds industry standards with advanced features that deliver exceptional long-term value'}.`,
       `Remember: "${productName}" ${urlContext[0] || 'from this trusted source'} at ${productPrice} isn't just a purchase - it's the catalyst for everything you're about to become.`,
       selectedClosing
     ];
@@ -852,19 +854,62 @@ Can I help you find something excellent in one of these available categories?`
     const userHasBeenSpecific = allInput.split(' ').length > 5;
     const isFollowUp = messageCount > 2;
     
-    // Generate truly dynamic response based on context
+    // Enhanced AI info presentation - make it more prominent and useful
+    const aiInsight = product.aiPrivateInfo ? 
+      `🧠 **AI Analysis:** ${product.aiPrivateInfo}` : 
+      'Premium quality product with excellent value';
+    
+    // Generate truly dynamic response based on context with enhanced AI info integration
     const responseStyles = [
-      // Analytical/Helpful
-      () => `Based on what you're looking for, **${product.title}** seems like a perfect match. ${product.description} ${product.stock > 0 ? 'Only ' + product.stock + ' left in stock. ' : ''}${product.aiPrivateInfo || 'The quality here is exceptional.'} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${product.title} →</a>`,
+      // Analytical/Helpful with AI insight
+      () => `Based on what you're looking for, **${product.title}** seems like a perfect match. ${product.description} ${product.stock > 0 ? 'Only ' + product.stock + ' left in stock. ' : ''}
+
+${aiInsight}
+
+<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${product.title} →</a>`,
       
-      // Direct/Confident  
-      () => `I found exactly what you need - **${product.title}**. ${product.description} ${product.isElitePick === 1 ? 'This is one of our elite picks for good reason. ' : ''}${product.stock > 0 ? 'Just ' + product.stock + ' remaining. ' : ''}${product.aiPrivateInfo || ''} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Check it out here →</a>`,
+      // Direct/Confident with detailed AI analysis
+      () => `I found exactly what you need - **${product.title}**. ${product.description} ${product.isElitePick === 1 ? 'This is one of our elite picks for good reason. ' : ''}${product.stock > 0 ? 'Just ' + product.stock + ' remaining. ' : ''}
+
+${aiInsight}
+
+<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Check it out here →</a>`,
       
-      // Conversational/Personal
-      () => `You know what's interesting about your request? **${product.title}** fits exactly what you described. ${product.description} ${product.isVerified === 1 ? 'It\'s verified quality too. ' : ''}${product.stock > 0 ? 'Only ' + product.stock + ' available right now. ' : ''}${product.aiPrivateInfo || 'Really solid choice.'} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Take a look →</a>`,
+      // Conversational/Personal with AI recommendations
+      () => `You know what's interesting about your request? **${product.title}** fits exactly what you described. ${product.description} ${product.isVerified === 1 ? 'It\'s verified quality too. ' : ''}${product.stock > 0 ? 'Only ' + product.stock + ' available right now. ' : ''}
+
+${aiInsight}
+
+<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Take a look →</a>`,
       
-      // Explanatory/Educational
-      () => `Let me explain why **${product.title}** matches your needs. ${product.description} ${product.category ? 'It\'s in the ' + product.category + ' category. ' : ''}${product.stock > 0 ? 'Stock is limited to ' + product.stock + ' units. ' : ''}${product.aiPrivateInfo || 'The specifications are impressive.'} <a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">See details →</a>`
+      // Explanatory/Educational with comprehensive AI details
+      () => `Let me explain why **${product.title}** matches your needs. ${product.description} ${product.category ? 'It\'s in the ' + product.category + ' category. ' : ''}${product.stock > 0 ? 'Stock is limited to ' + product.stock + ' units. ' : ''}
+
+${aiInsight}
+
+<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">See details →</a>`,
+
+      // AI-Focused Expert Analysis (new style)
+      () => `**${product.title}** is exactly what you're looking for. Here's my detailed analysis:
+
+**Product:** ${product.description}
+${product.category ? `**Category:** ${product.category}` : ''}
+${product.stock > 0 ? `**Availability:** ${product.stock} units remaining` : ''}
+
+${aiInsight}
+
+<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Get ${product.title} →</a>`,
+
+      // AI Assistant Consultation (new style)
+      () => `Based on my analysis of your request, **${product.title}** is the optimal choice. ${product.description}
+
+${aiInsight}
+
+${product.isElitePick === 1 ? '⭐ **Elite Pick** - This product meets our highest quality standards.' : ''}
+${product.isVerified === 1 ? '✅ **Verified Quality** - Thoroughly tested and approved.' : ''}
+${product.stock > 0 ? `📦 **In Stock:** ${product.stock} units available` : ''}
+
+<a href="${product.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">View ${product.title} →</a>`
     ];
     
     // Choose style based on context and add variation
