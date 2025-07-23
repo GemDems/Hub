@@ -10,15 +10,15 @@ Preferred communication style: Simple, everyday language.
 
 ## Recent Changes (July 2025)
 
-- **AI DESCRIPTION ENHANCEMENT UPGRADE (July 23, 2025)**: Ultra-precise 9-13 word descriptions
-  - **Enhancement**: Updated AI MAXIMIZE button to generate 9-13 word descriptions instead of long text
-  - **Backend**: Modified server/routes.ts prompt to enforce EXACTLY 9-13 words maximum
-  - **Frontend**: Updated admin-panel.tsx AI templates with 12 ultra-precise variations
-  - **Word Count Control**: Automatic word counting and trimming to stay within 9-13 range
-  - **Power Focus**: Shorter descriptions with maximum psychological impact and conversion power
-  - **Template System**: 12 unique templates for variety while maintaining Batman-level precision
-  - **CLARIFIED LIMITS**: 9-13 words is MAXIMUM limit - shorter is better (aim for 6-8 words)
-  - **Updated UI**: Button now shows "AI MAXIMIZE (Shorter Better)" to emphasize brevity preference
+- **CRITICAL BUG FIX: AI BUTTON SWAP (July 23, 2025)**: Fixed swapped AI MAXIMIZE buttons between sections
+  - **Problem**: Description section was generating 12-14 word templates, AI Assistant Info was generating 6-13 words
+  - **Root Cause**: AI MAXIMIZE button functionalities were accidentally swapped between the two sections
+  - **Solution**: Properly swapped button functionalities to correct assignments
+  - **Description Section**: Now generates ultra-precise 6-13 word descriptions (shorter is better, max 13 words)
+  - **AI Assistant Info Section**: Now generates comprehensive 30-40 word paragraphs for AI understanding
+  - **Correct Assignment**: Description = ultra-short for users, AI Assistant Info = detailed for AI chatbot
+  - **Fixed Labels**: Updated button texts and descriptions to match their actual functionality
+  - **Template System**: Maintained 12 unique templates for each section with proper word counts
 - **STRATEGIC AI INTELLIGENCE INTEGRATION (July 23, 2025)**: AI now uses private info strategically, not copy-paste
   - **Problem**: AI was copying/pasting private info with labels, treating it as luggage to carry instead of strategic advantage
   - **Solution**: Complete intelligence extraction overhaul - AI now UNDERSTANDS private info rather than copying it

@@ -619,119 +619,11 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       return;
                     }
                     
-                    // BATMAN-LEVEL AI: Generate unique conversion-optimized descriptions (12-14 words MAX)
+                    // BATMAN-LEVEL AI: Generate ultra-precise 6-13 word descriptions with maximum power
                     let originalText = formData.description.trim().toLowerCase();
                     
                     // Fix grammar first
                     let cleanText = formData.description.trim()
-                      .replace(/\bi\b/g, 'I')
-                      .replace(/\s+/g, ' ')
-                      .replace(/([.!?])\s*([a-z])/g, (match, punct, letter) => punct + ' ' + letter.toUpperCase())
-                      .replace(/^([a-z])/, (match) => match.toUpperCase())
-                      .replace(/\b(teh|hte)\b/gi, 'the')
-                      .replace(/\b(adn|nad)\b/gi, 'and')
-                      .replace(/\b(taht|thta)\b/gi, 'that')
-                      .replace(/\b(youer|yuor)\b/gi, 'your');
-                    
-                    // Generate unique seed based on title + category + description
-                    const seed = (formData.title + formData.category + originalText).length % 12;
-                    
-                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES - detached, descriptive, 12-14 words max
-                    const batmanTemplates = [
-                      (text) => `Professional-grade ${text} features advanced engineering. Serious performance for demanding applications.`,
-                      (text) => `Industrial-strength ${text} delivers consistent results. Built with premium materials and reliability.`,
-                      (text) => `High-performance ${text} offers superior functionality through innovative design. Maximum efficiency and durability.`,
-                      (text) => `Commercial-quality ${text} provides exceptional value with professional-grade construction. Reliable demanding performance.`,
-                      (text) => `Laboratory-tested ${text} meets strict quality standards. Advanced features deliver measurable improvements.`,
-                      (text) => `Premium ${text} combines cutting-edge technology with robust construction. Superior performance applications.`,
-                      (text) => `Heavy-duty ${text} exceeds industry standards through rigorous testing. Long-term reliability performance.`,
-                      (text) => `Precision-engineered ${text} offers advanced functionality with quality components. Consistent results applications.`,
-                      (text) => `Enterprise-grade ${text} provides professional performance with enhanced durability. Demanding environment reliability.`,
-                      (text) => `High-capacity ${text} delivers superior results through advanced engineering. Quality materials performance.`,
-                      (text) => `Technical-grade ${text} features precision construction and tested reliability. Consistent performance applications.`,
-                      (text) => `Professional ${text} offers enhanced functionality through quality engineering. Exceeds expectations applications.`
-                    ];
-                    
-                    // Extract core product essence (remove common words)
-                    const productEssence = cleanText
-                      .replace(/\b(the|a|an|and|or|but|in|on|at|to|for|of|with|by)\b/gi, '')
-                      .replace(/\s+/g, ' ')
-                      .trim()
-                      .split(' ')
-                      .slice(0, 3)
-                      .join(' ');
-                    
-                    // Apply unique template based on seed
-                    let enhanced = batmanTemplates[seed](productEssence);
-                    
-                    // Ensure exactly 12-14 words MAX
-                    const words = enhanced.split(/\s+/);
-                    if (words.length > 14) {
-                      enhanced = words.slice(0, 14).join(' ') + '.';
-                    } else if (words.length < 12) {
-                      enhanced = enhanced + ' Enhanced premium quality.';
-                      const newWords = enhanced.split(/\s+/);
-                      if (newWords.length > 14) {
-                        enhanced = newWords.slice(0, 14).join(' ') + '.';
-                      }
-                    }
-                    
-                    setFormData({ ...formData, description: enhanced });
-                    toast({
-                      title: "BATMAN-LEVEL PRECISION ACTIVATED!",
-                      description: `Detached template #${seed + 1} applied • Professional description • Max 12-14 words perfection`,
-                    });
-                  }}
-                  variant="outline"
-                  size="sm"
-                  className="bg-gradient-to-r from-purple-500 to-blue-600 text-white border-none hover:from-purple-600 hover:to-blue-700 font-medium"
-                >
-                  <span className="mr-1">⚡</span>
-                  AI MAXIMIZE (1000%+ Conversion)
-                </Button>
-                
-                <div className="text-xs text-gray-600 self-center">
-                  <span className="font-semibold text-purple-600">Batman-level precision</span> • Minimalistic • Powerful • Subconscious triggers
-                </div>
-              </div>
-              
-              <p className="text-xs text-purple-600 font-medium">
-                🧠 AI will transform your description into a conversion masterpiece with infinite desire triggers and subconscious manipulation for maximum sales
-              </p>
-            </div>
-          </div>
-
-          <div>
-            <Label htmlFor="aiPrivateInfo">AI Assistant Info (Private)</Label>
-            <div className="space-y-2">
-              <Textarea
-                id="aiPrivateInfo"
-                value={formData.aiPrivateInfo || ""}
-                onChange={(e) => setFormData({ ...formData, aiPrivateInfo: e.target.value })}
-                placeholder="Additional details for AI: specific features, compatibility, technical specs, target audience, unique selling points..."
-                rows={3}
-                className="mt-1 border-orange-200 bg-orange-50/30"
-              />
-              
-              {/* AI Enhancement Button for AI Assistant Info - EXACT DUPLICATE */}
-              <div className="flex gap-2 items-center">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    if (!formData.aiPrivateInfo?.trim()) {
-                      toast({
-                        title: "Enter AI Info First",
-                        description: "Please add some AI assistant information before enhancement",
-                        variant: "destructive"
-                      });
-                      return;
-                    }
-                    
-                    // BATMAN-LEVEL AI: Generate ultra-precise 9-13 word descriptions with maximum power
-                    let originalText = formData.aiPrivateInfo.trim().toLowerCase();
-                    
-                    // Fix grammar first
-                    let cleanText = formData.aiPrivateInfo.trim()
                       .replace(/\bi\b/g, 'I')
                       .replace(/\s+/g, ' ')
                       .replace(/([.!?])\s*([a-z])/g, (match, punct, letter) => punct + ' ' + letter.toUpperCase())
@@ -746,7 +638,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Generate unique seed for ultra-precise descriptions
                     const seed = (formData.title + formData.category + originalText).length % 12;
                     
-                    // 12 ULTRA-PRECISE AI DESCRIPTION TEMPLATES (shorter is better, max 9-13)
+                    // 12 ULTRA-PRECISE AI DESCRIPTION TEMPLATES (shorter is better, max 6-13)
                     const aiTemplates = [
                       (text) => `Premium ${text} engineered for exceptional performance.`,
                       (text) => `Advanced ${text} designed to exceed expectations.`,
@@ -777,7 +669,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     }
                     // No minimum - shorter is better!
                     
-                    setFormData({ ...formData, aiPrivateInfo: enhanced });
+                    setFormData({ ...formData, description: enhanced });
                     toast({
                       title: "BATMAN-LEVEL PRECISION ACTIVATED!",
                       description: `${enhanced.split(' ').length} words • Shorter = more powerful • Maximum impact • Perfect chatbot understanding`,
@@ -798,6 +690,114 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               
               <p className="text-xs text-purple-600 font-medium">
                 🧠 AI will transform your info into ultra-precise descriptions (shorter is better, max 13 words) for perfect chatbot understanding
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="aiPrivateInfo">AI Assistant Info (Private)</Label>
+            <div className="space-y-2">
+              <Textarea
+                id="aiPrivateInfo"
+                value={formData.aiPrivateInfo || ""}
+                onChange={(e) => setFormData({ ...formData, aiPrivateInfo: e.target.value })}
+                placeholder="Additional details for AI: specific features, compatibility, technical specs, target audience, unique selling points..."
+                rows={3}
+                className="mt-1 border-orange-200 bg-orange-50/30"
+              />
+              
+              {/* AI Enhancement Button for AI Assistant Info - EXACT DUPLICATE */}
+              <div className="flex gap-2 items-center">
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (!formData.aiPrivateInfo?.trim()) {
+                      toast({
+                        title: "Enter AI Info First",
+                        description: "Please add some AI assistant information before enhancement",
+                        variant: "destructive"
+                      });
+                      return;
+                    }
+                    
+                    // BATMAN-LEVEL AI: Generate comprehensive 30-40 word paragraphs for AI understanding
+                    let originalText = formData.aiPrivateInfo.trim().toLowerCase();
+                    
+                    // Fix grammar first
+                    let cleanText = formData.aiPrivateInfo.trim()
+                      .replace(/\bi\b/g, 'I')
+                      .replace(/\s+/g, ' ')
+                      .replace(/([.!?])\s*([a-z])/g, (match, punct, letter) => punct + ' ' + letter.toUpperCase())
+                      .replace(/^([a-z])/, (match) => match.toUpperCase())
+                      .replace(/\b(teh|hte)\b/gi, 'the')
+                      .replace(/\b(adn|nad)\b/gi, 'and')
+                      .replace(/\b(taht|thta)\b/gi, 'that')
+                      .replace(/\b(youer|yuor)\b/gi, 'your');
+                    
+                    // Generate unique seed based on title + category + description
+                    const seed = (formData.title + formData.category + originalText).length % 12;
+                    
+                    // 12 UNIQUE BATMAN-PRECISION TEMPLATES - detailed paragraphs, 30-40 words
+                    const batmanTemplates = [
+                      (text) => `Professional-grade ${text} features advanced engineering and premium construction. Designed for serious performance in demanding applications with enhanced reliability and consistent results.`,
+                      (text) => `Industrial-strength ${text} delivers consistent results through rigorous testing and quality materials. Built with premium components for long-term reliability and demanding professional environments.`,
+                      (text) => `High-performance ${text} offers superior functionality through innovative design and cutting-edge technology. Engineered for maximum efficiency and durability in challenging applications and conditions.`,
+                      (text) => `Commercial-quality ${text} provides exceptional value with professional-grade construction and advanced features. Reliable performance for demanding applications with measurable improvements and enhanced functionality.`,
+                      (text) => `Laboratory-tested ${text} meets strict quality standards with advanced engineering and precision manufacturing. Delivers consistent performance through quality components and enhanced durability features.`,
+                      (text) => `Premium ${text} combines cutting-edge technology with robust construction for superior performance. Advanced features and quality materials ensure reliable operation in demanding professional applications.`,
+                      (text) => `Heavy-duty ${text} exceeds industry standards through rigorous testing and premium materials. Engineered for long-term reliability and consistent performance in challenging professional environments.`,
+                      (text) => `Precision-engineered ${text} offers advanced functionality with quality components and enhanced durability. Designed for consistent results and reliable performance in demanding applications and conditions.`,
+                      (text) => `Enterprise-grade ${text} provides professional performance with enhanced durability and advanced features. Built for demanding environments with quality materials and consistent reliable operation.`,
+                      (text) => `High-capacity ${text} delivers superior results through advanced engineering and quality materials. Designed for optimal performance and enhanced functionality in demanding professional applications.`,
+                      (text) => `Technical-grade ${text} features precision construction and tested reliability with enhanced performance capabilities. Engineered for consistent results and demanding applications with advanced functionality.`,
+                      (text) => `Professional ${text} offers enhanced functionality through quality engineering and advanced features. Designed to exceed expectations in demanding applications with reliable consistent performance.`
+                    ];
+                    
+                    // Extract core product essence (remove common words)
+                    const productEssence = cleanText
+                      .replace(/\b(the|a|an|and|or|but|in|on|at|to|for|of|with|by)\b/gi, '')
+                      .replace(/\s+/g, ' ')
+                      .trim()
+                      .split(' ')
+                      .slice(0, 3)
+                      .join(' ');
+                    
+                    // Apply unique template based on seed
+                    let enhanced = batmanTemplates[seed](productEssence);
+                    
+                    // Ensure 30-40 words for AI understanding
+                    const words = enhanced.split(/\s+/);
+                    if (words.length > 40) {
+                      enhanced = words.slice(0, 40).join(' ') + '.';
+                    } else if (words.length < 30) {
+                      enhanced = enhanced + ' Enhanced premium quality features and advanced functionality for superior performance.';
+                      const newWords = enhanced.split(/\s+/);
+                      if (newWords.length > 40) {
+                        enhanced = newWords.slice(0, 40).join(' ') + '.';
+                      }
+                    }
+                    
+                    setFormData({ ...formData, aiPrivateInfo: enhanced });
+                    toast({
+                      title: "BATMAN-LEVEL PRECISION ACTIVATED!",
+                      description: `Detailed template #${seed + 1} applied • Comprehensive AI info • 30-40 words for perfect understanding`,
+                    });
+                  }}
+                  variant="outline"
+                  size="sm"
+                  className="bg-gradient-to-r from-purple-500 to-blue-600 text-white border-none hover:from-purple-600 hover:to-blue-700 font-medium"
+                >
+                  <span className="mr-1">⚡</span>
+                  AI MAXIMIZE (1000%+ Conversion)
+                </Button>
+                
+                <div className="text-xs text-gray-600 self-center">
+                  <span className="font-semibold text-purple-600">Batman-level precision</span> • Comprehensive • Detailed • AI Understanding
+                </div>
+              </div>
+              
+              <p className="text-xs text-purple-600 font-medium">
+                🧠 AI will transform your description into a comprehensive 30-40 word paragraph for perfect AI chatbot understanding and strategic conversion advantage
               </p>
               
               <p className="text-xs text-orange-600 font-medium">
