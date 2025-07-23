@@ -49,7 +49,6 @@ export default function Header() {
       <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm">
         <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
       </div>
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
 
@@ -58,7 +57,7 @@ export default function Header() {
             Elite Deals Hub
           </h1>
           
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed">
+          <p className="text-xl max-w-3xl mx-auto mb-6 leading-relaxed text-[#202120]">
             <span className="font-bold text-trust-green">Curated deals</span> by industry experts. 
             <span className="font-bold text-action-orange">Limited quantities</span> 
             • <span className="font-bold text-urgency-red">Act fast!</span>
