@@ -19,8 +19,22 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  // Track mouse movement for dynamic effects
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      setMousePosition({
+        x: (e.clientX / window.innerWidth) * 100,
+        y: (e.clientY / window.innerHeight) * 100
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
 
   const alerts = [
     "🔔 Real-time Stock Drop",
@@ -159,7 +173,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   return (
     <>
-      <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
+      <Card className="glass-card rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative mouse-responsive" style={{ filter: `hue-rotate(${mousePosition.x * 0.8}deg)` }}>
 
         
         {/* Invisible Delete Button */}
@@ -232,11 +246,11 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       </div>
       
       <CardContent className="p-6 space-y-4">
-        <h3 className="affiliate-card text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300 tracking-tight leading-tight">
+        <h3 className="dynamic-glass-text text-2xl font-bold mb-3 transition-all duration-300 tracking-tight leading-tight enhanced-spacing-tight mouse-responsive" style={{ filter: `hue-rotate(${mousePosition.x * 2}deg)` }}>
           {link.title}
         </h3>
         
-        <p className="affiliate-card text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed tracking-wide font-medium">
+        <p className="text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed font-medium professional-spacing enhanced-spacing">
           {link.description}
         </p>
         
@@ -295,7 +309,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         {/* Pricing */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <span className="stats-text text-2xl font-bold text-trust-green tracking-tight">{price}</span>
+            <span className="dynamic-glass-text text-2xl font-bold tracking-tight mouse-responsive" style={{ filter: `hue-rotate(${mousePosition.y * 3}deg)` }}>{price}</span>
             <span className="text-lg text-gray-400 line-through ml-2">
               {(() => {
                 // Extract number from price for calculation
