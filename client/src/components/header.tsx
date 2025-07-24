@@ -63,7 +63,9 @@ export default function Header() {
               <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text group cursor-pointer">
                 Hand-picked deals
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
-                <span className="absolute -bottom-1 right-0 w-0 h-0.5 bg-gradient-to-r from-white/90 to-white/60 opacity-0 group-hover:w-full group-hover:opacity-100 transition-all duration-700 ease-out shadow-lg shadow-white/50"></span>
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <span className="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-transparent via-white to-transparent shadow-lg shadow-white/70 group-hover:animate-[shimmer_1.5s_ease-in-out_infinite] -translate-x-full"></span>
+                </span>
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
             </p>
