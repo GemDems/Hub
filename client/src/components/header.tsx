@@ -44,8 +44,14 @@ export default function Header() {
   }, []);
 
   return (
-    <div className="relative p-3" style={{ backgroundColor: '#202120' }}>
-      {/* Header content with rounded corners and margin to show background color */}
+    <div className="relative">
+      {/* Corner elements positioned at each corner */}
+      <div className="absolute top-0 left-0 w-6 h-6 rounded-tl-3xl" style={{ backgroundColor: '#202120' }}></div>
+      <div className="absolute top-0 right-0 w-6 h-6 rounded-tr-3xl" style={{ backgroundColor: '#202120' }}></div>
+      <div className="absolute bottom-0 left-0 w-6 h-6 rounded-bl-3xl" style={{ backgroundColor: '#202120' }}></div>
+      <div className="absolute bottom-0 right-0 w-6 h-6 rounded-br-3xl" style={{ backgroundColor: '#202120' }}></div>
+      
+      {/* Header content with rounded corners */}
       <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden rounded-3xl">
         {/* Clean Alert Banner */}
         <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm rounded-t-3xl">
