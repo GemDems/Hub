@@ -7,42 +7,75 @@ interface LiveStats {
   timestamp: number;
 }
 
-// Animated Number Component with visible spinning effect
-function AnimatedNumber({ value, className = "" }: { value: number; className?: string }) {
-  const [displayValue, setDisplayValue] = useState(value);
-  const [isSpinning, setIsSpinning] = useState(false);
-
-  useEffect(() => {
-    if (value !== displayValue) {
-      setIsSpinning(true);
-      console.log(`Number changing from ${displayValue} to ${value}`);
-      
-      // Change the display value mid-spin for smooth transition
-      setTimeout(() => {
-        setDisplayValue(value);
-      }, 300);
-      
-      // Stop spinning animation
-      setTimeout(() => {
-        setIsSpinning(false);
-      }, 800);
-    }
-  }, [value, displayValue]);
-
+// Individual Digit Animation Component
+function AnimatedDigit({ digit, isAnimating }: { digit: string; isAnimating: boolean }) {
   return (
     <span 
       className={`
         inline-block font-bold text-gray-800
-        ${isSpinning ? 'spin-number' : ''}
-        ${className}
+        ${isAnimating ? 'spin-digit' : ''}
       `}
       style={{
         display: 'inline-block',
-        minWidth: '2ch',
+        minWidth: '1ch',
         transformOrigin: 'center center'
       }}
     >
-      {displayValue}
+      {digit}
+    </span>
+  );
+}
+
+// Animated Number Component with individual digit spinning
+function AnimatedNumber({ value, className = "" }: { value: number; className?: string }) {
+  const [displayValue, setDisplayValue] = useState(value);
+  const [animatingDigits, setAnimatingDigits] = useState<Set<number>>(new Set());
+
+  useEffect(() => {
+    if (value !== displayValue) {
+      console.log(`Number changing from ${displayValue} to ${value}`);
+      
+      const oldDigits = displayValue.toString().split('');
+      const newDigits = value.toString().split('');
+      const maxLength = Math.max(oldDigits.length, newDigits.length);
+      
+      // Pad with zeros for comparison
+      while (oldDigits.length < maxLength) oldDigits.unshift('0');
+      while (newDigits.length < maxLength) newDigits.unshift('0');
+      
+      // Find which digits changed
+      const changedDigits = new Set<number>();
+      for (let i = 0; i < maxLength; i++) {
+        if (oldDigits[i] !== newDigits[i]) {
+          changedDigits.add(i);
+        }
+      }
+      
+      setAnimatingDigits(changedDigits);
+      
+      // Update value mid-animation
+      setTimeout(() => {
+        setDisplayValue(value);
+      }, 350);
+      
+      // Stop animation
+      setTimeout(() => {
+        setAnimatingDigits(new Set());
+      }, 700);
+    }
+  }, [value, displayValue]);
+
+  const digits = displayValue.toString().split('');
+  
+  return (
+    <span className={`inline-block ${className}`}>
+      {digits.map((digit, index) => (
+        <AnimatedDigit 
+          key={`${displayValue}-${index}`}
+          digit={digit}
+          isAnimating={animatingDigits.has(digits.length - 1 - index)}
+        />
+      ))}
     </span>
   );
 }
