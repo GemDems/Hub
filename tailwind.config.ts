@@ -65,17 +65,20 @@ export default {
       keyframes: {
         "flash-cycle": {
           "0%": {
-            transform: "translateX(-100%)",
+            transform: "translateX(-150%)",
             opacity: "0"
           },
-          "20%": {
+          "10%": {
+            opacity: "0.8"
+          },
+          "50%": {
             opacity: "1"
           },
-          "80%": {
-            opacity: "1"
+          "90%": {
+            opacity: "0.8"
           },
           "100%": {
-            transform: "translateX(400%)",
+            transform: "translateX(500%)",
             opacity: "0"
           }
         },
@@ -97,7 +100,7 @@ export default {
         },
       },
       animation: {
-        "flash-cycle": "flash-cycle 1.5s ease-in-out infinite",
+        "flash-cycle": "flash-cycle 1.2s ease-in-out infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
