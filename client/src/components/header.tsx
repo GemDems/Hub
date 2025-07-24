@@ -60,27 +60,12 @@ export default function Header() {
           
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
-              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text group overflow-hidden cursor-pointer transition-all duration-300 hover:bg-[length:200%_100%] hover:animate-[gradient-slide_2s_ease-in-out_infinite]" 
-                    style={{
-                      backgroundImage: 'linear-gradient(45deg, #059669, #10b981, #34d399, #6ee7b7, #059669)',
-                      backgroundSize: '200% 100%',
-                      animation: 'none'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.animation = 'gradient-slide 2s ease-in-out infinite';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.animation = 'none';
-                    }}>
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text group cursor-pointer overflow-hidden">
                 Hand-picked deals
-                
-                {/* Slashing light effect */}
-                <span className="absolute inset-0 overflow-hidden">
-                  <span className="absolute top-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent transform skew-x-12 group-hover:animate-[slash-light_1.5s_ease-in-out_infinite] opacity-0 group-hover:opacity-100"></span>
-                </span>
-                
+                {/* Shining light effect */}
+                <span className="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/30 to-transparent transform -skew-x-12 -translate-x-full opacity-0 group-hover:opacity-100 group-hover:translate-x-full transition-all duration-1000 ease-out"></span>
                 {/* Animated underline */}
-                <span className="absolute -bottom-1 left-1/2 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60 transform -translate-x-1/2 transition-all duration-300 group-hover:w-3/4 group-hover:opacity-90"></span>
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60 origin-center group-hover:scale-x-50 transition-transform duration-300 ease-in-out"></span>
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
             </p>
