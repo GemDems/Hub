@@ -60,9 +60,10 @@ export default function Header() {
           
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
-              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text group cursor-pointer">
                 Hand-picked deals
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
+                <span className="absolute top-1/2 left-1/2 w-16 h-0.5 bg-white opacity-0 group-hover:opacity-90 transform -translate-x-1/2 -translate-y-1/2 rotate-12 transition-opacity duration-300 shadow-sm"></span>
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
             </p>
