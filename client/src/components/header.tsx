@@ -50,7 +50,6 @@ export default function Header() {
       <div className="absolute top-0 right-0 w-6 h-6 rounded-tr-3xl" style={{ backgroundColor: '#202120' }}></div>
       <div className="absolute bottom-0 left-0 w-6 h-6 rounded-bl-3xl" style={{ backgroundColor: '#202120' }}></div>
       <div className="absolute bottom-0 right-0 w-6 h-6 rounded-br-3xl" style={{ backgroundColor: '#202120' }}></div>
-      
       {/* Header content with rounded corners */}
       <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden rounded-3xl">
         {/* Clean Alert Banner */}
