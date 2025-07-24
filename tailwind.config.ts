@@ -79,19 +79,10 @@ export default {
             height: "0",
           },
         },
-        "slash-light": {
-          "0%": {
-            transform: "translateX(-120%) skewX(-12deg)",
-          },
-          "100%": {
-            transform: "translateX(120%) skewX(-12deg)",
-          },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "slash-light": "slash-light 1.5s ease-in-out infinite",
       },
     },
   },
