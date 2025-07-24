@@ -66,7 +66,17 @@ export default function Header() {
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
             </p>
-            
+            <div className="flex flex-wrap items-center justify-center gap-6 text-lg">
+              <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 rounded-full border border-orange-200">
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                <span className="font-semibold text-orange-700">Limited stock</span>
+              </div>
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-50 to-pink-50 rounded-full border border-red-200">
+                <span className="text-xl">⚡</span>
+                <span className="font-semibold text-red-700">Move quickly!</span>
+              </div>
+            </div>
           </div>
           
           {/* Enhanced Trust Ecosystem */}
