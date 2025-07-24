@@ -552,3 +552,29 @@ input, textarea, [contenteditable="true"] {
     background-position: 0% 50%;
   }
 }
+
+@keyframes flashSweep {
+  0% {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  20% {
+    opacity: 1;
+    transform: translateX(0);
+    box-shadow: 0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.6);
+  }
+  40% {
+    opacity: 1;
+    transform: translateX(0);
+    box-shadow: 0 0 25px rgba(255,255,255,1), 0 0 50px rgba(255,255,255,0.8);
+  }
+  60% {
+    opacity: 0.8;
+    transform: translateX(50%);
+    box-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.4);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
