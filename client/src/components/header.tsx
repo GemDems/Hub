@@ -100,7 +100,11 @@ export default function Header() {
           <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
             <div className="flex items-center justify-center space-x-6">
               <div className="flex items-center">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                <div className="relative mr-2">
+                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse z-10 relative"></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-green-400 rounded-full animate-ping opacity-75"></div>
+                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-green-300 rounded-full animate-ping opacity-30 animation-delay-200"></div>
+                </div>
                 <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
               </div>
               <div className="flex items-center">
