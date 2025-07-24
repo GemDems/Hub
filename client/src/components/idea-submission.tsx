@@ -11,30 +11,30 @@ function FunFactButton() {
   const [isOpen, setIsOpen] = useState(false);
 
   return (
-    <div className="flex justify-center mt-6">
+    <div className="flex justify-center mt-2">
       <div className="relative">
         {/* Dropdown Content */}
         {isOpen && (
-          <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-200 px-6 py-4 min-w-64 animate-in slide-in-from-bottom-2 duration-300">
+          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-md shadow-lg border border-gray-200 px-4 py-2 min-w-48 animate-in slide-in-from-bottom-2 duration-200">
             <div className="text-center">
-              <div className="text-sm font-semibold text-gray-700 mb-2">Fun Fact</div>
-              <div className="text-lg font-bold text-green-600">
+              <div className="text-xs font-medium text-gray-600 mb-1">Fun Fact</div>
+              <div className="text-sm font-semibold text-green-600">
                 😊 98.7% Saved More Than Expected
               </div>
             </div>
           </div>
         )}
         
-        {/* Swipe Button */}
+        {/* Swipe Button - Much smaller and more invisible */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-full p-2 shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95"
+          className="bg-gray-100/50 hover:bg-gray-200/60 border border-gray-200/50 rounded-full p-1 transition-all duration-200 opacity-40 hover:opacity-70"
           title="Fun Fact"
         >
           {isOpen ? (
-            <ChevronDown className="w-5 h-5 text-gray-600" />
+            <ChevronDown className="w-3 h-3 text-gray-500" />
           ) : (
-            <ChevronUp className="w-5 h-5 text-gray-600" />
+            <ChevronUp className="w-3 h-3 text-gray-500" />
           )}
         </button>
       </div>
