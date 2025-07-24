@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { apiRequest } from "@/lib/queryClient";
+import { EnhancedRollingNumber } from "./rolling-number";
 
 interface LiveStats {
   viewers: number;
@@ -93,11 +94,15 @@ export default function Header() {
             <div className="flex items-center justify-center space-x-6 text-[19px]">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
+                <span className="font-bold text-gray-800">
+                  LIVE: <EnhancedRollingNumber value={liveStats.viewers} /> viewing
+                </span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
+                <span className="font-bold text-gray-800">
+                  <EnhancedRollingNumber value={liveStats.hourlyBuyers} /> bought this hour
+                </span>
               </div>
             </div>
           </div>
