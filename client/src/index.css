@@ -465,48 +465,6 @@ input, textarea, [contenteditable="true"] {
   .verified-glow-button .relative {
     z-index: 10;
   }
-
-  /* Hand-picked deals glowing animation - same as verified button */
-  .hand-picked-glow-text {
-    position: relative;
-    overflow: hidden;
-  }
-  
-  .hand-picked-glow-text:hover::before {
-    content: '';
-    position: absolute;
-    top: -10%;
-    left: -120%;
-    width: 120%;
-    height: 120%;
-    background: linear-gradient(75deg, 
-      transparent, 
-      rgba(255, 255, 255, 0.4), 
-      rgba(255, 255, 255, 0.6), 
-      rgba(255, 255, 255, 0.4), 
-      transparent
-    );
-    animation: glowing-sweep-diagonal 1s infinite;
-    z-index: 1;
-    transform: skewX(-15deg);
-  }
-  
-  .hand-picked-glow-text:hover::after {
-    content: '';
-    position: absolute;
-    top: -10%;
-    left: -120%;
-    width: 60%;
-    height: 120%;
-    background: linear-gradient(75deg, 
-      transparent, 
-      rgba(255, 255, 255, 0.8), 
-      transparent
-    );
-    animation: glowing-sweep-diagonal 1s infinite 0.5s;
-    z-index: 1;
-    transform: skewX(-15deg);
-  }
   
   .urgency-red {
     color: var(--urgency-red);
