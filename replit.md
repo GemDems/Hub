@@ -8,7 +8,22 @@ This is a full-stack affiliate link management platform built with React, Expres
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (July 2025)
+## Recent Changes
+
+### Latest Implementation (January 24, 2025)
+✅ **Completed: AI Database & SMS Messaging System**
+- **Bug Fixes**: Resolved all TypeScript null pointer errors and LSP diagnostics
+- **AI Database Integration**: Added PostgreSQL tables for AI conversation tracking with full CRUD operations
+- **SMS Messaging System**: Built comprehensive Twilio-based SMS service (optional - requires API keys)
+  - SMS preferences management with opt-in/opt-out functionality
+  - Deal alerts and price drop notifications capability
+  - Database tracking for all SMS messages and user preferences
+  - Complete API endpoints for SMS operations
+- **Frontend Components**: Created SMS preferences component for user management
+- **Database Schema**: Added `aiConversations`, `smsMessages`, and `userSmsPreferences` tables
+- **API Endpoints**: Full REST API for both AI conversations and SMS functionality
+
+### Previous Changes (July 2025)
 
 - **CRITICAL BUG FIX: AI BUTTON SWAP (July 23, 2025)**: Fixed swapped AI MAXIMIZE buttons between sections
   - **Problem**: Description section was generating 12-14 word templates, AI Assistant Info was generating 6-13 words
