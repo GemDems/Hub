@@ -60,30 +60,13 @@ export default function Header() {
           
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
-              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text group overflow-hidden">
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
                 Hand-picked deals
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
-                
-                {/* Animated glowing lines on hover */}
-                <span className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <span className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent transform -skew-x-12 -translate-x-full group-hover:animate-[shimmer_1.5s_ease-in-out_infinite]"></span>
-                  <span className="absolute top-1/4 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-white/60 to-transparent transform -skew-x-12 -translate-x-full group-hover:animate-[shimmer_1.8s_ease-in-out_infinite_0.2s]"></span>
-                  <span className="absolute top-3/4 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-white/50 to-transparent transform -skew-x-12 -translate-x-full group-hover:animate-[shimmer_2.1s_ease-in-out_infinite_0.4s]"></span>
-                </span>
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-6 text-lg">
-              <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 rounded-full border border-orange-200">
-                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
-                <span className="font-semibold text-orange-700">Limited stock</span>
-              </div>
-              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
-              <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-50 to-pink-50 rounded-full border border-red-200">
-                <span className="text-xl">⚡</span>
-                <span className="font-semibold text-red-700">Move quickly!</span>
-              </div>
-            </div>
+            
           </div>
           
           {/* Enhanced Trust Ecosystem */}
