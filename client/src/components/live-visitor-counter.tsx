@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { Users, Eye, ShoppingCart } from "lucide-react";
-import { EnhancedRollingNumber } from "./rolling-number";
 
 export default function LiveVisitorCounter() {
   const [visitors, setVisitors] = useState(Math.floor(Math.random() * 200) + 150);
@@ -28,17 +27,13 @@ export default function LiveVisitorCounter() {
           <div className="flex items-center">
             <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse mr-2"></div>
             <Eye className="w-4 h-4 mr-2" />
-            <span className="font-bold text-sm">
-              <EnhancedRollingNumber value={visitors} /> viewing now
-            </span>
+            <span className="font-bold text-sm">{visitors} viewing now</span>
           </div>
           
           <div className="flex items-center">
             <div className="w-3 h-3 bg-yellow-400 rounded-full animate-pulse mr-2"></div>
             <ShoppingCart className="w-4 h-4 mr-2" />
-            <span className="font-bold text-sm">
-              <EnhancedRollingNumber value={recentPurchases} /> bought today
-            </span>
+            <span className="font-bold text-sm">{recentPurchases} bought today</span>
           </div>
           
           <div className="text-center pt-1 border-t border-white/20">
