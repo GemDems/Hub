@@ -62,7 +62,7 @@ export default function Header() {
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
               <span className="relative inline-block font-bold verified-glow-button hover:verified-glow-button">
                 <span className="relative z-10 text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">Hand-picked deals</span>
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60 z-20"></span>
+                <span className="absolute -bottom-1 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-green-400 opacity-80 z-20"></span>
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
             </p>
