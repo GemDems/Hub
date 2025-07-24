@@ -45,10 +45,10 @@ export default function Header() {
 
   return (
     <div className="relative">
-      {/* Background with rounded corners and custom color */}
-      <div className="absolute inset-0 rounded-t-3xl" style={{ backgroundColor: '#202120' }}></div>
+      {/* Background with rounded corners and custom color for all 4 corners */}
+      <div className="absolute inset-0 rounded-3xl" style={{ backgroundColor: '#202120' }}></div>
       
-      <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden rounded-t-3xl">
+      <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden rounded-3xl">
         {/* Clean Alert Banner */}
         <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm rounded-t-3xl">
           <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
