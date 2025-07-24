@@ -638,41 +638,35 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                     // Generate unique seed for ultra-precise descriptions
                     const seed = (formData.title + formData.category + originalText).length % 12;
                     
-                    // 12 ULTRA-PRECISE AI DESCRIPTION TEMPLATES (shorter is better, max 6-13)
+                    // 12 ULTRA-PRECISE AI DESCRIPTION TEMPLATES (4-9 characters max for UI)
                     const aiTemplates = [
-                      (text) => `Premium ${text} engineered for exceptional performance.`,
-                      (text) => `Advanced ${text} designed to exceed expectations.`,
-                      (text) => `Professional-grade ${text} built for superior results.`,
-                      (text) => `High-performance ${text} crafted with precision engineering.`,
-                      (text) => `Superior ${text} featuring innovative design standards.`,
-                      (text) => `Elite-quality ${text} delivering consistent results.`,
-                      (text) => `Precision-crafted ${text} engineered for reliability.`,
-                      (text) => `Professional ${text} built to industry standards.`,
-                      (text) => `Advanced ${text} featuring premium construction.`,
-                      (text) => `High-grade ${text} designed for optimal performance.`,
-                      (text) => `Superior-quality ${text} engineered with precision.`,
-                      (text) => `Premium ${text} delivering exceptional results.`
+                      () => `Top deal`,
+                      () => `Best buy`,
+                      () => `Hot item`,
+                      () => `Must have`,
+                      () => `Top pick`,
+                      () => `Great`,
+                      () => `Amazing`,
+                      () => `Perfect`,
+                      () => `Elite`,
+                      () => `Premium`,
+                      () => `Quality`,
+                      () => `Excellent`
                     ];
                     
-                    // Extract key product type/category
-                    const productType = formData.category.toLowerCase() === 'hot deals' ? 
-                      (cleanText.split(' ')[0] || 'product') : 
-                      formData.category.toLowerCase();
-                    
                     // Apply template based on seed
-                    let enhanced = aiTemplates[seed](productType);
+                    let enhanced = aiTemplates[seed]();
                     
-                    // Count words and enforce maximum limit (shorter is better)
-                    const words = enhanced.split(/\s+/);
-                    if (words.length > 13) {
-                      enhanced = words.slice(0, 13).join(' ');
+                    // Enforce 4-9 character limit (9 is absolute maximum for UI reasons)
+                    if (enhanced.length > 9) {
+                      enhanced = enhanced.substring(0, 9);
                     }
-                    // No minimum - shorter is better!
+                    // Minimum 4 characters for readability
                     
                     setFormData({ ...formData, description: enhanced });
                     toast({
-                      title: "BATMAN-LEVEL PRECISION ACTIVATED!",
-                      description: `${enhanced.split(' ').length} words • Shorter = more powerful • Maximum impact • Perfect chatbot understanding`,
+                      title: "ULTRA-COMPACT ACTIVATED!",
+                      description: `${enhanced.length} chars • Ultra-short for UI • 4-9 char limit • Maximum impact`,
                     });
                   }}
                   variant="outline"
@@ -684,12 +678,12 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                 </Button>
                 
                 <div className="text-xs text-gray-600 self-center">
-                  <span className="font-semibold text-purple-600">Batman-level precision</span> • Minimalistic • Powerful • Subconscious triggers
+                  <span className="font-semibold text-purple-600">Ultra-compact</span> • 4-9 chars • UI optimized • Maximum impact
                 </div>
               </div>
               
               <p className="text-xs text-purple-600 font-medium">
-                🧠 AI will transform your info into ultra-precise descriptions (shorter is better, max 13 words) for perfect chatbot understanding
+                🧠 AI will transform your info into ultra-compact descriptions (4-9 characters max) for perfect UI display
               </p>
             </div>
           </div>
