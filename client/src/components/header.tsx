@@ -60,13 +60,9 @@ export default function Header() {
           
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
-              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text overflow-hidden">
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
                 Hand-picked deals
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
-                <span className="absolute top-1/2 w-20 h-1 bg-white opacity-80 transform -translate-y-1/2 rotate-12 shadow-lg animate-sweep-right-to-left" style={{
-                  filter: 'drop-shadow(0 0 8px rgba(255, 255, 255, 0.8))',
-                  animation: 'sweepRightToLeft 2s infinite linear'
-                }}></span>
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
             </p>
