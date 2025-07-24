@@ -60,11 +60,15 @@ export default function Header() {
           
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
-              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text group cursor-pointer">
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text group cursor-pointer shimmer-effect">
                 Hand-picked deals
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <span className="absolute top-0 left-0 w-8 h-full bg-gradient-to-r from-transparent via-white to-transparent shadow-lg shadow-white/70 group-hover:animate-[shimmer_1.5s_ease-in-out_infinite] -translate-x-full"></span>
+                </span>
+                <span className="absolute -bottom-1 left-0 w-full h-1 overflow-hidden opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                  <span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/90 to-transparent animate-pulse"></span>
+                  <span className="absolute top-0 left-0 w-6 h-full bg-gradient-to-r from-transparent via-white to-transparent shadow-white/80 shadow-lg group-hover:animate-[shimmer_1s_linear_infinite]"></span>
                 </span>
               </span>
               <span className="mx-3 font-normal">crafted by industry insiders</span>
