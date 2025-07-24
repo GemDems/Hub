@@ -37,6 +37,19 @@ function FunFactButton() {
             <ChevronUp className="w-3 h-3 text-gray-500" />
           )}
         </button>
+        
+        {/* Small text under button */}
+        <div className="text-center mt-1">
+          <span 
+            className="text-xs text-black opacity-60 cursor-pointer"
+            style={{
+              textShadow: '1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white'
+            }}
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            More Info?
+          </span>
+        </div>
       </div>
     </div>
   );
