@@ -32,8 +32,8 @@ function AnimatedNumber({ value, className = "" }: { value: number; className?: 
   return (
     <span 
       className={`
-        inline-block font-bold
-        ${isSpinning ? 'spin-number text-blue-600' : 'text-gray-800'}
+        inline-block font-bold text-gray-800
+        ${isSpinning ? 'spin-number' : ''}
         ${className}
       `}
       style={{
