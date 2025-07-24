@@ -424,9 +424,9 @@ input, textarea, [contenteditable="true"] {
       rgba(255, 255, 255, 0.4), 
       transparent
     );
-    animation: glowing-sweep-diagonal 2s infinite;
     z-index: 1;
     transform: skewX(-15deg);
+    opacity: 0;
   }
   
   .verified-glow-button::after {
@@ -441,9 +441,9 @@ input, textarea, [contenteditable="true"] {
       rgba(255, 255, 255, 0.8), 
       transparent
     );
-    animation: glowing-sweep-diagonal 2s infinite 0.5s;
     z-index: 1;
     transform: skewX(-15deg);
+    opacity: 0;
   }
   
   @keyframes glowing-sweep-diagonal {
@@ -455,10 +455,14 @@ input, textarea, [contenteditable="true"] {
     }
   }
   
-  .verified-glow-button:hover::before,
+  .verified-glow-button:hover::before {
+    opacity: 1;
+    animation: glowing-sweep-diagonal 1s infinite;
+  }
+  
   .verified-glow-button:hover::after {
-    animation-duration: 1s;
-    animation-name: glowing-sweep-diagonal;
+    opacity: 1;
+    animation: glowing-sweep-diagonal 1s infinite 0.3s;
   }
   
   /* Ensure text content appears above the glowing animation */
