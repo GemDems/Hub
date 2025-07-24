@@ -60,7 +60,19 @@ export default function Header() {
           
           <div className="max-w-4xl mx-auto mb-8">
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
-              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
+              <span 
+                className="handpicked-deals relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text"
+                onClick={() => {
+                  // Scroll to products section smoothly
+                  const productsSection = document.querySelector('main');
+                  if (productsSection) {
+                    productsSection.scrollIntoView({ behavior: 'smooth' });
+                  } else {
+                    // Fallback: scroll to top of page where products typically are
+                    window.scrollTo({ top: 500, behavior: 'smooth' });
+                  }
+                }}
+              >
                 Hand-picked deals
                 <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
               </span>
