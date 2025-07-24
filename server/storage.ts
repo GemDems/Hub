@@ -1,4 +1,4 @@
-import { users, affiliateLinks, referralCodes, userStats, userIdeas, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats, type UserIdea, type InsertUserIdea } from "@shared/schema";
+import { users, affiliateLinks, referralCodes, userStats, userIdeas, aiConversations, smsMessages, userSmsPreferences, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats, type UserIdea, type InsertUserIdea, type AiConversation, type InsertAiConversation, type SmsMessage, type InsertSmsMessage, type UserSmsPreferences, type InsertUserSmsPreferences } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -33,6 +33,20 @@ export interface IStorage {
   // User Ideas
   submitUserIdea(deviceId: string, idea: string): Promise<UserIdea>;
   getAllUserIdeas(): Promise<UserIdea[]>;
+  
+  // AI Conversations
+  saveAiConversation(conversation: InsertAiConversation): Promise<AiConversation>;
+  getAiConversationHistory(sessionId: string, limit?: number): Promise<AiConversation[]>;
+  getUserAiConversations(userId: string, limit?: number): Promise<AiConversation[]>;
+  
+  // SMS Messaging
+  createSmsMessage(smsData: InsertSmsMessage): Promise<SmsMessage>;
+  updateSmsStatus(id: number, status: string, externalId?: string, sentAt?: Date): Promise<void>;
+  getPendingSmsMessages(): Promise<SmsMessage[]>;
+  getUserSmsPreferences(userId: string): Promise<UserSmsPreferences | undefined>;
+  createUserSmsPreferences(preferences: InsertUserSmsPreferences): Promise<UserSmsPreferences>;
+  updateUserSmsPreferences(userId: string, preferences: Partial<UserSmsPreferences>): Promise<void>;
+  optOutFromSms(userId: string): Promise<void>;
   markIdeaAsReviewed(id: number): Promise<UserIdea | undefined>;
 }
 
@@ -178,13 +192,13 @@ export class DatabaseStorage implements IStorage {
     }
 
     // Check if device already used THIS SPECIFIC code (prevent duplicate uses of same code)
-    if (referralCode.usedDevices.includes(deviceId)) {
+    if (referralCode.usedDevices && referralCode.usedDevices.includes(deviceId)) {
       throw new Error('This device has already used this referral code');
     }
 
     // Determine points to add based on code type
     const pointsToAdd = referralCode.isDoublePoints ? 2 : 1;
-    const newUsedDevices = [...referralCode.usedDevices, deviceId];
+    const newUsedDevices = [...(referralCode.usedDevices || []), deviceId];
     const newUsedCount = (referralCode.usedCount || 0) + 1;
     const vipUnlocked = newUsedCount >= 3 && !referralCode.isVip;
 
@@ -226,7 +240,7 @@ export class DatabaseStorage implements IStorage {
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
     // Always ensure users with $1000+ saved have bonus codes available
-    if (userStat && userStat.savingsProgress >= 1000) {
+    if (userStat && userStat.savingsProgress && userStat.savingsProgress >= 1000) {
       const existingBonusCodes = await db.select().from(referralCodes)
         .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
       
@@ -247,7 +261,7 @@ export class DatabaseStorage implements IStorage {
       myCode: referralCode?.code,
       usedCount: referralCode?.usedCount || 0,
       isVip: Boolean(userStat?.isVip || referralCode?.isVip),
-      username: userStat?.username,
+      username: userStat?.username || undefined,
       totalCodesShared: totalUsageCount,
       invitesUsedCount: userStat?.invitesUsedCount || 0,
       rewardCodes
@@ -335,7 +349,7 @@ export class DatabaseStorage implements IStorage {
       await db
         .update(userStats)
         .set({ 
-          totalSavings: existingStats.totalSavings + savings,
+          totalSavings: (existingStats.totalSavings || 0) + savings,
           lastActive: new Date()
         })
         .where(eq(userStats.userId, userId));
@@ -494,7 +508,7 @@ export class DatabaseStorage implements IStorage {
   async regenerateBonusCodesIfNeeded(userId: string): Promise<void> {
     const [userStat] = await db.select().from(userStats).where(eq(userStats.userId, userId));
     
-    if (userStat && userStat.savingsProgress >= 1000) {
+    if (userStat && userStat.savingsProgress && userStat.savingsProgress >= 1000) {
       // Delete existing bonus codes
       await db.delete(referralCodes)
         .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
@@ -545,7 +559,7 @@ export class DatabaseStorage implements IStorage {
 
     // Find the minimum invite count to qualify for leaderboard
     const minQualifyingInvites = currentTopReferrers.length === 10 
-      ? currentTopReferrers[9].referralCount 
+      ? (currentTopReferrers[9]?.referralCount || 3)
       : 3; // Default to 3 invites minimum
 
     // Find users with usernames and 3+ invites who could qualify
@@ -574,7 +588,7 @@ export class DatabaseStorage implements IStorage {
         }
 
         // If leaderboard is full (10 members), demote the lowest member
-        if (currentTopReferrers.length === 10 && userInvites > currentTopReferrers[9].referralCount) {
+        if (currentTopReferrers.length === 10 && currentTopReferrers[9] && userInvites > (currentTopReferrers[9].referralCount || 0)) {
           const lowestMember = currentTopReferrers[9];
           
           // Demote the lowest member from VIP status
@@ -651,6 +665,94 @@ export class DatabaseStorage implements IStorage {
       .where(eq(userIdeas.id, id))
       .returning();
     return updated || undefined;
+  }
+
+  // AI Conversation Methods
+  async saveAiConversation(conversation: InsertAiConversation): Promise<AiConversation> {
+    const [savedConversation] = await db
+      .insert(aiConversations)
+      .values(conversation)
+      .returning();
+    return savedConversation;
+  }
+
+  async getAiConversationHistory(sessionId: string, limit: number = 50): Promise<AiConversation[]> {
+    return await db
+      .select()
+      .from(aiConversations)
+      .where(eq(aiConversations.sessionId, sessionId))
+      .orderBy(desc(aiConversations.createdAt))
+      .limit(limit);
+  }
+
+  async getUserAiConversations(userId: string, limit: number = 100): Promise<AiConversation[]> {
+    return await db
+      .select()
+      .from(aiConversations)
+      .where(eq(aiConversations.userId, userId))
+      .orderBy(desc(aiConversations.createdAt))
+      .limit(limit);
+  }
+
+  // SMS Messaging Methods
+  async createSmsMessage(smsData: InsertSmsMessage): Promise<SmsMessage> {
+    const [smsMessage] = await db
+      .insert(smsMessages)
+      .values(smsData)
+      .returning();
+    return smsMessage;
+  }
+
+  async updateSmsStatus(id: number, status: string, externalId?: string, sentAt?: Date): Promise<void> {
+    const updateData: Partial<SmsMessage> = { status };
+    if (externalId) updateData.externalId = externalId;
+    if (sentAt) updateData.sentAt = sentAt;
+
+    await db
+      .update(smsMessages)
+      .set(updateData)
+      .where(eq(smsMessages.id, id));
+  }
+
+  async getPendingSmsMessages(): Promise<SmsMessage[]> {
+    return await db
+      .select()
+      .from(smsMessages)
+      .where(eq(smsMessages.status, "pending"))
+      .orderBy(smsMessages.scheduledAt || smsMessages.createdAt);
+  }
+
+  async getUserSmsPreferences(userId: string): Promise<UserSmsPreferences | undefined> {
+    const [preferences] = await db
+      .select()
+      .from(userSmsPreferences)
+      .where(eq(userSmsPreferences.userId, userId));
+    return preferences || undefined;
+  }
+
+  async createUserSmsPreferences(preferences: InsertUserSmsPreferences): Promise<UserSmsPreferences> {
+    const [smsPreferences] = await db
+      .insert(userSmsPreferences)
+      .values(preferences)
+      .returning();
+    return smsPreferences;
+  }
+
+  async updateUserSmsPreferences(userId: string, preferences: Partial<UserSmsPreferences>): Promise<void> {
+    await db
+      .update(userSmsPreferences)
+      .set(preferences)
+      .where(eq(userSmsPreferences.userId, userId));
+  }
+
+  async optOutFromSms(userId: string): Promise<void> {
+    await db
+      .update(userSmsPreferences)
+      .set({ 
+        isOptedIn: 0, 
+        optOutDate: new Date() 
+      })
+      .where(eq(userSmsPreferences.userId, userId));
   }
 }
 

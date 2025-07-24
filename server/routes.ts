@@ -1,9 +1,10 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertAffiliateLinkSchema } from "@shared/schema";
+import { insertAffiliateLinkSchema, insertAiConversationSchema, insertSmsMessageSchema, insertUserSmsPreferencesSchema } from "@shared/schema";
 import { z } from "zod";
 import { generateAIChatResponse } from "./cohere-service";
+import { smsService } from "./sms-service";
 
 // Global live stats that persist across sessions
 let liveStats = {
@@ -536,6 +537,146 @@ Transform now with maximum conversion power in minimal words:`;
         fallback: true
       });
     }
+  });
+
+  // AI Conversation History endpoints
+  app.post("/api/ai-conversations", async (req, res) => {
+    try {
+      const conversationData = insertAiConversationSchema.parse(req.body);
+      const savedConversation = await storage.saveAiConversation(conversationData);
+      res.json(savedConversation);
+    } catch (error) {
+      console.error("Error saving AI conversation:", error);
+      res.status(500).json({ message: "Failed to save conversation" });
+    }
+  });
+
+  app.get("/api/ai-conversations/session/:sessionId", async (req, res) => {
+    try {
+      const { sessionId } = req.params;
+      const limit = parseInt(req.query.limit as string) || 50;
+      const conversations = await storage.getAiConversationHistory(sessionId, limit);
+      res.json(conversations);
+    } catch (error) {
+      console.error("Error fetching conversation history:", error);
+      res.status(500).json({ message: "Failed to fetch conversation history" });
+    }
+  });
+
+  app.get("/api/ai-conversations/user/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const limit = parseInt(req.query.limit as string) || 100;
+      const conversations = await storage.getUserAiConversations(userId, limit);
+      res.json(conversations);
+    } catch (error) {
+      console.error("Error fetching user conversations:", error);
+      res.status(500).json({ message: "Failed to fetch user conversations" });
+    }
+  });
+
+  // SMS Messaging endpoints
+  app.post("/api/sms/send", async (req, res) => {
+    try {
+      const smsData = insertSmsMessageSchema.parse(req.body);
+      
+      // Create SMS record in database
+      const smsMessage = await storage.createSmsMessage(smsData);
+      
+      // Send SMS if service is configured
+      if (smsService.isConfigured()) {
+        const result = await smsService.sendSMS({
+          to: smsData.phoneNumber,
+          message: smsData.message,
+          scheduleTime: smsData.scheduledAt || undefined
+        });
+        
+        if (result.success) {
+          await storage.updateSmsStatus(smsMessage.id, "sent", result.messageId, new Date());
+        } else {
+          await storage.updateSmsStatus(smsMessage.id, "failed");
+        }
+        
+        res.json({ success: result.success, smsId: smsMessage.id, error: result.error });
+      } else {
+        await storage.updateSmsStatus(smsMessage.id, "failed");
+        res.json({ success: false, smsId: smsMessage.id, error: "SMS service not configured" });
+      }
+    } catch (error) {
+      console.error("Error sending SMS:", error);
+      res.status(500).json({ message: "Failed to send SMS" });
+    }
+  });
+
+  app.post("/api/sms/preferences", async (req, res) => {
+    try {
+      const preferencesData = insertUserSmsPreferencesSchema.parse(req.body);
+      const preferences = await storage.createUserSmsPreferences(preferencesData);
+      
+      // Send welcome SMS if opted in
+      if (preferences.isOptedIn && smsService.isConfigured()) {
+        await smsService.sendWelcomeMessage(preferences.phoneNumber);
+      }
+      
+      res.json(preferences);
+    } catch (error) {
+      console.error("Error creating SMS preferences:", error);
+      res.status(500).json({ message: "Failed to create SMS preferences" });
+    }
+  });
+
+  app.get("/api/sms/preferences/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const preferences = await storage.getUserSmsPreferences(userId);
+      res.json(preferences || null);
+    } catch (error) {
+      console.error("Error fetching SMS preferences:", error);
+      res.status(500).json({ message: "Failed to fetch SMS preferences" });
+    }
+  });
+
+  app.put("/api/sms/preferences/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const updates = req.body;
+      await storage.updateUserSmsPreferences(userId, updates);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error updating SMS preferences:", error);
+      res.status(500).json({ message: "Failed to update SMS preferences" });
+    }
+  });
+
+  app.post("/api/sms/opt-out/:userId", async (req, res) => {
+    try {
+      const { userId } = req.params;
+      await storage.optOutFromSms(userId);
+      res.json({ success: true });
+    } catch (error) {
+      console.error("Error opting out from SMS:", error);
+      res.status(500).json({ message: "Failed to opt out from SMS" });
+    }
+  });
+
+  app.get("/api/sms/pending", async (req, res) => {
+    try {
+      const pendingMessages = await storage.getPendingSmsMessages();
+      res.json(pendingMessages);
+    } catch (error) {
+      console.error("Error fetching pending SMS:", error);
+      res.status(500).json({ message: "Failed to fetch pending SMS" });
+    }
+  });
+
+  // SMS status check endpoint
+  app.get("/api/sms/status", (req, res) => {
+    res.json({ 
+      isConfigured: smsService.isConfigured(),
+      message: smsService.isConfigured() 
+        ? "SMS service is ready" 
+        : "SMS service requires Twilio credentials (TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER)"
+    });
   });
 
   const httpServer = createServer(app);

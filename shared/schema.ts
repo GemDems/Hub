@@ -63,6 +63,48 @@ export const userIdeas = pgTable("user_ideas", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+// AI Conversation History for tracking user interactions with AI chatbot
+export const aiConversations = pgTable("ai_conversations", {
+  id: serial("id").primaryKey(),
+  sessionId: text("session_id").notNull(), // User session identifier
+  userId: text("user_id"), // Optional user ID if logged in
+  userMessage: text("user_message").notNull(),
+  aiResponse: text("ai_response").notNull(),
+  intent: text("intent"), // Detected user intent (JSON string)
+  productRecommended: integer("product_recommended"), // ID of recommended product
+  conversationContext: text("conversation_context"), // Previous context (JSON string)
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// SMS Messages for sending promotional and alert messages
+export const smsMessages = pgTable("sms_messages", {
+  id: serial("id").primaryKey(),
+  phoneNumber: text("phone_number").notNull(),
+  message: text("message").notNull(),
+  messageType: text("message_type").default("promotional"), // "promotional", "alert", "deal_notification"
+  status: text("status").default("pending"), // "pending", "sent", "failed", "delivered"
+  externalId: text("external_id"), // SMS service provider message ID
+  productId: integer("product_id"), // Related product for deal notifications
+  userId: text("user_id"), // User who should receive the message
+  scheduledAt: timestamp("scheduled_at"), // When to send the message
+  sentAt: timestamp("sent_at"), // When the message was actually sent
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
+// User SMS Preferences for managing opt-ins and preferences
+export const userSmsPreferences = pgTable("user_sms_preferences", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull(),
+  phoneNumber: text("phone_number").notNull(),
+  isOptedIn: integer("is_opted_in").default(1), // 0 = opted out, 1 = opted in
+  dealNotifications: integer("deal_notifications").default(1), // Receive deal alerts
+  priceDropAlerts: integer("price_drop_alerts").default(1), // Receive price drop alerts
+  weeklyDigest: integer("weekly_digest").default(0), // Receive weekly deal digest
+  optInDate: timestamp("opt_in_date").defaultNow().notNull(),
+  optOutDate: timestamp("opt_out_date"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -85,6 +127,34 @@ export const insertAffiliateLinkSchema = z.object({
   aiPrivateInfo: z.string().optional().or(z.null()),
 });
 
+// Zod schemas for AI and SMS tables
+export const insertAiConversationSchema = createInsertSchema(aiConversations).pick({
+  sessionId: true,
+  userId: true,
+  userMessage: true,
+  aiResponse: true,
+  intent: true,
+  productRecommended: true,
+  conversationContext: true,
+});
+
+export const insertSmsMessageSchema = createInsertSchema(smsMessages).pick({
+  phoneNumber: true,
+  message: true,
+  messageType: true,
+  productId: true,
+  userId: true,
+  scheduledAt: true,
+});
+
+export const insertUserSmsPreferencesSchema = createInsertSchema(userSmsPreferences).pick({
+  userId: true,
+  phoneNumber: true,
+  dealNotifications: true,
+  priceDropAlerts: true,
+  weeklyDigest: true,
+});
+
 export type InsertUser = z.infer<typeof insertUserSchema>;
 export type User = typeof users.$inferSelect;
 export type AffiliateLink = typeof affiliateLinks.$inferSelect;
@@ -93,3 +163,9 @@ export type ReferralCode = typeof referralCodes.$inferSelect;
 export type UserStats = typeof userStats.$inferSelect;
 export type UserIdea = typeof userIdeas.$inferSelect;
 export type InsertUserIdea = typeof userIdeas.$inferInsert;
+export type AiConversation = typeof aiConversations.$inferSelect;
+export type InsertAiConversation = z.infer<typeof insertAiConversationSchema>;
+export type SmsMessage = typeof smsMessages.$inferSelect;
+export type InsertSmsMessage = z.infer<typeof insertSmsMessageSchema>;
+export type UserSmsPreferences = typeof userSmsPreferences.$inferSelect;
+export type InsertUserSmsPreferences = z.infer<typeof insertUserSmsPreferencesSchema>;

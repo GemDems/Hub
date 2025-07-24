@@ -63,7 +63,7 @@ ${availableProducts.map((product, index) =>
   📂 CATEGORY: ${product.category || 'General'}
   💰 PRICE: $${product.price || 'Contact for pricing'}
   📝 DESCRIPTION: ${product.description || 'Premium quality product'}
-  📦 STOCK: ${product.stock > 0 ? `${product.stock} units available` : 'In stock'}
+  📦 STOCK: ${(product.stock && product.stock > 0) ? `${product.stock} units available` : 'In stock'}
   👥 POPULARITY: ${product.clicks || 0} people interested
   🧠 STATUS: ${product.isElitePick ? '⭐ ELITE BRAIN PICK' : 'Standard'}${product.isVerified ? ' ✅ VERIFIED' : ''}
   🔗 DIRECT URL: ${product.url}
@@ -222,7 +222,7 @@ Assistant:`;
   } catch (error) {
     console.error('Cohere API Error:', error);
     // Return null to indicate fallback should be used
-    throw new Error(`Cohere API unavailable: ${error.message}`);
+    throw new Error(`Cohere API unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
 
