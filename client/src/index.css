@@ -2,51 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@keyframes shimmer {
-  0% {
-    transform: translateX(-100%);
-    opacity: 0;
-  }
-  50% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateX(400%);
-    opacity: 0;
-  }
-}
-
-.shimmer-effect {
-  position: relative;
-  overflow: hidden;
-}
-
-.shimmer-effect::after {
-  content: '';
-  position: absolute;
-  bottom: -2px;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.9),
-    rgba(255, 255, 255, 1),
-    rgba(255, 255, 255, 0.9),
-    transparent
-  );
-  transform: translateX(-100%);
-  transition: transform 0s;
-  animation: none;
-  box-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
-  border-radius: 2px;
-}
-
-.shimmer-effect:hover::after {
-  animation: shimmer 1.2s ease-in-out infinite;
-}
-
 /* ======== COPY-PASTE PROTECTION - ALL PLATFORMS & DEVICES ======== */
 /* Disable text selection across entire site */
 * {
