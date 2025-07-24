@@ -7,79 +7,6 @@ interface LiveStats {
   timestamp: number;
 }
 
-// Individual Digit Animation Component
-function AnimatedDigit({ digit, isAnimating }: { digit: string; isAnimating: boolean }) {
-  return (
-    <span 
-      className={`
-        inline-block font-bold text-gray-800
-        ${isAnimating ? 'spin-digit' : ''}
-      `}
-      style={{
-        display: 'inline-block',
-        minWidth: '1ch',
-        transformOrigin: 'center center'
-      }}
-    >
-      {digit}
-    </span>
-  );
-}
-
-// Animated Number Component with individual digit spinning
-function AnimatedNumber({ value, className = "" }: { value: number; className?: string }) {
-  const [displayValue, setDisplayValue] = useState(value);
-  const [animatingDigits, setAnimatingDigits] = useState<Set<number>>(new Set());
-
-  useEffect(() => {
-    if (value !== displayValue) {
-      console.log(`Number changing from ${displayValue} to ${value}`);
-      
-      const oldDigits = displayValue.toString().split('');
-      const newDigits = value.toString().split('');
-      const maxLength = Math.max(oldDigits.length, newDigits.length);
-      
-      // Pad with zeros for comparison
-      while (oldDigits.length < maxLength) oldDigits.unshift('0');
-      while (newDigits.length < maxLength) newDigits.unshift('0');
-      
-      // Find which digits changed
-      const changedDigits = new Set<number>();
-      for (let i = 0; i < maxLength; i++) {
-        if (oldDigits[i] !== newDigits[i]) {
-          changedDigits.add(i);
-        }
-      }
-      
-      setAnimatingDigits(changedDigits);
-      
-      // Update value mid-animation
-      setTimeout(() => {
-        setDisplayValue(value);
-      }, 350);
-      
-      // Stop animation
-      setTimeout(() => {
-        setAnimatingDigits(new Set());
-      }, 700);
-    }
-  }, [value, displayValue]);
-
-  const digits = displayValue.toString().split('');
-  
-  return (
-    <span className={`inline-block ${className}`}>
-      {digits.map((digit, index) => (
-        <AnimatedDigit 
-          key={`${displayValue}-${index}`}
-          digit={digit}
-          isAnimating={animatingDigits.has(digits.length - 1 - index)}
-        />
-      ))}
-    </span>
-  );
-}
-
 export default function Header() {
   const [liveStats, setLiveStats] = useState<LiveStats>({
     viewers: 200,
@@ -122,7 +49,6 @@ export default function Header() {
       <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm">
         <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
       </div>
-      
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">
 
@@ -164,14 +90,14 @@ export default function Header() {
           
           {/* Live Activity Monitor */}
           <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
-            <div className="flex items-center justify-center space-x-6">
+            <div className="flex items-center justify-center space-x-6 text-[19px]">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">LIVE: <AnimatedNumber value={liveStats.viewers} /> viewing</span>
+                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800"><AnimatedNumber value={liveStats.hourlyBuyers} /> bought this hour</span>
+                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
               </div>
             </div>
           </div>

@@ -2,36 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Individual digit spinning with fade effect */
-@keyframes digit-fade-spin {
-  0% {
-    opacity: 1;
-    transform: rotateX(0deg);
-  }
-  25% {
-    opacity: 0.3;
-    transform: rotateX(45deg);
-  }
-  50% {
-    opacity: 0;
-    transform: rotateX(90deg);
-  }
-  75% {
-    opacity: 0.3;
-    transform: rotateX(135deg);
-  }
-  100% {
-    opacity: 1;
-    transform: rotateX(180deg);
-  }
-}
-
-.spin-digit {
-  animation: digit-fade-spin 0.7s ease-in-out;
-  display: inline-block;
-  transform-origin: center center;
-}
-
 /* ======== COPY-PASTE PROTECTION - ALL PLATFORMS & DEVICES ======== */
 /* Disable text selection across entire site */
 * {
