@@ -63,6 +63,22 @@ export default {
         },
       },
       keyframes: {
+        "flash-cycle": {
+          "0%": {
+            transform: "translateX(-100%)",
+            opacity: "0"
+          },
+          "20%": {
+            opacity: "1"
+          },
+          "80%": {
+            opacity: "1"
+          },
+          "100%": {
+            transform: "translateX(400%)",
+            opacity: "0"
+          }
+        },
         "accordion-down": {
           from: {
             height: "0",
@@ -81,6 +97,7 @@ export default {
         },
       },
       animation: {
+        "flash-cycle": "flash-cycle 1.5s ease-in-out infinite",
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
       },
