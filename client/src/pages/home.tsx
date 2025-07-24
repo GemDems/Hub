@@ -21,8 +21,6 @@ import AIChatbot from "@/components/ai-chatbot";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 
-
-
 export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");

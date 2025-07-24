@@ -4,56 +4,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
-import { ChevronDown, ChevronUp } from "lucide-react";
-
-// Fun Fact Button Component
-function FunFactButton() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return (
-    <div className="flex justify-center mt-2">
-      <div className="relative">
-        {/* Dropdown Content */}
-        {isOpen && (
-          <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white rounded-md shadow-lg border border-gray-200 px-4 py-2 min-w-48 animate-in slide-in-from-bottom-2 duration-200">
-            <div className="text-center">
-              <div className="text-xs font-medium text-gray-600 mb-1">Fun Fact</div>
-              <div className="text-sm font-semibold text-green-600">
-                😊 98.7% Saved More Than Expected
-              </div>
-            </div>
-          </div>
-        )}
-        
-        {/* Swipe Button - Much smaller and more invisible */}
-        <button
-          onClick={() => setIsOpen(!isOpen)}
-          className="bg-gray-100/50 hover:bg-gray-200/60 border border-gray-200/50 rounded-full p-1 transition-all duration-200 opacity-40 hover:opacity-70"
-          title="Fun Fact"
-        >
-          {isOpen ? (
-            <ChevronDown className="w-3 h-3 text-gray-500" />
-          ) : (
-            <ChevronUp className="w-3 h-3 text-gray-500" />
-          )}
-        </button>
-        
-        {/* Small text under button */}
-        <div className="text-center mt-1">
-          <span 
-            className="text-xs text-black opacity-60 cursor-pointer"
-            style={{
-              textShadow: '1px 1px 0 white, -1px -1px 0 white, 1px -1px 0 white, -1px 1px 0 white'
-            }}
-            onClick={() => setIsOpen(!isOpen)}
-          >
-            More Info?
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 // Separate Guarantee Component
 function GuaranteeSection() {
@@ -232,7 +182,6 @@ export default function IdeaSubmission() {
           </div>
         </div>
         <GuaranteeSection />
-        <FunFactButton />
       </>
     );
   }
@@ -347,7 +296,6 @@ export default function IdeaSubmission() {
         </div>
       </div>
       <GuaranteeSection />
-      <FunFactButton />
     </>
   );
 }
