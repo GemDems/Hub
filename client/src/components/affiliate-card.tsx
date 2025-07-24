@@ -100,8 +100,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     // Start tracking in background (but don't wait for it)
     trackClickMutation.mutate();
     
-    // OPEN IN NEW TAB - BETTER USER EXPERIENCE
-    window.open(link.url, '_blank');
+    // IMMEDIATE REDIRECT TO ENTERED URL - PERIOD.
+    window.location.href = link.url;
   };
 
   const getCategoryEmoji = (category: string) => {
