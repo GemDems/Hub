@@ -7,33 +7,39 @@ interface LiveStats {
   timestamp: number;
 }
 
-// Animated Number Component for smooth digit transitions
+// Animated Number Component with visible spinning effect
 function AnimatedNumber({ value, className = "" }: { value: number; className?: string }) {
   const [displayValue, setDisplayValue] = useState(value);
-  const [isAnimating, setIsAnimating] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
 
   useEffect(() => {
     if (value !== displayValue) {
-      setIsAnimating(true);
+      setIsSpinning(true);
+      console.log(`Number changing from ${displayValue} to ${value}`);
       
-      // Start animation after a brief delay
+      // Change the display value mid-spin for smooth transition
       setTimeout(() => {
         setDisplayValue(value);
-        
-        // End animation after spin completes
-        setTimeout(() => {
-          setIsAnimating(false);
-        }, 300);
-      }, 50);
+      }, 300);
+      
+      // Stop spinning animation
+      setTimeout(() => {
+        setIsSpinning(false);
+      }, 800);
     }
   }, [value, displayValue]);
 
   return (
     <span 
-      className={`inline-block transition-transform duration-300 ${isAnimating ? 'animate-spin' : ''} ${className}`}
+      className={`
+        inline-block font-bold
+        ${isSpinning ? 'spin-number text-blue-600' : 'text-gray-800'}
+        ${className}
+      `}
       style={{
-        transform: isAnimating ? 'rotateX(360deg)' : 'rotateX(0deg)',
-        transformStyle: 'preserve-3d'
+        display: 'inline-block',
+        minWidth: '2ch',
+        transformOrigin: 'center center'
       }}
     >
       {displayValue}
