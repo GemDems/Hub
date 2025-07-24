@@ -58,7 +58,7 @@ export default function Header() {
             Elite Deals Hub
           </h1>
           
-          <div className="max-w-4xl mx-auto mb-8 verified-glow-button cursor-pointer relative overflow-hidden">
+          <div className="max-w-4xl mx-auto mb-8 header-glow-effect cursor-pointer relative overflow-hidden">
             <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2 relative z-10">
               <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
                 Hand-picked deals

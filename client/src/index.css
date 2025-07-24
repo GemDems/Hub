@@ -424,9 +424,9 @@ input, textarea, [contenteditable="true"] {
       rgba(255, 255, 255, 0.4), 
       transparent
     );
+    animation: glowing-sweep-diagonal 2s infinite;
     z-index: 1;
     transform: skewX(-15deg);
-    opacity: 0;
   }
   
   .verified-glow-button::after {
@@ -441,9 +441,53 @@ input, textarea, [contenteditable="true"] {
       rgba(255, 255, 255, 0.8), 
       transparent
     );
+    animation: glowing-sweep-diagonal 2s infinite 0.5s;
+    z-index: 1;
+    transform: skewX(-15deg);
+  }
+
+  /* Header glow animation - separate from button glow */
+  .header-glow-effect {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .header-glow-effect::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 120%;
+    height: 100%;
+    background: linear-gradient(75deg, 
+      transparent, 
+      rgba(34, 197, 94, 0.3), 
+      rgba(34, 197, 94, 0.5), 
+      rgba(34, 197, 94, 0.3), 
+      transparent
+    );
     z-index: 1;
     transform: skewX(-15deg);
     opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+  
+  .header-glow-effect::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(75deg, 
+      transparent, 
+      rgba(34, 197, 94, 0.7), 
+      transparent
+    );
+    z-index: 1;
+    transform: skewX(-15deg);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
   
   @keyframes glowing-sweep-diagonal {
@@ -455,14 +499,20 @@ input, textarea, [contenteditable="true"] {
     }
   }
   
-  .verified-glow-button:hover::before {
+  .verified-glow-button:hover::before,
+  .verified-glow-button:hover::after {
+    animation-duration: 1s;
+    animation-name: glowing-sweep-diagonal;
+  }
+
+  .header-glow-effect:hover::before {
     opacity: 1;
-    animation: glowing-sweep-diagonal 1s infinite;
+    animation: glowing-sweep-diagonal 1.2s infinite;
   }
   
-  .verified-glow-button:hover::after {
+  .header-glow-effect:hover::after {
     opacity: 1;
-    animation: glowing-sweep-diagonal 1s infinite 0.3s;
+    animation: glowing-sweep-diagonal 1.2s infinite 0.4s;
   }
   
   /* Ensure text content appears above the glowing animation */
