@@ -7,6 +7,40 @@ interface LiveStats {
   timestamp: number;
 }
 
+// Animated Number Component for smooth digit transitions
+function AnimatedNumber({ value, className = "" }: { value: number; className?: string }) {
+  const [displayValue, setDisplayValue] = useState(value);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  useEffect(() => {
+    if (value !== displayValue) {
+      setIsAnimating(true);
+      
+      // Start animation after a brief delay
+      setTimeout(() => {
+        setDisplayValue(value);
+        
+        // End animation after spin completes
+        setTimeout(() => {
+          setIsAnimating(false);
+        }, 300);
+      }, 50);
+    }
+  }, [value, displayValue]);
+
+  return (
+    <span 
+      className={`inline-block transition-transform duration-300 ${isAnimating ? 'animate-spin' : ''} ${className}`}
+      style={{
+        transform: isAnimating ? 'rotateX(360deg)' : 'rotateX(0deg)',
+        transformStyle: 'preserve-3d'
+      }}
+    >
+      {displayValue}
+    </span>
+  );
+}
+
 export default function Header() {
   const [liveStats, setLiveStats] = useState<LiveStats>({
     viewers: 200,
@@ -94,11 +128,11 @@ export default function Header() {
             <div className="flex items-center justify-center space-x-6">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
+                <span className="font-bold text-gray-800">LIVE: <AnimatedNumber value={liveStats.viewers} /> viewing</span>
               </div>
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
+                <span className="font-bold text-gray-800"><AnimatedNumber value={liveStats.hourlyBuyers} /> bought this hour</span>
               </div>
             </div>
           </div>
