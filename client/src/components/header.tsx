@@ -58,11 +58,26 @@ export default function Header() {
             Elite Deals Hub
           </h1>
           
-          <p className="text-xl text-gray-700 max-w-3xl mx-auto mb-6 leading-relaxed">
-            <span className="font-bold text-trust-green">Curated deals</span> by industry experts. 
-            <span className="font-bold text-action-orange">Limited quantities</span> 
-            • <span className="font-bold text-urgency-red">Act fast!</span>
-          </p>
+          <div className="max-w-4xl mx-auto mb-8">
+            <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
+                Hand-picked deals
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
+              </span>
+              <span className="mx-3 font-normal">crafted by industry insiders</span>
+            </p>
+            <div className="flex flex-wrap items-center justify-center gap-6 text-lg">
+              <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-50 to-red-50 rounded-full border border-orange-200">
+                <div className="w-2 h-2 bg-orange-500 rounded-full animate-pulse"></div>
+                <span className="font-semibold text-orange-700">Limited stock</span>
+              </div>
+              <div className="w-1 h-1 bg-gray-400 rounded-full"></div>
+              <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-red-50 to-pink-50 rounded-full border border-red-200">
+                <span className="text-xl">⚡</span>
+                <span className="font-semibold text-red-700">Move quickly!</span>
+              </div>
+            </div>
+          </div>
           
           {/* Enhanced Trust Ecosystem */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
