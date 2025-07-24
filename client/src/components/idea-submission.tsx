@@ -4,6 +4,43 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { apiRequest } from "@/lib/queryClient";
+import { ChevronDown, ChevronUp } from "lucide-react";
+
+// Fun Fact Button Component
+function FunFactButton() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="flex justify-center mt-6">
+      <div className="relative">
+        {/* Dropdown Content */}
+        {isOpen && (
+          <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-200 px-6 py-4 min-w-64 animate-in slide-in-from-bottom-2 duration-300">
+            <div className="text-center">
+              <div className="text-sm font-semibold text-gray-700 mb-2">Fun Fact</div>
+              <div className="text-lg font-bold text-green-600">
+                😊 98.7% Saved More Than Expected
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Swipe Button */}
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="bg-white hover:bg-gray-50 border border-gray-300 rounded-full p-2 shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95"
+          title="Fun Fact"
+        >
+          {isOpen ? (
+            <ChevronDown className="w-5 h-5 text-gray-600" />
+          ) : (
+            <ChevronUp className="w-5 h-5 text-gray-600" />
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
 
 // Separate Guarantee Component
 function GuaranteeSection() {
@@ -182,6 +219,7 @@ export default function IdeaSubmission() {
           </div>
         </div>
         <GuaranteeSection />
+        <FunFactButton />
       </>
     );
   }
@@ -296,6 +334,7 @@ export default function IdeaSubmission() {
         </div>
       </div>
       <GuaranteeSection />
+      <FunFactButton />
     </>
   );
 }

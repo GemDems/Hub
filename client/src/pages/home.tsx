@@ -8,7 +8,7 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
-import { ChevronDown, ChevronUp, Dice6 } from "lucide-react";
+import { ChevronDown, Dice6 } from "lucide-react";
 
 import Leaderboard from "@/components/leaderboard";
 import ReferralSystem from "@/components/referral-system";
@@ -21,39 +21,7 @@ import AIChatbot from "@/components/ai-chatbot";
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
 
-// Fun Fact Button Component
-function FunFactButton() {
-  const [isOpen, setIsOpen] = useState(false);
 
-  return (
-    <div className="fixed bottom-0 left-1/2 transform -translate-x-1/2 z-50">
-      {/* Dropdown Content */}
-      {isOpen && (
-        <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-white rounded-lg shadow-xl border border-gray-200 px-6 py-4 min-w-64 animate-in slide-in-from-bottom-2 duration-300">
-          <div className="text-center">
-            <div className="text-sm font-semibold text-gray-700 mb-2">Fun Fact</div>
-            <div className="text-lg font-bold text-green-600">
-              😊 98.7% Saved More Than Expected
-            </div>
-          </div>
-        </div>
-      )}
-      
-      {/* Swipe Button */}
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-white hover:bg-gray-50 border border-gray-300 rounded-full p-2 shadow-lg transition-all duration-200 hover:shadow-xl active:scale-95 mb-2"
-        title="Fun Fact"
-      >
-        {isOpen ? (
-          <ChevronDown className="w-5 h-5 text-gray-600" />
-        ) : (
-          <ChevronUp className="w-5 h-5 text-gray-600" />
-        )}
-      </button>
-    </div>
-  );
-}
 
 export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
@@ -437,9 +405,6 @@ export default function Home() {
       
       {/* AI Chatbot */}
       <AIChatbot />
-      
-      {/* Fun Fact Swipe Down Button - Very Bottom */}
-      <FunFactButton />
     </div>
   );
 }
