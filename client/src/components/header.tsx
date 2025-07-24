@@ -44,21 +44,14 @@ export default function Header() {
   }, []);
 
   return (
-    <div className="relative">
-      {/* Corner elements positioned at each corner */}
-      <div className="absolute top-0 left-0 w-6 h-6 rounded-tl-3xl" style={{ backgroundColor: '#202120' }}></div>
-      <div className="absolute top-0 right-0 w-6 h-6 rounded-tr-3xl" style={{ backgroundColor: '#202120' }}></div>
-      <div className="absolute bottom-0 left-0 w-6 h-6 rounded-bl-3xl" style={{ backgroundColor: '#202120' }}></div>
-      <div className="absolute bottom-0 right-0 w-6 h-6 rounded-br-3xl" style={{ backgroundColor: '#202120' }}></div>
-      {/* Header content with rounded corners */}
-      <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden rounded-3xl">
-        {/* Clean Alert Banner */}
-        <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm rounded-t-3xl">
-          <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
-        </div>
+    <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden">
+      {/* Clean Alert Banner */}
+      <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm">
+        <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
+      </div>
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="text-center text-[21px]">
+        <div className="text-center">
 
           
           <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3">
@@ -100,11 +93,7 @@ export default function Header() {
           <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
             <div className="flex items-center justify-center space-x-6">
               <div className="flex items-center">
-                <div className="relative mr-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse z-10 relative"></div>
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-red-500 rounded-full animate-ping opacity-75"></div>
-                  <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 bg-red-400 rounded-full animate-ping opacity-30 animation-delay-200"></div>
-                </div>
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
                 <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
               </div>
               <div className="flex items-center">
@@ -125,7 +114,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-      </header>
-    </div>
+    </header>
   );
 }

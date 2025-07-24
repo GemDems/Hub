@@ -284,11 +284,6 @@ input, textarea, [contenteditable="true"] {
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
   }
   
-  /* Animation delay for sparking green effect */
-  .animation-delay-200 {
-    animation-delay: 0.2s;
-  }
-  
 
   
   /* CHAT MESSAGES SCROLLBAR - DESKTOP */
