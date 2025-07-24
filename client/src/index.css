@@ -556,25 +556,37 @@ input, textarea, [contenteditable="true"] {
 @keyframes flashSweep {
   0% {
     opacity: 0;
-    transform: translateX(-100%);
+    transform: scaleY(0.3);
+    box-shadow: 0 0 5px rgba(255,255,255,0.5);
   }
-  20% {
+  25% {
     opacity: 1;
-    transform: translateX(0);
-    box-shadow: 0 0 20px rgba(255,255,255,1), 0 0 40px rgba(255,255,255,0.6);
+    transform: scaleY(1);
+    box-shadow: 0 0 15px rgba(255,255,255,1), 0 0 25px rgba(255,255,255,0.8);
   }
-  40% {
+  50% {
     opacity: 1;
-    transform: translateX(0);
-    box-shadow: 0 0 25px rgba(255,255,255,1), 0 0 50px rgba(255,255,255,0.8);
+    transform: scaleY(1.2);
+    box-shadow: 0 0 20px rgba(255,255,255,1), 0 0 35px rgba(255,255,255,0.9);
   }
-  60% {
+  75% {
     opacity: 0.8;
-    transform: translateX(50%);
-    box-shadow: 0 0 15px rgba(255,255,255,0.8), 0 0 30px rgba(255,255,255,0.4);
+    transform: scaleY(1);
+    box-shadow: 0 0 12px rgba(255,255,255,0.7), 0 0 20px rgba(255,255,255,0.5);
   }
   100% {
-    opacity: 0;
-    transform: translateX(100%);
+    opacity: 0.3;
+    transform: scaleY(0.5);
+    box-shadow: 0 0 8px rgba(255,255,255,0.4);
   }
+}
+
+.flash-sweep-line {
+  animation: flashSweep 1.5s ease-in-out infinite;
+  filter: blur(0.5px);
+  background: linear-gradient(to bottom, 
+    rgba(255,255,255,0.8) 0%, 
+    rgba(255,255,255,1) 50%, 
+    rgba(255,255,255,0.8) 100%
+  );
 }
