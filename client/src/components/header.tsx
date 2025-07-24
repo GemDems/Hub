@@ -90,14 +90,10 @@ export default function Header() {
           
           {/* Live Activity Monitor */}
           <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
-            <div className="flex items-center justify-center space-x-6 text-[19px]">
+            <div className="flex items-center justify-center text-[16px]">
               <div className="flex items-center">
                 <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
+                <span className="font-bold text-gray-800">LIVE: 577 viewing164 bought this hour</span>
               </div>
             </div>
           </div>
