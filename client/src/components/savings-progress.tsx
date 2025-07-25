@@ -18,8 +18,8 @@ const getDeviceId = () => {
 
 // Component to show reward codes from database  
 function SavingsRewardCodes() {
-  // For testing, use the device ID that has bonus codes
-  const deviceId = 'POB2I6Y8'; // getDeviceId();
+  // Use actual device ID for proper reward code tracking
+  const deviceId = getDeviceId();
   const { toast } = useToast();
   
   const { data: referralStatus, isLoading } = useQuery({
