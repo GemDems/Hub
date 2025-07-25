@@ -448,6 +448,35 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
+  // Test route to simulate $1000 savings and generate reward codes
+  app.post('/api/test/savings', async (req, res) => {
+    try {
+      const { userId, amount } = req.body;
+      if (!userId) {
+        return res.status(400).json({ message: 'User ID required' });
+      }
+      
+      // Update savings progress to trigger reward generation
+      const result = await storage.updateSavingsProgress(userId, amount || 1000);
+      
+      // Ensure bonus codes are available
+      await storage.regenerateBonusCodesIfNeeded(userId);
+      
+      // Get updated referral status with reward codes
+      const status = await storage.getReferralStatus(userId);
+      
+      res.json({ 
+        success: true, 
+        hasReward: result.hasReward,
+        newProgress: result.newProgress,
+        rewardCodes: status.rewardCodes 
+      });
+    } catch (error) {
+      console.error('Error updating test savings:', error);
+      res.status(500).json({ message: 'Failed to update savings' });
+    }
+  });
+
   // User Ideas endpoints
   app.post("/api/user-ideas", async (req, res) => {
     try {
