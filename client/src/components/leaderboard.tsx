@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Trophy, Star, Crown, TrendingUp, TrendingUp as ArrowUp, TrendingDown as ArrowDown } from "lucide-react";
+import { Trophy, Star, Crown, TrendingUp, ChevronUp, ChevronDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import SavingsProgress from "./savings-progress";
 
@@ -223,10 +223,12 @@ export default function Leaderboard() {
                   <div>
                     <div className="flex items-center">
                       <span className="font-bold text-blue-900">{referrer.name}</span>
-                      {getArrowDirection(index, referrer.name) === 'up' ? (
-                        <ArrowUp className="w-4 h-4 text-green-500 ml-2" />
-                      ) : (
-                        <ArrowDown className="w-4 h-4 text-red-500 ml-2" />
+                      {index !== 0 && (
+                        getArrowDirection(index, referrer.name) === 'up' ? (
+                          <ChevronUp className="w-4 h-4 text-green-500 ml-2 stroke-2" />
+                        ) : (
+                          <ChevronDown className="w-4 h-4 text-red-500 ml-2 stroke-2" />
+                        )
                       )}
                       <Crown className="w-4 h-4 text-yellow-500 ml-1" />
                     </div>
