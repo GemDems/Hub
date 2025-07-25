@@ -6,11 +6,15 @@ import { useToast } from "@/hooks/use-toast";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 
-// Generate persistent device ID
+// Generate unique device ID per browser session - each device gets separate codes  
 const getDeviceId = () => {
   let deviceId = localStorage.getItem('elite_device_id');
   if (!deviceId) {
-    deviceId = `device_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    // Create truly unique device ID with timestamp and random strings
+    const timestamp = Date.now();
+    const randomPart = Math.random().toString(36).substr(2, 9);
+    const uniqueId = Math.random().toString(36).substr(2, 6);
+    deviceId = `device_${timestamp}_${randomPart}_${uniqueId}`;
     localStorage.setItem('elite_device_id', deviceId);
   }
   return deviceId;

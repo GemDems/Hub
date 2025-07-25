@@ -165,9 +165,19 @@ export class DatabaseStorage implements IStorage {
 
   // Referral System Methods
   async generateReferralCode(userId: string): Promise<ReferralCode> {
-    // Generate unique code
-    const code = Math.random().toString(36).substring(2, 8).toUpperCase() + 
-                 Math.random().toString(36).substring(2, 4).toUpperCase();
+    // Check if this device already has a regular code
+    const [existingCode] = await db.select().from(referralCodes)
+      .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} = 'regular'`)
+      .limit(1);
+    
+    if (existingCode) {
+      return existingCode;
+    }
+    
+    // Generate unique code with device-specific prefix
+    const devicePrefix = userId.slice(-4).toUpperCase();
+    const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+    const code = devicePrefix + randomSuffix;
     
     const [referralCode] = await db
       .insert(referralCodes)
@@ -474,12 +484,18 @@ export class DatabaseStorage implements IStorage {
 
   // Generate reward codes when user has $1000+ saved
   private async generateRewardCodes(userId: string): Promise<void> {
-    // Generate unique random codes each time
-    const bonusCode1 = Math.random().toString(36).substring(2, 6).toUpperCase() + 
-                       Math.random().toString(36).substring(2, 6).toUpperCase();
+    // Check if bonus codes already exist for this device
+    const existingBonusCodes = await db.select().from(referralCodes)
+      .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
     
-    const bonusCode2 = Math.random().toString(36).substring(2, 6).toUpperCase() + 
-                       Math.random().toString(36).substring(2, 6).toUpperCase();
+    if (existingBonusCodes.length >= 2) {
+      return; // Already has both bonus codes
+    }
+    
+    // Generate unique device-specific reward codes
+    const devicePrefix = userId.slice(-4).toUpperCase();
+    const bonusCode1 = devicePrefix + "B2X" + Math.random().toString(36).substring(2, 4).toUpperCase();
+    const bonusCode2 = devicePrefix + "B1X" + Math.random().toString(36).substring(2, 4).toUpperCase();
     
     // Insert both reward codes as additional invite codes
     await db.insert(referralCodes).values([
