@@ -371,17 +371,15 @@ export class DatabaseStorage implements IStorage {
     const newProgress = currentProgress + amount;
     const hasReward = newProgress >= 1000 && currentProgress < 1000 && !existingStats?.hasSeinfeldCode;
 
-    // Generate reward codes when hitting $1000 milestone for first time
+    // NOTE: Reward code generation is now handled by the frontend with proper validation
+    // The frontend checks if user has main referral code before calling this endpoint
+    // Generate reward codes when hitting $1000 milestone for first time - validation done on frontend
     if (hasReward) {
-      await this.generateRewardCodes(userId);
-    }
-
-    // Also ensure bonus codes exist for anyone above $1000
-    if (newProgress >= 1000) {
-      const existingBonusCodes = await db.select().from(referralCodes)
-        .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} IN ('bonus_2x', 'bonus_regular')`);
+      // Check if user has main referral code first (main codes have codeType as "regular")
+      const mainCodes = await db.select().from(referralCodes)
+        .where(sql`${referralCodes.userId} = ${userId} AND ${referralCodes.codeType} = 'regular'`);
       
-      if (existingBonusCodes.length === 0) {
+      if (mainCodes.length > 0) {
         await this.generateRewardCodes(userId);
       }
     }
