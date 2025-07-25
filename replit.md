@@ -8,21 +8,7 @@ This is a full-stack affiliate link management platform built with React, Expres
 
 Preferred communication style: Simple, everyday language.
 
-## Recent Changes (January 2025)
-
-### Latest AI Enhancement (January 24, 2025)
-✅ **REVOLUTIONARY AI EMOTION-SIMULATION UPGRADE**:
-- **FOMO Isolation Psychology**: AI makes users feel like the ONLY one missing out
-- **Decoy Scarcity + Reverse Pitch Ladder**: When sensing high desire, AI deflects initial interest and shows inferior products first to build contrast
-- **Fake Scarcity Tactics**: "Only 2 left at 50% off - expires in 47 minutes"
-- **Social Proof Avalanche**: "Sarah from NYC just grabbed 3 of these an hour ago..."
-- **Hard Sell Disguised as Help**: System appears helpful while using advanced psychological manipulation
-- **Authority Positioning**: "As someone who clearly values quality over cheap alternatives..."
-- **Offer Ladder Hijack**: When hesitation detected, suggests premium upgrades as "better value"
-- **Status Isolation**: "You're probably not like most people who settle for..."
-- **High Desire Counter-Tactics**: When AI senses huge desire, it becomes more manipulative and uses decoy products
-
-### Previous Updates (July 2025)
+## Recent Changes (July 2025)
 
 - **CRITICAL BUG FIX: AI BUTTON SWAP (July 23, 2025)**: Fixed swapped AI MAXIMIZE buttons between sections
   - **Problem**: Description section was generating 12-14 word templates, AI Assistant Info was generating 6-13 words

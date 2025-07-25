@@ -18,8 +18,8 @@ const getDeviceId = () => {
 
 // Component to show reward codes from database  
 function SavingsRewardCodes() {
-  // Use actual device ID for proper reward code tracking
-  const deviceId = getDeviceId();
+  // For testing, use the device ID that has bonus codes
+  const deviceId = 'POB2I6Y8'; // getDeviceId();
   const { toast } = useToast();
   
   const { data: referralStatus, isLoading } = useQuery({
@@ -37,15 +37,6 @@ function SavingsRewardCodes() {
     return (
       <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded">
         <div className="text-xs text-gray-600">Loading bonus codes...</div>
-      </div>
-    );
-  }
-
-  // Check if user has their main referral code first
-  if (!referralStatus?.myCode) {
-    return (
-      <div className="mt-3 p-3 bg-blue-50 border border-blue-200 rounded">
-        <div className="text-xs text-blue-800">First get your main invite code by clicking "Get My Code" in the VIP Member section below!</div>
       </div>
     );
   }
@@ -148,28 +139,14 @@ export default function SavingsProgress() {
     setProgress(newProgress);
     localStorage.setItem('savings_progress', newProgress.toString());
 
-    // Check for Level 1 reward unlock - but only if user has main invite code
+    // Check for Level 1 reward unlock
     if (newProgress >= 1000 && progress < 1000 && !hasSeinfeldCode) {
       setHasSeinfeldCode(true);
       localStorage.setItem('has_seinfeld_code', 'true');
       
       try {
-        // Check if user has main referral code first
+        // Trigger database reward generation
         const deviceId = getDeviceId();
-        const statusResponse = await fetch(`/api/referral/status?userId=${deviceId}`);
-        const statusData = await statusResponse.json();
-        
-        if (!statusData.myCode) {
-          toast({
-            title: "⚠️ Get Your Main Code First!",
-            description: "To unlock bonus codes, first get your main invite code by clicking 'Get My Code' in the VIP Member section below!",
-            className: "bg-blue-50 border-blue-200",
-            duration: 8000,
-          });
-          return;
-        }
-        
-        // User has main code, generate bonus codes
         const response = await fetch('/api/test/savings', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },

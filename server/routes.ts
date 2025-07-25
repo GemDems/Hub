@@ -448,27 +448,6 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
-  // Savings progress endpoint - generates 2 invite codes when $1000 is reached
-  app.post('/api/test/savings', async (req, res) => {
-    try {
-      const { userId, amount } = req.body;
-      if (!userId || !amount) {
-        return res.status(400).json({ message: 'User ID and amount required' });
-      }
-      
-      const result = await storage.updateSavingsProgress(userId, amount);
-      res.json({ 
-        success: true, 
-        hasReward: result.hasReward, 
-        newProgress: result.newProgress,
-        message: result.hasReward ? '2 bonus invite codes generated!' : 'Progress updated'
-      });
-    } catch (error) {
-      console.error('Error updating savings progress:', error);
-      res.status(500).json({ message: 'Failed to update savings progress' });
-    }
-  });
-
   // User Ideas endpoints
   app.post("/api/user-ideas", async (req, res) => {
     try {
