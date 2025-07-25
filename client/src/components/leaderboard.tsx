@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Trophy, Star, Crown, TrendingUp } from "lucide-react";
+import { Trophy, Star, Crown, TrendingUp, TrendingUp as ArrowUp, TrendingDown as ArrowDown } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import SavingsProgress from "./savings-progress";
 
@@ -31,6 +31,18 @@ const STATIC_LEADERBOARD_DATA = {
   ]
 };
 
+// Function to get random arrow direction for each referrer
+const getArrowDirection = (index: number, name: string) => {
+  // Use name and index to create consistent but varied results
+  const hash = (name + index).split('').reduce((a, b) => {
+    a = ((a << 5) - a) + b.charCodeAt(0);
+    return a & a;
+  }, 0);
+  
+  // 60% green up, 40% red down for realistic distribution
+  return Math.abs(hash) % 100 < 60 ? 'up' : 'down';
+};
+
 export default function Leaderboard() {
   const [topSavers, setTopSavers] = useState(STATIC_LEADERBOARD_DATA.topSavers);
   const [topReferrers, setTopReferrers] = useState(STATIC_LEADERBOARD_DATA.topReferrers);
@@ -46,13 +58,13 @@ export default function Leaderboard() {
 
   // Merge real VIP users into static leaderboard when they qualify
   useEffect(() => {
-    if (realVipUsers?.topReferrers) {
+    if (realVipUsers && (realVipUsers as any)?.topReferrers) {
       setTopReferrers(prev => {
         // Get the minimum invite count from current leaderboard (17 is the lowest)
         const minInvites = Math.min(...prev.map(r => r.referrals));
         
         // Filter real users who qualify (more than minimum invites)
-        const qualifyingUsers = realVipUsers.topReferrers.filter(user => 
+        const qualifyingUsers = (realVipUsers as any).topReferrers.filter((user: any) => 
           user.referralCount > minInvites && user.username
         );
 
@@ -61,7 +73,7 @@ export default function Leaderboard() {
         // Create updated leaderboard
         let updatedBoard = [...prev];
         
-        qualifyingUsers.forEach(realUser => {
+        qualifyingUsers.forEach((realUser: any) => {
           // Check if user already exists in leaderboard
           const existingIndex = updatedBoard.findIndex(member => 
             member.name === realUser.username
@@ -211,7 +223,12 @@ export default function Leaderboard() {
                   <div>
                     <div className="flex items-center">
                       <span className="font-bold text-blue-900">{referrer.name}</span>
-                      <Crown className="w-4 h-4 text-yellow-500 ml-2" />
+                      {getArrowDirection(index, referrer.name) === 'up' ? (
+                        <ArrowUp className="w-4 h-4 text-green-500 ml-2" />
+                      ) : (
+                        <ArrowDown className="w-4 h-4 text-red-500 ml-2" />
+                      )}
+                      <Crown className="w-4 h-4 text-yellow-500 ml-1" />
                     </div>
                     <div className="text-sm text-gray-500">{referrer.location}</div>
                   </div>
