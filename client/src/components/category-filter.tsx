@@ -14,21 +14,30 @@ interface CategoryFilterProps {
 
 export default function CategoryFilter({ categories, activeCategory, onCategoryChange }: CategoryFilterProps) {
   return (
-    <div className="mb-8 flex flex-wrap justify-center gap-3">
-      {categories.map((category) => (
-        <Button
-          key={category.id}
-          onClick={() => onCategoryChange(category.id)}
-          variant={activeCategory === category.id ? "default" : "outline"}
-          className={`px-6 py-2 rounded-full font-medium transition-all duration-300 ${
-            activeCategory === category.id
-              ? "bg-conversion-blue hover:bg-blue-700 text-white"
-              : "bg-white text-gray-700 hover:bg-gray-100 border"
-          }`}
-        >
-          {category.emoji && `${category.emoji} `}{category.label}
-        </Button>
-      ))}
+    <div className="mb-16">
+      <div className="flex flex-wrap justify-center gap-4 max-w-6xl mx-auto">
+        {categories.map((category) => (
+          <Button
+            key={category.id}
+            onClick={() => onCategoryChange(category.id)}
+            variant={activeCategory === category.id ? "default" : "outline"}
+            className={`group px-8 py-4 rounded-2xl font-bold transition-all duration-500 flex items-center space-x-3 transform hover:scale-105 ${
+              activeCategory === category.id
+                ? "bg-gradient-to-r from-black to-gray-900 text-white shadow-2xl scale-105"
+                : "bg-white/80 backdrop-blur-sm text-gray-800 border-2 border-gray-200/50 hover:border-black/20 hover:bg-white hover:shadow-xl"
+            }`}
+          >
+            {category.emoji && (
+              <span className={`text-xl transition-transform duration-300 group-hover:scale-110 ${
+                activeCategory === category.id ? '' : 'group-hover:rotate-12'
+              }`}>
+                {category.emoji}
+              </span>
+            )}
+            <span className="tracking-wide">{category.label}</span>
+          </Button>
+        ))}
+      </div>
     </div>
   );
 }

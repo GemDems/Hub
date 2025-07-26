@@ -180,7 +180,7 @@ export default function Home() {
   }, [showDropdown]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
       {/* Category Dropdown Menu - Top Left (Only shows on scroll) */}
       <div className={`fixed top-4 left-4 z-50 transition-all duration-1000 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
         <div className="relative dropdown-container">
@@ -230,7 +230,7 @@ export default function Home() {
       <Header />
       <StatsBar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
         <SearchBar 
           onSearch={setSearchQuery}
           links={affiliateLinks}
