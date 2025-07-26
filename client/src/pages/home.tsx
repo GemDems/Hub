@@ -263,25 +263,7 @@ export default function Home() {
         
         
 
-        {/* 6 Categories Section */}
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-8">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.slice(1).map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`p-4 rounded-xl border text-center transition-all duration-300 hover:scale-105 ${
-                  activeCategory === category.id
-                    ? 'bg-blue-50 border-blue-300 text-blue-700'
-                    : 'bg-white/5 border-white/20 hover:bg-white/10 text-gray-700'
-                }`}
-              >
-                <div className="text-2xl mb-2">{category.emoji}</div>
-                <div className="text-sm font-medium">{category.label}</div>
-              </button>
-            ))}
-          </div>
-        </div>
+        
 
         {isLoading ? (
           <div className="space-y-8">
