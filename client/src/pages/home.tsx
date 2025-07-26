@@ -261,30 +261,7 @@ export default function Home() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         
-        {/* Title, Subtitle, Stats, Amount Saved Section */}
-        <div className="text-center space-y-4 mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Elite Deals Hub</h1>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Discover premium products with exclusive savings and verified deals</p>
-          
-          {/* Stats Section */}
-          <div className="flex justify-center items-center gap-8 text-sm text-gray-700 py-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-              <span>{liveStats?.viewers || 890} active users</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-              <span>{liveStats?.hourlyBuyers || 353} deals claimed today</span>
-            </div>
-          </div>
-          
-          {/* Amount Saved Monthly */}
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 max-w-md mx-auto">
-            <div className="text-sm text-gray-600 mb-1">Total Saved This Month</div>
-            <div className="text-2xl font-bold text-green-600">$47,382</div>
-            <div className="text-xs text-gray-500">By Elite Deals Hub users</div>
-          </div>
-        </div>
+        
 
         {/* 6 Categories Section */}
         <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-8">
@@ -308,20 +285,7 @@ export default function Home() {
 
         {isLoading ? (
           <div className="space-y-8">
-            {/* Featured Loading */}
-            <section>
-              <div className="h-8 bg-gray-200 rounded mb-6 w-64 mx-auto animate-pulse"></div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {[...Array(3)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-lg p-4 animate-pulse">
-                    <div className="h-40 bg-gray-200 rounded-lg mb-3"></div>
-                    <div className="h-5 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded mb-3"></div>
-                    <div className="h-10 bg-gray-200 rounded"></div>
-                  </div>
-                ))}
-              </div>
-            </section>
+            
             
             {/* All Products Loading */}
             <section>
