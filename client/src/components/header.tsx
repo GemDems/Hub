@@ -44,185 +44,72 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="bg-gradient-to-br from-slate-900 via-gray-900 to-black text-white relative overflow-hidden">
-      {/* Premium Alert Banner */}
-      <div className="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 text-white text-center py-3 font-bold text-sm relative">
-        <div className="absolute inset-0 bg-black/20"></div>
-        <span className="relative z-10 tracking-wide">🚀 JOIN 98.7% WHO GOT MORE THAN THEY EXPECTED — LIMITED ACCESS INSIDE ⚡</span>
+    <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden">
+      {/* Clean Alert Banner */}
+      <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm">
+        <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
       </div>
-      {/* Hero Section */}
-      <div className="relative">
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20"></div>
-          <div className="absolute top-0 left-0 w-full h-full bg-[radial-gradient(circle_at_50%_50%,rgba(120,119,198,0.1),transparent)]"></div>
-        </div>
-        
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10">
-          <div className="text-center">
-            {/* Main Title */}
-            <div className="mb-6">
-              <h1 className="text-6xl md:text-7xl font-black bg-gradient-to-r from-white via-blue-100 to-purple-200 bg-clip-text text-transparent mb-4 tracking-tight">
-                ELITE DEALS
-              </h1>
-              <div className="text-2xl md:text-3xl font-light text-blue-200 tracking-[0.2em] uppercase">
-                Premium Marketplace
-              </div>
-            </div>
-            
-            {/* Tagline */}
-            <div className="max-w-4xl mx-auto mb-12">
-              <p className="text-xl md:text-2xl text-gray-300 leading-relaxed mb-6">
-                <span className="font-bold text-transparent bg-gradient-to-r from-yellow-400 to-orange-500 bg-clip-text">
-                  Curated by experts.
-                </span>
-                <span className="mx-2">•</span>
-                <span className="font-bold text-transparent bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text">
-                  Verified authentic.
-                </span>
-                <span className="mx-2">•</span>
-                <span className="font-bold text-transparent bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text">
-                  Trusted by thousands.
-                </span>
-              </p>
-            </div>
-          
-            {/* Premium Trust Badges */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12 max-w-5xl mx-auto">
-              <div className="group hover:scale-105 transition-transform duration-300">
-                <div className="bg-gradient-to-br from-emerald-500/20 to-green-600/20 backdrop-blur-sm border border-emerald-400/30 rounded-2xl px-6 py-4 text-center">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-emerald-400 to-green-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">✓</span>
-                  </div>
-                  <div className="text-emerald-300 font-bold text-sm">VERIFIED AUTHENTIC</div>
-                  <div className="text-xs text-gray-400 mt-1">Every product vetted</div>
-                </div>
-              </div>
-              
-              <div className="group hover:scale-105 transition-transform duration-300">
-                <div className="bg-gradient-to-br from-yellow-500/20 to-orange-600/20 backdrop-blur-sm border border-yellow-400/30 rounded-2xl px-6 py-4 text-center">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">⭐</span>
-                  </div>
-                  <div className="text-yellow-300 font-bold text-sm">4.9/5 RATING</div>
-                  <div className="text-xs text-gray-400 mt-1">78K+ reviews</div>
-                </div>
-              </div>
-              
-              <div className="group hover:scale-105 transition-transform duration-300">
-                <div className="bg-gradient-to-br from-purple-500/20 to-indigo-600/20 backdrop-blur-sm border border-purple-400/30 rounded-2xl px-6 py-4 text-center">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">🏆</span>
-                  </div>
-                  <div className="text-purple-300 font-bold text-sm">#1 MARKETPLACE</div>
-                  <div className="text-xs text-gray-400 mt-1">Industry leader</div>
-                </div>
-              </div>
-              
-              <div className="group hover:scale-105 transition-transform duration-300">
-                <div className="bg-gradient-to-br from-blue-500/20 to-cyan-600/20 backdrop-blur-sm border border-blue-400/30 rounded-2xl px-6 py-4 text-center">
-                  <div className="w-12 h-12 mx-auto mb-3 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-full flex items-center justify-center">
-                    <span className="text-2xl">🔒</span>
-                  </div>
-                  <div className="text-blue-300 font-bold text-sm">BANK-LEVEL SECURITY</div>
-                  <div className="text-xs text-gray-400 mt-1">256-bit encryption</div>
-                </div>
-              </div>
-            </div>
-          
-            {/* Live Activity Dashboard */}
-            <div className="bg-gradient-to-r from-gray-800/50 to-gray-900/50 backdrop-blur-lg border border-gray-600/30 rounded-3xl px-8 py-6 shadow-2xl max-w-3xl mx-auto mb-8">
-              <div className="flex items-center justify-center space-x-8">
-                <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    <div className="w-4 h-4 bg-green-400 rounded-full animate-pulse"></div>
-                    <div className="absolute inset-0 w-4 h-4 bg-green-400 rounded-full animate-ping opacity-75"></div>
-                  </div>
-                  <div>
-                    <span className="font-bold text-white text-lg">{liveStats.viewers}</span>
-                    <span className="text-gray-300 ml-2">live viewers</span>
-                  </div>
-                </div>
-                
-                <div className="w-px h-8 bg-gray-600"></div>
-                
-                <div className="flex items-center space-x-3">
-                  <div className="relative">
-                    <div className="w-4 h-4 bg-blue-400 rounded-full animate-pulse"></div>
-                    <div className="absolute inset-0 w-4 h-4 bg-blue-400 rounded-full animate-ping opacity-75"></div>
-                  </div>
-                  <div>
-                    <span className="font-bold text-white text-lg">{liveStats.hourlyBuyers}</span>
-                    <span className="text-gray-300 ml-2">orders this hour</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Integrated Search Section */}
-            <div className="max-w-4xl mx-auto mb-8">
-              <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-2xl opacity-20 blur-lg group-hover:opacity-30 transition-all duration-500"></div>
-                <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-6">
-                  <div className="flex items-center space-x-4">
-                    <div className="relative flex-1">
-                      <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300">
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                        </svg>
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Find your next premium purchase..."
-                        className="w-full pl-12 pr-4 py-4 text-lg rounded-xl border-0 bg-white/10 focus:bg-white/20 focus:ring-0 focus:outline-none transition-all duration-300 font-medium placeholder-gray-300 text-white"
-                      />
-                    </div>
-                    
-                    <button className="bg-gradient-to-r from-white to-gray-100 hover:from-gray-100 hover:to-white text-gray-900 px-6 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 tracking-wide">
-                      DISCOVER →
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center">
 
-            {/* Integrated Categories */}
-            <div className="max-w-6xl mx-auto mb-8">
-              <div className="flex flex-wrap justify-center gap-3">
-                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white text-gray-900 shadow-xl scale-105">
-                  <span className="tracking-wide">All Deals</span>
-                </button>
-                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
-                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">🔥</span>
-                  <span className="tracking-wide">Hot Deals</span>
-                </button>
-                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
-                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">📱</span>
-                  <span className="tracking-wide">Tech & Gadgets</span>
-                </button>
-                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
-                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">👔</span>
-                  <span className="tracking-wide">Fashion</span>
-                </button>
-                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
-                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">💪</span>
-                  <span className="tracking-wide">Health & Fitness</span>
-                </button>
-                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
-                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">✈️</span>
-                  <span className="tracking-wide">Travel</span>
-                </button>
+          
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3">
+            Elite Deals Hub
+          </h1>
+          
+          <div className="max-w-4xl mx-auto mb-8">
+            <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
+                Hand-picked deals
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
+              </span>
+              <span className="mx-3 font-normal">crafted by industry insiders</span>
+            </p>
+            
+          </div>
+          
+          {/* Enhanced Trust Ecosystem */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-trust-green/10 to-trust-green/5 border border-trust-green/20 rounded-xl px-4 py-3">
+              <div className="text-trust-green font-bold text-sm">✅ Verified Authentic</div>
+              <div className="text-xs text-gray-600">Every deal verified</div>
+            </div>
+            <div className="bg-gradient-to-br from-yellow-100 to-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
+              <div className="text-yellow-800 font-bold text-sm">⭐ 4.9/5 Rating</div>
+              <div className="text-xs text-gray-600">50K+ reviews</div>
+            </div>
+            <div className="bg-gradient-to-br from-purple-100 to-purple-50 border border-purple-200 rounded-xl px-4 py-3">
+              <div className="text-purple-800 font-bold text-sm">🏆 #1 Platform</div>
+              <div className="text-xs text-gray-600">5 years running</div>
+            </div>
+            <div className="bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+              <div className="text-blue-800 font-bold text-sm">🔒 Bank Security</div>
+              <div className="text-xs text-gray-600">SSL encrypted</div>
+            </div>
+          </div>
+          
+          {/* Live Activity Monitor */}
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
+            <div className="flex items-center justify-center space-x-6">
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
+                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
               </div>
             </div>
-
-            {/* Social Proof Statement */}
-            <div className="bg-gradient-to-r from-emerald-600/20 to-green-600/20 backdrop-blur-sm border border-emerald-400/30 rounded-2xl px-8 py-4 max-w-2xl mx-auto shadow-lg">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-transparent bg-gradient-to-r from-emerald-300 to-green-300 bg-clip-text mb-1">
-                  $6.2M+ SAVED
-                </div>
-                <div className="text-gray-300 text-sm">by our members this month</div>
-              </div>
+          </div>
+          
+          {/* Clean Social Proof */}
+          <div className="bg-white rounded-xl px-6 py-3 max-w-xl mx-auto shadow-sm border border-gray-200">
+            <div className="text-gray-800 font-bold text-lg">
+              Members Saved $4.7M This Month
+            </div>
+            <div className="text-sm text-gray-600">
+              Average savings: $247 per member
             </div>
           </div>
         </div>

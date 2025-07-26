@@ -3,17 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
 import StatsBar from "@/components/stats-bar";
-
-interface LiveStats {
-  viewers: number;
-  hourlyBuyers: number;
-  timestamp: number;
-}
-
+import SearchBar from "@/components/search-bar";
+import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
-import SearchBar from "@/components/search-bar";
 import { ChevronDown, Dice6 } from "lucide-react";
 
 import Leaderboard from "@/components/leaderboard";
@@ -37,37 +31,13 @@ export default function Home() {
   const [timerCount, setTimerCount] = useState(5);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [hasExpired, setHasExpired] = useState(false);
-  const [liveStats, setLiveStats] = useState<LiveStats>({
-    viewers: 890,
-    hourlyBuyers: 353,
-    timestamp: Date.now()
-  });
+
+
+
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
   });
-
-  // Fetch live stats
-  const fetchLiveStats = async () => {
-    try {
-      const response = await fetch("/api/live-stats");
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const stats = await response.json();
-      setLiveStats(prev => ({
-        viewers: stats.viewers,
-        hourlyBuyers: Math.max(prev.hourlyBuyers, stats.hourlyBuyers),
-        timestamp: stats.timestamp
-      }));
-    } catch (error) {
-      console.error('Failed to fetch live stats:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchLiveStats();
-    const interval = setInterval(fetchLiveStats, 8000);
-    return () => clearInterval(interval);
-  }, []);
 
   const filteredAndSortedLinks = affiliateLinks
     .filter(link => {
@@ -210,7 +180,7 @@ export default function Home() {
   }, [showDropdown]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-gray-50 to-slate-100">
+    <div className="min-h-screen bg-gray-50">
       {/* Category Dropdown Menu - Top Left (Only shows on scroll) */}
       <div className={`fixed top-4 left-4 z-50 transition-all duration-1000 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
         <div className="relative dropdown-container">
@@ -257,82 +227,33 @@ export default function Home() {
         </Button>
       </div>
 
-      {/* Title, Subtitle, Stats, Amount Saved Section */}
-      <div className="text-center space-y-4 mb-8 pt-6">
-        <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Elite Deals Hub</h1>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">Discover premium products with exclusive savings and verified deals</p>
-        
-        {/* Stats Section */}
-        <div className="flex justify-center items-center gap-8 text-sm text-gray-700 py-4">
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-            <span>{liveStats?.viewers || 890} active users</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-            <span>{liveStats?.hourlyBuyers || 353} deals claimed today</span>
-          </div>
-        </div>
-        
-        {/* Amount Saved Monthly */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 max-w-md mx-auto">
-          <div className="text-sm text-gray-600 mb-1">Total Saved This Month</div>
-          <div className="text-2xl font-bold text-green-600">$47,382</div>
-          <div className="text-xs text-gray-500">By Elite Deals Hub users</div>
-        </div>
-      </div>
+      <Header />
+      <StatsBar />
 
-      {/* Search Bar */}
-      <div className="max-w-2xl mx-auto mb-8 px-4">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <SearchBar 
           onSearch={setSearchQuery}
           links={affiliateLinks}
         />
-      </div>
-
-      {/* 6 Categories Section */}
-      <div className="max-w-6xl mx-auto px-4 mb-8">
-        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {categories.slice(1).map((category) => (
-              <button
-                key={category.id}
-                onClick={() => setActiveCategory(category.id)}
-                className={`p-4 rounded-xl border text-center transition-all duration-300 hover:scale-105 ${
-                  activeCategory === category.id
-                    ? 'bg-blue-50 border-blue-300 text-blue-700'
-                    : 'bg-white/5 border-white/20 hover:bg-white/10 text-gray-700'
-                }`}
-              >
-                <div className="text-2xl mb-2">{category.emoji}</div>
-                <div className="text-sm font-medium">{category.label}</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+        
+        <CategoryFilter 
+          categories={categories}
+          activeCategory={activeCategory}
+          onCategoryChange={setActiveCategory}
+        />
         
 
+
         {isLoading ? (
-          <div className="space-y-8">
-            
-            
-            {/* All Products Loading */}
-            <section>
-              <div className="h-6 bg-gray-200 rounded mb-4 w-48 mx-auto animate-pulse"></div>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {[...Array(8)].map((_, i) => (
-                  <div key={i} className="bg-white rounded-xl shadow-lg p-4 animate-pulse">
-                    <div className="h-40 bg-gray-200 rounded-lg mb-3"></div>
-                    <div className="h-5 bg-gray-200 rounded mb-2"></div>
-                    <div className="h-3 bg-gray-200 rounded mb-3"></div>
-                    <div className="h-10 bg-gray-200 rounded"></div>
-                  </div>
-                ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-lg p-6 animate-pulse">
+                <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
+                <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                <div className="h-12 bg-gray-200 rounded"></div>
               </div>
-            </section>
+            ))}
           </div>
         ) : filteredAndSortedLinks.length === 0 ? (
           <div className="text-center py-16">
@@ -394,69 +315,10 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="space-y-12 animate-fade-in">
-            {/* Featured Hero Section */}
-            {filteredAndSortedLinks.length > 0 && (
-              <section className="relative">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight animate-slide-up">
-                    Today's Featured Deals
-                  </h2>
-                  <p className="text-gray-600 max-w-2xl mx-auto animate-slide-up animation-delay-200">
-                    Handpicked premium products with exclusive savings
-                  </p>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
-                  {filteredAndSortedLinks.slice(0, 3).map((link, index) => (
-                    <div 
-                      key={link.id} 
-                      className="animate-slide-up transform hover:scale-105 transition-all duration-500 ease-out"
-                      style={{ animationDelay: `${index * 150}ms` }}
-                    >
-                      <AffiliateCard link={link} />
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-            
-            {/* All Products Grid - More Organized */}
-            {filteredAndSortedLinks.length > 3 && (
-              <section className="relative">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-2 animate-slide-up">
-                    Complete Collection
-                  </h2>
-                  <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full animate-scale-in"></div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {filteredAndSortedLinks.slice(3).map((link, index) => (
-                    <div 
-                      key={link.id} 
-                      className="animate-fade-in-up transform hover:scale-102 transition-all duration-300 ease-out"
-                      style={{ animationDelay: `${(index + 3) * 100}ms` }}
-                    >
-                      <AffiliateCard link={link} />
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-            
-            {/* Simplified Single Grid for Fewer Items */}
-            {filteredAndSortedLinks.length <= 3 && filteredAndSortedLinks.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {filteredAndSortedLinks.map((link, index) => (
-                  <div 
-                    key={link.id} 
-                    className="animate-slide-up transform hover:scale-105 transition-all duration-500 ease-out"
-                    style={{ animationDelay: `${index * 150}ms` }}
-                  >
-                    <AffiliateCard link={link} />
-                  </div>
-                ))}
-              </div>
-            )}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAndSortedLinks.map((link) => (
+              <AffiliateCard key={link.id} link={link} />
+            ))}
           </div>
         )}
       </main>

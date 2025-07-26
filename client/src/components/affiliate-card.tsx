@@ -159,7 +159,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   return (
     <>
-      <Card className="bg-white border border-gray-200 hover:border-blue-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ease-out transform hover:-translate-y-1 hover:scale-[1.01] overflow-hidden group relative">
+      <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
 
         
         {/* Invisible Delete Button */}
@@ -209,13 +209,15 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
         <div className="absolute top-3 left-3 z-10">
-          <div className="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             {getCategoryEmoji(link.category || '')} BESTSELLER
           </div>
         </div>
         
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-1">
-          <div className="bg-orange-50 border border-orange-200 text-orange-700 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
+          
+          
+          <div className="bg-gradient-to-r from-action-orange to-orange-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             <Clock className="w-3 h-3 mr-1 inline" />
             {stats.timeLeft}H LEFT
           </div>
@@ -225,73 +227,73 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         <PhotoCarousel 
           images={allImages}
           title={link.title}
-          className="w-full h-40"
+          className="w-full h-48"
         />
       </div>
       
-      <CardContent className="p-4 space-y-3">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-all duration-300 line-clamp-2">
+      <CardContent className="p-6 space-y-4">
+        <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300">
           {link.title}
         </h3>
         
-        <p className="text-gray-800 mb-3 text-xs line-clamp-2 leading-relaxed font-medium">
+        <p className="text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed">
           {link.description}
         </p>
         
         {/* Ultra Social Proof Matrix */}
-        <div className="bg-white/3 backdrop-blur-sm p-3 rounded-xl border border-white/8 shadow-inner mb-3">
-          <div className="grid grid-cols-2 gap-2">
-            <div className="bg-white/3 backdrop-blur-sm rounded-lg p-1.5 border border-white/8">
+        <div className="bg-gradient-to-br from-trust-green/5 via-blue-50 to-purple-50 p-4 rounded-xl border-2 border-trust-green/20 shadow-inner mb-4">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-green-50 rounded-lg p-2 border border-green-200">
               <div className="flex items-center">
-                <Users className="w-3 h-3 text-green-700 mr-1" />
-                <span className="text-xs font-bold text-green-800">{stats.buyers}</span>
+                <Users className="w-4 h-4 text-green-700 mr-1" />
+                <span className="text-xs font-bold text-green-800">{stats.buyers} bought</span>
               </div>
-              <div className="text-xs text-gray-700">bought</div>
+              <div className="text-xs text-gray-700">this week</div>
             </div>
-            <div className="bg-white/3 backdrop-blur-sm rounded-lg p-1.5 border border-white/8">
+            <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
               <div className="flex items-center">
-                <TrendingUp className="w-3 h-3 text-blue-700 mr-1" />
+                <TrendingUp className="w-4 h-4 text-blue-700 mr-1" />
                 <span className="text-xs font-bold text-blue-800">+{Math.floor(Math.random() * 50) + 30}%</span>
               </div>
-              <div className="text-xs text-gray-700">demand</div>
+              <div className="text-xs text-gray-700">demand ↗</div>
             </div>
-            <div className="bg-white/3 backdrop-blur-sm rounded-lg p-1.5 border border-white/8">
+            <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
               <div className="flex items-center">
-                <Star className="w-3 h-3 text-yellow-600 mr-1" />
+                <Star className="w-4 h-4 text-yellow-600 mr-1" />
                 <span className="text-xs font-bold text-yellow-800">{stats.rating}/5</span>
               </div>
-              <div className="text-xs text-gray-700">{stats.reviews}</div>
+              <div className="text-xs text-gray-700">{stats.reviews} reviews</div>
             </div>
-            <div className="bg-white/3 backdrop-blur-sm rounded-lg p-1.5 border border-white/8">
+            <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
               <div className="flex items-center">
-                <Award className="w-3 h-3 text-purple-700 mr-1" />
-                <span className="text-xs font-bold text-purple-800">#1</span>
+                <Award className="w-4 h-4 text-purple-700 mr-1" />
+                <span className="text-xs font-bold text-purple-800">#1 Choice</span>
               </div>
-              <div className="text-xs text-gray-700">choice</div>
+              <div className="text-xs text-gray-700">bestseller</div>
             </div>
           </div>
         </div>
         
         {/* Clean Psychological Triggers */}
-        <div className="space-y-2">
-          <div className="bg-white/3 backdrop-blur-sm border border-white/8 rounded-lg p-2">
+        <div className="space-y-3">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
             <div className="flex items-center justify-center">
-              <Clock className="w-3 h-3 text-red-600 mr-1" />
-              <span className="text-xs font-semibold text-red-700">
-                Save ${stats.savedAmount} today
+              <Clock className="w-4 h-4 text-red-600 mr-2" />
+              <span className="text-sm font-semibold text-red-700">
+                Limited time: Save ${stats.savedAmount} today
               </span>
             </div>
           </div>
           
-          <div className="bg-white/3 backdrop-blur-sm border border-white/8 rounded-lg p-1">
-            <div className="text-center text-xs font-medium text-blue-700">
-              {Math.floor(Math.random() * 15) + 5} viewing now
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+            <div className="text-center text-sm font-medium text-blue-700">
+              {Math.floor(Math.random() * 15) + 5} people viewing this deal
             </div>
           </div>
         </div>
         
         {/* Pricing */}
-        <div className="flex items-center justify-between mb-3">
+        <div className="flex items-center justify-between mb-4">
           <div>
             <span className="text-2xl font-bold text-trust-green">{price}</span>
             <span className="text-lg text-gray-400 line-through ml-2">
@@ -316,33 +318,33 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         </div>
         
         {/* Ultimate CTA Experience */}
-        <div className="space-y-2">
+        <div className="space-y-3">
           <Button
             onClick={handleClick}
             disabled={trackClickMutation.isPending}
-            className={`w-full bg-gradient-to-r from-black to-gray-900 hover:from-gray-900 hover:to-black text-white font-bold py-3 px-4 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl relative overflow-hidden backdrop-blur-sm border border-white/20 ${
+            className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg relative overflow-hidden ${
               link.isVerified ? 'verified-glow-button' : ''
             }`}
           >
-            <span className="relative z-10 flex items-center justify-center text-sm">
+            <span className="relative z-10 flex items-center justify-center text-lg">
               {trackClickMutation.isPending ? (
                 <>Processing...</>
               ) : (
                 <>
-                  <ShoppingCart className="w-4 h-4 mr-2" />
+                  <ShoppingCart className="w-5 h-5 mr-2" />
                   Get Deal Now
-                  <ExternalLink className="w-4 h-4 ml-2" />
+                  <ExternalLink className="w-5 h-5 ml-2" />
                 </>
               )}
             </span>
           </Button>
           
           {/* Trust Indicators */}
-          <div className="grid grid-cols-2 gap-1">
-            <div className="bg-white/3 backdrop-blur-sm border border-white/8 rounded-lg px-2 py-1 text-center">
+          <div className="grid grid-cols-2 gap-2">
+            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center">
               <div className="text-xs font-medium text-green-700">SSL Secured</div>
             </div>
-            <div className="bg-white/3 backdrop-blur-sm border border-white/8 rounded-lg px-2 py-1 text-center">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-center">
               <div className="text-xs font-medium text-blue-700">Encrypted</div>
             </div>
           </div>
@@ -351,18 +353,21 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         </div>
         
         {/* Social Proof */}
-        <div className="mt-3 space-y-1">
+        <div className="mt-4 space-y-2">
           {link.clicks > 0 ? (
-            <div className="bg-white/3 backdrop-blur-sm border border-white/8 rounded-lg p-1 text-center">
-              <div className="text-xs font-medium text-blue-700">
-                {link.clicks} claimed
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 text-center">
+              <div className="text-sm font-medium text-blue-700">
+                {link.clicks} people claimed this deal
               </div>
             </div>
           ) : null}
-          <div className="bg-white/3 backdrop-blur-sm border border-white/8 rounded-lg p-1">
+          <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
             <div className="text-center">
-              <div className="text-xs font-medium text-gray-700">
-                {Math.floor(Math.random() * 20) + 15} viewing • {Math.floor(Math.random() * 5) + 1}m ago
+              <div className="text-sm font-medium text-gray-700">
+                {Math.floor(Math.random() * 20) + 15} people viewing
+              </div>
+              <div className="text-xs text-gray-500">
+                Updated {Math.floor(Math.random() * 5) + 1} minutes ago
               </div>
             </div>
           </div>
