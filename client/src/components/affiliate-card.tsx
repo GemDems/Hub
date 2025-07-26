@@ -159,7 +159,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   return (
     <>
-      <Card className="bg-gradient-to-br from-white to-gray-50 hover:from-gray-50 hover:to-white rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-[1.02] border-0 overflow-hidden group relative backdrop-blur-sm">
+      <Card className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/40 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-[1.02] overflow-hidden group relative">
 
         
         {/* Invisible Delete Button */}
@@ -209,7 +209,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
         <div className="absolute top-3 left-3 z-10">
-          <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+          <div className="bg-red-500/80 backdrop-blur-sm border border-white/20 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             {getCategoryEmoji(link.category || '')} BESTSELLER
           </div>
         </div>
@@ -217,7 +217,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-1">
           
           
-          <div className="bg-gradient-to-r from-action-orange to-orange-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+          <div className="bg-orange-500/80 backdrop-blur-sm border border-white/20 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
             <Clock className="w-3 h-3 mr-1 inline" />
             {stats.timeLeft}H LEFT
           </div>
@@ -232,39 +232,39 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       </div>
       
       <CardContent className="p-6 space-y-4">
-        <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300">
+        <h3 className="text-2xl font-bold text-gray-900 mb-3 group-hover:text-blue-700 transition-all duration-300">
           {link.title}
         </h3>
         
-        <p className="text-gray-700 mb-4 text-sm line-clamp-3 leading-relaxed">
+        <p className="text-gray-800 mb-4 text-sm line-clamp-3 leading-relaxed font-medium">
           {link.description}
         </p>
         
         {/* Ultra Social Proof Matrix */}
-        <div className="bg-gradient-to-br from-trust-green/5 via-blue-50 to-purple-50 p-4 rounded-xl border-2 border-trust-green/20 shadow-inner mb-4">
+        <div className="bg-white/10 backdrop-blur-sm p-4 rounded-xl border border-white/20 shadow-inner mb-4">
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-green-50 rounded-lg p-2 border border-green-200">
+            <div className="bg-green-500/20 backdrop-blur-sm rounded-lg p-2 border border-white/20">
               <div className="flex items-center">
                 <Users className="w-4 h-4 text-green-700 mr-1" />
                 <span className="text-xs font-bold text-green-800">{stats.buyers} bought</span>
               </div>
               <div className="text-xs text-gray-700">this week</div>
             </div>
-            <div className="bg-blue-50 rounded-lg p-2 border border-blue-200">
+            <div className="bg-blue-500/20 backdrop-blur-sm rounded-lg p-2 border border-white/20">
               <div className="flex items-center">
                 <TrendingUp className="w-4 h-4 text-blue-700 mr-1" />
                 <span className="text-xs font-bold text-blue-800">+{Math.floor(Math.random() * 50) + 30}%</span>
               </div>
               <div className="text-xs text-gray-700">demand ↗</div>
             </div>
-            <div className="bg-yellow-50 rounded-lg p-2 border border-yellow-200">
+            <div className="bg-yellow-500/20 backdrop-blur-sm rounded-lg p-2 border border-white/20">
               <div className="flex items-center">
                 <Star className="w-4 h-4 text-yellow-600 mr-1" />
                 <span className="text-xs font-bold text-yellow-800">{stats.rating}/5</span>
               </div>
               <div className="text-xs text-gray-700">{stats.reviews} reviews</div>
             </div>
-            <div className="bg-purple-50 rounded-lg p-2 border border-purple-200">
+            <div className="bg-purple-500/20 backdrop-blur-sm rounded-lg p-2 border border-white/20">
               <div className="flex items-center">
                 <Award className="w-4 h-4 text-purple-700 mr-1" />
                 <span className="text-xs font-bold text-purple-800">#1 Choice</span>
@@ -276,7 +276,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         
         {/* Clean Psychological Triggers */}
         <div className="space-y-3">
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+          <div className="bg-red-500/20 backdrop-blur-sm border border-white/20 rounded-lg p-3">
             <div className="flex items-center justify-center">
               <Clock className="w-4 h-4 text-red-600 mr-2" />
               <span className="text-sm font-semibold text-red-700">
@@ -285,7 +285,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             </div>
           </div>
           
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
+          <div className="bg-blue-500/20 backdrop-blur-sm border border-white/20 rounded-lg p-2">
             <div className="text-center text-sm font-medium text-blue-700">
               {Math.floor(Math.random() * 15) + 5} people viewing this deal
             </div>
@@ -322,7 +322,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           <Button
             onClick={handleClick}
             disabled={trackClickMutation.isPending}
-            className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg relative overflow-hidden ${
+            className={`w-full bg-gradient-to-r from-black to-gray-900 hover:from-gray-900 hover:to-black text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-xl relative overflow-hidden backdrop-blur-sm border border-white/20 ${
               link.isVerified ? 'verified-glow-button' : ''
             }`}
           >
@@ -341,10 +341,10 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           
           {/* Trust Indicators */}
           <div className="grid grid-cols-2 gap-2">
-            <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center">
+            <div className="bg-green-500/20 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2 text-center">
               <div className="text-xs font-medium text-green-700">SSL Secured</div>
             </div>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-center">
+            <div className="bg-blue-500/20 backdrop-blur-sm border border-white/20 rounded-lg px-3 py-2 text-center">
               <div className="text-xs font-medium text-blue-700">Encrypted</div>
             </div>
           </div>
@@ -355,13 +355,13 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         {/* Social Proof */}
         <div className="mt-4 space-y-2">
           {link.clicks > 0 ? (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2 text-center">
+            <div className="bg-blue-500/20 backdrop-blur-sm border border-white/20 rounded-lg p-2 text-center">
               <div className="text-sm font-medium text-blue-700">
                 {link.clicks} people claimed this deal
               </div>
             </div>
           ) : null}
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-2">
+          <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-2">
             <div className="text-center">
               <div className="text-sm font-medium text-gray-700">
                 {Math.floor(Math.random() * 20) + 15} people viewing
