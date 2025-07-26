@@ -48,9 +48,8 @@ export default function Header() {
       {/* Premium Alert Banner */}
       <div className="bg-gradient-to-r from-red-600 via-pink-600 to-purple-600 text-white text-center py-3 font-bold text-sm relative">
         <div className="absolute inset-0 bg-black/20"></div>
-        <span className="relative z-10 tracking-wide">⚡ EXCLUSIVE ACCESS: Limited Members Only - 72% OFF Everything ⚡</span>
+        <span className="relative z-10 tracking-wide">😊 98.7% OF USERS RECEIVED MORE THAN THEY EXPECTED</span>
       </div>
-      
       {/* Hero Section */}
       <div className="relative">
         {/* Background Pattern */}
