@@ -234,15 +234,36 @@ export default function Home() {
 
 
         {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-lg p-4 animate-pulse">
-                <div className="h-40 bg-gray-200 rounded-lg mb-3"></div>
-                <div className="h-5 bg-gray-200 rounded mb-2"></div>
-                <div className="h-3 bg-gray-200 rounded mb-3"></div>
-                <div className="h-10 bg-gray-200 rounded"></div>
+          <div className="space-y-8">
+            {/* Featured Loading */}
+            <section>
+              <div className="h-8 bg-gray-200 rounded mb-6 w-64 mx-auto animate-pulse"></div>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl shadow-lg p-4 animate-pulse">
+                    <div className="h-40 bg-gray-200 rounded-lg mb-3"></div>
+                    <div className="h-5 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-10 bg-gray-200 rounded"></div>
+                  </div>
+                ))}
               </div>
-            ))}
+            </section>
+            
+            {/* All Products Loading */}
+            <section>
+              <div className="h-6 bg-gray-200 rounded mb-4 w-48 mx-auto animate-pulse"></div>
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {[...Array(8)].map((_, i) => (
+                  <div key={i} className="bg-white rounded-xl shadow-lg p-4 animate-pulse">
+                    <div className="h-40 bg-gray-200 rounded-lg mb-3"></div>
+                    <div className="h-5 bg-gray-200 rounded mb-2"></div>
+                    <div className="h-3 bg-gray-200 rounded mb-3"></div>
+                    <div className="h-10 bg-gray-200 rounded"></div>
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
         ) : filteredAndSortedLinks.length === 0 ? (
           <div className="text-center py-16">
@@ -304,10 +325,39 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filteredAndSortedLinks.map((link) => (
-              <AffiliateCard key={link.id} link={link} />
-            ))}
+          <div className="space-y-8">
+            {/* Featured Section */}
+            {filteredAndSortedLinks.length > 0 && (
+              <section>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Featured Deals</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {filteredAndSortedLinks.slice(0, 3).map((link) => (
+                    <AffiliateCard key={link.id} link={link} />
+                  ))}
+                </div>
+              </section>
+            )}
+            
+            {/* All Products Grid */}
+            {filteredAndSortedLinks.length > 3 && (
+              <section>
+                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">All Products</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {filteredAndSortedLinks.slice(3).map((link) => (
+                    <AffiliateCard key={link.id} link={link} />
+                  ))}
+                </div>
+              </section>
+            )}
+            
+            {/* Show all in single grid if 3 or fewer items */}
+            {filteredAndSortedLinks.length <= 3 && filteredAndSortedLinks.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredAndSortedLinks.map((link) => (
+                  <AffiliateCard key={link.id} link={link} />
+                ))}
+              </div>
+            )}
           </div>
         )}
       </main>
