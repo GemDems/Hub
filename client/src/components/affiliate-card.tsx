@@ -159,11 +159,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   return (
     <>
-      <Card className="bg-white/8 backdrop-blur-lg border border-white/15 hover:border-white/25 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-700 ease-out transform hover:-translate-y-2 hover:scale-[1.02] overflow-hidden group relative"
-        style={{
-          background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
-          backdropFilter: 'blur(20px)'
-        }}>
+      <Card className="bg-white border border-gray-200 hover:border-blue-300 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ease-out transform hover:-translate-y-1 hover:scale-[1.01] overflow-hidden group relative">
 
         
         {/* Invisible Delete Button */}
@@ -213,15 +209,13 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
         {/* Clean Badges */}
         <div className="absolute top-3 left-3 z-10">
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+          <div className="bg-blue-50 border border-blue-200 text-blue-700 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
             {getCategoryEmoji(link.category || '')} BESTSELLER
           </div>
         </div>
         
         <div className="absolute top-3 right-3 z-10 flex flex-col gap-1">
-          
-          
-          <div className="bg-white/5 backdrop-blur-sm border border-white/10 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+          <div className="bg-orange-50 border border-orange-200 text-orange-700 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
             <Clock className="w-3 h-3 mr-1 inline" />
             {stats.timeLeft}H LEFT
           </div>
@@ -236,7 +230,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       </div>
       
       <CardContent className="p-4 space-y-3">
-        <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-blue-700 transition-all duration-300 line-clamp-2">
+        <h3 className="text-lg font-semibold text-gray-800 mb-2 group-hover:text-blue-600 transition-all duration-300 line-clamp-2">
           {link.title}
         </h3>
         

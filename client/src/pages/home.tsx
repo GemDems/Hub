@@ -4,6 +4,12 @@ import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
 import StatsBar from "@/components/stats-bar";
 
+interface LiveStats {
+  viewers: number;
+  hourlyBuyers: number;
+  timestamp: number;
+}
+
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
@@ -30,13 +36,37 @@ export default function Home() {
   const [timerCount, setTimerCount] = useState(5);
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [hasExpired, setHasExpired] = useState(false);
-
-
-
+  const [liveStats, setLiveStats] = useState<LiveStats>({
+    viewers: 890,
+    hourlyBuyers: 353,
+    timestamp: Date.now()
+  });
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
   });
+
+  // Fetch live stats
+  const fetchLiveStats = async () => {
+    try {
+      const response = await fetch("/api/live-stats");
+      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      const stats = await response.json();
+      setLiveStats(prev => ({
+        viewers: stats.viewers,
+        hourlyBuyers: Math.max(prev.hourlyBuyers, stats.hourlyBuyers),
+        timestamp: stats.timestamp
+      }));
+    } catch (error) {
+      console.error('Failed to fetch live stats:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchLiveStats();
+    const interval = setInterval(fetchLiveStats, 8000);
+    return () => clearInterval(interval);
+  }, []);
 
   const filteredAndSortedLinks = affiliateLinks
     .filter(link => {
@@ -229,9 +259,52 @@ export default function Home() {
       <Header />
       <StatsBar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
         
+        {/* Title, Subtitle, Stats, Amount Saved Section */}
+        <div className="text-center space-y-4 mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Elite Deals Hub</h1>
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto">Discover premium products with exclusive savings and verified deals</p>
+          
+          {/* Stats Section */}
+          <div className="flex justify-center items-center gap-8 text-sm text-gray-700 py-4">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span>{liveStats?.viewers || 890} active users</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+              <span>{liveStats?.hourlyBuyers || 353} deals claimed today</span>
+            </div>
+          </div>
+          
+          {/* Amount Saved Monthly */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl p-4 max-w-md mx-auto">
+            <div className="text-sm text-gray-600 mb-1">Total Saved This Month</div>
+            <div className="text-2xl font-bold text-green-600">$47,382</div>
+            <div className="text-xs text-gray-500">By Elite Deals Hub users</div>
+          </div>
+        </div>
 
+        {/* 6 Categories Section */}
+        <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-6 mb-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+            {categories.slice(1).map((category) => (
+              <button
+                key={category.id}
+                onClick={() => setActiveCategory(category.id)}
+                className={`p-4 rounded-xl border text-center transition-all duration-300 hover:scale-105 ${
+                  activeCategory === category.id
+                    ? 'bg-blue-50 border-blue-300 text-blue-700'
+                    : 'bg-white/5 border-white/20 hover:bg-white/10 text-gray-700'
+                }`}
+              >
+                <div className="text-2xl mb-2">{category.emoji}</div>
+                <div className="text-sm font-medium">{category.label}</div>
+              </button>
+            ))}
+          </div>
+        </div>
 
         {isLoading ? (
           <div className="space-y-8">
