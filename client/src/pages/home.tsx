@@ -3,8 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
 import StatsBar from "@/components/stats-bar";
-import SearchBar from "@/components/search-bar";
-import CategoryFilter from "@/components/category-filter";
+
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
@@ -230,17 +229,7 @@ export default function Home() {
       <Header />
       <StatsBar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-        <SearchBar 
-          onSearch={setSearchQuery}
-          links={affiliateLinks}
-        />
-        
-        <CategoryFilter 
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-8">
         
 
 

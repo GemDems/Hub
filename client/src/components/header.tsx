@@ -159,6 +159,62 @@ export default function Header() {
               </div>
             </div>
             
+            {/* Integrated Search Section */}
+            <div className="max-w-4xl mx-auto mb-8">
+              <div className="relative group">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 rounded-2xl opacity-20 blur-lg group-hover:opacity-30 transition-all duration-500"></div>
+                <div className="relative bg-white/10 backdrop-blur-lg rounded-2xl shadow-2xl border border-white/20 p-6">
+                  <div className="flex items-center space-x-4">
+                    <div className="relative flex-1">
+                      <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-300">
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                        </svg>
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Find your next premium purchase..."
+                        className="w-full pl-12 pr-4 py-4 text-lg rounded-xl border-0 bg-white/10 focus:bg-white/20 focus:ring-0 focus:outline-none transition-all duration-300 font-medium placeholder-gray-300 text-white"
+                      />
+                    </div>
+                    
+                    <button className="bg-gradient-to-r from-white to-gray-100 hover:from-gray-100 hover:to-white text-gray-900 px-6 py-4 rounded-xl font-bold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 tracking-wide">
+                      DISCOVER →
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Integrated Categories */}
+            <div className="max-w-6xl mx-auto mb-8">
+              <div className="flex flex-wrap justify-center gap-3">
+                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white text-gray-900 shadow-xl scale-105">
+                  <span className="tracking-wide">All Deals</span>
+                </button>
+                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
+                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">🔥</span>
+                  <span className="tracking-wide">Hot Deals</span>
+                </button>
+                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
+                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">📱</span>
+                  <span className="tracking-wide">Tech & Gadgets</span>
+                </button>
+                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
+                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">👔</span>
+                  <span className="tracking-wide">Fashion</span>
+                </button>
+                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
+                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">💪</span>
+                  <span className="tracking-wide">Health & Fitness</span>
+                </button>
+                <button className="group px-6 py-3 rounded-xl font-bold transition-all duration-500 flex items-center space-x-2 transform hover:scale-105 bg-white/20 backdrop-blur-sm text-white border border-white/30 hover:bg-white/30 hover:shadow-lg">
+                  <span className="text-lg transition-transform duration-300 group-hover:scale-110 group-hover:rotate-12">✈️</span>
+                  <span className="tracking-wide">Travel</span>
+                </button>
+              </div>
+            </div>
+
             {/* Social Proof Statement */}
             <div className="bg-gradient-to-r from-emerald-600/20 to-green-600/20 backdrop-blur-sm border border-emerald-400/30 rounded-2xl px-8 py-4 max-w-2xl mx-auto shadow-lg">
               <div className="text-center">
