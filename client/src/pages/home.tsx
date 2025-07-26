@@ -325,36 +325,66 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="space-y-8">
-            {/* Featured Section */}
+          <div className="space-y-12 animate-fade-in">
+            {/* Featured Hero Section */}
             {filteredAndSortedLinks.length > 0 && (
-              <section>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6 text-center">Featured Deals</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                  {filteredAndSortedLinks.slice(0, 3).map((link) => (
-                    <AffiliateCard key={link.id} link={link} />
+              <section className="relative">
+                <div className="text-center mb-8">
+                  <h2 className="text-3xl font-extrabold text-gray-900 mb-2 tracking-tight animate-slide-up">
+                    Today's Featured Deals
+                  </h2>
+                  <p className="text-gray-600 max-w-2xl mx-auto animate-slide-up animation-delay-200">
+                    Handpicked premium products with exclusive savings
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+                  {filteredAndSortedLinks.slice(0, 3).map((link, index) => (
+                    <div 
+                      key={link.id} 
+                      className="animate-slide-up transform hover:scale-105 transition-all duration-500 ease-out"
+                      style={{ animationDelay: `${index * 150}ms` }}
+                    >
+                      <AffiliateCard link={link} />
+                    </div>
                   ))}
                 </div>
               </section>
             )}
             
-            {/* All Products Grid */}
+            {/* All Products Grid - More Organized */}
             {filteredAndSortedLinks.length > 3 && (
-              <section>
-                <h2 className="text-xl font-semibold text-gray-800 mb-4 text-center">All Products</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                  {filteredAndSortedLinks.slice(3).map((link) => (
-                    <AffiliateCard key={link.id} link={link} />
+              <section className="relative">
+                <div className="text-center mb-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-2 animate-slide-up">
+                    Complete Collection
+                  </h2>
+                  <div className="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto rounded-full animate-scale-in"></div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {filteredAndSortedLinks.slice(3).map((link, index) => (
+                    <div 
+                      key={link.id} 
+                      className="animate-fade-in-up transform hover:scale-102 transition-all duration-300 ease-out"
+                      style={{ animationDelay: `${(index + 3) * 100}ms` }}
+                    >
+                      <AffiliateCard link={link} />
+                    </div>
                   ))}
                 </div>
               </section>
             )}
             
-            {/* Show all in single grid if 3 or fewer items */}
+            {/* Simplified Single Grid for Fewer Items */}
             {filteredAndSortedLinks.length <= 3 && filteredAndSortedLinks.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredAndSortedLinks.map((link) => (
-                  <AffiliateCard key={link.id} link={link} />
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {filteredAndSortedLinks.map((link, index) => (
+                  <div 
+                    key={link.id} 
+                    className="animate-slide-up transform hover:scale-105 transition-all duration-500 ease-out"
+                    style={{ animationDelay: `${index * 150}ms` }}
+                  >
+                    <AffiliateCard link={link} />
+                  </div>
                 ))}
               </div>
             )}

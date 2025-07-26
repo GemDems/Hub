@@ -159,7 +159,11 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   return (
     <>
-      <Card className="bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/40 rounded-3xl shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-1 hover:scale-[1.02] overflow-hidden group relative">
+      <Card className="bg-white/8 backdrop-blur-lg border border-white/15 hover:border-white/25 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-700 ease-out transform hover:-translate-y-2 hover:scale-[1.02] overflow-hidden group relative"
+        style={{
+          background: 'linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.04) 100%)',
+          backdropFilter: 'blur(20px)'
+        }}>
 
         
         {/* Invisible Delete Button */}
