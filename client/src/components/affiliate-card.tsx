@@ -223,22 +223,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             {link.description}
           </p>
 
-          {/* Stock depletion bar — visual scarcity panic trigger */}
-          <div className="mb-2">
-            <div className="flex justify-between items-center mb-1">
-              <span className="text-xs font-bold text-red-600 scarcity-pulse">
-                🔥 {stockPct < 40 ? 'ALMOST GONE' : 'Selling Fast'}
-              </span>
-              <span className="text-xs text-gray-500">{stock} left of {stockBase}</span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
-              <div
-                className={`h-2 rounded-full transition-all duration-1000 ${stockPct < 30 ? 'bg-red-500' : stockPct < 60 ? 'bg-orange-400' : 'bg-green-500'}`}
-                style={{ width: `${stockPct}%` }}
-              ></div>
-            </div>
-          </div>
-
           {/* Social Proof Matrix */}
           <div className="bg-gradient-to-br from-trust-green/5 via-blue-50 to-purple-50 p-4 rounded-xl border-2 border-trust-green/20 shadow-inner mb-4">
             <div className="grid grid-cols-2 gap-3">
