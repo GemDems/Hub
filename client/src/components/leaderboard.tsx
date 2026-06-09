@@ -6,28 +6,28 @@ import SavingsProgress from "./savings-progress";
 // Realistic static leaderboard data that persists
 const STATIC_LEADERBOARD_DATA = {
   topSavers: [
-    { name: "Michael R.", savings: 2857, location: "California", isVip: true },
-    { name: "Sarah K.", savings: 2652, location: "Texas", isVip: true },
-    { name: "David L.", savings: 2309, location: "New York", isVip: true },
-    { name: "Jennifer M.", savings: 2171, location: "Florida", isVip: false },
-    { name: "Robert P.", savings: 2107, location: "Illinois", isVip: true },
-    { name: "Lisa W.", savings: 1979, location: "Arizona", isVip: false },
-    { name: "James T.", savings: 1843, location: "Ohio", isVip: true },
-    { name: "Amanda S.", savings: 1728, location: "Georgia", isVip: false },
-    { name: "Chris B.", savings: 1651, location: "Michigan", isVip: false },
-    { name: "Maria G.", savings: 1605, location: "Nevada", isVip: true }
+    { name: "MILO",     savings: 2857, location: "California", isVip: true },
+    { name: "Tr3vor",   savings: 2652, location: "Texas",      isVip: true },
+    { name: "kaia",     savings: 2309, location: "New York",   isVip: true },
+    { name: "JENNA",    savings: 2171, location: "Florida",    isVip: false },
+    { name: "Andr3w",   savings: 2107, location: "Illinois",   isVip: true },
+    { name: "nina",     savings: 1979, location: "",           isVip: false },
+    { name: "OMAR",     savings: 1843, location: "Ohio",       isVip: true },
+    { name: "c4rter",   savings: 1728, location: "",           isVip: false },
+    { name: "Lexi",     savings: 1651, location: "Michigan",   isVip: false },
+    { name: "m4rco",    savings: 1605, location: "Nevada",     isVip: true }
   ],
   topReferrers: [
-    { name: "Sarah K.", referrals: 47, earnings: 1420, location: "Texas" },
-    { name: "Michael R.", referrals: 43, earnings: 1290, location: "California" },
-    { name: "David L.", referrals: 39, earnings: 1170, location: "New York" },
-    { name: "Robert P.", referrals: 36, earnings: 1080, location: "Illinois" },
-    { name: "James T.", referrals: 31, earnings: 930, location: "Ohio" },
-    { name: "Maria G.", referrals: 28, earnings: 840, location: "Nevada" },
-    { name: "Ashley D.", referrals: 24, earnings: 720, location: "Colorado" },
-    { name: "Kevin H.", referrals: 21, earnings: 630, location: "Washington" },
-    { name: "Nicole F.", referrals: 19, earnings: 570, location: "Oregon" },
-    { name: "Jackson H.", referrals: 17, earnings: 510, location: "Tennessee" }
+    { name: "Tr3vor",   referrals: 47, earnings: 1420, location: "Texas" },
+    { name: "MILO",     referrals: 43, earnings: 1290, location: "California" },
+    { name: "kaia",     referrals: 39, earnings: 1170, location: "" },
+    { name: "Andr3w",   referrals: 36, earnings: 1080, location: "Illinois" },
+    { name: "OMAR",     referrals: 31, earnings: 930,  location: "" },
+    { name: "m4rco",    referrals: 28, earnings: 840,  location: "Nevada" },
+    { name: "brianna",  referrals: 24, earnings: 720,  location: "Colorado" },
+    { name: "RYAN",     referrals: 21, earnings: 630,  location: "" },
+    { name: "priya",    referrals: 19, earnings: 570,  location: "Oregon" },
+    { name: "Br4dley",  referrals: 17, earnings: 510,  location: "Tennessee" }
   ]
 };
 
@@ -165,7 +165,7 @@ export default function Leaderboard() {
                       <span className="font-bold text-blue-900">{saver.name}</span>
                       {saver.isVip && <Crown className="w-4 h-4 text-yellow-500 ml-2" />}
                     </div>
-                    <div className="text-sm text-gray-500">{saver.location}</div>
+                    {saver.location ? <div className="text-sm text-gray-500">{saver.location}</div> : null}
                   </div>
                 </div>
                 
@@ -213,7 +213,7 @@ export default function Leaderboard() {
                       <span className="font-bold text-blue-900">{referrer.name}</span>
                       <Crown className="w-4 h-4 text-yellow-500 ml-2" />
                     </div>
-                    <div className="text-sm text-gray-500">{referrer.location}</div>
+                    {referrer.location ? <div className="text-sm text-gray-500">{referrer.location}</div> : null}
                   </div>
                 </div>
                 

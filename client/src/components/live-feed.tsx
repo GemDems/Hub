@@ -17,20 +17,23 @@ export default function LiveFeed() {
 
   // Generate realistic activity feed
   useEffect(() => {
-    const names = ['xo_brianna', 'mattdoeslife', 'kenzie99', 'ur_boy_trev', 'itssszoey', 'jaxon2fast', 'chloe.wav', 'notmarcus', 'livvy4real', 'brody_lol', 'xyz_hailey', 'dankmike22', 'kaylee__x', 'ryanvibes', 'lol_its_bri'];
+    const names = ['brianna', 'DEREK', 'Tr3vor', 'kaia', 'J4cob', 'MILO', 'zoe', 'Andr3w', 'CASSIE', 'm4rco', 'Lexi', 'RYAN', 'c4rter', 'nina', 'Br4dley', 'JENNA', 'ty', 'K4tie', 'OMAR', 'priya'];
     const locations = ['TX', 'CA', 'NY', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI'];
     const actions = ['claimed this deal', 'just purchased', 'grabbed this offer', 'secured this item'];
     const products = ['Premium Headphones', 'Smart Watch', 'Wireless Earbuds', 'Fitness Tracker', 'Phone Case'];
 
-    const generateActivity = (): LiveActivity => ({
-      id: Math.random().toString(36).substr(2, 9),
-      user: names[Math.floor(Math.random() * names.length)],
-      location: locations[Math.floor(Math.random() * locations.length)],
-      action: actions[Math.floor(Math.random() * actions.length)],
-      product: products[Math.floor(Math.random() * products.length)],
-      timeAgo: `${Math.floor(Math.random() * 59) + 1} mins ago`,
-      blurProduct: true // Always blur products for privacy protection
-    });
+    const generateActivity = (): LiveActivity => {
+      const showLocation = Math.random() > 0.5;
+      return {
+        id: Math.random().toString(36).substr(2, 9),
+        user: names[Math.floor(Math.random() * names.length)],
+        location: showLocation ? locations[Math.floor(Math.random() * locations.length)] : '',
+        action: actions[Math.floor(Math.random() * actions.length)],
+        product: products[Math.floor(Math.random() * products.length)],
+        timeAgo: `${Math.floor(Math.random() * 59) + 1} mins ago`,
+        blurProduct: true
+      };
+    };
 
     // Initialize with some activities
     const initialActivities = Array.from({ length: 5 }, generateActivity);
@@ -73,11 +76,14 @@ export default function LiveFeed() {
               <div className="flex-1 min-w-0">
                 <p className="text-sm">
                   <span className="font-medium text-conversion-blue">{activity.user}</span>
-                  {' '}in{' '}
-                  <span className="inline-flex items-center gap-1">
-                    <MapPin className="w-3 h-3 text-gray-500" />
-                    {activity.location}
-                  </span>
+                  {activity.location ? (
+                    <>{' '}in{' '}
+                      <span className="inline-flex items-center gap-1">
+                        <MapPin className="w-3 h-3 text-gray-500" />
+                        {activity.location}
+                      </span>
+                    </>
+                  ) : null}
                   {' '}{activity.action}
                 </p>
                 <p className={`text-xs text-gray-600 truncate ${activity.blurProduct ? 'blur-sm' : ''}`}>
