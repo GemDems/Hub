@@ -43,7 +43,6 @@ export default function Header() {
       <div style={{ background: "linear-gradient(90deg,#e63946,#9b2dca)" }} className="w-full py-2.5 text-center text-xs font-semibold tracking-widest text-white">
         ⚡ FLASH SALE ENDING SOON — {viewers.toLocaleString()} MEMBERS ACTIVE TODAY &nbsp;|&nbsp; SPOTS FILLING FAST ⚡
       </div>
-
       {/* Hero */}
       <div className="text-center pt-10 pb-2 px-4">
         <div className="text-xs font-semibold tracking-[0.18em] mb-3" style={{ color: "#9b8fcb" }}>
@@ -51,7 +50,7 @@ export default function Header() {
         </div>
         <h1 className="font-extrabold leading-none tracking-tight text-white" style={{ fontSize: "clamp(52px,9vw,88px)", letterSpacing: "-0.02em" }}>
           ELITE<br />
-          <span style={{ color: "#7c3aed" }}>DEALS</span>
+          <span style={{ color: "#7c3aed" }} className="text-[#00008B]">DEALS</span>
         </h1>
         <div className="mt-2 text-sm font-normal tracking-[0.2em]" style={{ color: "#9ca3af" }}>
           PREMIUM MARKETPLACE
@@ -70,7 +69,6 @@ export default function Header() {
           </span>
         </div>
       </div>
-
       {/* Stats grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto px-4 mt-5">
         {[
@@ -88,7 +86,6 @@ export default function Header() {
           </div>
         ))}
       </div>
-
       {/* Live bar */}
       <div className="max-w-lg mx-auto px-4 mt-4">
         <div className="rounded-xl px-6 py-3.5 flex justify-around items-center" style={{ background: "#151929", border: "1px solid rgba(255,255,255,0.07)" }}>
@@ -105,7 +102,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-
       {/* CTA */}
       <div className="text-center px-4 mt-7 pb-2">
         <div className="inline-block text-3xl font-extrabold px-8 py-2.5 rounded-xl mb-1.5"
@@ -132,7 +128,6 @@ export default function Header() {
           <span style={{ color: "#4ade80" }}>98.7%</span> of members got more than they expected &nbsp;|&nbsp; No credit card required to start
         </div>
       </div>
-
       {/* Guarantee */}
       <div className="max-w-lg mx-auto px-4 mt-6">
         <div className="rounded-xl px-5 py-4 flex gap-4 items-start"
@@ -146,7 +141,6 @@ export default function Header() {
           </div>
         </div>
       </div>
-
       {/* Reviews */}
       <div className="max-w-2xl mx-auto px-4 mt-5 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
@@ -163,12 +157,10 @@ export default function Header() {
           ))}
         </div>
       </div>
-
       {/* Footer strip */}
       <div className="text-center py-3 text-xs" style={{ background: "#0a0c14", borderTop: "1px solid rgba(255,255,255,0.05)", color: "#4b5563" }}>
         <span style={{ color: "#22c55e" }}>✓</span> Every Deal Verified &nbsp;•&nbsp; No Fake Offers &nbsp;•&nbsp; Secure Checkout &nbsp;•&nbsp; 24/7 Support
       </div>
-
       <style>{`
         @keyframes ctapulse {
           0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.5); }
