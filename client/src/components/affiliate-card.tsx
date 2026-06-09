@@ -269,12 +269,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
               </div>
             </div>
 
-            {/* Live viewer count drifting */}
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-2">
-              <div className="text-center text-sm font-medium text-blue-700">
-                👀 {viewers} people viewing this deal right now
-              </div>
-            </div>
           </div>
 
           {/* Pricing with phantom anchoring */}
