@@ -146,9 +146,9 @@ Assistant:`;
       message: msg.content
     }));
 
-    // Get AI response using Cohere chat API (required for command-r-plus)
+    // Get AI response using Cohere chat API
     const response = await cohere.chat({
-      model: "command-r-plus",
+      model: "command-r",
       message: userMessage,
       preamble: systemPrompt,
       chatHistory,
@@ -246,7 +246,7 @@ Create a compelling, benefit-focused description that highlights value and quali
 Enhanced Description:`;
 
     const response = await cohere.generate({
-      model: "command-r-plus",
+      model: "command-r",
       prompt: prompt,
       maxTokens: 150,
       temperature: 0.7,

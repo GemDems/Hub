@@ -6,152 +6,219 @@ interface LiveStats {
   timestamp: number;
 }
 
-// Randomly placed dark blue tint blobs for subconscious brand anchoring
-const blueTints = [
-  { top: "10%", left: "5%",  size: 120, opacity: 0.06 },
-  { top: "60%", left: "80%", size: 90,  opacity: 0.05 },
-  { top: "30%", left: "55%", size: 70,  opacity: 0.04 },
-  { top: "75%", left: "20%", size: 100, opacity: 0.05 },
-  { top: "20%", left: "90%", size: 60,  opacity: 0.04 },
-];
-
 export default function Header() {
-  const [liveStats, setLiveStats] = useState<LiveStats>({
-    viewers: 200,
-    hourlyBuyers: 15,
-    timestamp: Date.now()
-  });
+  const [liveStats, setLiveStats] = useState<LiveStats>({ viewers: 1035, hourlyBuyers: 708, timestamp: Date.now() });
+  const [viewers, setViewers] = useState(1035);
+  const [orders, setOrders] = useState(708);
 
-  // Rotating urgency sub-messages below banner
-  const urgencyMessages = [
-    `⚡ Only ${Math.floor(Math.random() * 30) + 12} spots left at this price`,
-    `🔥 ${Math.floor(Math.random() * 40) + 60} people claimed in the last hour`,
-    `⏳ Price increases when sale ends`,
-    `👀 ${Math.floor(Math.random() * 20) + 8} people viewing this sale right now`,
-  ];
-  const [urgencyIdx, setUrgencyIdx] = useState(0);
+  // Countdown timer — resets every 2h when done
+  const [timeLeft, setTimeLeft] = useState(1 * 3600 + 47 * 60 + 33);
   useEffect(() => {
-    const iv = setInterval(() => setUrgencyIdx(i => (i + 1) % urgencyMessages.length), 4000);
+    const iv = setInterval(() => {
+      setTimeLeft(t => {
+        if (t <= 0) return 2 * 3600;
+        return t - 1;
+      });
+    }, 1000);
+    return () => clearInterval(iv);
+  }, []);
+  const hrs = String(Math.floor(timeLeft / 3600)).padStart(2, "0");
+  const mins = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, "0");
+  const secs = String(timeLeft % 60).padStart(2, "0");
+
+  // Live viewers/orders drift
+  useEffect(() => {
+    const iv = setInterval(() => {
+      setViewers(v => Math.max(980, Math.min(1200, v + Math.floor(Math.random() * 5) - 2)));
+      setOrders(o => Math.max(650, Math.min(820, o + Math.floor(Math.random() * 3) - 1)));
+    }, 3500);
     return () => clearInterval(iv);
   }, []);
 
-  // Drifting viewer count
-  const [viewerDrift, setViewerDrift] = useState(0);
+  // Fetch live stats
   useEffect(() => {
-    const drift = setInterval(() => {
-      setViewerDrift(Math.floor(Math.random() * 7) - 3);
-    }, 6000);
-    return () => clearInterval(drift);
-  }, []);
-
-  const fetchLiveStats = async () => {
-    try {
-      const response = await fetch("/api/live-stats");
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const stats = await response.json();
-      setLiveStats(prev => ({
-        viewers: stats.viewers,
-        hourlyBuyers: Math.max(prev.hourlyBuyers, stats.hourlyBuyers),
-        timestamp: stats.timestamp
-      }));
-    } catch (error) {
-      console.error('Failed to fetch live stats:', error);
-    }
-  };
-
-  useEffect(() => {
-    fetchLiveStats();
-    const interval = setInterval(fetchLiveStats, 8000);
-    return () => clearInterval(interval);
+    const fetch_ = async () => {
+      try {
+        const res = await fetch("/api/live-stats");
+        if (!res.ok) return;
+        const s = await res.json();
+        setLiveStats(s);
+        setViewers(s.viewers);
+        setOrders(s.hourlyBuyers);
+      } catch {}
+    };
+    fetch_();
+    const iv = setInterval(fetch_, 8000);
+    return () => clearInterval(iv);
   }, []);
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden">
-      {/* Randomly placed dark blue tint blobs — subconscious brand color anchoring */}
-      {blueTints.map((tint, i) => (
-        <div
-          key={i}
-          className="absolute pointer-events-none rounded-full"
-          style={{
-            top: tint.top,
-            left: tint.left,
-            width: tint.size,
-            height: tint.size,
-            background: `radial-gradient(circle, rgba(30,58,138,${tint.opacity}) 0%, transparent 70%)`,
-            transform: "translate(-50%, -50%)",
-            zIndex: 0,
-          }}
-        />
-      ))}
-      {/* Rotating urgency sub-message */}
-      <div className="bg-amber-50 border-b border-amber-200 text-amber-800 text-center py-1 text-xs font-medium relative z-10 transition-all duration-500 opacity-[0.01]">
-        <span key={urgencyIdx} className="proof-fade-in">{urgencyMessages[urgencyIdx]}</span>
+    <header style={{ background: "#0d0f1a" }} className="w-full overflow-hidden">
+      {/* Flash sale ticker */}
+      <div style={{ background: "linear-gradient(90deg,#e63946,#9b2dca)" }} className="w-full py-2.5 text-center text-xs font-semibold tracking-widest text-white">
+        ⚡ FLASH SALE ENDING SOON — {viewers.toLocaleString()} MEMBERS ACTIVE TODAY &nbsp;|&nbsp; SPOTS FILLING FAST ⚡
       </div>
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
-        <div className="text-center">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3">
-            Elite Deals Hub
-          </h1>
 
-          <div className="max-w-4xl mx-auto mb-8">
-            <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
-              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
-                Hand-picked deals
-                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
-              </span>
-              <span className="mx-3 font-normal">crafted by industry insiders</span>
-            </p>
+      {/* Hero */}
+      <div className="text-center pt-10 pb-2 px-4">
+        <div className="text-xs font-semibold tracking-[0.18em] mb-3" style={{ color: "#9b8fcb" }}>
+          THE #1 PREMIUM MARKETPLACE
+        </div>
+        <h1 className="font-extrabold leading-none tracking-tight text-white" style={{ fontSize: "clamp(52px,9vw,88px)", letterSpacing: "-0.02em" }}>
+          ELITE<br />
+          <span style={{ color: "#7c3aed" }}>DEALS</span>
+        </h1>
+        <div className="mt-2 text-sm font-normal tracking-[0.2em]" style={{ color: "#9ca3af" }}>
+          PREMIUM MARKETPLACE
+        </div>
+
+        {/* Trust pills */}
+        <div className="flex flex-wrap justify-center gap-2 mt-5 max-w-lg mx-auto">
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(251,191,36,0.1)", borderColor: "rgba(251,191,36,0.3)", color: "#fbbf24" }}>
+            Curated by experts
+          </span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.3)", color: "#22c55e" }}>
+            Verified authentic
+          </span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(96,165,250,0.1)", borderColor: "rgba(96,165,250,0.3)", color: "#60a5fa" }}>
+            Trusted by thousands
+          </span>
+        </div>
+      </div>
+
+      {/* Urgency countdown */}
+      <div className="max-w-xl mx-auto mx-4 mt-7 mb-2 px-4">
+        <div className="rounded-xl px-5 py-4 flex items-center justify-center gap-5 flex-wrap"
+          style={{ background: "rgba(220,38,38,0.12)", border: "1px solid rgba(220,38,38,0.4)" }}>
+          <div className="flex items-center gap-3">
+            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: "#ef4444" }}></div>
+            <span className="text-sm font-semibold" style={{ color: "#fca5a5" }}>
+              <strong className="text-white text-base">Limited access — offer expires in:</strong>
+            </span>
           </div>
-
-          {/* Trust Ecosystem with shimmer */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
-            <div className="bg-gradient-to-br from-trust-green/10 to-trust-green/5 border border-trust-green/20 rounded-xl px-4 py-3 relative overflow-hidden">
-              <div className="trust-shimmer absolute inset-0 pointer-events-none rounded-xl"></div>
-              <div className="text-trust-green font-bold text-sm relative z-10">✅ Verified Authentic</div>
-              <div className="text-xs text-gray-600 relative z-10">Every deal verified</div>
+          <div className="flex items-center gap-1.5">
+            <div className="rounded-md px-3 py-1.5 text-center" style={{ background: "#1e0a0a", border: "1px solid rgba(220,38,38,0.5)" }}>
+              <span className="block text-2xl font-bold leading-none" style={{ color: "#f87171" }}>{hrs}</span>
+              <span className="block text-[9px] tracking-widest mt-0.5" style={{ color: "#9ca3af" }}>HRS</span>
             </div>
-            <div className="bg-gradient-to-br from-yellow-100 to-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 relative overflow-hidden">
-              <div className="trust-shimmer absolute inset-0 pointer-events-none rounded-xl"></div>
-              <div className="text-yellow-800 font-bold text-sm relative z-10">⭐ 4.9/5 Rating</div>
-              <div className="text-xs text-gray-600 relative z-10">50,247 verified reviews</div>
+            <span className="text-xl font-bold" style={{ color: "#ef4444" }}>:</span>
+            <div className="rounded-md px-3 py-1.5 text-center" style={{ background: "#1e0a0a", border: "1px solid rgba(220,38,38,0.5)" }}>
+              <span className="block text-2xl font-bold leading-none" style={{ color: "#f87171" }}>{mins}</span>
+              <span className="block text-[9px] tracking-widest mt-0.5" style={{ color: "#9ca3af" }}>MIN</span>
             </div>
-            <div className="bg-gradient-to-br from-purple-100 to-purple-50 border border-purple-200 rounded-xl px-4 py-3 relative overflow-hidden">
-              <div className="trust-shimmer absolute inset-0 pointer-events-none rounded-xl"></div>
-              <div className="text-purple-800 font-bold text-sm relative z-10">🏆 #1 Platform</div>
-              <div className="text-xs text-gray-600 relative z-10">5 years running</div>
-            </div>
-            <div className="bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-200 rounded-xl px-4 py-3 relative overflow-hidden">
-              <div className="trust-shimmer absolute inset-0 pointer-events-none rounded-xl"></div>
-              <div className="text-blue-800 font-bold text-sm relative z-10">🔒 Bank Security</div>
-              <div className="text-xs text-gray-600 relative z-10">SSL encrypted</div>
-            </div>
-          </div>
-
-          {/* Live Activity Monitor */}
-          <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
-            <div className="flex items-center justify-center space-x-6">
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers + viewerDrift} viewing</span>
-              </div>
-              <div className="flex items-center">
-                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
-                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Loss-framed savings proof */}
-          <div className="bg-white rounded-xl px-6 py-3 max-w-xl mx-auto shadow-sm border border-gray-200">
-            <div className="text-gray-800 font-bold text-lg">
-              Members Saved $4.7M This Month
-            </div>
-            <div className="text-sm text-red-600 font-medium">
-              Non-members are overpaying an average of $247/month
+            <span className="text-xl font-bold" style={{ color: "#ef4444" }}>:</span>
+            <div className="rounded-md px-3 py-1.5 text-center" style={{ background: "#1e0a0a", border: "1px solid rgba(220,38,38,0.5)" }}>
+              <span className="block text-2xl font-bold leading-none" style={{ color: "#f87171" }}>{secs}</span>
+              <span className="block text-[9px] tracking-widest mt-0.5" style={{ color: "#9ca3af" }}>SEC</span>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Stats grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 max-w-3xl mx-auto px-4 mt-5">
+        {[
+          { icon: "✅", label: "Verified", desc: "Every product vetted", color: "#4ade80", bg: "rgba(34,197,94,0.15)" },
+          { icon: "⭐", label: "4.9/5 Rating", desc: "78K+ reviews", color: "#fbbf24", bg: "rgba(251,191,36,0.15)" },
+          { icon: "🏆", label: "#1 Marketplace", desc: "Industry leader", color: "#a78bfa", bg: "rgba(139,92,246,0.15)" },
+          { icon: "🔒", label: "Bank-Level", desc: "256-bit encryption", color: "#60a5fa", bg: "rgba(96,165,250,0.15)" },
+        ].map((s) => (
+          <div key={s.label} className="rounded-xl p-4 text-center" style={{ background: "#151929", border: "1px solid rgba(255,255,255,0.07)" }}>
+            <div className="w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-2 text-xl" style={{ background: s.bg }}>
+              {s.icon}
+            </div>
+            <div className="text-sm font-bold mb-0.5" style={{ color: s.color }}>{s.label}</div>
+            <div className="text-xs" style={{ color: "#6b7280" }}>{s.desc}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Live bar */}
+      <div className="max-w-lg mx-auto px-4 mt-4">
+        <div className="rounded-xl px-6 py-3.5 flex justify-around items-center" style={{ background: "#151929", border: "1px solid rgba(255,255,255,0.07)" }}>
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#22c55e" }}></div>
+            <span className="font-bold text-white">{viewers.toLocaleString()}</span>
+            <span style={{ color: "#9ca3af" }}>live viewers</span>
+          </div>
+          <div style={{ width: 1, background: "rgba(255,255,255,0.07)", height: 28 }}></div>
+          <div className="flex items-center gap-2 text-sm">
+            <div className="w-2 h-2 rounded-full animate-pulse" style={{ background: "#60a5fa", animationDelay: "0.4s" }}></div>
+            <span className="font-bold text-white">{orders.toLocaleString()}</span>
+            <span style={{ color: "#9ca3af" }}>orders this hour</span>
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
+      <div className="text-center px-4 mt-7 pb-2">
+        <div className="inline-block text-3xl font-extrabold px-8 py-2.5 rounded-xl mb-1.5"
+          style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.3)", color: "#4ade80" }}>
+          $6.2M+ SAVED
+        </div>
+        <div className="text-xs mb-6" style={{ color: "#6b7280" }}>by our members this month alone</div>
+        <button
+          className="text-white text-lg font-bold px-14 py-5 rounded-full cursor-pointer transition-transform hover:scale-105"
+          style={{
+            background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
+            border: "none",
+            animation: "ctapulse 2.5s infinite",
+            letterSpacing: "0.02em"
+          }}
+          onClick={() => {
+            const chatBtn = document.querySelector('[data-chat-button]') as HTMLElement;
+            if (chatBtn) chatBtn.click();
+          }}
+        >
+          CLAIM MY EXCLUSIVE ACCESS →
+        </button>
+        <div className="mt-3 text-xs" style={{ color: "#6b7280" }}>
+          <span style={{ color: "#4ade80" }}>98.7%</span> of members got more than they expected &nbsp;|&nbsp; No credit card required to start
+        </div>
+      </div>
+
+      {/* Guarantee */}
+      <div className="max-w-lg mx-auto px-4 mt-6">
+        <div className="rounded-xl px-5 py-4 flex gap-4 items-start"
+          style={{ background: "rgba(251,191,36,0.06)", border: "1px solid rgba(251,191,36,0.2)" }}>
+          <div className="text-3xl flex-shrink-0 mt-0.5">🏅</div>
+          <div>
+            <div className="text-sm font-bold mb-1" style={{ color: "#fbbf24" }}>100% Satisfaction Guarantee</div>
+            <div className="text-xs leading-relaxed" style={{ color: "#9ca3af" }}>
+              Not happy? We'll make it right — full refund, zero questions asked. We're so confident in Elite Deals that we take on all the risk so you don't have to.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Reviews */}
+      <div className="max-w-2xl mx-auto px-4 mt-5 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          {[
+            { text: `"Saved $340 on my first order. I was skeptical but this is the real deal — everything arrived exactly as described."`, author: "James T. — Verified Buyer" },
+            { text: `"Best marketplace I've used. The curation is insane — every deal is actually worth it. My friends all joined after I told them."`, author: "Priya M. — Member since 2024" },
+            { text: `"Legit saved over $1,200 this year. The security and authenticity checks give me total peace of mind. 10/10."`, author: "Marcus R. — Elite Member" },
+          ].map((r) => (
+            <div key={r.author} className="rounded-xl p-4" style={{ background: "#151929", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="text-xs mb-1.5" style={{ color: "#fbbf24" }}>★★★★★</div>
+              <div className="text-xs leading-relaxed mb-2" style={{ color: "#d1d5db" }}>{r.text}</div>
+              <div className="text-xs font-medium" style={{ color: "#6b7280" }}>{r.author}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Footer strip */}
+      <div className="text-center py-3 text-xs" style={{ background: "#0a0c14", borderTop: "1px solid rgba(255,255,255,0.05)", color: "#4b5563" }}>
+        <span style={{ color: "#22c55e" }}>✓</span> Every Deal Verified &nbsp;•&nbsp; No Fake Offers &nbsp;•&nbsp; Secure Checkout &nbsp;•&nbsp; 24/7 Support
+      </div>
+
+      <style>{`
+        @keyframes ctapulse {
+          0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.5); }
+          50% { box-shadow: 0 0 0 14px rgba(124,58,237,0); }
+        }
+      `}</style>
     </header>
   );
 }
