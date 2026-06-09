@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { apiRequest } from "@/lib/queryClient";
 
 interface LiveStats {
   viewers: number;
@@ -8,16 +9,20 @@ interface LiveStats {
 
 export default function Header() {
   const [liveStats, setLiveStats] = useState<LiveStats>({
-    viewers: 1035,
-    hourlyBuyers: 708,
+    viewers: 200,
+    hourlyBuyers: 15,
     timestamp: Date.now()
   });
 
   const fetchLiveStats = async () => {
     try {
       const response = await fetch("/api/live-stats");
-      if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const stats = await response.json();
+      
+      // Update with server values, ensuring hourly buyers only increase
       setLiveStats(prev => ({
         viewers: stats.viewers,
         hourlyBuyers: Math.max(prev.hourlyBuyers, stats.hourlyBuyers),
@@ -29,103 +34,85 @@ export default function Header() {
   };
 
   useEffect(() => {
+    // Initial fetch
     fetchLiveStats();
+    
+    // Update every 8 seconds
     const interval = setInterval(fetchLiveStats, 8000);
+    
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <header className="relative overflow-hidden" style={{ background: "linear-gradient(180deg, #0d1117 0%, #0f172a 100%)" }}>
-      {/* Top Announcement Banner */}
-      <div style={{ background: "linear-gradient(90deg, #e53e3e 0%, #7c3aed 50%, #6d28d9 100%)" }} className="text-white text-center py-2 font-bold text-sm tracking-wide">
-        🚀 JOIN 98.7% WHO GOT MORE THAN THEY EXPECTED — LIMITED ACCESS INSIDE ⚡
+    <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden">
+      {/* Clean Alert Banner */}
+      <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm">
+        <span>FLASH SALE: 70% OFF ENDS IN 3 HOURS</span>
       </div>
+      
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center">
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-center">
-
-        {/* Main Title */}
-        <h1 className="font-black text-white mb-2 tracking-tight" style={{ fontSize: "clamp(3rem, 8vw, 5.5rem)", letterSpacing: "-0.02em" }}>
-          ELITE DEALS
-        </h1>
-
-        {/* Subtitle */}
-        <p className="text-gray-300 font-semibold tracking-widest text-sm sm:text-base mb-5" style={{ letterSpacing: "0.3em" }}>
-          PREMIUM MARKETPLACE
-        </p>
-
-        {/* Tagline */}
-        <p className="text-base sm:text-lg mb-8 font-medium">
-          <span className="text-cyan-400 font-semibold">Curated by <span className="text-white">experts.</span></span>
-          <span className="text-gray-400 mx-2">•</span>
-          <span className="text-cyan-400 font-semibold">Verified <span className="text-white">authentic.</span></span>
-          <span className="text-gray-400 mx-2">•</span>
-          <span className="text-cyan-400 font-semibold">Trusted by <span className="text-white">thousands.</span></span>
-        </p>
-
-        {/* Trust Badge Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6 max-w-3xl mx-auto">
-          {/* Verified Authentic */}
-          <div className="rounded-xl px-4 py-4 flex flex-col items-center" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2" style={{ background: "linear-gradient(135deg, #22c55e, #16a34a)" }}>
-              <span className="text-white text-lg">✓</span>
-            </div>
-            <div className="text-white font-bold text-xs tracking-wide uppercase">Verified Authentic</div>
-            <div className="text-gray-400 text-xs mt-0.5">Every product vetted</div>
+          
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3">
+            Elite Deals Hub
+          </h1>
+          
+          <div className="max-w-4xl mx-auto mb-8">
+            <p className="text-2xl font-light text-gray-800 leading-relaxed tracking-wide mb-2">
+              <span className="relative inline-block font-bold text-transparent bg-gradient-to-r from-emerald-600 to-green-500 bg-clip-text">
+                Hand-picked deals
+                <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-300 to-green-300 opacity-60"></span>
+              </span>
+              <span className="mx-3 font-normal">crafted by industry insiders</span>
+            </p>
+            
           </div>
-
-          {/* Rating */}
-          <div className="rounded-xl px-4 py-4 flex flex-col items-center" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2" style={{ background: "linear-gradient(135deg, #f59e0b, #d97706)" }}>
-              <span className="text-white text-lg">★</span>
+          
+          {/* Enhanced Trust Ecosystem */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6 max-w-4xl mx-auto">
+            <div className="bg-gradient-to-br from-trust-green/10 to-trust-green/5 border border-trust-green/20 rounded-xl px-4 py-3">
+              <div className="text-trust-green font-bold text-sm">✅ Verified Authentic</div>
+              <div className="text-xs text-gray-600">Every deal verified</div>
             </div>
-            <div className="text-white font-bold text-xs tracking-wide uppercase">4.9/5 Rating</div>
-            <div className="text-gray-400 text-xs mt-0.5">78K+ reviews</div>
+            <div className="bg-gradient-to-br from-yellow-100 to-yellow-50 border border-yellow-200 rounded-xl px-4 py-3">
+              <div className="text-yellow-800 font-bold text-sm">⭐ 4.9/5 Rating</div>
+              <div className="text-xs text-gray-600">50K+ reviews</div>
+            </div>
+            <div className="bg-gradient-to-br from-purple-100 to-purple-50 border border-purple-200 rounded-xl px-4 py-3">
+              <div className="text-purple-800 font-bold text-sm">🏆 #1 Platform</div>
+              <div className="text-xs text-gray-600">5 years running</div>
+            </div>
+            <div className="bg-gradient-to-br from-blue-100 to-blue-50 border border-blue-200 rounded-xl px-4 py-3">
+              <div className="text-blue-800 font-bold text-sm">🔒 Bank Security</div>
+              <div className="text-xs text-gray-600">SSL encrypted</div>
+            </div>
           </div>
-
-          {/* #1 Marketplace */}
-          <div className="rounded-xl px-4 py-4 flex flex-col items-center" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2" style={{ background: "linear-gradient(135deg, #8b5cf6, #7c3aed)" }}>
-              <span className="text-white text-lg">🏆</span>
+          
+          {/* Live Activity Monitor */}
+          <div className="bg-gray-50 border border-gray-200 rounded-2xl px-8 py-4 shadow-lg max-w-2xl mx-auto mb-4">
+            <div className="flex items-center justify-center space-x-6">
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse mr-2"></div>
+                <span className="font-bold text-gray-800">LIVE: {liveStats.viewers} viewing</span>
+              </div>
+              <div className="flex items-center">
+                <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse mr-2"></div>
+                <span className="font-bold text-gray-800">{liveStats.hourlyBuyers} bought this hour</span>
+              </div>
             </div>
-            <div className="text-white font-bold text-xs tracking-wide uppercase">#1 Marketplace</div>
-            <div className="text-gray-400 text-xs mt-0.5">Industry leader</div>
           </div>
-
-          {/* Bank-Level Security */}
-          <div className="rounded-xl px-4 py-4 flex flex-col items-center" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2" style={{ background: "linear-gradient(135deg, #3b82f6, #2563eb)" }}>
-              <span className="text-white text-lg">🔒</span>
+          
+          {/* Clean Social Proof */}
+          <div className="bg-white rounded-xl px-6 py-3 max-w-xl mx-auto shadow-sm border border-gray-200">
+            <div className="text-gray-800 font-bold text-lg">
+              Members Saved $4.7M This Month
             </div>
-            <div className="text-white font-bold text-xs tracking-wide uppercase">Bank-Level Security</div>
-            <div className="text-gray-400 text-xs mt-0.5">256-bit encryption</div>
+            <div className="text-sm text-gray-600">
+              Average savings: $247 per member
+            </div>
           </div>
         </div>
-
-        {/* Live Activity Bar */}
-        <div className="rounded-2xl px-8 py-4 mb-4 max-w-2xl mx-auto flex items-center justify-center gap-8" style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.1)" }}>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-green-400 rounded-full animate-pulse"></div>
-            <span className="text-white font-bold">{liveStats.viewers.toLocaleString()}</span>
-            <span className="text-gray-400 text-sm">live viewers</span>
-          </div>
-          <div className="w-px h-6 bg-gray-600"></div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 bg-blue-400 rounded-full animate-pulse"></div>
-            <span className="text-white font-bold">{liveStats.hourlyBuyers.toLocaleString()}</span>
-            <span className="text-gray-400 text-sm">orders this hour</span>
-          </div>
-        </div>
-
-        {/* Savings Box */}
-        <div className="rounded-2xl px-8 py-4 max-w-2xl mx-auto" style={{ background: "rgba(34,197,94,0.12)", border: "1px solid rgba(34,197,94,0.25)" }}>
-          <div className="text-white font-black text-2xl sm:text-3xl">$6.2M+ SAVED</div>
-          <div className="text-gray-400 text-sm mt-1">by our members this month</div>
-        </div>
-      </div>
-
-      {/* Bottom Trust Strip */}
-      <div className="border-t py-2 text-center text-sm text-gray-400" style={{ borderColor: "rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.03)" }}>
-        ✅ Every Deal Verified &bull; No Fake Offers
       </div>
     </header>
   );
