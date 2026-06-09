@@ -956,8 +956,7 @@ ${product.stock > 0 ? `📦 **In Stock:** ${product.stock} units available` : ''
       }
     } catch (error) {
       console.log('⚠️ Cohere unavailable, using local AI system:', error.message);
-      // Fallback to the existing advanced AI system
-      const fallbackResponse = generateAdvancedAIResponse(userMessage, conversationHistory);
+      const fallbackResponse = generateContextualResponse(userMessage, conversationHistory);
       return {
         response: fallbackResponse,
         confidence: 0.5
@@ -966,8 +965,7 @@ ${product.stock > 0 ? `📦 **In Stock:** ${product.stock} units available` : ''
   };
 
   const generateBotResponse = (userMessage: string): string => {
-    // Use the advanced AI search system as fallback (kept for compatibility)
-    return generateAdvancedAIResponse(userMessage, conversationHistory);
+    return generateContextualResponse(userMessage, conversationHistory);
   };
 
   const handleSendMessage = async () => {
@@ -1027,7 +1025,7 @@ ${product.stock > 0 ? `📦 **In Stock:** ${product.stock} units available` : ''
       // Since Cohere failed, directly use the local advanced AI system
       setIsTyping(false);
       
-      const localResponse = generateAdvancedAIResponse(messageToProcess, conversationHistory);
+      const localResponse = generateContextualResponse(messageToProcess, conversationHistory);
       
       const botResponse: Message = {
         id: (Date.now() + 1).toString(),

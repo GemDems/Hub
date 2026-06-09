@@ -6,28 +6,28 @@ import SavingsProgress from "./savings-progress";
 // Realistic static leaderboard data that persists
 const STATIC_LEADERBOARD_DATA = {
   topSavers: [
-    { name: "MILO",     savings: 2857, location: "California", isVip: true },
-    { name: "Tr3vor",   savings: 2652, location: "Texas",      isVip: true },
-    { name: "kaia",     savings: 2309, location: "New York",   isVip: true },
-    { name: "JENNA",    savings: 2171, location: "Florida",    isVip: false },
-    { name: "Andr3w",   savings: 2107, location: "Illinois",   isVip: true },
-    { name: "nina",     savings: 1979, location: "",           isVip: false },
-    { name: "OMAR",     savings: 1843, location: "Ohio",       isVip: true },
-    { name: "c4rter",   savings: 1728, location: "",           isVip: false },
-    { name: "Lexi",     savings: 1651, location: "Michigan",   isVip: false },
-    { name: "m4rco",    savings: 1605, location: "Nevada",     isVip: true }
+    { name: "MILO",    savings: 2857, location: "California", isVip: true },
+    { name: "Trevor",  savings: 2652, location: "Texas",      isVip: true },
+    { name: "kaia",    savings: 2309, location: "New York",   isVip: true },
+    { name: "JENNA",   savings: 2171, location: "Florida",    isVip: false },
+    { name: "Andrew",  savings: 2107, location: "Illinois",   isVip: true },
+    { name: "nina",    savings: 1979, location: "",           isVip: false },
+    { name: "OMAR",    savings: 1843, location: "Ohio",       isVip: true },
+    { name: "carter",  savings: 1728, location: "",           isVip: false },
+    { name: "Lexi",    savings: 1651, location: "Michigan",   isVip: false },
+    { name: "marco",   savings: 1605, location: "Nevada",     isVip: true }
   ],
   topReferrers: [
-    { name: "Tr3vor",   referrals: 47, earnings: 1420, location: "Texas" },
-    { name: "MILO",     referrals: 43, earnings: 1290, location: "California" },
-    { name: "kaia",     referrals: 39, earnings: 1170, location: "" },
-    { name: "Andr3w",   referrals: 36, earnings: 1080, location: "Illinois" },
-    { name: "OMAR",     referrals: 31, earnings: 930,  location: "" },
-    { name: "m4rco",    referrals: 28, earnings: 840,  location: "Nevada" },
-    { name: "brianna",  referrals: 24, earnings: 720,  location: "Colorado" },
-    { name: "RYAN",     referrals: 21, earnings: 630,  location: "" },
-    { name: "priya",    referrals: 19, earnings: 570,  location: "Oregon" },
-    { name: "Br4dley",  referrals: 17, earnings: 510,  location: "Tennessee" }
+    { name: "Trevor",  referrals: 47, earnings: 1420, location: "Texas" },
+    { name: "MILO",    referrals: 43, earnings: 1290, location: "California" },
+    { name: "kaia",    referrals: 39, earnings: 1170, location: "" },
+    { name: "Andrew",  referrals: 36, earnings: 1080, location: "Illinois" },
+    { name: "OMAR",    referrals: 31, earnings: 930,  location: "" },
+    { name: "marco",   referrals: 28, earnings: 840,  location: "Nevada" },
+    { name: "brianna", referrals: 24, earnings: 720,  location: "Colorado" },
+    { name: "RYAN",    referrals: 21, earnings: 630,  location: "" },
+    { name: "priya",   referrals: 19, earnings: 570,  location: "Oregon" },
+    { name: "Bradley", referrals: 17, earnings: 510,  location: "Tennessee" }
   ]
 };
 
