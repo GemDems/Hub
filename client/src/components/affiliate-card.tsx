@@ -257,20 +257,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             </div>
           </div>
 
-          {/* Urgency + competition strip */}
-          <div className="space-y-2">
-            {/* Cart competition — fear of losing to others */}
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-2">
-              <div className="flex items-center justify-center gap-2">
-                <ShoppingCart className="w-4 h-4 text-amber-700" />
-                <span className="text-xs font-semibold text-amber-800">
-                  {inCart} people have this in their cart right now
-                </span>
-              </div>
-            </div>
-
-          </div>
-
           {/* Pricing with phantom anchoring */}
           <div className="flex items-center justify-between mb-2">
             <div>
