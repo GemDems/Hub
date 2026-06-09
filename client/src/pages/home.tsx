@@ -85,23 +85,6 @@ export default function Home() {
     localStorage.setItem("edh_last_visit", now.toString());
   }, []);
 
-  // ─── Periodic "someone just claimed" notification ─────────────────────────
-  const claimNames = ["Sarah M.", "Jake T.", "Priya K.", "Lucas B.", "Emma R.", "Diego S."];
-  const claimAmounts = [47, 89, 134, 62, 203, 118, 76, 291];
-  const [claimNotif, setClaimNotif] = useState<{ name: string; amount: number } | null>(null);
-  useEffect(() => {
-    const show = () => {
-      const name   = claimNames[Math.floor(Math.random() * claimNames.length)];
-      const amount = claimAmounts[Math.floor(Math.random() * claimAmounts.length)];
-      setClaimNotif({ name, amount });
-      setTimeout(() => {
-        setClaimNotif(null);
-        setTimeout(show, 15000 + Math.random() * 20000);
-      }, 4500);
-    };
-    const initial = setTimeout(show, 8000 + Math.random() * 6000);
-    return () => clearTimeout(initial);
-  }, []);
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
@@ -286,22 +269,6 @@ export default function Home() {
         </div>
       )}
 
-      {/* ── GLOBAL SOCIAL PROOF NOTIFICATION (bottom left) ────────────── */}
-      {claimNotif && (
-        <div className="fixed bottom-6 left-4 z-[9996] max-w-xs float-notif">
-          <div className="bg-white border border-green-200 rounded-xl shadow-lg p-3 flex items-center gap-3">
-            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-              {claimNotif.name[0]}
-            </div>
-            <div>
-              <div className="text-xs font-bold text-gray-900">{claimNotif.name} just saved ${claimNotif.amount}!</div>
-              <div className="text-xs text-gray-500 flex items-center gap-1">
-                <Clock className="w-3 h-3" /> Just now • Verified purchase
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* Category Dropdown Menu */}
       <div className={`fixed top-4 left-4 z-50 transition-all duration-1000 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>

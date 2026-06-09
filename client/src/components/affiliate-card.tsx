@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,24 +81,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     return () => clearInterval(iv);
   }, []);
 
-  // ─── Recent buyer notification cycle ─────────────────────────────────────
-  const firstNames = ["Alex", "Jordan", "Sam", "Taylor", "Morgan", "Casey", "Riley", "Dana"];
-  const locations  = ["TX", "CA", "NY", "FL", "WA", "IL", "GA", "OH"];
-  const [recentBuyer, setRecentBuyer] = useState<{ name: string; loc: string } | null>(null);
-  const notifTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  useEffect(() => {
-    const show = () => {
-      const name = firstNames[Math.floor(Math.random() * firstNames.length)];
-      const loc  = locations[Math.floor(Math.random() * locations.length)];
-      setRecentBuyer({ name: `${name}`, loc });
-      notifTimerRef.current = setTimeout(() => {
-        setRecentBuyer(null);
-        notifTimerRef.current = setTimeout(show, 8000 + Math.random() * 12000);
-      }, 3500);
-    };
-    notifTimerRef.current = setTimeout(show, 4000 + Math.random() * 8000);
-    return () => clearTimeout(notifTimerRef.current);
-  }, []);
 
   // ─── Cycling alert badges ─────────────────────────────────────────────────
   const alerts = [
@@ -232,14 +214,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
         </div>
 
         <CardContent className="p-6 space-y-4">
-
-          {/* Recent buyer notification — social proof micro-popup */}
-          {recentBuyer ? (
-            <div className="float-notif bg-green-50 border border-green-200 rounded-lg px-3 py-2 flex items-center gap-2 text-xs font-medium text-green-800">
-              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse flex-shrink-0"></div>
-              <span><strong>{recentBuyer.name}</strong> from {recentBuyer.loc} just claimed this! 🎉</span>
-            </div>
-          ) : null}
 
           <h3 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-3 group-hover:from-conversion-blue group-hover:to-blue-700 transition-all duration-300">
             {link.title}

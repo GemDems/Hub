@@ -17,7 +17,7 @@ export default function LiveFeed() {
 
   // Generate realistic activity feed
   useEffect(() => {
-    const names = ['Sarah', 'Mike', 'Jessica', 'David', 'Emma', 'Chris', 'Lisa', 'Alex'];
+    const names = ['xo_brianna', 'mattdoeslife', 'kenzie99', 'ur_boy_trev', 'itssszoey', 'jaxon2fast', 'chloe.wav', 'notmarcus', 'livvy4real', 'brody_lol', 'xyz_hailey', 'dankmike22', 'kaylee__x', 'ryanvibes', 'lol_its_bri'];
     const locations = ['TX', 'CA', 'NY', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI'];
     const actions = ['claimed this deal', 'just purchased', 'grabbed this offer', 'secured this item'];
     const products = ['Premium Headphones', 'Smart Watch', 'Wireless Earbuds', 'Fitness Tracker', 'Phone Case'];
