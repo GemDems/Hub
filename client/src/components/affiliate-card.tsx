@@ -275,16 +275,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
           {/* Urgency + competition strip */}
           <div className="space-y-2">
-            {/* Loss-framed limited time — "Save X" is weaker than "Lose X" */}
-            <div className="urgency-breathe bg-red-50 border border-red-300 rounded-lg p-3">
-              <div className="flex items-center justify-center">
-                <Clock className="w-4 h-4 text-red-600 mr-2" />
-                <span className="text-sm font-semibold text-red-700">
-                  You're missing $<strong>{savedAmount}</strong> in savings — grab it now
-                </span>
-              </div>
-            </div>
-
             {/* Cart competition — fear of losing to others */}
             <div className="bg-amber-50 border border-amber-200 rounded-lg p-2">
               <div className="flex items-center justify-center gap-2">
