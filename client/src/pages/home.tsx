@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -8,7 +8,7 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
-import { ChevronDown, Dice6 } from "lucide-react";
+import { ChevronDown, Dice6, X, Zap, Clock, Gift } from "lucide-react";
 
 import Leaderboard from "@/components/leaderboard";
 import ReferralSystem from "@/components/referral-system";
@@ -16,7 +16,6 @@ import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
 import AIChatbot from "@/components/ai-chatbot";
-
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -32,8 +31,77 @@ export default function Home() {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [hasExpired, setHasExpired] = useState(false);
 
+  // ─── Exit Intent popup ────────────────────────────────────────────────────
+  const [showExitIntent, setShowExitIntent] = useState(false);
+  const exitFiredRef = useRef(false);
 
+  useEffect(() => {
+    const handleMouseLeave = (e: MouseEvent) => {
+      // Fires when cursor approaches top of viewport (about to close tab/address bar)
+      if (e.clientY < 10 && !exitFiredRef.current) {
+        exitFiredRef.current = true;
+        setShowExitIntent(true);
+      }
+    };
+    document.addEventListener("mouseleave", handleMouseLeave);
+    return () => document.removeEventListener("mouseleave", handleMouseLeave);
+  }, []);
 
+  // ─── Idle / Inactivity popup ──────────────────────────────────────────────
+  const [showIdlePopup, setShowIdlePopup] = useState(false);
+  const idleTimerRef = useRef<ReturnType<typeof setTimeout>>();
+  const idleFiredRef = useRef(false);
+
+  const resetIdleTimer = useCallback(() => {
+    clearTimeout(idleTimerRef.current);
+    if (!idleFiredRef.current) {
+      idleTimerRef.current = setTimeout(() => {
+        idleFiredRef.current = true;
+        setShowIdlePopup(true);
+      }, 35000); // 35 seconds of no activity
+    }
+  }, []);
+
+  useEffect(() => {
+    const events = ["mousemove", "keydown", "touchstart", "scroll", "click"];
+    events.forEach(e => window.addEventListener(e, resetIdleTimer, { passive: true }));
+    resetIdleTimer();
+    return () => {
+      clearTimeout(idleTimerRef.current);
+      events.forEach(e => window.removeEventListener(e, resetIdleTimer));
+    };
+  }, [resetIdleTimer]);
+
+  // ─── Welcome-back returning visitor ───────────────────────────────────────
+  const [showWelcomeBack, setShowWelcomeBack] = useState(false);
+  useEffect(() => {
+    const last = localStorage.getItem("edh_last_visit");
+    const now = Date.now();
+    if (last && now - parseInt(last) > 60 * 60 * 1000) {
+      // Been away > 1 hour — show welcome back
+      setTimeout(() => setShowWelcomeBack(true), 2500);
+      setTimeout(() => setShowWelcomeBack(false), 7000);
+    }
+    localStorage.setItem("edh_last_visit", now.toString());
+  }, []);
+
+  // ─── Periodic "someone just claimed" notification ─────────────────────────
+  const claimNames = ["Sarah M.", "Jake T.", "Priya K.", "Lucas B.", "Emma R.", "Diego S."];
+  const claimAmounts = [47, 89, 134, 62, 203, 118, 76, 291];
+  const [claimNotif, setClaimNotif] = useState<{ name: string; amount: number } | null>(null);
+  useEffect(() => {
+    const show = () => {
+      const name   = claimNames[Math.floor(Math.random() * claimNames.length)];
+      const amount = claimAmounts[Math.floor(Math.random() * claimAmounts.length)];
+      setClaimNotif({ name, amount });
+      setTimeout(() => {
+        setClaimNotif(null);
+        setTimeout(show, 15000 + Math.random() * 20000);
+      }, 4500);
+    };
+    const initial = setTimeout(show, 8000 + Math.random() * 6000);
+    return () => clearTimeout(initial);
+  }, []);
 
   const { data: affiliateLinks = [], isLoading, refetch } = useQuery<AffiliateLink[]>({
     queryKey: ["/api/affiliate-links"],
@@ -42,78 +110,55 @@ export default function Home() {
   const filteredAndSortedLinks = affiliateLinks
     .filter(link => {
       const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
-      const matchesSearch = !searchQuery || 
+      const matchesSearch = !searchQuery ||
         link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
         link.category.toLowerCase().includes(searchQuery.toLowerCase());
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {
-      if (sortByClicks) {
-        return (b.clicks || 0) - (a.clicks || 0); // Most clicked first
-      }
-      return 0; // Keep original order when not sorting by clicks
+      if (sortByClicks) return (b.clicks || 0) - (a.clicks || 0);
+      return 0;
     });
 
   const categories = [
-    { id: "all", label: "All Deals", emoji: "" },
-    { id: "hot", label: "Hot Deals", emoji: "🔥" },
-    { id: "tech", label: "Tech & Gadgets", emoji: "📱" },
-    { id: "fashion", label: "Fashion", emoji: "👔" },
-    { id: "health", label: "Health & Fitness", emoji: "💪" },
-    { id: "travel", label: "Travel", emoji: "✈️" },
+    { id: "all",     label: "All Deals",        emoji: "" },
+    { id: "hot",     label: "Hot Deals",        emoji: "🔥" },
+    { id: "tech",    label: "Tech & Gadgets",   emoji: "📱" },
+    { id: "fashion", label: "Fashion",          emoji: "👔" },
+    { id: "health",  label: "Health & Fitness", emoji: "💪" },
+    { id: "travel",  label: "Travel",           emoji: "✈️" },
   ];
 
   const handleNewDropsClick = () => {
     setSortByClicks(true);
     setActiveCategory("all");
     setSearchQuery("");
-    // Scroll to top of products
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleLeaderboardClick = () => {
-    const leaderboardSection = document.querySelector('[data-section="leaderboard"]');
-    leaderboardSection?.scrollIntoView({ behavior: 'smooth' });
+    const el = document.querySelector('[data-section="leaderboard"]');
+    el?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleMyDealsClick = () => {
-    const savingsSection = document.querySelector('[data-section="savings-progress"]');
-    savingsSection?.scrollIntoView({ behavior: 'smooth' });
+    const el = document.querySelector('[data-section="savings-progress"]');
+    el?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const handleRandomLink = () => {
     if (affiliateLinks.length === 0) return;
-    
-    // Get click counts for weighting
-    const linksWithClicks = affiliateLinks.map(link => ({
-      ...link,
-      clicks: link.clicks || 0
-    }));
-    
-    // Sort by clicks (most clicked first)
+    const linksWithClicks = affiliateLinks.map(link => ({ ...link, clicks: link.clicks || 0 }));
     const sortedLinks = linksWithClicks.sort((a, b) => b.clicks - a.clicks);
-    
-    // Create weighted selection with 60% probability for most clicked products
-    const totalWeight = sortedLinks.reduce((sum, link, index) => {
-      // Higher weight for more clicked products (decreasing weight)
-      const weight = index < Math.ceil(sortedLinks.length * 0.6) ? 0.6 : 0.4;
-      return sum + weight;
-    }, 0);
-    
+    const totalWeight = sortedLinks.reduce((sum, _, index) => sum + (index < Math.ceil(sortedLinks.length * 0.6) ? 0.6 : 0.4), 0);
     let random = Math.random() * totalWeight;
-    let selectedLink = sortedLinks[0]; // fallback
-    
+    let selectedLink = sortedLinks[0];
     for (let i = 0; i < sortedLinks.length; i++) {
       const weight = i < Math.ceil(sortedLinks.length * 0.6) ? 0.6 : 0.4;
-      if (random <= weight) {
-        selectedLink = sortedLinks[i];
-        break;
-      }
+      if (random <= weight) { selectedLink = sortedLinks[i]; break; }
       random -= weight;
     }
-    
-    // Open in new tab
     window.open(selectedLink.url, '_blank');
   };
 
@@ -122,21 +167,16 @@ export default function Home() {
     setShowDropdown(false);
   };
 
-  // Handle scroll visibility for dropdown button
   useEffect(() => {
     const handleScroll = () => {
       const scrollY = window.scrollY;
-      const shouldShow = scrollY > 2000; // Show after scrolling down 2000px (about 10 scrolls)
-      
-      // If button should show and wasn't showing before, and hasn't expired, start timer
+      const shouldShow = scrollY > 2000;
       if (shouldShow && !showScrollButton && !hasExpired) {
         setShowScrollButton(true);
         setIsTimerActive(true);
         setTimerCount(5);
       }
-      
-      // If scrolling back to top, reset everything
-      if (scrollY < 100) { // Reset when scrolled near top
+      if (scrollY < 100) {
         setShowScrollButton(false);
         setIsTimerActive(false);
         setTimerCount(5);
@@ -144,20 +184,15 @@ export default function Home() {
         setShowDropdown(false);
       }
     };
-
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, [showScrollButton, hasExpired]);
 
-  // Timer countdown effect
   useEffect(() => {
     if (isTimerActive && timerCount > 0) {
-      const timer = setTimeout(() => {
-        setTimerCount(prev => prev - 1);
-      }, 1000);
+      const timer = setTimeout(() => setTimerCount(prev => prev - 1), 1000);
       return () => clearTimeout(timer);
     } else if (isTimerActive && timerCount === 0) {
-      // Timer finished, hide button permanently until user scrolls to top
       setShowScrollButton(false);
       setIsTimerActive(false);
       setShowDropdown(false);
@@ -165,32 +200,117 @@ export default function Home() {
     }
   }, [isTimerActive, timerCount]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (showDropdown && !(event.target as Element).closest('.dropdown-container')) {
         setShowDropdown(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Category Dropdown Menu - Top Left (Only shows on scroll) */}
+
+      {/* ── EXIT INTENT POPUP ─────────────────────────────────────────── */}
+      {showExitIntent && (
+        <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-8 px-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
+          <div className="exit-intent-popup bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center relative border-4 border-urgency-red">
+            <button onClick={() => setShowExitIntent(false)} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+              <X className="w-5 h-5" />
+            </button>
+            <div className="text-5xl mb-3">⏳</div>
+            <h2 className="text-2xl font-black text-gray-900 mb-2">Wait! Your Deals Are Expiring</h2>
+            <p className="text-gray-600 mb-4 text-sm">
+              You're seconds away from losing access to <strong>today's exclusive prices</strong>. These won't be here when you come back.
+            </p>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-5">
+              <div className="text-red-700 font-bold text-sm">
+                🔥 {Math.floor(Math.random() * 8) + 3} people are about to claim the deals you're looking at
+              </div>
+            </div>
+            <Button
+              onClick={() => setShowExitIntent(false)}
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-xl text-lg cta-heartbeat mb-3"
+            >
+              <Zap className="w-5 h-5 mr-2" />
+              Keep My Deals — Stay
+            </Button>
+            <button onClick={() => setShowExitIntent(false)} className="text-xs text-gray-400 hover:text-gray-600 underline">
+              No thanks, I'll miss out on the savings
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* ── IDLE POPUP ─────────────────────────────────────────────────── */}
+      {showIdlePopup && (
+        <div className="fixed bottom-24 right-4 z-[9998] max-w-xs idle-popup">
+          <div className="bg-white rounded-2xl shadow-2xl border-2 border-amber-400 p-5">
+            <button onClick={() => setShowIdlePopup(false)} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
+              <X className="w-4 h-4" />
+            </button>
+            <div className="flex items-start gap-3">
+              <div className="text-3xl">👋</div>
+              <div>
+                <div className="font-bold text-gray-900 text-sm mb-1">Still here? Don't sleep on this.</div>
+                <div className="text-xs text-gray-600 mb-3">
+                  Prices are live — deals disappear every few minutes. 3 people just grabbed something while you were browsing.
+                </div>
+                <button
+                  onClick={() => {
+                    setShowIdlePopup(false);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                  }}
+                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg w-full hover:opacity-90 transition-opacity"
+                >
+                  ⚡ Show Me Today's Deals
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── WELCOME BACK NOTIFICATION ──────────────────────────────────── */}
+      {showWelcomeBack && (
+        <div className="fixed top-4 right-4 z-[9997] max-w-xs float-notif">
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl shadow-2xl p-4 flex items-center gap-3">
+            <Gift className="w-8 h-8 flex-shrink-0" />
+            <div>
+              <div className="font-bold text-sm">Welcome back! 🎉</div>
+              <div className="text-xs opacity-90">New deals dropped since your last visit</div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── GLOBAL SOCIAL PROOF NOTIFICATION (bottom left) ────────────── */}
+      {claimNotif && (
+        <div className="fixed bottom-6 left-4 z-[9996] max-w-xs float-notif">
+          <div className="bg-white border border-green-200 rounded-xl shadow-lg p-3 flex items-center gap-3">
+            <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
+              {claimNotif.name[0]}
+            </div>
+            <div>
+              <div className="text-xs font-bold text-gray-900">{claimNotif.name} just saved ${claimNotif.amount}!</div>
+              <div className="text-xs text-gray-500 flex items-center gap-1">
+                <Clock className="w-3 h-3" /> Just now • Verified purchase
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Category Dropdown Menu */}
       <div className={`fixed top-4 left-4 z-50 transition-all duration-1000 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
         <div className="relative dropdown-container">
-          {/* Timer indicator */}
           {isTimerActive && (
             <div className="absolute -top-2 -left-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-white text-xs font-bold z-10">
               {timerCount}
             </div>
           )}
-          
           <button
             onClick={() => setShowDropdown(!showDropdown)}
             className="w-8 h-8 bg-white/20 backdrop-blur-md hover:bg-white/30 rounded-full flex items-center justify-center shadow-lg transition-all duration-200 border border-white/30"
@@ -198,7 +318,6 @@ export default function Home() {
           >
             <ChevronDown className="w-4 h-4 text-black" />
           </button>
-          
           {showDropdown && (
             <div className="absolute top-10 left-0 bg-white/10 backdrop-blur-lg rounded-lg shadow-xl border border-white/20 py-2 min-w-48 z-50">
               {categories.map((category) => (
@@ -216,7 +335,7 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Invisible Admin Toggle Button */}
+      {/* Invisible Admin Toggle */}
       <div className="fixed top-4 right-4 z-50">
         <Button
           onClick={() => setShowAdmin(true)}
@@ -231,18 +350,8 @@ export default function Home() {
       <StatsBar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <SearchBar 
-          onSearch={setSearchQuery}
-          links={affiliateLinks}
-        />
-        
-        <CategoryFilter 
-          categories={categories}
-          activeCategory={activeCategory}
-          onCategoryChange={setActiveCategory}
-        />
-        
-
+        <SearchBar onSearch={setSearchQuery} links={affiliateLinks} />
+        <CategoryFilter categories={categories} activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -266,13 +375,11 @@ export default function Home() {
                   Can't find what you're looking for? Let our AI assistant help you!
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-                  <button 
+                  <button
                     onClick={() => {
-                      // Open AI chat with the search query
                       const chatButton = document.querySelector('[data-chat-button]') as HTMLButtonElement;
                       if (chatButton) {
                         chatButton.click();
-                        // Pre-fill the chat with user's search query
                         setTimeout(() => {
                           const chatInput = document.querySelector('[data-chat-input]') as HTMLInputElement;
                           if (chatInput) {
@@ -286,29 +393,17 @@ export default function Home() {
                   >
                     🤖 Ask AI Assistant
                   </button>
-                  <button 
-                    onClick={() => setSearchQuery("")}
-                    className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium"
-                  >
+                  <button onClick={() => setSearchQuery("")} className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
                     Clear Search
                   </button>
                 </div>
-                <p className="text-sm text-gray-500">
-                  Or try a different search term or browse our categories
-                </p>
+                <p className="text-sm text-gray-500">Or try a different search term or browse our categories</p>
               </>
             ) : (
               <>
-                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
-                  No deals available yet
-                </h3>
-                <p className="text-gray-600 mb-8">
-                  Use Creator Mode to add your first affiliate link!
-                </p>
-                <Button 
-                  onClick={() => setShowAdmin(true)}
-                  className="bg-conversion-blue hover:bg-blue-700"
-                >
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">No deals available yet</h3>
+                <p className="text-gray-600 mb-8">Use Creator Mode to add your first affiliate link!</p>
+                <Button onClick={() => setShowAdmin(true)} className="bg-conversion-blue hover:bg-blue-700">
                   Add Your First Deal
                 </Button>
               </>
@@ -324,54 +419,38 @@ export default function Home() {
       </main>
 
       <TrustIndicators />
-      
-      {/* Leaderboard Section - Connected without gap */}
+
       <div className="bg-white pt-0 pb-10" data-section="leaderboard">
         <Leaderboard />
       </div>
-      
-      {/* Hidden Referral System - Bottom section, hard to find */}
+
       <div className="bg-gray-100 py-8 border-t" data-section="savings-progress">
         <div className="max-w-md mx-auto">
-          <h2 className="text-center text-gray-500 text-xs mb-4 uppercase tracking-wider">
-            Elite Access
-          </h2>
+          <h2 className="text-center text-gray-500 text-xs mb-4 uppercase tracking-wider">Elite Access</h2>
           <ReferralSystem />
         </div>
       </div>
-      
-      {/* Live Feed - At very bottom, requires scroll */}
+
       <div className="bg-gray-900 py-16">
         <LiveFeed />
       </div>
-      
-      {/* Mini Navigation - Simple thin links */}
+
       <div className="bg-gray-900 py-4">
         <div className="text-center">
-          <button
-            onClick={handleNewDropsClick}
-            className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline"
-          >
+          <button onClick={handleNewDropsClick} className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline">
             🔥 New Drops
           </button>
           <span className="text-gray-500">|</span>
-          <button
-            onClick={handleLeaderboardClick}
-            className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline"
-          >
+          <button onClick={handleLeaderboardClick} className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline">
             🎁 View Leaderboard
           </button>
           <span className="text-gray-500">|</span>
-          <button
-            onClick={handleMyDealsClick}
-            className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline"
-          >
+          <button onClick={handleMyDealsClick} className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline">
             🛍️ My Deals
           </button>
         </div>
       </div>
-      
-      {/* Random Deal Dice Button - Above Ideas Box */}
+
       <div className="bg-gradient-to-b from-gray-800 to-gray-900 py-8">
         <div className="text-center">
           <button
@@ -384,24 +463,19 @@ export default function Home() {
           <p className="text-white text-sm">Click for a random deal!</p>
         </div>
       </div>
-      
-      {/* User Idea Submission - After Dice Button */}
+
       <div className="bg-gradient-to-b from-gray-800 to-gray-900 py-12">
         <div className="max-w-md mx-auto px-4">
           <IdeaSubmission />
         </div>
       </div>
 
-      <AdminPanel 
+      <AdminPanel
         isOpen={showAdmin}
         onClose={() => setShowAdmin(false)}
-        onSuccess={() => {
-          refetch();
-          setShowAdmin(false);
-        }}
+        onSuccess={() => { refetch(); setShowAdmin(false); }}
       />
-      
-      {/* AI Chatbot */}
+
       <AIChatbot />
     </div>
   );

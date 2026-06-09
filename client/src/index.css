@@ -552,3 +552,125 @@ input, textarea, [contenteditable="true"] {
     background-position: 0% 50%;
   }
 }
+
+/* ===== SUBCONSCIOUS CONVERSION PSYCHOLOGY ANIMATIONS ===== */
+
+/* CTA Heartbeat Pulse - draws eye to button like a heartbeat */
+@keyframes cta-heartbeat {
+  0%, 100% { transform: scale(1); box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
+  14% { transform: scale(1.04); box-shadow: 0 6px 25px rgba(37,99,235,0.7); }
+  28% { transform: scale(1); box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
+  42% { transform: scale(1.03); box-shadow: 0 5px 20px rgba(37,99,235,0.6); }
+  70% { transform: scale(1); box-shadow: 0 4px 15px rgba(37,99,235,0.4); }
+}
+
+.cta-heartbeat {
+  animation: cta-heartbeat 2.4s ease-in-out infinite;
+}
+
+/* Urgency border breathing - keeps urgency elements alive */
+@keyframes urgency-breathe {
+  0%, 100% { border-color: rgba(220,38,38,0.3); box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+  50% { border-color: rgba(220,38,38,0.8); box-shadow: 0 0 12px 4px rgba(220,38,38,0.2); }
+}
+
+.urgency-breathe {
+  animation: urgency-breathe 2s ease-in-out infinite;
+}
+
+/* Trust badge shimmer sweep - makes trust seals feel "active" */
+@keyframes trust-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.trust-shimmer {
+  background: linear-gradient(90deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: trust-shimmer 3s linear infinite;
+}
+
+/* Stock bar drain animation - visual depletion creates panic */
+@keyframes stock-drain {
+  0% { width: 100%; }
+  100% { width: 0%; }
+}
+
+/* Exit intent overlay */
+@keyframes exit-slide-in {
+  0% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.exit-intent-popup {
+  animation: exit-slide-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Idle popup slide up */
+@keyframes idle-popup-in {
+  0% { transform: translateX(120%); opacity: 0; }
+  100% { transform: translateX(0); opacity: 1; }
+}
+
+.idle-popup {
+  animation: idle-popup-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Floating notification bounce */
+@keyframes float-notif {
+  0% { transform: translateY(20px); opacity: 0; }
+  20% { transform: translateY(0); opacity: 1; }
+  80% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-10px); opacity: 0; }
+}
+
+.float-notif {
+  animation: float-notif 4s ease-in-out forwards;
+}
+
+/* Number tick-up animation for live stats */
+@keyframes number-pop {
+  0% { transform: scale(1); color: inherit; }
+  50% { transform: scale(1.3); color: #22c55e; }
+  100% { transform: scale(1); color: inherit; }
+}
+
+.number-pop {
+  animation: number-pop 0.6s ease-out;
+}
+
+/* Scarcity bar pulse when low */
+@keyframes scarcity-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.scarcity-pulse {
+  animation: scarcity-pulse 1s ease-in-out infinite;
+}
+
+/* Card glow on hover - desire amplifier */
+@keyframes card-desire-glow {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37,99,235,0); }
+  50% { box-shadow: 0 0 30px 5px rgba(37,99,235,0.15); }
+}
+
+/* Countdown timer urgency flash when low */
+@keyframes timer-flash {
+  0%, 100% { color: #dc2626; background-color: #fef2f2; }
+  50% { color: #fff; background-color: #dc2626; }
+}
+
+.timer-critical {
+  animation: timer-flash 0.8s ease-in-out infinite;
+}
+
+/* Social proof ticker fade */
+@keyframes proof-fade-in {
+  0% { opacity: 0; transform: translateY(5px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.proof-fade-in {
+  animation: proof-fade-in 0.4s ease-out forwards;
+}
