@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -8,7 +8,7 @@ import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
-import { ChevronDown, Dice6, X, Zap, Clock, Gift } from "lucide-react";
+import { ChevronDown, Dice6, Gift } from "lucide-react";
 
 import Leaderboard from "@/components/leaderboard";
 import ReferralSystem from "@/components/referral-system";
@@ -31,46 +31,6 @@ export default function Home() {
   const [isTimerActive, setIsTimerActive] = useState(false);
   const [hasExpired, setHasExpired] = useState(false);
 
-  // ─── Exit Intent popup ────────────────────────────────────────────────────
-  const [showExitIntent, setShowExitIntent] = useState(false);
-  const exitFiredRef = useRef(false);
-
-  useEffect(() => {
-    const handleMouseLeave = (e: MouseEvent) => {
-      // Fires when cursor approaches top of viewport (about to close tab/address bar)
-      if (e.clientY < 10 && !exitFiredRef.current) {
-        exitFiredRef.current = true;
-        setShowExitIntent(true);
-      }
-    };
-    document.addEventListener("mouseleave", handleMouseLeave);
-    return () => document.removeEventListener("mouseleave", handleMouseLeave);
-  }, []);
-
-  // ─── Idle / Inactivity popup ──────────────────────────────────────────────
-  const [showIdlePopup, setShowIdlePopup] = useState(false);
-  const idleTimerRef = useRef<ReturnType<typeof setTimeout>>();
-  const idleFiredRef = useRef(false);
-
-  const resetIdleTimer = useCallback(() => {
-    clearTimeout(idleTimerRef.current);
-    if (!idleFiredRef.current) {
-      idleTimerRef.current = setTimeout(() => {
-        idleFiredRef.current = true;
-        setShowIdlePopup(true);
-      }, 35000); // 35 seconds of no activity
-    }
-  }, []);
-
-  useEffect(() => {
-    const events = ["mousemove", "keydown", "touchstart", "scroll", "click"];
-    events.forEach(e => window.addEventListener(e, resetIdleTimer, { passive: true }));
-    resetIdleTimer();
-    return () => {
-      clearTimeout(idleTimerRef.current);
-      events.forEach(e => window.removeEventListener(e, resetIdleTimer));
-    };
-  }, [resetIdleTimer]);
 
   // ─── Welcome-back returning visitor ───────────────────────────────────────
   const [showWelcomeBack, setShowWelcomeBack] = useState(false);
@@ -196,65 +156,6 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
 
-      {/* ── EXIT INTENT POPUP ─────────────────────────────────────────── */}
-      {showExitIntent && (
-        <div className="fixed inset-0 z-[9999] flex items-start justify-center pt-8 px-4" style={{ background: 'rgba(0,0,0,0.7)' }}>
-          <div className="exit-intent-popup bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 text-center relative border-4 border-urgency-red">
-            <button onClick={() => setShowExitIntent(false)} className="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
-              <X className="w-5 h-5" />
-            </button>
-            <div className="text-5xl mb-3">⏳</div>
-            <h2 className="text-2xl font-black text-gray-900 mb-2">Wait! Your Deals Are Expiring</h2>
-            <p className="text-gray-600 mb-4 text-sm">
-              You're seconds away from losing access to <strong>today's exclusive prices</strong>. These won't be here when you come back.
-            </p>
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-5">
-              <div className="text-red-700 font-bold text-sm">
-                🔥 {Math.floor(Math.random() * 8) + 3} people are about to claim the deals you're looking at
-              </div>
-            </div>
-            <Button
-              onClick={() => setShowExitIntent(false)}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold py-4 rounded-xl text-lg cta-heartbeat mb-3"
-            >
-              <Zap className="w-5 h-5 mr-2" />
-              Keep My Deals — Stay
-            </Button>
-            <button onClick={() => setShowExitIntent(false)} className="text-xs text-gray-400 hover:text-gray-600 underline">
-              No thanks, I'll miss out on the savings
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* ── IDLE POPUP ─────────────────────────────────────────────────── */}
-      {showIdlePopup && (
-        <div className="fixed bottom-24 right-4 z-[9998] max-w-xs idle-popup">
-          <div className="bg-white rounded-2xl shadow-2xl border-2 border-amber-400 p-5">
-            <button onClick={() => setShowIdlePopup(false)} className="absolute top-2 right-2 text-gray-400 hover:text-gray-600">
-              <X className="w-4 h-4" />
-            </button>
-            <div className="flex items-start gap-3">
-              <div className="text-3xl">👋</div>
-              <div>
-                <div className="font-bold text-gray-900 text-sm mb-1">Still here? Don't sleep on this.</div>
-                <div className="text-xs text-gray-600 mb-3">
-                  Prices are live — deals disappear every few minutes. 3 people just grabbed something while you were browsing.
-                </div>
-                <button
-                  onClick={() => {
-                    setShowIdlePopup(false);
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                  }}
-                  className="bg-gradient-to-r from-blue-600 to-blue-700 text-white text-xs font-bold px-4 py-2 rounded-lg w-full hover:opacity-90 transition-opacity"
-                >
-                  ⚡ Show Me Today's Deals
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ── WELCOME BACK NOTIFICATION ──────────────────────────────────── */}
       {showWelcomeBack && (

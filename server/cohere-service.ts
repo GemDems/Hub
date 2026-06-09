@@ -140,18 +140,23 @@ ${conversationContext}
 User: ${userMessage}
 Assistant:`;
 
-    // Get AI response using Cohere
-    const response = await cohere.generate({
+    // Build chat history for Cohere chat API
+    const chatHistory = conversationHistory.slice(-10).map(msg => ({
+      role: msg.role === 'user' ? 'USER' as const : 'CHATBOT' as const,
+      message: msg.content
+    }));
+
+    // Get AI response using Cohere chat API (required for command-r-plus)
+    const response = await cohere.chat({
       model: "command-r-plus",
-      prompt: fullPrompt,
-      maxTokens: 120, // Ultra-short for direct conversion
-      temperature: 0.8, // Higher creativity for sales psychology
-      k: 0,
-      stopSequences: ["User:"],
-      returnLikelihoods: "NONE"
+      message: userMessage,
+      preamble: systemPrompt,
+      chatHistory,
+      maxTokens: 150,
+      temperature: 0.8,
     });
 
-    const aiResponse = response.generations[0]?.text?.trim() || "I apologize, but I'm having trouble generating a response right now. Please try asking again.";
+    const aiResponse = response.text?.trim() || "I'm having trouble responding right now. Please try again.";
 
     // Analyze the response to extract product recommendations
     let recommendedProduct: AffiliateLink | undefined;
