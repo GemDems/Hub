@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock } from "lucide-react";
+import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock, CheckCircle, XCircle } from "lucide-react";
 import type { InsertAffiliateLink, AffiliateLink, UserIdea } from "@shared/schema";
 
 interface AdminPanelProps {
@@ -255,6 +255,28 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       });
     },
   });
+
+  // Toggle verified badge on a product
+  const toggleVerifyMutation = useMutation({
+    mutationFn: async (id: number) => {
+      return await apiRequest("PUT", `/api/admin/affiliate-links/${id}/verify`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/admin/affiliate-links"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/affiliate-links"] });
+      toast({
+        title: "Verified Badge Updated",
+        description: "Product verification status changed",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to update verification",
+        variant: "destructive",
+      });
+    },
+  });
   
   const ADMIN_PASSWORD = "9f$81r@V7#iwant";
   
@@ -436,14 +458,33 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               </>
             )}
             {!isDraft && (
-              <Button
-                size="sm"
-                variant="outline"
-                onClick={() => setSchedulingProduct({ id: product.id, title: product.title, type: 'delete' })}
-              >
-                <Clock className="w-4 h-4 mr-1" />
-                Schedule Delete
-              </Button>
+              <>
+                {/* Verify / Unverify toggle — adds ultimate trust badge to live product */}
+                <Button
+                  size="sm"
+                  variant={product.isVerified ? "outline" : "default"}
+                  onClick={() => toggleVerifyMutation.mutate(product.id)}
+                  disabled={toggleVerifyMutation.isPending}
+                  className={product.isVerified
+                    ? "border-amber-500 text-amber-700 hover:bg-amber-50"
+                    : "bg-gradient-to-r from-blue-700 to-blue-900 text-white hover:from-blue-800 hover:to-blue-950"
+                  }
+                  title={product.isVerified ? "Remove verified badge" : "Add verified badge to this product"}
+                >
+                  {product.isVerified
+                    ? <><XCircle className="w-4 h-4 mr-1" /> Unverify</>
+                    : <><CheckCircle className="w-4 h-4 mr-1" /> Verify</>
+                  }
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setSchedulingProduct({ id: product.id, title: product.title, type: 'delete' })}
+                >
+                  <Clock className="w-4 h-4 mr-1" />
+                  Schedule Delete
+                </Button>
+              </>
             )}
             <Button
               size="sm"

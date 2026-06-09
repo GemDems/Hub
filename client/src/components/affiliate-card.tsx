@@ -202,14 +202,37 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         ) : null}
 
-        {/* Verified Source Badge */}
+        {/* Ultimate Verified Source Badge */}
         {link.isVerified ? (
           <div className={`absolute ${isElitePick ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-20`}>
-            <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white text-xs font-bold text-center py-1 flex items-center justify-center">
-              <div className="w-3 h-3 bg-white rounded-full mr-1 flex items-center justify-center">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-              </div>
-              🔒 Verified Source Badge (Amazon/Walmart/etc)
+            <div className="relative overflow-hidden flex items-center justify-center py-1.5 gap-2" style={{
+              background: "linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 60%, #0f172a 100%)",
+              boxShadow: "0 2px 12px rgba(30,58,138,0.7), inset 0 1px 0 rgba(255,255,255,0.15)"
+            }}>
+              {/* Shimmer sweep */}
+              <div className="absolute inset-0 pointer-events-none" style={{
+                background: "linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.12) 50%, transparent 80%)",
+                backgroundSize: "200% 100%",
+                animation: "trust-shimmer 2.5s linear infinite"
+              }} />
+              {/* Shield icon */}
+              <svg width="13" height="14" viewBox="0 0 13 14" fill="none" className="flex-shrink-0 relative z-10">
+                <path d="M6.5 0.5L1 2.5V7C1 9.985 3.44 12.743 6.5 13.5C9.56 12.743 12 9.985 12 7V2.5L6.5 0.5Z" fill="#22d3ee" fillOpacity="0.9" stroke="#7dd3fc" strokeWidth="0.5"/>
+                <path d="M4.5 7L6 8.5L9 5.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              <span className="text-xs font-black tracking-wide relative z-10" style={{
+                color: "#e0f2fe",
+                textShadow: "0 0 8px rgba(125,211,252,0.8), 0 1px 2px rgba(0,0,0,0.5)",
+                letterSpacing: "0.06em"
+              }}>
+                VERIFIED & SECURED — ELITE CERTIFIED ✦ TRUSTED SOURCE
+              </span>
+              {/* Lock icon */}
+              <svg width="11" height="12" viewBox="0 0 11 12" fill="none" className="flex-shrink-0 relative z-10">
+                <rect x="1" y="5" width="9" height="7" rx="1.5" fill="#22d3ee" fillOpacity="0.8" stroke="#7dd3fc" strokeWidth="0.5"/>
+                <path d="M3 5V3.5C3 2.12 4.12 1 5.5 1C6.88 1 8 2.12 8 3.5V5" stroke="#7dd3fc" strokeWidth="1.2" strokeLinecap="round"/>
+                <circle cx="5.5" cy="8.5" r="1" fill="white"/>
+              </svg>
             </div>
           </div>
         ) : null}

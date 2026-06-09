@@ -269,6 +269,21 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
+  // Toggle verified status on a product
+  app.put("/api/admin/affiliate-links/:id/verify", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const link = await storage.getAffiliateLinkById(id);
+      if (!link) return res.status(404).json({ message: "Product not found" });
+      const newVerified = link.isVerified ? 0 : 1;
+      const updated = await storage.updateAffiliateLink(id, { isVerified: newVerified } as any);
+      res.json(updated);
+    } catch (error) {
+      console.error("Error toggling verified status:", error);
+      res.status(500).json({ message: "Failed to update verified status" });
+    }
+  });
+
   // Create new affiliate link
   app.post("/api/affiliate-links", async (req, res) => {
     try {
