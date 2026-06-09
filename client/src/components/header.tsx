@@ -11,21 +11,6 @@ export default function Header() {
   const [viewers, setViewers] = useState(1035);
   const [orders, setOrders] = useState(708);
 
-  // Countdown timer — resets every 2h when done
-  const [timeLeft, setTimeLeft] = useState(1 * 3600 + 47 * 60 + 33);
-  useEffect(() => {
-    const iv = setInterval(() => {
-      setTimeLeft(t => {
-        if (t <= 0) return 2 * 3600;
-        return t - 1;
-      });
-    }, 1000);
-    return () => clearInterval(iv);
-  }, []);
-  const hrs = String(Math.floor(timeLeft / 3600)).padStart(2, "0");
-  const mins = String(Math.floor((timeLeft % 3600) / 60)).padStart(2, "0");
-  const secs = String(timeLeft % 60).padStart(2, "0");
-
   // Live viewers/orders drift
   useEffect(() => {
     const iv = setInterval(() => {
@@ -83,35 +68,6 @@ export default function Header() {
           <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(96,165,250,0.1)", borderColor: "rgba(96,165,250,0.3)", color: "#60a5fa" }}>
             Trusted by thousands
           </span>
-        </div>
-      </div>
-
-      {/* Urgency countdown */}
-      <div className="max-w-xl mx-auto mx-4 mt-7 mb-2 px-4">
-        <div className="rounded-xl px-5 py-4 flex items-center justify-center gap-5 flex-wrap"
-          style={{ background: "rgba(220,38,38,0.12)", border: "1px solid rgba(220,38,38,0.4)" }}>
-          <div className="flex items-center gap-3">
-            <div className="w-2.5 h-2.5 rounded-full flex-shrink-0 animate-pulse" style={{ background: "#ef4444" }}></div>
-            <span className="text-sm font-semibold" style={{ color: "#fca5a5" }}>
-              <strong className="text-white text-base">Limited access — offer expires in:</strong>
-            </span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <div className="rounded-md px-3 py-1.5 text-center" style={{ background: "#1e0a0a", border: "1px solid rgba(220,38,38,0.5)" }}>
-              <span className="block text-2xl font-bold leading-none" style={{ color: "#f87171" }}>{hrs}</span>
-              <span className="block text-[9px] tracking-widest mt-0.5" style={{ color: "#9ca3af" }}>HRS</span>
-            </div>
-            <span className="text-xl font-bold" style={{ color: "#ef4444" }}>:</span>
-            <div className="rounded-md px-3 py-1.5 text-center" style={{ background: "#1e0a0a", border: "1px solid rgba(220,38,38,0.5)" }}>
-              <span className="block text-2xl font-bold leading-none" style={{ color: "#f87171" }}>{mins}</span>
-              <span className="block text-[9px] tracking-widest mt-0.5" style={{ color: "#9ca3af" }}>MIN</span>
-            </div>
-            <span className="text-xl font-bold" style={{ color: "#ef4444" }}>:</span>
-            <div className="rounded-md px-3 py-1.5 text-center" style={{ background: "#1e0a0a", border: "1px solid rgba(220,38,38,0.5)" }}>
-              <span className="block text-2xl font-bold leading-none" style={{ color: "#f87171" }}>{secs}</span>
-              <span className="block text-[9px] tracking-widest mt-0.5" style={{ color: "#9ca3af" }}>SEC</span>
-            </div>
-          </div>
         </div>
       </div>
 
