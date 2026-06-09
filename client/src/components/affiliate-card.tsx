@@ -202,44 +202,9 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         ) : null}
 
-        {/* Ultimate Verified Source Badge */}
-        {link.isVerified ? (
-          <div className={`absolute ${isElitePick ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-20`}>
-            <div className="relative overflow-hidden flex items-center justify-center py-1.5 gap-2" style={{
-              background: "linear-gradient(135deg, #0f172a 0%, #1e3a8a 40%, #1d4ed8 60%, #0f172a 100%)",
-              boxShadow: "0 2px 12px rgba(30,58,138,0.7), inset 0 1px 0 rgba(255,255,255,0.15)"
-            }}>
-              {/* Shimmer sweep */}
-              <div className="absolute inset-0 pointer-events-none" style={{
-                background: "linear-gradient(90deg, transparent 20%, rgba(255,255,255,0.12) 50%, transparent 80%)",
-                backgroundSize: "200% 100%",
-                animation: "trust-shimmer 2.5s linear infinite"
-              }} />
-              {/* Shield icon */}
-              <svg width="13" height="14" viewBox="0 0 13 14" fill="none" className="flex-shrink-0 relative z-10">
-                <path d="M6.5 0.5L1 2.5V7C1 9.985 3.44 12.743 6.5 13.5C9.56 12.743 12 9.985 12 7V2.5L6.5 0.5Z" fill="#22d3ee" fillOpacity="0.9" stroke="#7dd3fc" strokeWidth="0.5"/>
-                <path d="M4.5 7L6 8.5L9 5.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span className="text-xs font-black tracking-wide relative z-10" style={{
-                color: "#e0f2fe",
-                textShadow: "0 0 8px rgba(125,211,252,0.8), 0 1px 2px rgba(0,0,0,0.5)",
-                letterSpacing: "0.06em"
-              }}>
-                VERIFIED & SECURED — ELITE CERTIFIED ✦ TRUSTED SOURCE
-              </span>
-              {/* Lock icon */}
-              <svg width="11" height="12" viewBox="0 0 11 12" fill="none" className="flex-shrink-0 relative z-10">
-                <rect x="1" y="5" width="9" height="7" rx="1.5" fill="#22d3ee" fillOpacity="0.8" stroke="#7dd3fc" strokeWidth="0.5"/>
-                <path d="M3 5V3.5C3 2.12 4.12 1 5.5 1C6.88 1 8 2.12 8 3.5V5" stroke="#7dd3fc" strokeWidth="1.2" strokeLinecap="round"/>
-                <circle cx="5.5" cy="8.5" r="1" fill="white"/>
-              </svg>
-            </div>
-          </div>
-        ) : null}
-
         {/* Stock Countdown Alert */}
         {stock > 0 ? (
-          <div className={`absolute ${isElitePick && link.isVerified ? 'top-12' : isElitePick || link.isVerified ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-10`}>
+          <div className={`absolute ${isElitePick ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-10`}>
             <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
               <AlertCircle className="w-3 h-3 inline mr-1" />
               ONLY {stock} LEFT IN STOCK
@@ -247,7 +212,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         ) : null}
 
-        <div className={`relative ${isElitePick && link.isVerified ? 'mt-12' : isElitePick || link.isVerified ? 'mt-8' : 'mt-6'}`}>
+        <div className={`relative ${isElitePick ? 'mt-8' : 'mt-6'}`}>
           {/* Clean Badges */}
           <div className="absolute top-3 left-3 z-10">
             <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
@@ -440,6 +405,25 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
               </div>
             ) : null}
           </div>
+
+          {/* Verified source mini badge — bottom of card, only when verified */}
+          {link.isVerified ? (
+            <div className="mt-3 flex items-center justify-center gap-1.5">
+              {/* Blue shield with checkmark — matches screenshot reference */}
+              <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+                <path d="M9 1L2 4V10C2 14.418 5.134 18.522 9 19.5C12.866 18.522 16 14.418 16 10V4L9 1Z"
+                  fill="url(#shield-gradient)" />
+                <path d="M6 10L8 12.5L12.5 7.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <defs>
+                  <linearGradient id="shield-gradient" x1="9" y1="1" x2="9" y2="19.5" gradientUnits="userSpaceOnUse">
+                    <stop offset="0%" stopColor="#1d4ed8"/>
+                    <stop offset="100%" stopColor="#1e3a8a"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+              <span className="text-xs font-semibold text-blue-800 tracking-wide">Verified Source</span>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
 
