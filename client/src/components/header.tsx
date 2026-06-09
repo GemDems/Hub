@@ -85,14 +85,6 @@ export default function Header() {
         />
       ))}
 
-      {/* Flash Sale Banner — static, clean, with gold pirate sword decorations */}
-      <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-center py-2 font-bold text-sm relative z-10">
-        <span className="text-yellow-300 mr-2 text-base">⚔️</span>
-        FLASH SALE: 70% OFF ENDS IN 3 HOURS
-        <span className="text-yellow-300 ml-2 text-base">⚔️</span>
-        <span className="text-yellow-400 ml-1 text-xs">⚔</span>
-      </div>
-
       {/* Rotating urgency sub-message */}
       <div className="bg-amber-50 border-b border-amber-200 text-amber-800 text-center py-1 text-xs font-medium relative z-10 transition-all duration-500">
         <span key={urgencyIdx} className="proof-fade-in">{urgencyMessages[urgencyIdx]}</span>
