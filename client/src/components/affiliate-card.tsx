@@ -400,7 +400,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
               </div>
               {/* 3 certification chips */}
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border border-t-[#ffffff00] border-r-[#ffffff00] border-b-[#ffffff00] border-l-[#ffffff00]"
                   style={{ background: "linear-gradient(135deg,#dcfce7,#bbf7d0)", borderColor: "#16a34a", color: "#15803d" }}>
                   ✦ Guaranteed
                 </span>
@@ -417,7 +417,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           ) : null}
         </CardContent>
       </Card>
-
       {/* Delete Dialog */}
       <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent className="max-w-md" aria-describedby="delete-description">
