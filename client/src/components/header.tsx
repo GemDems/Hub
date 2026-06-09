@@ -67,7 +67,6 @@ export default function Header() {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 relative overflow-hidden">
-
       {/* Randomly placed dark blue tint blobs — subconscious brand color anchoring */}
       {blueTints.map((tint, i) => (
         <div
@@ -84,12 +83,10 @@ export default function Header() {
           }}
         />
       ))}
-
       {/* Rotating urgency sub-message */}
-      <div className="bg-amber-50 border-b border-amber-200 text-amber-800 text-center py-1 text-xs font-medium relative z-10 transition-all duration-500">
+      <div className="bg-amber-50 border-b border-amber-200 text-amber-800 text-center py-1 text-xs font-medium relative z-10 transition-all duration-500 opacity-[0.01]">
         <span key={urgencyIdx} className="proof-fade-in">{urgencyMessages[urgencyIdx]}</span>
       </div>
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="text-center">
           <h1 className="text-5xl font-bold bg-gradient-to-r from-blue-900 via-blue-700 to-blue-900 bg-clip-text text-transparent mb-3">
