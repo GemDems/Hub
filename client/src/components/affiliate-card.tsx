@@ -408,20 +408,37 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
           {/* Verified source mini badge — bottom of card, only when verified */}
           {link.isVerified ? (
-            <div className="mt-3 flex items-center justify-center gap-1.5">
-              {/* Blue shield with checkmark — matches screenshot reference */}
-              <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
-                <path d="M9 1L2 4V10C2 14.418 5.134 18.522 9 19.5C12.866 18.522 16 14.418 16 10V4L9 1Z"
-                  fill="url(#shield-gradient)" />
-                <path d="M6 10L8 12.5L12.5 7.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                <defs>
-                  <linearGradient id="shield-gradient" x1="9" y1="1" x2="9" y2="19.5" gradientUnits="userSpaceOnUse">
-                    <stop offset="0%" stopColor="#1d4ed8"/>
-                    <stop offset="100%" stopColor="#1e3a8a"/>
-                  </linearGradient>
-                </defs>
-              </svg>
-              <span className="text-xs font-semibold text-blue-800 tracking-wide">Verified Source</span>
+            <div className="mt-3 space-y-2">
+              {/* Shield + label row */}
+              <div className="flex items-center justify-center gap-1.5">
+                <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+                  <path d="M9 1L2 4V10C2 14.418 5.134 18.522 9 19.5C12.866 18.522 16 14.418 16 10V4L9 1Z"
+                    fill="url(#shield-gradient)" />
+                  <path d="M6 10L8 12.5L12.5 7.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                  <defs>
+                    <linearGradient id="shield-gradient" x1="9" y1="1" x2="9" y2="19.5" gradientUnits="userSpaceOnUse">
+                      <stop offset="0%" stopColor="#1d4ed8"/>
+                      <stop offset="100%" stopColor="#1e3a8a"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+                <span className="text-xs font-semibold text-blue-800 tracking-wide">Verified Source</span>
+              </div>
+              {/* 3 certification chips */}
+              <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                  style={{ background: "linear-gradient(135deg,#dcfce7,#bbf7d0)", borderColor: "#16a34a", color: "#15803d" }}>
+                  ✦ Guaranteed
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                  style={{ background: "linear-gradient(135deg,#fef9c3,#fde68a)", borderColor: "#ca8a04", color: "#92400e" }}>
+                  ⚡ Elite Certified
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                  style={{ background: "linear-gradient(135deg,#ede9fe,#ddd6fe)", borderColor: "#7c3aed", color: "#5b21b6" }}>
+                  🔒 Risk-Free Assured
+                </span>
+              </div>
             </div>
           ) : null}
         </CardContent>
