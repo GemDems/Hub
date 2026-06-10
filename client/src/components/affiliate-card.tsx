@@ -144,7 +144,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       (window as any).updateSavingsProgress(amount);
     }
     trackClickMutation.mutate();
-    window.location.href = link.url;
+    window.open(link.url, '_blank');
   };
 
   const allImages = link.imageUrls && link.imageUrls.length > 0
