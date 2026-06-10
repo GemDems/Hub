@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface LiveStats {
   viewers: number;
@@ -6,10 +6,34 @@ interface LiveStats {
   timestamp: number;
 }
 
+const ALL_REVIEWS = [
+  { text: `"Saved $340 on my first order. Was skeptical at first but this is the real deal — everything arrived exactly as described."`, author: "tyler", badge: "Verified Buyer" },
+  { text: `"Best marketplace I've used. The curation is insane — every deal is actually worth it. My friends all joined after I told them."`, author: "brittany", badge: "Member since 2023" },
+  { text: `"Legit saved over $1,200 this year. The security and authenticity checks give me total peace of mind. 10/10."`, author: "Nathan", badge: "Elite Member" },
+  { text: `"I don't usually leave reviews but this place genuinely surprised me. Got a $200 item for $58. No catches."`, author: "ashley", badge: "Verified Buyer" },
+  { text: `"Scored noise-cancelling headphones for basically nothing. My coworkers keep asking where I got them lol."`, author: "derek", badge: "Member since 2024" },
+  { text: `"Thought it was too good to be true. It's not. Third order and everything's been perfect."`, author: "Kayla", badge: "Verified Buyer" },
+  { text: `"The AI assistant helped me find exactly what I needed in like 30 seconds. Low-key the best feature."`, author: "mike", badge: "Elite Member" },
+  { text: `"Got my whole Christmas shopping done for half price. Everyone was asking where I found this stuff."`, author: "sarah", badge: "Member since 2023" },
+  { text: `"Wasn't sure about signing up but the guarantee made me feel safe. Glad I did — absolute steal."`, author: "jake", badge: "Verified Buyer" },
+  { text: `"Used to spend hours looking for deals. This just shows me the good ones. My time is worth something."`, author: "amanda", badge: "Member since 2024" },
+  { text: `"Omar vouched for this and now I'm vouching for it. Saved $80 my first week."`, author: "chris", badge: "Verified Buyer" },
+  { text: `"Finally a marketplace that doesn't feel sketchy. Everything is legit and the prices are wild."`, author: "Omar", badge: "Elite Member" },
+  { text: `"Bought gym equipment at 60% off. Quality is exactly as listed. Zero complaints."`, author: "jessica", badge: "Member since 2024" },
+  { text: `"My boyfriend sent me the link and I've been hooked since. Found stuff I didn't even know I needed."`, author: "Megan", badge: "Verified Buyer" },
+  { text: `"Three orders in, three wins. This thing is consistent which is rare."`, author: "ryan", badge: "Elite Member" },
+];
+
 export default function Header() {
   const [liveStats, setLiveStats] = useState<LiveStats>({ viewers: 1035, hourlyBuyers: 708, timestamp: Date.now() });
   const [viewers, setViewers] = useState(1035);
   const [orders, setOrders] = useState(708);
+  const [popupReview, setPopupReview] = useState<typeof ALL_REVIEWS[0] | null>(null);
+  const [popupVisible, setPopupVisible] = useState(false);
+  const reviewsRef = useRef<HTMLDivElement>(null);
+  const popupIndexRef = useRef(3);
+  const popupTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cyclingRef = useRef(false);
 
   useEffect(() => {
     const iv = setInterval(() => {
@@ -34,6 +58,49 @@ export default function Header() {
     const iv = setInterval(fetch_, 8000);
     return () => clearInterval(iv);
   }, []);
+
+  const showNextPopup = () => {
+    const idx = popupIndexRef.current % ALL_REVIEWS.length;
+    popupIndexRef.current = idx + 1;
+    setPopupReview(ALL_REVIEWS[idx]);
+    setPopupVisible(true);
+
+    if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+    popupTimerRef.current = setTimeout(() => {
+      setPopupVisible(false);
+      popupTimerRef.current = setTimeout(() => {
+        if (cyclingRef.current) showNextPopup();
+      }, 700);
+    }, 4000);
+  };
+
+  useEffect(() => {
+    const el = reviewsRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !cyclingRef.current) {
+          cyclingRef.current = true;
+          showNextPopup();
+        } else if (!entry.isIntersecting) {
+          cyclingRef.current = false;
+          setPopupVisible(false);
+          if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    observer.observe(el);
+    return () => {
+      observer.disconnect();
+      cyclingRef.current = false;
+      if (popupTimerRef.current) clearTimeout(popupTimerRef.current);
+    };
+  }, []);
+
+  const displayedReviews = ALL_REVIEWS.slice(0, 3);
 
   return (
     <header style={{ background: "#0d0f1a" }} className="w-full overflow-hidden">
@@ -138,17 +205,13 @@ export default function Header() {
         </div>
       </div>
       {/* Reviews */}
-      <div className="max-w-2xl mx-auto px-4 mt-5 pb-8">
+      <div ref={reviewsRef} className="max-w-2xl mx-auto px-4 mt-5 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          {[
-            { text: `"Saved $340 on my first order. I was skeptical but this is the real deal — everything arrived exactly as described."`, author: "James T. — Verified Buyer" },
-            { text: `"Best marketplace I've used. The curation is insane — every deal is actually worth it. My friends all joined after I told them."`, author: "Priya M. — Member since 2024" },
-            { text: `"Legit saved over $1,200 this year. The security and authenticity checks give me total peace of mind. 10/10."`, author: "Marcus R. — Elite Member" },
-          ].map((r) => (
+          {displayedReviews.map((r) => (
             <div key={r.author} className="rounded-xl p-4" style={{ background: "#151929", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div className="text-xs mb-1.5" style={{ color: "#fbbf24" }}>★★★★★</div>
               <div className="text-xs leading-relaxed mb-2" style={{ color: "#d1d5db" }}>{r.text}</div>
-              <div className="text-xs font-medium" style={{ color: "#6b7280" }}>{r.author}</div>
+              <div className="text-xs font-medium" style={{ color: "#6b7280" }}>{r.author} — {r.badge}</div>
             </div>
           ))}
         </div>
@@ -157,6 +220,60 @@ export default function Header() {
       <div className="text-center py-3 text-xs" style={{ background: "#0a0c14", borderTop: "1px solid rgba(255,255,255,0.05)", color: "#4b5563" }}>
         <span style={{ color: "#22c55e" }}>✓</span> Every Deal Verified &nbsp;•&nbsp; No Fake Offers &nbsp;•&nbsp; Secure Checkout &nbsp;•&nbsp; 24/7 Support
       </div>
+
+      {/* Scroll-triggered review popup */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: popupVisible ? "24px" : "-160px",
+          left: "50%",
+          transform: "translateX(-50%)",
+          zIndex: 9999,
+          transition: "bottom 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          width: "min(92vw, 380px)",
+          pointerEvents: popupVisible ? "auto" : "none",
+        }}
+      >
+        {popupReview && (
+          <div
+            className="rounded-2xl px-5 py-4 shadow-2xl"
+            style={{
+              background: "#1a1d2e",
+              border: "1px solid rgba(124,58,237,0.35)",
+              boxShadow: "0 8px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(124,58,237,0.15)",
+            }}
+          >
+            <div className="flex items-start gap-3">
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0"
+                style={{ background: "linear-gradient(135deg,#7c3aed,#4f46e5)", color: "#fff" }}
+              >
+                {popupReview.author[0].toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-xs font-semibold" style={{ color: "#e5e7eb" }}>{popupReview.author}</span>
+                  <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "rgba(34,197,94,0.12)", color: "#4ade80", border: "1px solid rgba(34,197,94,0.2)" }}>
+                    {popupReview.badge}
+                  </span>
+                </div>
+                <div className="text-xs mb-1" style={{ color: "#fbbf24" }}>★★★★★</div>
+                <div className="text-xs leading-relaxed" style={{ color: "#9ca3af" }}>
+                  {popupReview.text.length > 100 ? popupReview.text.slice(0, 97) + '..."' : popupReview.text}
+                </div>
+              </div>
+              <button
+                onClick={() => setPopupVisible(false)}
+                className="flex-shrink-0 text-xs ml-1"
+                style={{ color: "#4b5563", background: "none", border: "none", cursor: "pointer", lineHeight: 1 }}
+              >
+                ✕
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
       <style>{`
         @keyframes ctapulse {
           0%,100% { box-shadow: 0 0 0 0 rgba(124,58,237,0.5); }
