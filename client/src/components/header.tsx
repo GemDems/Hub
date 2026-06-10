@@ -8,21 +8,21 @@ interface LiveStats {
 }
 
 const ALL_REVIEWS = [
-  { text: `"Saved $340 on my first order. Was skeptical at first but this is the real deal — everything arrived exactly as described."`, author: "tyler", badge: "Verified Buyer" },
-  { text: `"Best marketplace I've used. The curation is insane — every deal is actually worth it. My friends all joined after I told them."`, author: "brittany", badge: "Member since 2023" },
+  { text: `"Saved $340 on my first order. was skeptical at first but this is the real deal, everything arrived exactly as described."`, author: "tyler", badge: "Verified Buyer" },
+  { text: `"Best marketplace ive used. the curation is insane every deal is actually worth it. my friends all joined after I told them."`, author: "brittany", badge: "Member since 2023" },
   { text: `"Legit saved over $1,200 this year. The security and authenticity checks give me total peace of mind. 10/10."`, author: "nathan", badge: "Elite Member" },
-  { text: `"I don't usually leave reviews but this place genuinely surprised me. Got a $200 item for $58. No catches."`, author: "ashley", badge: "Verified Buyer" },
-  { text: `"Scored noise-cancelling headphones for basically nothing. My coworkers keep asking where I got them lol."`, author: "derek", badge: "Member since 2024" },
-  { text: `"Thought it was too good to be true. It's not. Third order and everything's been perfect."`, author: "kayla", badge: "Verified Buyer" },
-  { text: `"The AI assistant helped me find exactly what I needed in like 30 seconds. Low-key the best feature."`, author: "mike", badge: "Elite Member" },
+  { text: `"I dont usually leave reviews but this place genuinely surprised me. Got a $200 item for $58. no catches at all."`, author: "ashley", badge: "Verified Buyer" },
+  { text: `"Scored noise-cancelling headphones for basically nothing. my coworkers keep asking where I got them lol."`, author: "derek", badge: "Member since 2024" },
+  { text: `"Thought it was too good to be true. its not. Third order and everythings been perfect."`, author: "kayla", badge: "Verified Buyer" },
+  { text: `"The AI assistant helped me find exactly what I needed in like 30 seconds. honestly the best feature on here."`, author: "mike", badge: "Elite Member" },
   { text: `"Got my whole Christmas shopping done for half price. Everyone was asking where I found this stuff."`, author: "sarah", badge: "Member since 2023" },
-  { text: `"Wasn't sure about signing up but the guarantee made me feel safe. Glad I did — absolute steal."`, author: "jake", badge: "Verified Buyer" },
-  { text: `"Used to spend hours looking for deals. This just shows me the good ones. My time is worth something."`, author: "amanda", badge: "Member since 2024" },
-  { text: `"Omar vouched for this and now I'm vouching for it. Saved $80 my first week."`, author: "chris", badge: "Verified Buyer" },
+  { text: `"Wasnt sure about signing up but the guarantee made me feel safe. glad I did, absolute steal."`, author: "jake", badge: "Verified Buyer" },
+  { text: `"Used to spend hours looking for deals. This just shows me the good ones. my time is worth something."`, author: "amanda", badge: "Member since 2024" },
+  { text: `"Omar vouched for this and now im vouching for it. Saved $80 my first week alone."`, author: "chris", badge: "Verified Buyer" },
   { text: `"Finally a marketplace that doesn't feel sketchy. Everything is legit and the prices are wild."`, author: "omar", badge: "Elite Member" },
-  { text: `"Bought gym equipment at 60% off. Quality is exactly as listed. Zero complaints."`, author: "jessica", badge: "Member since 2024" },
-  { text: `"My boyfriend sent me the link and I've been hooked since. Found stuff I didn't even know I needed."`, author: "megan", badge: "Verified Buyer" },
-  { text: `"Three orders in, three wins. This thing is consistent which is rare."`, author: "ryan", badge: "Elite Member" },
+  { text: `"Bought gym equipment at 60% off. quality is exactly as listed. Zero complaints."`, author: "jessica", badge: "Member since 2024" },
+  { text: `"My boyfriend sent me the link and ive been hooked since. Found stuff I didnt even know I needed."`, author: "megan", badge: "Verified Buyer" },
+  { text: `"Three orders in, three wins. this thing is consistent which is rare."`, author: "ryan", badge: "Elite Member" },
 ];
 
 interface HeaderProps {
