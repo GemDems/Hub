@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 
 interface LiveStats {
   viewers: number;
@@ -116,69 +116,11 @@ export default function Header() {
     return () => clearInterval(iv);
   }, []);
 
-  const [topQuery, setTopQuery] = useState("");
-
-  const handleTopSearch = () => {
-    if (!topQuery.trim()) return;
-    const input = document.querySelector('[data-chat-input]') as HTMLInputElement;
-    const btn = document.querySelector('[data-chat-button]') as HTMLElement;
-    if (input && btn) {
-      input.value = topQuery;
-      input.dispatchEvent(new Event("input", { bubbles: true }));
-      btn.click();
-    } else {
-      const mainInput = document.querySelector('input[placeholder="Search for deals..."]') as HTMLInputElement;
-      if (mainInput) {
-        mainInput.value = topQuery;
-        mainInput.dispatchEvent(new Event("input", { bubbles: true }));
-        mainInput.dispatchEvent(new KeyboardEvent("keypress", { key: "Enter", bubbles: true }));
-      }
-    }
-  };
-
   return (
     <header style={{ background: "#0d0f1a" }} className="w-full overflow-hidden">
-      {/* Flash sale ticker — untouched */}
-      <div className="relative">
-        <div style={{ background: "linear-gradient(90deg,#e63946,#9b2dca)" }} className="w-full py-2.5 text-center text-xs font-semibold tracking-widest text-white opacity-[0.01]">
-          ⚡ FLASH SALE ENDING SOON — {viewers.toLocaleString()} MEMBERS ACTIVE TODAY &nbsp;|&nbsp; SPOTS FILLING FAST ⚡
-        </div>
-        {/* Conversion search bar overlay */}
-        <div
-          className="absolute inset-0 flex items-center justify-center px-3"
-          style={{ opacity: 0.93 }}
-        >
-          <div className="flex items-center w-full max-w-2xl rounded-full overflow-hidden"
-            style={{
-              background: "linear-gradient(135deg,#1a0533,#0d1a3a)",
-              border: "1.5px solid rgba(124,58,237,0.55)",
-              boxShadow: "0 0 18px rgba(124,58,237,0.25)",
-            }}
-          >
-            <span className="pl-4 text-sm" style={{ color: "#a78bfa" }}>🔥</span>
-            <input
-              type="text"
-              value={topQuery}
-              onChange={e => setTopQuery(e.target.value)}
-              onKeyDown={e => e.key === "Enter" && handleTopSearch()}
-              placeholder="Find your next deal — type anything..."
-              className="flex-1 bg-transparent outline-none text-xs font-medium px-3 py-2.5"
-              style={{ color: "#f3f4f6", caretColor: "#a78bfa" }}
-            />
-            <button
-              onClick={handleTopSearch}
-              className="px-5 py-2.5 text-xs font-bold text-white flex-shrink-0 transition-opacity hover:opacity-90"
-              style={{
-                background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
-                border: "none",
-                cursor: "pointer",
-                letterSpacing: "0.05em",
-              }}
-            >
-              FIND DEALS →
-            </button>
-          </div>
-        </div>
+      {/* Flash sale ticker */}
+      <div style={{ background: "linear-gradient(90deg,#e63946,#9b2dca)" }} className="w-full py-2.5 text-center text-xs font-semibold tracking-widest text-white opacity-[0.01]">
+        ⚡ FLASH SALE ENDING SOON — {viewers.toLocaleString()} MEMBERS ACTIVE TODAY &nbsp;|&nbsp; SPOTS FILLING FAST ⚡
       </div>
       {/* Hero */}
       <div className="text-center pt-10 pb-2 px-4">
