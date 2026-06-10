@@ -134,11 +134,12 @@ export default function Header({ onSearch }: HeaderProps) {
           className="max-w-2xl mx-auto flex items-center gap-2 rounded-2xl px-4 py-2.5 bg-[#0d0f1a]"
           style={{
             opacity: 0.93,
-            background: "#ffffff",
+            background: "#0d0f1a",
             boxShadow: "0 4px 28px rgba(0,0,0,0.45)",
+            border: "1px solid rgba(255,255,255,0.1)",
           }}
         >
-          <Search className="w-5 h-5 flex-shrink-0" style={{ color: "#9ca3af" }} />
+          <Search className="w-5 h-5 flex-shrink-0" style={{ color: "#6b7280" }} />
           <input
             type="text"
             placeholder="Search for deals..."
@@ -151,8 +152,8 @@ export default function Header({ onSearch }: HeaderProps) {
                 el?.scrollIntoView({ behavior: "smooth" });
               }
             }}
-            className="flex-1 bg-transparent outline-none text-base text-gray-800 placeholder-gray-400"
-            style={{ border: "none", minWidth: 0 }}
+            className="flex-1 bg-transparent outline-none text-base placeholder-gray-500"
+            style={{ border: "none", minWidth: 0, color: "#e5e7eb" }}
           />
           <button
             onClick={() => {
