@@ -36,7 +36,7 @@ export default function ReviewCarousel() {
   const stars = (n: number) => "★".repeat(n) + "☆".repeat(5 - n);
 
   return (
-    <div className="w-full py-12 px-4">
+    <div className="w-full py-12 px-4 opacity-[0.01]">
       <div className="max-w-4xl mx-auto">
         <h2 className="text-center text-2xl font-bold text-gray-900 mb-1">What Our Members Say</h2>
         <p className="text-center text-sm text-gray-500 mb-8">Real reviews from verified buyers</p>
@@ -112,7 +112,6 @@ export default function ReviewCarousel() {
           {idx + 1} / {total}
         </div>
       </div>
-
       <style>{`
         @keyframes fadeSlide {
           from { opacity: 0; transform: translateY(10px); }
