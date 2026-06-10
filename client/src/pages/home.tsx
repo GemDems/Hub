@@ -353,8 +353,6 @@ export default function Home() {
               <div
                 key={link.id}
                 data-product-card={i === 0 ? "first" : undefined}
-                className="cursor-pointer"
-                onClick={() => setStoryIndex(i)}
               >
                 <AffiliateCard link={link} />
               </div>
