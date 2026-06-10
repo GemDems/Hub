@@ -155,7 +155,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       (window as any).updateSavingsProgress(amount);
     }
     trackClickMutation.mutate();
-    window.location.href = link.url;
+    window.open(link.url, '_blank', 'noopener,noreferrer');
   };
 
   // ─── Image array ──────────────────────────────────────────────────────────
@@ -189,7 +189,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           <div className={`absolute ${isElitePick ? 'top-6' : 'top-[0px]'} left-[0px] right-[0px] z-10`}>
             <div className="bg-gradient-to-r from-urgency-red to-red-600 text-white text-xs font-bold text-center py-1">
               <AlertCircle className="w-3 h-3 inline mr-1" />
-              ONLY {stock} LEFT IN STOCK
+              Only {stock} left in stock
             </div>
           </div>
         ) : null}
@@ -247,12 +247,18 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
                 </div>
                 <div className="text-xs text-gray-700">{reviews.toLocaleString()} reviews</div>
               </div>
-              <div className="bg-pink-50 rounded-lg p-2 border border-pink-200">
-                <div className="flex items-center">
-                  <Heart className="w-4 h-4 text-pink-600 mr-1" />
-                  <span className="text-xs font-bold text-pink-800">{wishlists}</span>
+              <div className="rounded-lg p-2 border flex items-center gap-2" style={{ background: "rgba(139,92,246,0.08)", borderColor: "rgba(139,92,246,0.25)" }}>
+                <div className="flex-shrink-0">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+                    <path d="M12 2L9.5 9H2l6 4.5-2.5 7L12 16.5l6.5 4-2.5-7L22 9h-7.5L12 2z" fill="#7c3aed" opacity="0.2"/>
+                    <path d="M12 3.5L9.8 9.5H3.5l5.2 3.8-2.2 6.2L12 15.5l5.5 4-2.2-6.2 5.2-3.8h-6.3L12 3.5z" stroke="#7c3aed" strokeWidth="1.5" strokeLinejoin="round"/>
+                    <circle cx="12" cy="10" r="2.5" fill="#7c3aed"/>
+                  </svg>
                 </div>
-                <div className="text-xs text-gray-700">wishlists</div>
+                <div>
+                  <div className="text-[10px] font-bold" style={{ color: "#7c3aed" }}>#1 Choice</div>
+                  <div className="text-[10px]" style={{ color: "#9ca3af" }}>bestseller</div>
+                </div>
               </div>
             </div>
           </div>
@@ -314,11 +320,11 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center relative overflow-hidden">
                 <div className="trust-shimmer absolute inset-0 pointer-events-none rounded-lg"></div>
-                <div className="text-xs font-medium text-green-700 relative z-10">🔒 SSL Secured</div>
+                <div className="text-xs font-medium text-green-700 relative z-10">🔒 SSL Encrypted</div>
               </div>
               <div className="bg-blue-50 border border-blue-200 rounded-lg px-3 py-2 text-center relative overflow-hidden">
                 <div className="trust-shimmer absolute inset-0 pointer-events-none rounded-lg"></div>
-                <div className="text-xs font-medium text-blue-700 relative z-10">🛡️ Encrypted</div>
+                <div className="text-xs font-medium text-blue-700 relative z-10">🔐 256-bit Secure</div>
               </div>
             </div>
           </div>
@@ -352,9 +358,9 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
                 </svg>
                 <span className="text-xs font-semibold text-blue-800 tracking-wide">Verified Source</span>
               </div>
-              {/* 3 certification chips */}
+              {/* 4 certification chips */}
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
-                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border border-t-[#ffffff00] border-r-[#ffffff00] border-b-[#ffffff00] border-l-[#ffffff00]"
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
                   style={{ background: "linear-gradient(135deg,#dcfce7,#bbf7d0)", borderColor: "#16a34a", color: "#15803d" }}>
                   ✦ Guaranteed
                 </span>
@@ -365,6 +371,10 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
                   style={{ background: "linear-gradient(135deg,#ede9fe,#ddd6fe)", borderColor: "#7c3aed", color: "#5b21b6" }}>
                   🔒 Risk-Free Assured
+                </span>
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
+                  style={{ background: "linear-gradient(135deg,#e0f2fe,#bae6fd)", borderColor: "#0284c7", color: "#075985" }}>
+                  ✓ Pure Verified
                 </span>
               </div>
             </div>
