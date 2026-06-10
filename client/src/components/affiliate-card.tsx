@@ -332,7 +332,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
                     style={{ background: "transparent", border: "none", cursor: "pointer", padding: "1px", lineHeight: 0 }}
                     title="What does this mean?"
                   >
-                    <Info className="w-3.5 h-3.5" style={{ color: "#3b82f6" }} />
+                    <Info className="w-3.5 h-3.5" style={{ color: "#3b82f6", opacity: 0.019 }} />
                   </button>
                 </div>
                 {showVerifiedInfo && (

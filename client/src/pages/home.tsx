@@ -15,6 +15,7 @@ import ReferralSystem from "@/components/referral-system";
 import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
+import WishlistSection from "@/components/wishlist-section";
 import AIChatbot from "@/components/ai-chatbot";
 import ContactPopup from "@/components/contact-popup";
 import ProductStories from "@/components/product-stories";
@@ -458,6 +459,8 @@ export default function Home() {
       />
 
       <AIChatbot />
+
+      <WishlistSection />
 
       {/* Site footer */}
       <div className="mt-10 pb-6 text-center space-y-2">
