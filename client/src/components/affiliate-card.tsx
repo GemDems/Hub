@@ -328,15 +328,12 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
                   style={{ background: "linear-gradient(135deg,#dcfce7,#bbf7d0)", borderColor: "#16a34a", color: "#15803d" }}>
-                  ✦ Guaranteed
                 </span>
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
                   style={{ background: "linear-gradient(135deg,#fef9c3,#fde68a)", borderColor: "#ca8a04", color: "#92400e" }}>
-                  ⚡ Elite Certified
                 </span>
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
                   style={{ background: "linear-gradient(135deg,#ede9fe,#ddd6fe)", borderColor: "#7c3aed", color: "#5b21b6" }}>
-                  🔒 Risk-Free Assured
                 </span>
               </div>
             </div>
