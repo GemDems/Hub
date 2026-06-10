@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { AffiliateLink } from "@shared/schema";
 import StoryViewer from "./story-viewer";
 
@@ -34,11 +34,38 @@ function fmtPrice(price: string | null | undefined): string {
 }
 
 export default function ProductStories({ products }: ProductStoriesProps) {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
   const published = products.filter((p) => !p.isDraft);
 
+  const [viewedIds, setViewedIds] = useState<Set<number>>(new Set());
+  const [openId, setOpenId] = useState<number | null>(null);
+  const [displayList, setDisplayList] = useState<AffiliateLink[]>([]);
+
+  useEffect(() => {
+    if (openId === null) {
+      if (published.length >= 3) {
+        const unviewed = published.filter((p) => !viewedIds.has(p.id));
+        const viewed = published.filter((p) => viewedIds.has(p.id));
+        setDisplayList([...unviewed, ...viewed]);
+      } else {
+        setDisplayList(published);
+      }
+    }
+  }, [published.length, viewedIds, openId]);
+
   if (published.length === 0) return null;
+
+  const list = displayList.length > 0 ? displayList : published;
+
+  const handleOpen = (product: AffiliateLink) => {
+    setViewedIds((prev) => new Set([...prev, product.id]));
+    setOpenId(product.id);
+  };
+
+  const handleClose = () => {
+    setOpenId(null);
+  };
+
+  const openStartIndex = openId !== null ? list.findIndex((p) => p.id === openId) : -1;
 
   return (
     <>
@@ -48,21 +75,27 @@ export default function ProductStories({ products }: ProductStoriesProps) {
       >
         <style>{`.stories-row::-webkit-scrollbar{display:none}`}</style>
         <div className="stories-row flex gap-4 px-2 py-2 w-max">
-          {published.map((product, i) => {
+          {list.map((product, i) => {
             const img = getFirstImage(product);
+            const isViewed = viewedIds.has(product.id);
+            const ringStyle = isViewed
+              ? "2px solid #a8a8a8"
+              : undefined;
+
             return (
               <div
                 key={product.id}
                 className="flex flex-col items-center gap-1 cursor-pointer flex-shrink-0"
                 style={{ width: 64 }}
-                onClick={() => setOpenIndex(i)}
+                onClick={() => handleOpen(product)}
               >
                 <div
                   style={{
-                    background: RING_GRADIENTS[i % RING_GRADIENTS.length],
+                    background: isViewed ? "transparent" : RING_GRADIENTS[i % RING_GRADIENTS.length],
                     borderRadius: "50%",
-                    padding: 2.5,
-                    boxShadow: "0 2px 12px rgba(0,0,0,0.18)",
+                    padding: isViewed ? 0 : 2.5,
+                    border: isViewed ? "2px solid #a8a8a8" : undefined,
+                    boxShadow: isViewed ? "none" : "0 2px 12px rgba(0,0,0,0.18)",
                   }}
                 >
                   <div
@@ -72,7 +105,7 @@ export default function ProductStories({ products }: ProductStoriesProps) {
                       borderRadius: "50%",
                       overflow: "hidden",
                       background: "#111",
-                      border: "2px solid #fff",
+                      border: isViewed ? "2px solid #1c1c1e" : "2px solid #fff",
                     }}
                   >
                     {img ? (
@@ -97,11 +130,11 @@ export default function ProductStories({ products }: ProductStoriesProps) {
         </div>
       </div>
 
-      {openIndex !== null && (
+      {openId !== null && openStartIndex >= 0 && (
         <StoryViewer
-          links={published}
-          startIndex={openIndex}
-          onClose={() => setOpenIndex(null)}
+          links={list}
+          startIndex={openStartIndex}
+          onClose={handleClose}
         />
       )}
     </>

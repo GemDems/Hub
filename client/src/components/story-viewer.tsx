@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { X, ShoppingCart, Zap, Lock, ChevronLeft, ChevronRight } from "lucide-react";
+import { X, ShoppingCart, Zap, Lock, ChevronLeft, ChevronRight, Star } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import type { AffiliateLink } from "@shared/schema";
 
@@ -16,6 +16,78 @@ function getFirstImage(link: AffiliateLink): string | null {
   }
   if (link.imageUrl?.trim()) return link.imageUrl;
   return null;
+}
+
+function getRatingKey(productId: number) {
+  return `story_rating_${productId}`;
+}
+
+function getSavedRating(productId: number): number {
+  try {
+    const v = localStorage.getItem(getRatingKey(productId));
+    return v ? parseInt(v, 10) : 0;
+  } catch {
+    return 0;
+  }
+}
+
+function saveRating(productId: number, rating: number) {
+  try {
+    localStorage.setItem(getRatingKey(productId), String(rating));
+  } catch {}
+}
+
+function StarRating({ productId, paused, onRate }: { productId: number; paused: boolean; onRate: (r: number) => void }) {
+  const [rating, setRating] = useState(() => getSavedRating(productId));
+  const [hover, setHover] = useState(0);
+
+  useEffect(() => {
+    setRating(getSavedRating(productId));
+    setHover(0);
+  }, [productId]);
+
+  const handle = (r: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRating(r);
+    saveRating(productId, r);
+    onRate(r);
+  };
+
+  const displayed = hover || rating;
+
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <div className="flex items-center gap-1">
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            onClick={(e) => handle(n, e)}
+            onMouseEnter={() => setHover(n)}
+            onMouseLeave={() => setHover(0)}
+            className="transition-transform hover:scale-110 active:scale-95"
+            style={{ background: "none", border: "none", padding: 2, cursor: "pointer" }}
+          >
+            <Star
+              className="w-6 h-6"
+              style={{
+                fill: n <= displayed ? "#f59e0b" : "none",
+                color: n <= displayed ? "#f59e0b" : "#d1d5db",
+                transition: "fill 0.12s, color 0.12s",
+              }}
+            />
+          </button>
+        ))}
+      </div>
+      {rating > 0 && (
+        <span className="text-xs text-gray-400 font-medium">
+          {rating === 1 ? "Poor" : rating === 2 ? "Fair" : rating === 3 ? "Good" : rating === 4 ? "Great" : "Amazing!"}
+        </span>
+      )}
+      {rating === 0 && (
+        <span className="text-xs text-gray-400">Rate this deal</span>
+      )}
+    </div>
+  );
 }
 
 function SideCard({ link, onClick }: { link: AffiliateLink; onClick: () => void }) {
@@ -76,6 +148,8 @@ const DURATION = 10000;
 export default function StoryViewer({ links, startIndex, onClose }: Props) {
   const [idx, setIdx] = useState(startIndex);
   const [progress, setProgress] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const [ratedFlash, setRatedFlash] = useState(false);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const touchX = useRef(0);
 
@@ -89,11 +163,13 @@ export default function StoryViewer({ links, startIndex, onClose }: Props) {
     if (newIdx < 0 || newIdx >= links.length) { onClose(); return; }
     setIdx(newIdx);
     setProgress(0);
+    setRatedFlash(false);
   }, [links.length, onClose]);
 
   useEffect(() => {
     setProgress(0);
     if (intervalRef.current) clearInterval(intervalRef.current);
+    if (paused) return;
     const start = Date.now();
     intervalRef.current = setInterval(() => {
       const pct = Math.min(((Date.now() - start) / DURATION) * 100, 100);
@@ -104,7 +180,7 @@ export default function StoryViewer({ links, startIndex, onClose }: Props) {
       }
     }, 40);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [idx]);
+  }, [idx, paused]);
 
   useEffect(() => {
     const h = (e: KeyboardEvent) => {
@@ -130,6 +206,12 @@ export default function StoryViewer({ links, startIndex, onClose }: Props) {
       (window as any).updateSavingsProgress(n);
     }
     window.open(current.url, "_blank");
+  };
+
+  const handleRate = (r: number) => {
+    setRatedFlash(true);
+    setPaused(false);
+    setTimeout(() => setRatedFlash(false), 1200);
   };
 
   const segStart = Math.max(0, Math.min(idx - 4, links.length - 9));
@@ -265,10 +347,29 @@ export default function StoryViewer({ links, startIndex, onClose }: Props) {
               )}
             </div>
 
-            {/* Info + CTA */}
+            {/* Info + Rating + CTA */}
             <div className="p-5 flex flex-col gap-3" style={{ flex: 1, overflowY: "auto" }}>
               <h2 className="text-xl font-bold text-gray-900 leading-tight">{current.title}</h2>
               <p className="text-sm text-gray-500 leading-relaxed line-clamp-2">{current.description}</p>
+
+              {/* ── Star Rating ── */}
+              <div
+                className="flex flex-col items-center py-2 rounded-2xl"
+                style={{ background: "#f9fafb", border: "1px solid #e5e7eb" }}
+                onClick={e => e.stopPropagation()}
+                onMouseEnter={() => setPaused(true)}
+                onMouseLeave={() => setPaused(false)}
+              >
+                {ratedFlash && (
+                  <span className="text-xs font-semibold text-amber-500 mb-1 animate-pulse">Thanks for rating! ⭐</span>
+                )}
+                <StarRating
+                  productId={current.id}
+                  paused={paused}
+                  onRate={handleRate}
+                />
+              </div>
+
               <button
                 onClick={handleCTA}
                 className="w-full text-white font-bold py-4 rounded-2xl text-base shadow-lg flex items-center justify-center gap-2 mt-auto transition-all hover:scale-[1.02] active:scale-[0.98]"
