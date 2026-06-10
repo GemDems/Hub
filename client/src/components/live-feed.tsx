@@ -23,7 +23,7 @@ export default function LiveFeed() {
     const lasts  = ['na','ton','ley','son','la','ren','xa','ros','wyn','belle','don','kay','zee','rie','lyn','ven','ell','ara'];
     const applyCase = (s: string) => {
       const r = Math.random();
-      if (r < 0.45) return s.toLowerCase();
+      if (r < 0.33) return s.toLowerCase();
       if (r < 0.55) return s.toUpperCase();
       return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
     };

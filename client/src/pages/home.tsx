@@ -228,6 +228,17 @@ export default function Home() {
       </div>
 
       <Header />
+
+      {/* Smooth color fade from dark header (#0d0f1a) to white page body */}
+      <div
+        style={{
+          height: 80,
+          background: "linear-gradient(to bottom, #0d0f1a 0%, #0d0f1a 10%, #1a1f36 35%, #4a4a6a 60%, #c0c0d8 80%, #ffffff 100%)",
+          pointerEvents: "none",
+          marginBottom: -1,
+        }}
+      />
+
       <StatsBar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
