@@ -3,12 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import type { Review } from "@shared/schema";
 
 const SEED_REVIEWS = [
-  { id: -1, name: "James T.", rating: 5, message: "Saved $340 on my first order. I was skeptical but everything arrived exactly as described. Total game changer.", createdAt: "" },
-  { id: -2, name: "Priya M.", rating: 5, message: "Best marketplace I've used. The curation is insane — every deal is actually worth it. My friends all joined after I told them.", createdAt: "" },
+  { id: -1, name: "James T.", rating: 5, message: "Saved $340 on my first order. i was skeptical but everything arrived exactly as described. Total game changer.", createdAt: "" },
+  { id: -2, name: "Priya M.", rating: 5, message: "Best marketplace I've used. the curation is insane — every deal is actually worth it. my friends all joined after I told them.", createdAt: "" },
   { id: -3, name: "Marcus R.", rating: 5, message: "Saved over $1,200 this year. The security and authenticity checks give me total peace of mind. 10/10 would recommend.", createdAt: "" },
-  { id: -4, name: "Sofia L.", rating: 5, message: "Honestly shocked at how legit these deals are. Got premium headphones for half the price I'd find anywhere else.", createdAt: "" },
+  { id: -4, name: "Sofia L.", rating: 5, message: "Honestly shocked at how legit these deals are. Got premium headphones for half the price id find anywhere else.", createdAt: "" },
   { id: -5, name: "Derek W.", rating: 5, message: "Been a member for 6 months and already saved more than my annual subscription fee 10x over. Worth every second.", createdAt: "" },
-  { id: -6, name: "Aaliyah K.", rating: 5, message: "My sister told me about this and I thought it sounded too good. Nope — it's 100% real. Already saved $280 this month alone.", createdAt: "" },
+  { id: -6, name: "Aaliyah K.", rating: 5, message: "My sister told me about this and I thought it sounded too good. Nope — it's 100% real. already saved $280 this month alone.", createdAt: "" },
 ];
 
 export default function ReviewCarousel() {
