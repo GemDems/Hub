@@ -119,7 +119,7 @@ export default function Header() {
   return (
     <header style={{ background: "#0d0f1a" }} className="w-full overflow-hidden">
       {/* Flash sale ticker */}
-      <div style={{ background: "linear-gradient(90deg,#e63946,#9b2dca)" }} className="w-full py-2.5 text-center text-xs font-semibold tracking-widest text-white">
+      <div style={{ background: "linear-gradient(90deg,#e63946,#9b2dca)" }} className="w-full py-2.5 text-center text-xs font-semibold tracking-widest text-white opacity-[0.01]">
         ⚡ FLASH SALE ENDING SOON — {viewers.toLocaleString()} MEMBERS ACTIVE TODAY &nbsp;|&nbsp; SPOTS FILLING FAST ⚡
       </div>
       {/* Hero */}
