@@ -39,9 +39,8 @@ export default function Header({ onSearch }: HeaderProps) {
       if (Date.now() - resetAt < ONE_HOUR) {
         const dropPct = 0.06 + Math.random() * 0.01; // 6–7%
         const newViewers = Math.max(1000, Math.round(viewers * (1 - dropPct)));
-        const newOrders = Math.max(100, Math.round(orders * (1 - dropPct * 0.5)));
-        localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: newViewers, orders: newOrders, resetAt }));
-        return { viewers: newViewers, orders: newOrders, resetAt };
+        localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: newViewers, orders, resetAt }));
+        return { viewers: newViewers, orders, resetAt };
       }
     }
     // Hourly reset: fresh base under 7,000
