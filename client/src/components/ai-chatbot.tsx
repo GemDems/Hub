@@ -144,25 +144,44 @@ export default function AIChatbot() {
   const generateDynamicResponse = (userMessage: string, context: any) => {
     const lowerMessage = userMessage.toLowerCase();
     
-    // Analyze query type and generate appropriate response
-    if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
-      return `Hi! I help find the best deals. What are you looking for today?`;
+    // Casual greetings — match the energy
+    if (lowerMessage.match(/^(hey|hi|hello|yo|sup|what'?s? ?up|what'?s? ?good|hiya|howdy|heya|wassup|heyy|hiii|ello|ayo)\b/)) {
+      const greets = [
+        "hey! 👋 what are you looking for today?",
+        "hey hey! looking for anything specific or just browsing?",
+        "yo! what can i help you find?",
+        "hi! what deals are you hunting for?"
+      ];
+      return greets[Math.floor(Math.random() * greets.length)];
+    }
+
+    if (lowerMessage.match(/how are you|how'?s? it going|how'?s? everything|you good|you okay/)) {
+      return "doing great, thanks for asking 😄 what are you shopping for today?";
+    }
+
+    if (lowerMessage.includes('help') || lowerMessage.includes('what can you do') || lowerMessage.includes('what do you do')) {
+      return `i'm Zane — i help you find the best deals on here. just tell me what you're looking for and i'll point you right to it 🎯`;
     }
     
-    if (lowerMessage.includes('help') || lowerMessage.includes('what can you do')) {
-      return `I can help you find deals across different categories. Just tell me what you need and I'll search for the best options.`;
+    if (lowerMessage.match(/\bthanks?\b|thank you|ty\b|appreciate/)) {
+      const replies = ["of course! 😊", "anytime!", "happy to help!", "no problem at all!"];
+      return replies[Math.floor(Math.random() * replies.length)];
     }
     
-    if (lowerMessage.includes('thank')) {
-      return `You're welcome! Need help finding anything else?`;
+    if (lowerMessage.match(/\b(bye|goodbye|see ya|later|peace|gotta go|ttyl|cya)\b/)) {
+      return "see ya! come back anytime 👋";
     }
-    
-    if (lowerMessage.includes('bye') || lowerMessage.includes('goodbye')) {
-      return `See you later! Come back anytime for more deals.`;
+
+    if (lowerMessage.match(/\b(lol|lmao|haha|hehe|😂|💀|😭)\b/)) {
+      return "lol right? 😄 anyway — anything i can help you find?";
+    }
+
+    if (lowerMessage.match(/\b(cool|nice|awesome|sick|fire|lit|dope|ok|okay|got it|sounds good)\b/) && lowerMessage.length < 20) {
+      return "😎 let me know if you need anything!";
     }
     
     // Default response for unrecognized queries
-    return `I understand you're asking about "${userMessage}". Let me help you find relevant deals. What specific product category interests you?`;
+    return `hmm, not sure i caught that — what are you looking for? i can help you find deals on pretty much anything we've got 🔍`;
   };
 
   const analyzeUserIntent = (message: string, currentIntent: any) => {
