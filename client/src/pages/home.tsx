@@ -16,6 +16,7 @@ import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
 import AIChatbot from "@/components/ai-chatbot";
+import ReviewCarousel from "@/components/review-carousel";
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -309,6 +310,10 @@ export default function Home() {
         )}
       </main>
 
+      {/* Review Carousel — smooth gradient blend from white product section */}
+      <div style={{ background: "linear-gradient(to bottom, #ffffff 0%, #f9fafb 30%, #ffffff 100%)" }}>
+        <ReviewCarousel />
+      </div>
 
       <TrustIndicators />
 
