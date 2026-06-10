@@ -131,7 +131,7 @@ export default function Header({ onSearch }: HeaderProps) {
       {/* Search bar — overlapping the banner above */}
       <div className="relative z-20 px-4" style={{ marginTop: "-22px" }}>
         <div
-          className="max-w-2xl mx-auto flex items-center gap-2 rounded-2xl px-4 py-2.5"
+          className="max-w-2xl mx-auto flex items-center gap-2 rounded-2xl px-4 py-2.5 bg-[#0d0f1a]"
           style={{
             opacity: 0.93,
             background: "#ffffff",
