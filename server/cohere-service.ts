@@ -82,7 +82,7 @@ Assistant:`;
 
     // Get AI response using Cohere chat API
     const response = await cohere.chat({
-      model: "command-r",
+      model: "command-r-plus-08-2024",
       message: userMessage,
       preamble: systemPrompt,
       chatHistory,
@@ -180,7 +180,7 @@ Create a compelling, benefit-focused description that highlights value and quali
 Enhanced Description:`;
 
     const response = await cohere.generate({
-      model: "command-r",
+      model: "command-r-plus-08-2024",
       prompt: prompt,
       maxTokens: 150,
       temperature: 0.7,
