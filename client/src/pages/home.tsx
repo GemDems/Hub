@@ -6,6 +6,7 @@ import StatsBar from "@/components/stats-bar";
 import SearchBar from "@/components/search-bar";
 import CategoryFilter from "@/components/category-filter";
 import AffiliateCard from "@/components/affiliate-card";
+import StoryViewer from "@/components/story-viewer";
 import AdminPanel from "@/components/admin-panel";
 import TrustIndicators from "@/components/trust-indicators";
 import { ChevronDown, Dice6, Gift } from "lucide-react";
@@ -28,6 +29,7 @@ export default function Home() {
   const [showAdmin, setShowAdmin] = useState(false);
   const [activeCategory, setActiveCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [storyIndex, setStoryIndex] = useState<number | null>(null);
   const [sortByClicks, setSortByClicks] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
@@ -182,6 +184,13 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {storyIndex !== null && (
+        <StoryViewer
+          links={filteredAndSortedLinks}
+          startIndex={storyIndex}
+          onClose={() => setStoryIndex(null)}
+        />
+      )}
 
 
       {/* ── WELCOME BACK NOTIFICATION ──────────────────────────────────── */}
@@ -341,7 +350,12 @@ export default function Home() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredAndSortedLinks.map((link, i) => (
-              <div key={link.id} data-product-card={i === 0 ? "first" : undefined}>
+              <div
+                key={link.id}
+                data-product-card={i === 0 ? "first" : undefined}
+                className="cursor-pointer"
+                onClick={() => setStoryIndex(i)}
+              >
                 <AffiliateCard link={link} />
               </div>
             ))}

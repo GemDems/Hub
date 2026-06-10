@@ -137,7 +137,8 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
     deleteLinkMutation.mutate(password);
   };
 
-  const handleClick = () => {
+  const handleClick = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const priceMatch = price.match(/\$?(\d+(?:,\d{3})*(?:\.\d{2})?)/);
     if (priceMatch && (window as any).updateSavingsProgress) {
       const amount = parseInt(priceMatch[1].replace(/,/g, ''));
@@ -156,7 +157,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
       <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
 
         <div className="absolute top-2 right-2 z-30" style={{ opacity: 0, visibility: 'hidden' }}>
-          <Button onClick={() => setShowDeleteDialog(true)} className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none" title="Delete Product" style={{ opacity: 0, visibility: 'hidden' }}>
+          <Button onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(true); }} className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none" title="Delete Product" style={{ opacity: 0, visibility: 'hidden' }}>
             <Trash2 className="w-4 h-4" style={{ opacity: 0, visibility: 'hidden' }} />
           </Button>
         </div>
@@ -265,7 +266,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
           <div className="space-y-3">
             <Button
-              onClick={handleClick}
+              onClick={(e) => handleClick(e)}
               disabled={trackClickMutation.isPending}
               className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg relative overflow-hidden cta-heartbeat ${link.isVerified ? 'verified-glow-button' : ''}`}
             >
