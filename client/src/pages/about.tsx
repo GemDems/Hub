@@ -31,7 +31,7 @@ export default function About() {
             <p>
               <strong className="text-white">Important:</strong> Elite Deals Hub participates in affiliate marketing programs. This means that when you click on product links on this site and make a purchase, we may earn a commission at <em>no additional cost to you</em>.
             </p>
-            <p>We are a participant in affiliate programs including, but not limited to: Amazon Associates, Walmart Affiliate Program, eBay Partner Network, Commission Junction (CJ Affiliate), ShareASale, Impact, and other retailer-specific affiliate programmes.</p>
+            <p>We are a participant in affiliate programs including, but not limited to: Amazon Associates, Walmart Affiliate Program, eBay Partner Network, Partner Stack, ShareASale, Impact, and other retailer-specific affiliate programmes.</p>
             <p>Our affiliate relationships do not influence our editorial decisions. We only feature deals we believe offer genuine value. Commissions help us keep this service free for all users.</p>
           </section>
 
