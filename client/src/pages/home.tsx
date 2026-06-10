@@ -242,6 +242,14 @@ export default function Home() {
       <StatsBar />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center mb-6">
+          <h2 className="font-extrabold text-4xl sm:text-5xl mb-2" style={{ color: "#00008B" }}>
+            Elite Deals Hub
+          </h2>
+          <p className="text-base sm:text-lg text-gray-700">
+            <strong>Curated deals</strong> by industry experts. <strong>Limited quantities</strong> · Act fast!
+          </p>
+        </div>
         <SearchBar onSearch={setSearchQuery} links={affiliateLinks} />
         <CategoryFilter categories={categories} activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
 
