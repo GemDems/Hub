@@ -48,7 +48,7 @@ export default function Header() {
         </div>
         <h1 className="font-extrabold leading-none tracking-tight text-white" style={{ fontSize: "clamp(52px,9vw,88px)", letterSpacing: "-0.02em" }}>
           ELITE<br />
-          <span style={{ color: "#7c3aed" }}>DEALS</span>
+          <span style={{ color: "#7c3aed" }} className="text-[#00008B]">DEALS</span>
         </h1>
         <div className="mt-2 text-sm font-normal tracking-[0.2em]" style={{ color: "#9ca3af" }}>
           PREMIUM MARKETPLACE
