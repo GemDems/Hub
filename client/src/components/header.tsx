@@ -31,15 +31,21 @@ interface HeaderProps {
 
 export default function Header({ onSearch }: HeaderProps) {
   const getInitialCounts = () => {
-    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+    const ONE_HOUR = 60 * 60 * 1000;
     const stored = localStorage.getItem("edh_live_counts");
     if (stored) {
       const { viewers, orders, resetAt } = JSON.parse(stored);
-      if (Date.now() - resetAt < TWELVE_HOURS) {
-        return { viewers, orders, resetAt };
+      // If within the hour window, apply a 6–7% refresh drop
+      if (Date.now() - resetAt < ONE_HOUR) {
+        const dropPct = 0.06 + Math.random() * 0.01; // 6–7%
+        const newViewers = Math.max(1000, Math.round(viewers * (1 - dropPct)));
+        const newOrders = Math.max(100, Math.round(orders * (1 - dropPct * 0.5)));
+        localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: newViewers, orders: newOrders, resetAt }));
+        return { viewers: newViewers, orders: newOrders, resetAt };
       }
     }
-    const base = Math.floor(Math.random() * 9000) + 1000;
+    // Hourly reset: fresh base under 7,000
+    const base = Math.floor(Math.random() * 4000) + 2500; // 2,500–6,499
     const counts = { viewers: base, orders: Math.floor(base * 0.35), resetAt: Date.now() };
     localStorage.setItem("edh_live_counts", JSON.stringify(counts));
     return counts;
@@ -73,7 +79,7 @@ export default function Header({ onSearch }: HeaderProps) {
   const currentReviews = ALL_REVIEWS.slice(reviewPage * 3, reviewPage * 3 + 3);
 
   useEffect(() => {
-    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+    const ONE_HOUR = 60 * 60 * 1000;
 
     const save = (v: number, o: number) => {
       const stored = localStorage.getItem("edh_live_counts");
@@ -85,8 +91,8 @@ export default function Header({ onSearch }: HeaderProps) {
       const stored = localStorage.getItem("edh_live_counts");
       if (!stored) return;
       const { resetAt } = JSON.parse(stored);
-      if (Date.now() - resetAt >= TWELVE_HOURS) {
-        const base = Math.floor(Math.random() * 9000) + 1000;
+      if (Date.now() - resetAt >= ONE_HOUR) {
+        const base = Math.floor(Math.random() * 4000) + 2500; // 2,500–6,499
         const newOrders = Math.floor(base * 0.35);
         localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: base, orders: newOrders, resetAt: Date.now() }));
         setViewers(base);
