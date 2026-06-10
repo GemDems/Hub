@@ -16,6 +16,8 @@ import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
 import AIChatbot from "@/components/ai-chatbot";
+import ContactPopup from "@/components/contact-popup";
+import { Link } from "wouter";
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -440,6 +442,19 @@ export default function Home() {
       />
 
       <AIChatbot />
+
+      {/* Site footer */}
+      <div className="mt-10 pb-6 text-center space-y-2">
+        <div className="flex items-center justify-center gap-3 flex-wrap">
+          <ContactPopup />
+          <Link href="/about" className="text-xs hover:opacity-70 transition-opacity" style={{ color: "#4b5563", textDecoration: "none" }}>
+            About Us &amp; Legal
+          </Link>
+        </div>
+        <p className="text-xs" style={{ color: "#374151" }}>
+          © {new Date().getFullYear()} Elite Deals Hub · Affiliate links may earn us a commission at no cost to you
+        </p>
+      </div>
     </div>
   );
 }

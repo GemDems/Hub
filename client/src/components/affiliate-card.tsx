@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ExternalLink, ShoppingCart, Users, Star, Clock, TrendingUp, Award, AlertCircle, Trash2, Eye, EyeOff, Heart, Zap, Lock } from "lucide-react";
+import { ExternalLink, ShoppingCart, Users, Star, Clock, TrendingUp, Award, AlertCircle, Trash2, Eye, EyeOff, Heart, Zap, Lock, Info } from "lucide-react";
 import PhotoCarousel from "./photo-carousel";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
@@ -22,6 +22,7 @@ function seededRand(seed: number, offset: number = 0) {
 
 export default function AffiliateCard({ link }: AffiliateCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [showVerifiedInfo, setShowVerifiedInfo] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
@@ -311,19 +312,43 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
           {link.isVerified ? (
             <div className="mt-3 space-y-2">
-              <div className="flex items-center justify-center gap-1.5">
-                <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
-                  <path d="M9 1L2 4V10C2 14.418 5.134 18.522 9 19.5C12.866 18.522 16 14.418 16 10V4L9 1Z"
-                    fill="url(#shield-gradient)" />
-                  <path d="M6 10L8 12.5L12.5 7.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
-                  <defs>
-                    <linearGradient id="shield-gradient" x1="9" y1="1" x2="9" y2="19.5" gradientUnits="userSpaceOnUse">
-                      <stop offset="0%" stopColor="#1d4ed8"/>
-                      <stop offset="100%" stopColor="#1e3a8a"/>
-                    </linearGradient>
-                  </defs>
-                </svg>
-                <span className="text-xs font-semibold text-blue-800 tracking-wide">Verified Source</span>
+              <div className="flex items-center justify-center gap-1.5 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <svg width="18" height="20" viewBox="0 0 18 20" fill="none">
+                    <path d="M9 1L2 4V10C2 14.418 5.134 18.522 9 19.5C12.866 18.522 16 14.418 16 10V4L9 1Z"
+                      fill="url(#shield-gradient)" />
+                    <path d="M6 10L8 12.5L12.5 7.5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                    <defs>
+                      <linearGradient id="shield-gradient" x1="9" y1="1" x2="9" y2="19.5" gradientUnits="userSpaceOnUse">
+                        <stop offset="0%" stopColor="#1d4ed8"/>
+                        <stop offset="100%" stopColor="#1e3a8a"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                  <span className="text-xs font-semibold text-blue-800 tracking-wide">Verified Source</span>
+                  <button
+                    onClick={() => setShowVerifiedInfo((v) => !v)}
+                    className="rounded-full transition-colors hover:bg-blue-100"
+                    style={{ background: "transparent", border: "none", cursor: "pointer", padding: "1px", lineHeight: 0 }}
+                    title="What does this mean?"
+                  >
+                    <Info className="w-3.5 h-3.5" style={{ color: "#3b82f6" }} />
+                  </button>
+                </div>
+                {showVerifiedInfo && (
+                  <div
+                    className="w-full text-xs px-3 py-2 rounded-lg text-center leading-relaxed"
+                    style={{
+                      background: "rgba(219,234,254,0.7)",
+                      color: "#1e40af",
+                      border: "1px solid rgba(147,197,253,0.6)",
+                      animation: "fadeIn 0.2s ease",
+                    }}
+                  >
+                    Professional · Superior-quality · Built to industry standards 🔒 Verified Source Badge — product link confirmed via authorised retailer (Amazon / Walmart / etc.)
+                    <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
+                  </div>
+                )}
               </div>
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"
