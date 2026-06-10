@@ -226,7 +226,7 @@ export default function Home() {
         </Button>
       </div>
 
-      <Header />
+      <Header onSearch={setSearchQuery} />
 
       {/* Smooth color fade from dark header (#0d0f1a) to white page body */}
       <div

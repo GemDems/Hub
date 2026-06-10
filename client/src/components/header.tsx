@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { Search } from "lucide-react";
 
 interface LiveStats {
   viewers: number;
@@ -24,7 +25,11 @@ const ALL_REVIEWS = [
   { text: `"Three orders in, three wins. This thing is consistent which is rare."`, author: "ryan", badge: "Elite Member" },
 ];
 
-export default function Header() {
+interface HeaderProps {
+  onSearch?: (query: string) => void;
+}
+
+export default function Header({ onSearch }: HeaderProps) {
   const getInitialCounts = () => {
     const TWELVE_HOURS = 12 * 60 * 60 * 1000;
     const stored = localStorage.getItem("edh_live_counts");
@@ -45,6 +50,7 @@ export default function Header() {
   const [orders, setOrders] = useState(initial.orders);
   const [reviewPage, setReviewPage] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
+  const [headerSearch, setHeaderSearch] = useState("");
   const totalPages = Math.ceil(ALL_REVIEWS.length / 3);
 
   const goToPage = (next: number) => {
@@ -121,6 +127,45 @@ export default function Header() {
       {/* Flash sale ticker */}
       <div style={{ background: "linear-gradient(90deg,#e63946,#9b2dca)" }} className="w-full py-2.5 text-center text-xs font-semibold tracking-widest text-white opacity-[0.01]">
         ⚡ FLASH SALE ENDING SOON — {viewers.toLocaleString()} MEMBERS ACTIVE TODAY &nbsp;|&nbsp; SPOTS FILLING FAST ⚡
+      </div>
+      {/* Search bar — overlapping the banner above */}
+      <div className="relative z-20 px-4" style={{ marginTop: "-22px" }}>
+        <div
+          className="max-w-2xl mx-auto flex items-center gap-2 rounded-2xl px-4 py-2.5"
+          style={{
+            opacity: 0.93,
+            background: "#ffffff",
+            boxShadow: "0 4px 28px rgba(0,0,0,0.45)",
+          }}
+        >
+          <Search className="w-5 h-5 flex-shrink-0" style={{ color: "#9ca3af" }} />
+          <input
+            type="text"
+            placeholder="Search for deals..."
+            value={headerSearch}
+            onChange={(e) => setHeaderSearch(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onSearch?.(headerSearch);
+                const el = document.querySelector('[data-section="products"]') as HTMLElement;
+                el?.scrollIntoView({ behavior: "smooth" });
+              }
+            }}
+            className="flex-1 bg-transparent outline-none text-base text-gray-800 placeholder-gray-400"
+            style={{ border: "none", minWidth: 0 }}
+          />
+          <button
+            onClick={() => {
+              onSearch?.(headerSearch);
+              const el = document.querySelector('[data-section="products"]') as HTMLElement;
+              el?.scrollIntoView({ behavior: "smooth" });
+            }}
+            className="flex-shrink-0 px-5 py-2 rounded-xl text-white text-sm font-semibold transition-opacity hover:opacity-90"
+            style={{ background: "linear-gradient(135deg,#2563eb,#1d4ed8)", border: "none", cursor: "pointer" }}
+          >
+            Search
+          </button>
+        </div>
       </div>
       {/* Hero */}
       <div className="text-center pt-10 pb-2 px-4">
