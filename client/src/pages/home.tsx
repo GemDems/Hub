@@ -169,6 +169,17 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
 
+  useEffect(() => {
+    if (!searchQuery) return;
+    const timeout = setTimeout(() => {
+      const firstCard = document.querySelector('[data-product-card]') as HTMLElement;
+      if (firstCard) {
+        firstCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }, 80);
+    return () => clearTimeout(timeout);
+  }, [searchQuery, filteredAndSortedLinks.length]);
+
   return (
     <div className="min-h-screen bg-gray-50">
 
@@ -329,8 +340,10 @@ export default function Home() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAndSortedLinks.map((link) => (
-              <AffiliateCard key={link.id} link={link} />
+            {filteredAndSortedLinks.map((link, i) => (
+              <div key={link.id} data-product-card={i === 0 ? "first" : undefined}>
+                <AffiliateCard link={link} />
+              </div>
             ))}
           </div>
         )}

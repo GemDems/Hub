@@ -22,7 +22,6 @@ function seededRand(seed: number, offset: number = 0) {
 
 export default function AffiliateCard({ link }: AffiliateCardProps) {
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [showVerifiedInfo, setShowVerifiedInfo] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const { toast } = useToast();
@@ -326,29 +325,10 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
                     </defs>
                   </svg>
                   <span className="text-xs font-semibold text-blue-800 tracking-wide">Verified Source</span>
-                  <button
-                    onClick={() => setShowVerifiedInfo((v) => !v)}
-                    className="rounded-full transition-colors hover:bg-blue-100"
-                    style={{ background: "transparent", border: "none", cursor: "pointer", padding: "1px", lineHeight: 0 }}
-                    title="What does this mean?"
-                  >
+                  <span style={{ padding: "1px", lineHeight: 0, display: "inline-flex" }}>
                     <Info className="w-3.5 h-3.5" style={{ color: "#3b82f6", opacity: 0.019 }} />
-                  </button>
+                  </span>
                 </div>
-                {showVerifiedInfo && (
-                  <div
-                    className="w-full text-xs px-3 py-2 rounded-lg text-center leading-relaxed"
-                    style={{
-                      background: "rgba(219,234,254,0.7)",
-                      color: "#1e40af",
-                      border: "1px solid rgba(147,197,253,0.6)",
-                      animation: "fadeIn 0.2s ease",
-                    }}
-                  >
-                    Professional · Superior-quality · Built to industry standards 🔒 Verified Source Badge — product link confirmed via authorised retailer (Amazon / Walmart / etc.)
-                    <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
-                  </div>
-                )}
               </div>
               <div className="flex items-center justify-center gap-1.5 flex-wrap">
                 <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full border"

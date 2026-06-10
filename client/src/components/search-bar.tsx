@@ -56,7 +56,7 @@ export default function SearchBar({ onSearch, links }: SearchBarProps) {
                 type="text"
                 placeholder="Search for deals..."
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => { setQuery(e.target.value); onSearch(e.target.value); }}
                 onKeyPress={(e) => e.key === 'Enter' && handleSearch(query)}
                 className="pl-12 pr-4 py-5 text-xl rounded-xl border-2 border-gray-200 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all duration-300"
               />
