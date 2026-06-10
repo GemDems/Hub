@@ -723,6 +723,36 @@ Transform now with maximum conversion power in minimal words:`;
     });
   });
 
+  // Reviews
+  app.get("/api/reviews", async (req, res) => {
+    try {
+      const data = await storage.getApprovedReviews();
+      res.json(data);
+    } catch (e) {
+      res.status(500).json({ error: "Failed to fetch reviews" });
+    }
+  });
+
+  app.get("/api/admin/reviews", async (req, res) => {
+    try {
+      const data = await storage.getAllReviews();
+      res.json(data);
+    } catch (e) {
+      res.status(500).json({ error: "Failed to fetch reviews" });
+    }
+  });
+
+  app.post("/api/reviews", async (req, res) => {
+    try {
+      const { name, rating, message, deviceId } = req.body;
+      if (!name || !message || !deviceId) return res.status(400).json({ error: "Missing fields" });
+      const r = await storage.submitReview(name, rating || 5, message, deviceId);
+      res.json(r);
+    } catch (e) {
+      res.status(500).json({ error: "Failed to submit review" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

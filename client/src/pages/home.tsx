@@ -16,6 +16,7 @@ import LiveFeed from "@/components/live-feed";
 import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
 import AIChatbot from "@/components/ai-chatbot";
+import ReviewCarousel from "@/components/review-carousel";
 
 import { Button } from "@/components/ui/button";
 import { Settings } from "lucide-react";
@@ -34,6 +35,13 @@ export default function Home() {
 
   // ─── Welcome-back returning visitor ───────────────────────────────────────
   const [showWelcomeBack, setShowWelcomeBack] = useState(false);
+  const [showReviewPopup, setShowReviewPopup] = useState(false);
+  const [reviewDone, setReviewDone] = useState(false);
+  const [reviewName, setReviewName] = useState("");
+  const [reviewMsg, setReviewMsg] = useState("");
+  const [reviewRating, setReviewRating] = useState(5);
+  const [reviewSubmitting, setReviewSubmitting] = useState(false);
+  const [reviewSuccess, setReviewSuccess] = useState(false);
   useEffect(() => {
     const last = localStorage.getItem("edh_last_visit");
     const now = Date.now();
@@ -126,10 +134,15 @@ export default function Home() {
         setHasExpired(false);
         setShowDropdown(false);
       }
+      // Show review popup when near bottom of page
+      const nearBottom = scrollY + window.innerHeight >= document.documentElement.scrollHeight - 200;
+      if (nearBottom && !reviewDone && !showReviewPopup) {
+        setShowReviewPopup(true);
+      }
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [showScrollButton, hasExpired]);
+  }, [showScrollButton, hasExpired, reviewDone, showReviewPopup]);
 
   useEffect(() => {
     if (isTimerActive && timerCount > 0) {
@@ -286,6 +299,11 @@ export default function Home() {
         )}
       </main>
 
+      {/* Review Carousel — smooth gradient blend from white product section */}
+      <div style={{ background: "linear-gradient(to bottom, #ffffff 0%, #f9fafb 30%, #ffffff 100%)" }}>
+        <ReviewCarousel />
+      </div>
+
       <TrustIndicators />
 
       <div className="bg-white pt-0 pb-10" data-section="leaderboard">
@@ -337,6 +355,70 @@ export default function Home() {
           <IdeaSubmission />
         </div>
       </div>
+
+      {/* Leave a Review popup — appears when user scrolls to bottom */}
+      {showReviewPopup && !reviewDone && (
+        <div className="fixed bottom-4 right-4 z-[9998] w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 animate-in slide-in-from-bottom">
+          <button
+            onClick={() => { setShowReviewPopup(false); setReviewDone(true); }}
+            className="absolute top-3 right-3 text-gray-400 hover:text-gray-600 text-lg leading-none"
+          >×</button>
+          {reviewSuccess ? (
+            <div className="text-center py-4">
+              <div className="text-3xl mb-2">🎉</div>
+              <div className="font-bold text-gray-900 mb-1">Thanks for your review!</div>
+              <div className="text-xs text-gray-500">It means a lot to us.</div>
+            </div>
+          ) : (
+            <>
+              <div className="font-bold text-gray-900 mb-1">Enjoying Elite Deals?</div>
+              <div className="text-xs text-gray-500 mb-3">Leave a quick review — it helps others discover real deals.</div>
+              {/* Stars */}
+              <div className="flex gap-1 mb-3">
+                {[1,2,3,4,5].map(s => (
+                  <button key={s} onClick={() => setReviewRating(s)} className="text-2xl" style={{ color: s <= reviewRating ? "#f59e0b" : "#d1d5db", background: "none", border: "none", cursor: "pointer" }}>★</button>
+                ))}
+              </div>
+              <input
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:border-blue-400"
+                placeholder="Your name"
+                value={reviewName}
+                onChange={e => setReviewName(e.target.value)}
+                maxLength={40}
+              />
+              <textarea
+                className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:border-blue-400 resize-none"
+                placeholder="Share your experience..."
+                rows={3}
+                value={reviewMsg}
+                onChange={e => setReviewMsg(e.target.value)}
+                maxLength={300}
+              />
+              <button
+                disabled={reviewSubmitting || !reviewName.trim() || !reviewMsg.trim()}
+                onClick={async () => {
+                  if (!reviewName.trim() || !reviewMsg.trim()) return;
+                  setReviewSubmitting(true);
+                  try {
+                    const deviceId = localStorage.getItem("deviceId") || `anon_${Date.now()}`;
+                    await fetch("/api/reviews", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                      body: JSON.stringify({ name: reviewName.trim(), rating: reviewRating, message: reviewMsg.trim(), deviceId })
+                    });
+                    setReviewSuccess(true);
+                    setTimeout(() => { setShowReviewPopup(false); setReviewDone(true); }, 2500);
+                  } catch { setReviewSubmitting(false); }
+                }}
+                className="w-full py-2.5 rounded-xl text-sm font-semibold text-white transition-all"
+                style={{ background: reviewSubmitting ? "#9ca3af" : "linear-gradient(135deg,#1a237e,#3949ab)", border: "none", cursor: reviewSubmitting ? "not-allowed" : "pointer" }}
+              >
+                {reviewSubmitting ? "Submitting..." : "Submit Review"}
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       <AdminPanel
         isOpen={showAdmin}

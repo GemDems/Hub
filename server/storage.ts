@@ -1,4 +1,4 @@
-import { users, affiliateLinks, referralCodes, userStats, userIdeas, aiConversations, smsMessages, userSmsPreferences, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats, type UserIdea, type InsertUserIdea, type AiConversation, type InsertAiConversation, type SmsMessage, type InsertSmsMessage, type UserSmsPreferences, type InsertUserSmsPreferences } from "@shared/schema";
+import { users, affiliateLinks, referralCodes, userStats, userIdeas, aiConversations, smsMessages, userSmsPreferences, reviews, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats, type UserIdea, type InsertUserIdea, type AiConversation, type InsertAiConversation, type SmsMessage, type InsertSmsMessage, type UserSmsPreferences, type InsertUserSmsPreferences } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -769,6 +769,19 @@ export class DatabaseStorage implements IStorage {
         optOutDate: new Date() 
       })
       .where(eq(userSmsPreferences.userId, userId));
+  }
+
+  async submitReview(name: string, rating: number, message: string, deviceId: string) {
+    const [review] = await db.insert(reviews).values({ name, rating, message, deviceId, isApproved: 1 }).returning();
+    return review;
+  }
+
+  async getApprovedReviews() {
+    return db.select().from(reviews).where(eq(reviews.isApproved, 1)).orderBy(desc(reviews.createdAt));
+  }
+
+  async getAllReviews() {
+    return db.select().from(reviews).orderBy(desc(reviews.createdAt));
   }
 }
 
