@@ -25,8 +25,24 @@ const ALL_REVIEWS = [
 ];
 
 export default function Header() {
-  const [viewers, setViewers] = useState(1247);
-  const [orders, setOrders] = useState(413);
+  const getInitialCounts = () => {
+    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+    const stored = localStorage.getItem("edh_live_counts");
+    if (stored) {
+      const { viewers, orders, resetAt } = JSON.parse(stored);
+      if (Date.now() - resetAt < TWELVE_HOURS) {
+        return { viewers, orders, resetAt };
+      }
+    }
+    const base = Math.floor(Math.random() * 9000) + 1000;
+    const counts = { viewers: base, orders: Math.floor(base * 0.35), resetAt: Date.now() };
+    localStorage.setItem("edh_live_counts", JSON.stringify(counts));
+    return counts;
+  };
+
+  const initial = getInitialCounts();
+  const [viewers, setViewers] = useState(initial.viewers);
+  const [orders, setOrders] = useState(initial.orders);
   const [reviewPage, setReviewPage] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
   const totalPages = Math.ceil(ALL_REVIEWS.length / 3);
@@ -51,10 +67,52 @@ export default function Header() {
   const currentReviews = ALL_REVIEWS.slice(reviewPage * 3, reviewPage * 3 + 3);
 
   useEffect(() => {
+    const TWELVE_HOURS = 12 * 60 * 60 * 1000;
+
+    const save = (v: number, o: number) => {
+      const stored = localStorage.getItem("edh_live_counts");
+      const resetAt = stored ? JSON.parse(stored).resetAt : Date.now();
+      localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: v, orders: o, resetAt }));
+    };
+
+    const checkReset = () => {
+      const stored = localStorage.getItem("edh_live_counts");
+      if (!stored) return;
+      const { resetAt } = JSON.parse(stored);
+      if (Date.now() - resetAt >= TWELVE_HOURS) {
+        const base = Math.floor(Math.random() * 9000) + 1000;
+        const newOrders = Math.floor(base * 0.35);
+        localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: base, orders: newOrders, resetAt: Date.now() }));
+        setViewers(base);
+        setOrders(newOrders);
+      }
+    };
+
+    let tickCount = 0;
+
     const iv = setInterval(() => {
-      setViewers(v => v + Math.floor(Math.random() * 3) + 1);
-      setOrders(o => o + (Math.random() < 0.65 ? 1 : 0));
+      tickCount++;
+      checkReset();
+
+      const isBigJump = tickCount % (Math.floor(Math.random() * 4) + 6) === 0;
+
+      setViewers(v => {
+        const bump = isBigJump
+          ? Math.floor(Math.random() * 60) + 20
+          : Math.floor(Math.random() * 3) + 1;
+        const next = v + bump;
+        setOrders(o => {
+          const obump = isBigJump
+            ? Math.floor(Math.random() * 12) + 4
+            : (Math.random() < 0.65 ? 1 : 0);
+          const onext = o + obump;
+          save(next, onext);
+          return onext;
+        });
+        return next;
+      });
     }, 4000);
+
     return () => clearInterval(iv);
   }, []);
 
