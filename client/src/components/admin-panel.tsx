@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock, CheckCircle, XCircle } from "lucide-react";
+import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock, CheckCircle, XCircle, MessageSquare, Bot, MailOpen } from "lucide-react";
 import type { InsertAffiliateLink, AffiliateLink, UserIdea } from "@shared/schema";
 
 interface AdminPanelProps {
@@ -25,7 +25,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [activeTab, setActiveTab] = useState<"create" | "drafts" | "manage" | "ideas">("create");
+  const [activeTab, setActiveTab] = useState<"create" | "drafts" | "manage" | "ideas" | "messages">("create");
+  const [msgAiReplies, setMsgAiReplies] = useState<Record<number, string>>({});
   const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean; isDraft?: boolean; scheduledPublishAt?: Date; scheduledDeleteAt?: Date }>({
     title: "",
     url: "",
@@ -64,6 +65,35 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     queryKey: ["/api/admin/user-ideas"],
     enabled: isAuthenticated && activeTab === "ideas",
   });
+
+  // Fetch contact messages
+  const { data: contactMsgs = [], refetch: refetchMsgs } = useQuery<any[]>({
+    queryKey: ["/api/contact/messages"],
+    enabled: isAuthenticated && activeTab === "messages",
+  });
+
+  const MSG_KEYWORDS: { keywords: string[]; response: string; unresolvable?: boolean }[] = [
+    { keywords: ["refund","money back","return","reimburse"], response: "We understand your concern. For refund requests, please ask the customer to email elitedeals.edh@gmail.com with their order details and device reference.", unresolvable: true },
+    { keywords: ["scam","fake","fraud","not real"], response: "Thank you for reporting this. We're investigating immediately. Please ask the customer to email elitedeals.edh@gmail.com with full details and their device reference.", unresolvable: true },
+    { keywords: ["broken","error","bug","not working","issue","problem","glitch"], response: "Thanks for flagging this! We're looking into the technical issue. Please ask the customer to clear their cache and try again. If it persists, email elitedeals.edh@gmail.com with their device info." },
+    { keywords: ["cancel","unsubscribe","stop","remove"], response: "No action needed on your end — there are no subscriptions on the platform. If the customer has a specific account concern, ask them to email elitedeals.edh@gmail.com." },
+    { keywords: ["help","how","what","where","explain"], response: "Auto-reply sent to customer with how-to information. If they need further help, they can use the AI chatbot on the main page or email elitedeals.edh@gmail.com." },
+  ];
+
+  function generateAiReply(message: string, deviceId?: string): string {
+    const lower = (message || "").toLowerCase();
+    for (const entry of MSG_KEYWORDS) {
+      if (entry.keywords.some(k => lower.includes(k))) {
+        const deviceRef = deviceId ? ` (Device ref: ...${deviceId.slice(-8)})` : "";
+        if (entry.unresolvable) {
+          return `${entry.response}${deviceRef} — ask them to mention this device reference in their email so you can identify their account.`;
+        }
+        return entry.response;
+      }
+    }
+    const deviceRef = deviceId ? `...${deviceId.slice(-8)}` : "unknown";
+    return `Message received from device ref ${deviceRef}. This appears to be a general enquiry. If it needs a personal response, ask the customer to email elitedeals.edh@gmail.com with reference to their device (${deviceRef}).`;
+  }
 
   const addImageField = () => {
     setAdditionalImages([...additionalImages, ""]);
@@ -596,11 +626,19 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
           </form>
         ) : (
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="create">Create Product</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="create">Create</TabsTrigger>
               <TabsTrigger value="drafts">Drafts ({drafts.length})</TabsTrigger>
-              <TabsTrigger value="manage">Manage All</TabsTrigger>
-              <TabsTrigger value="ideas">User Ideas ({userIdeas.length})</TabsTrigger>
+              <TabsTrigger value="manage">Manage</TabsTrigger>
+              <TabsTrigger value="ideas">Ideas ({userIdeas.length})</TabsTrigger>
+              <TabsTrigger value="messages" className="relative">
+                Messages
+                {contactMsgs.filter((m: any) => !m.isResolved).length > 0 && (
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold rounded-full flex items-center justify-center">
+                    {contactMsgs.filter((m: any) => !m.isResolved).length}
+                  </span>
+                )}
+              </TabsTrigger>
             </TabsList>
             
             <TabsContent value="create">
@@ -1160,6 +1198,98 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                             >
                               Mark as Reviewed
                             </Button>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="messages">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-purple-600" />
+                    Contact Messages
+                  </CardTitle>
+                  <CardDescription>
+                    Messages submitted via the "Contact Us" button. Use AI Reply to generate a suggested response.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  {contactMsgs.length === 0 ? (
+                    <div className="text-center py-8">
+                      <MailOpen className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-gray-500">No messages yet</p>
+                      <p className="text-sm text-gray-400 mt-1">Messages from the Contact Us popup will appear here</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {contactMsgs.map((msg: any) => (
+                        <div key={msg.id} className={`border rounded-xl p-4 space-y-3 ${msg.isResolved ? "opacity-50 bg-gray-50" : "bg-white"}`}>
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span className="font-semibold text-sm text-gray-900">{msg.name || "Anonymous"}</span>
+                                {msg.isResolved ? (
+                                  <Badge variant="secondary" className="text-[10px]">Resolved</Badge>
+                                ) : (
+                                  <Badge variant="outline" className="text-[10px] border-orange-400 text-orange-600">Open</Badge>
+                                )}
+                              </div>
+                              <div className="text-[11px] text-gray-400 mt-0.5">
+                                Device: ...{(msg.deviceId || "unknown").slice(-8)} · {new Date(msg.createdAt).toLocaleDateString()} {new Date(msg.createdAt).toLocaleTimeString()}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-sm text-gray-700 bg-gray-50 rounded-lg px-3 py-2">
+                            "{msg.message}"
+                          </div>
+
+                          {/* AI Reply area */}
+                          {msgAiReplies[msg.id] && (
+                            <div className="rounded-lg px-3 py-2.5 text-xs text-purple-800 space-y-1" style={{ background: "rgba(124,58,237,0.07)", border: "1px solid rgba(124,58,237,0.2)" }}>
+                              <div className="flex items-center gap-1.5 font-semibold text-purple-700">
+                                <Bot className="w-3.5 h-3.5" /> AI Suggested Response
+                              </div>
+                              <p className="leading-relaxed">{msgAiReplies[msg.id]}</p>
+                            </div>
+                          )}
+
+                          {!msg.isResolved && (
+                            <div className="flex gap-2 flex-wrap">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-purple-700 border-purple-300 hover:bg-purple-50"
+                                onClick={() => {
+                                  const reply = generateAiReply(msg.message, msg.deviceId);
+                                  setMsgAiReplies(prev => ({ ...prev, [msg.id]: reply }));
+                                }}
+                              >
+                                <Bot className="w-3.5 h-3.5 mr-1" /> AI Reply
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="text-green-700 border-green-300 hover:bg-green-50"
+                                onClick={async () => {
+                                  try {
+                                    await apiRequest("PUT", `/api/contact/messages/${msg.id}/resolve`, {
+                                      aiResponse: msgAiReplies[msg.id],
+                                    });
+                                    refetchMsgs();
+                                    toast({ title: "Resolved", description: "Message marked as resolved" });
+                                  } catch {
+                                    toast({ title: "Error", description: "Failed to resolve", variant: "destructive" });
+                                  }
+                                }}
+                              >
+                                <CheckCircle className="w-3.5 h-3.5 mr-1" /> Mark Resolved
+                              </Button>
+                            </div>
                           )}
                         </div>
                       ))}

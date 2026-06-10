@@ -753,6 +753,38 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
+  // Contact Messages
+  app.post("/api/contact", async (req, res) => {
+    try {
+      const { name, message, deviceId } = req.body;
+      if (!message) return res.status(400).json({ error: "Message required" });
+      const msg = await storage.submitContactMessage(name, message, deviceId);
+      res.json(msg);
+    } catch (e) {
+      res.status(500).json({ error: "Failed to save message" });
+    }
+  });
+
+  app.get("/api/contact/messages", async (req, res) => {
+    try {
+      const msgs = await storage.getAllContactMessages();
+      res.json(msgs);
+    } catch (e) {
+      res.status(500).json({ error: "Failed to fetch messages" });
+    }
+  });
+
+  app.put("/api/contact/messages/:id/resolve", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { aiResponse } = req.body;
+      await storage.markContactMessageResolved(id, aiResponse);
+      res.json({ ok: true });
+    } catch (e) {
+      res.status(500).json({ error: "Failed to resolve message" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

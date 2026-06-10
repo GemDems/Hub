@@ -1,4 +1,4 @@
-import { users, affiliateLinks, referralCodes, userStats, userIdeas, aiConversations, smsMessages, userSmsPreferences, reviews, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats, type UserIdea, type InsertUserIdea, type AiConversation, type InsertAiConversation, type SmsMessage, type InsertSmsMessage, type UserSmsPreferences, type InsertUserSmsPreferences } from "@shared/schema";
+import { users, affiliateLinks, referralCodes, userStats, userIdeas, aiConversations, smsMessages, userSmsPreferences, reviews, contactMessages, type User, type InsertUser, type AffiliateLink, type InsertAffiliateLink, type ReferralCode, type UserStats, type UserIdea, type InsertUserIdea, type AiConversation, type InsertAiConversation, type SmsMessage, type InsertSmsMessage, type UserSmsPreferences, type InsertUserSmsPreferences, type ContactMessage } from "@shared/schema";
 import { db } from "./db";
 import { eq, desc, sql } from "drizzle-orm";
 
@@ -48,6 +48,11 @@ export interface IStorage {
   updateUserSmsPreferences(userId: string, preferences: Partial<UserSmsPreferences>): Promise<void>;
   optOutFromSms(userId: string): Promise<void>;
   markIdeaAsReviewed(id: number): Promise<UserIdea | undefined>;
+
+  // Contact Messages
+  submitContactMessage(name: string | undefined, message: string, deviceId: string | undefined): Promise<ContactMessage>;
+  getAllContactMessages(): Promise<ContactMessage[]>;
+  markContactMessageResolved(id: number, aiResponse?: string): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -782,6 +787,21 @@ export class DatabaseStorage implements IStorage {
 
   async getAllReviews() {
     return db.select().from(reviews).orderBy(desc(reviews.createdAt));
+  }
+
+  async submitContactMessage(name: string | undefined, message: string, deviceId: string | undefined): Promise<ContactMessage> {
+    const [msg] = await db.insert(contactMessages).values({ name: name || null, message, deviceId: deviceId || null }).returning();
+    return msg;
+  }
+
+  async getAllContactMessages(): Promise<ContactMessage[]> {
+    return db.select().from(contactMessages).orderBy(desc(contactMessages.createdAt));
+  }
+
+  async markContactMessageResolved(id: number, aiResponse?: string): Promise<void> {
+    await db.update(contactMessages)
+      .set({ isResolved: 1, ...(aiResponse ? { aiResponse } : {}) })
+      .where(eq(contactMessages.id, id));
   }
 }
 

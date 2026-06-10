@@ -17,6 +17,7 @@ import SavingsProgress from "@/components/savings-progress";
 import IdeaSubmission from "@/components/idea-submission";
 import AIChatbot from "@/components/ai-chatbot";
 import ContactPopup from "@/components/contact-popup";
+import ProductStories from "@/components/product-stories";
 import { Link } from "wouter";
 
 import { Button } from "@/components/ui/button";
@@ -252,7 +253,22 @@ export default function Home() {
           </p>
         </div>
         <SearchBar onSearch={setSearchQuery} links={affiliateLinks} />
+
+        {/* ── Instagram-style product stories ── */}
+        <ProductStories products={affiliateLinks} />
+
         <CategoryFilter categories={categories} activeCategory={activeCategory} onCategoryChange={setActiveCategory} />
+
+        {/* ── FTC / Affiliate Disclosure ── */}
+        <div className="flex items-center justify-center gap-1.5 py-1.5 px-3 mb-4 rounded-lg text-center flex-wrap"
+          style={{ background: "rgba(239,246,255,0.7)", border: "1px solid rgba(147,197,253,0.35)" }}>
+          <span className="text-[10px]" style={{ color: "#6b7280" }}>
+            📋 <strong style={{ color: "#374151" }}>Affiliate Disclosure:</strong> Links on this page may earn us a commission at no extra cost to you. Prices shown at time of listing and may vary.
+          </span>
+          <Link href="/about" className="text-[10px] font-semibold hover:underline" style={{ color: "#3b82f6", textDecoration: "none" }}>
+            Full Legal Disclosure →
+          </Link>
+        </div>
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

@@ -4,34 +4,33 @@ import { X, MessageCircle, Mail, Clock, Send, Sparkles } from "lucide-react";
 const AUTO_RESPONSES: { keywords: string[]; response: string }[] = [
   {
     keywords: ["refund", "money back", "return", "reimburse"],
-    response: "We hear you, and we genuinely care! 💛 Rather than a refund, we'd love to personally hunt down an even better deal for you — one that truly hits. Just describe what you were looking for and we'll make it right. We take all the risk so you don't have to! 🎯",
+    response: "We totally understand 💛 Instead of a refund, we'd love to personally find you an even better deal. For direct assistance, reach us at elitedeals.edh@gmail.com — include a quick description and we'll make it right! 🎯",
   },
   {
     keywords: ["scam", "fake", "fraud", "not real", "doesn't work"],
-    response: "Your trust means everything to us 🙏 Every deal we list is personally verified. If something didn't feel right, tell us exactly what happened and we'll investigate immediately — and find you a replacement deal worth your time! ✅",
+    response: "Your trust means the world to us 🙏 Every deal we list is personally verified. Please reach out directly at elitedeals.edh@gmail.com with details of what happened — we investigate every report and respond personally. ✅",
   },
   {
     keywords: ["broken", "error", "bug", "not working", "issue", "problem", "glitch"],
-    response: "Ugh, tech gremlins! 😤 Our team is on it. Please share what happened and which device you're on — we'll get it sorted fast. In the meantime, try a refresh! ⚡",
+    response: "Ugh, tech gremlins! 😤 Please email us at elitedeals.edh@gmail.com with what happened and your device type — we'll get it sorted fast. Try a quick refresh in the meantime! ⚡",
   },
   {
     keywords: ["cancel", "unsubscribe", "stop", "remove"],
-    response: "Totally respect that! 💙 You're always in control here — no subscriptions, no pressure. If we can improve your experience instead, we're all ears. What would make this better for you? 🌟",
+    response: "Totally respect that! 💙 You're always in full control here. For anything specific, reach us at elitedeals.edh@gmail.com — we'll handle it personally and promptly. 🌟",
   },
   {
     keywords: ["help", "how", "what", "where", "explain"],
-    response: "Happy to help! 🙌 Browse deals on the main page, click 'Get This Deal Now' to grab any offer, and use the AI assistant (the chat button) for personalised recommendations. Any other questions, just ask! 😊",
+    response: "Happy to help! 🙌 Browse deals on the main page, tap 'Get This Deal Now' to grab any offer, or use the AI chatbot for personalised picks. For anything else, email us directly at elitedeals.edh@gmail.com 😊",
   },
 ];
 
-const DEFAULT_RESPONSE = "Thanks so much for reaching out! 💌 We'll get back to you at elitedeals.edh@gmail.com within 24 hours. We read every single message and genuinely love hearing from our members!";
+const DEFAULT_RESPONSE =
+  "Thanks for reaching out! 💌 Please email us directly at elitedeals.edh@gmail.com — we read and personally respond to every message. Include any details so we can help you faster!";
 
 function getAutoResponse(message: string): string | null {
   const lower = message.toLowerCase();
   for (const entry of AUTO_RESPONSES) {
-    if (entry.keywords.some((kw) => lower.includes(kw))) {
-      return entry.response;
-    }
+    if (entry.keywords.some((kw) => lower.includes(kw))) return entry.response;
   }
   return null;
 }
@@ -47,7 +46,16 @@ export default function ContactPopup() {
   const handleSubmit = async () => {
     if (!message.trim()) return;
     setSending(true);
-    await new Promise((r) => setTimeout(r, 600));
+    const deviceId = localStorage.getItem("deviceId") || undefined;
+    try {
+      await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: name.trim() || undefined, message: message.trim(), deviceId }),
+      });
+    } catch {
+      // non-blocking
+    }
     const reply = getAutoResponse(message);
     setAutoReply(reply || DEFAULT_RESPONSE);
     setSubmitted(true);
@@ -105,7 +113,7 @@ export default function ContactPopup() {
                 <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: "#22c55e" }} />
                 <div>
                   <div className="text-xs font-semibold" style={{ color: "#4ade80" }}>We're here for you</div>
-                  <div className="text-xs" style={{ color: "#6b7280" }}>Usually reply within a few hours ✨</div>
+                  <div className="text-xs" style={{ color: "#6b7280" }}>Reach us any time ✨</div>
                 </div>
               </div>
 
@@ -115,7 +123,7 @@ export default function ContactPopup() {
               </div>
               <div className="flex items-center gap-2 text-xs" style={{ color: "#6b7280" }}>
                 <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#a78bfa" }} />
-                <span>Mon–Sun · Expected reply: within 24 hrs</span>
+                <span>Mon–Sun · Response within 24 hrs</span>
               </div>
 
               {!submitted ? (

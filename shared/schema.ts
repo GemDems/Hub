@@ -115,6 +115,16 @@ export const reviews = pgTable("reviews", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export const contactMessages = pgTable("contact_messages", {
+  id: serial("id").primaryKey(),
+  name: text("name"),
+  message: text("message").notNull(),
+  deviceId: text("device_id"),
+  aiResponse: text("ai_response"),
+  isResolved: integer("is_resolved").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertUserSchema = createInsertSchema(users).pick({
   username: true,
   password: true,
@@ -180,3 +190,4 @@ export type InsertSmsMessage = z.infer<typeof insertSmsMessageSchema>;
 export type UserSmsPreferences = typeof userSmsPreferences.$inferSelect;
 export type InsertUserSmsPreferences = z.infer<typeof insertUserSmsPreferencesSchema>;
 export type Review = typeof reviews.$inferSelect;
+export type ContactMessage = typeof contactMessages.$inferSelect;
