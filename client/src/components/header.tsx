@@ -25,8 +25,8 @@ const ALL_REVIEWS = [
 ];
 
 export default function Header() {
-  const [viewers, setViewers] = useState(1035);
-  const [orders, setOrders] = useState(708);
+  const [viewers, setViewers] = useState(1247);
+  const [orders, setOrders] = useState(413);
   const [reviewPage, setReviewPage] = useState(0);
   const [fadeIn, setFadeIn] = useState(true);
   const totalPages = Math.ceil(ALL_REVIEWS.length / 3);
@@ -52,24 +52,9 @@ export default function Header() {
 
   useEffect(() => {
     const iv = setInterval(() => {
-      setViewers(v => Math.max(980, Math.min(1200, v + Math.floor(Math.random() * 5) - 2)));
-      setOrders(o => Math.max(650, Math.min(820, o + Math.floor(Math.random() * 3) - 1)));
-    }, 3500);
-    return () => clearInterval(iv);
-  }, []);
-
-  useEffect(() => {
-    const fetch_ = async () => {
-      try {
-        const res = await fetch("/api/live-stats");
-        if (!res.ok) return;
-        const s = await res.json();
-        setViewers(s.viewers);
-        setOrders(s.hourlyBuyers);
-      } catch {}
-    };
-    fetch_();
-    const iv = setInterval(fetch_, 8000);
+      setViewers(v => v + Math.floor(Math.random() * 3) + 1);
+      setOrders(o => o + (Math.random() < 0.65 ? 1 : 0));
+    }, 4000);
     return () => clearInterval(iv);
   }, []);
 
