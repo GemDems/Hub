@@ -240,13 +240,13 @@ export default function Home() {
       </div>
 
       {/* Invisible Admin Toggle */}
-      <div className="fixed top-4 right-4 z-50">
+      <div className="fixed top-1 right-1 z-50">
         <Button
           onClick={() => setShowAdmin(true)}
-          className="w-16 h-16 bg-transparent hover:bg-transparent border-0 shadow-none opacity-0"
+          className="w-6 h-6 sm:w-16 sm:h-16 bg-transparent hover:bg-transparent border-0 shadow-none opacity-0 p-0 min-w-0"
           title="Creator Mode"
         >
-          <Settings className="w-4 h-4 opacity-0" />
+          <Settings className="w-2 h-2 opacity-0" />
         </Button>
       </div>
 
