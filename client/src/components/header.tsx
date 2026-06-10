@@ -27,6 +27,28 @@ const ALL_REVIEWS = [
 export default function Header() {
   const [viewers, setViewers] = useState(1035);
   const [orders, setOrders] = useState(708);
+  const [reviewPage, setReviewPage] = useState(0);
+  const [fadeIn, setFadeIn] = useState(true);
+  const totalPages = Math.ceil(ALL_REVIEWS.length / 3);
+
+  const goToPage = (next: number) => {
+    setFadeIn(false);
+    setTimeout(() => {
+      setReviewPage(next);
+      setFadeIn(true);
+    }, 250);
+  };
+
+  const handleReviewScroll = (e: React.WheelEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (e.deltaY > 0) {
+      goToPage((reviewPage + 1) % totalPages);
+    } else {
+      goToPage((reviewPage - 1 + totalPages) % totalPages);
+    }
+  };
+
+  const currentReviews = ALL_REVIEWS.slice(reviewPage * 3, reviewPage * 3 + 3);
 
   useEffect(() => {
     const iv = setInterval(() => {
@@ -152,34 +174,43 @@ export default function Header() {
           </div>
         </div>
       </div>
-      {/* Reviews carousel */}
-      <div className="mt-5 pb-8">
+      {/* Reviews — 3 shown at a time, scroll to fade through all */}
+      <div
+        className="max-w-2xl mx-auto px-4 mt-5 pb-8"
+        onWheel={handleReviewScroll}
+        style={{ cursor: "ns-resize" }}
+      >
         <div
+          className="grid grid-cols-1 md:grid-cols-3 gap-3"
           style={{
-            display: "flex",
-            overflowX: "auto",
-            gap: "12px",
-            paddingLeft: "16px",
-            paddingRight: "16px",
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
+            opacity: fadeIn ? 1 : 0,
+            transition: "opacity 0.25s ease",
           }}
         >
-          {ALL_REVIEWS.map((r) => (
-            <div
-              key={r.author + r.badge}
-              className="rounded-xl p-4 flex-shrink-0"
-              style={{
-                background: "#151929",
-                border: "1px solid rgba(255,255,255,0.06)",
-                width: "260px",
-              }}
-            >
+          {currentReviews.map((r) => (
+            <div key={r.author + r.badge} className="rounded-xl p-4" style={{ background: "#151929", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div className="text-xs mb-1.5" style={{ color: "#fbbf24" }}>★★★★★</div>
               <div className="text-xs leading-relaxed mb-2" style={{ color: "#d1d5db" }}>{r.text}</div>
               <div className="text-xs font-medium" style={{ color: "#6b7280" }}>{r.author} — {r.badge}</div>
             </div>
+          ))}
+        </div>
+        <div className="flex justify-center gap-1.5 mt-3">
+          {Array.from({ length: totalPages }).map((_, i) => (
+            <button
+              key={i}
+              onClick={() => goToPage(i)}
+              style={{
+                width: i === reviewPage ? "18px" : "6px",
+                height: "4px",
+                borderRadius: "2px",
+                background: i === reviewPage ? "#7c3aed" : "rgba(255,255,255,0.15)",
+                border: "none",
+                padding: 0,
+                cursor: "pointer",
+                transition: "all 0.3s ease",
+              }}
+            />
           ))}
         </div>
       </div>
