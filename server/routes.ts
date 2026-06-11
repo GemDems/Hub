@@ -801,6 +801,15 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
+  app.delete("/api/contact/messages/resolved", async (req, res) => {
+    try {
+      await storage.deleteAllResolvedContactMessages();
+      res.json({ ok: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete resolved messages" });
+    }
+  });
+
   app.put("/api/contact/messages/:id/resolve", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
