@@ -21,6 +21,8 @@ body, html {
   user-select: none !important;
   -webkit-touch-callout: none !important;
   -webkit-tap-highlight-color: transparent !important;
+  background-color: #111827 !important;
+  overscroll-behavior: none;
 }
 
 /* Disable highlighting and context menus */
