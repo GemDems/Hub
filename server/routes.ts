@@ -531,6 +531,15 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
+  app.delete("/api/admin/user-ideas/all", async (req, res) => {
+    try {
+      await storage.deleteAllUserIdeas();
+      res.json({ ok: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete all ideas" });
+    }
+  });
+
   app.put("/api/admin/user-ideas/:id/review", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -771,6 +780,15 @@ Transform now with maximum conversion power in minimal words:`;
       res.json(msgs);
     } catch (e) {
       res.status(500).json({ error: "Failed to fetch messages" });
+    }
+  });
+
+  app.delete("/api/contact/messages/all", async (req, res) => {
+    try {
+      await storage.deleteAllContactMessages();
+      res.json({ ok: true });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to delete all messages" });
     }
   });
 

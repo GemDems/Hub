@@ -66,10 +66,12 @@ export default function Home() {
   const filteredAndSortedLinks = affiliateLinks
     .filter(link => {
       const matchesCategory = activeCategory === "all" || link.category.toLowerCase().includes(activeCategory.toLowerCase());
+      const q = searchQuery.toLowerCase();
       const matchesSearch = !searchQuery ||
-        link.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        link.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        link.category.toLowerCase().includes(searchQuery.toLowerCase());
+        link.title.toLowerCase().includes(q) ||
+        link.description.toLowerCase().includes(q) ||
+        link.category.toLowerCase().includes(q) ||
+        (link.aiPrivateInfo && link.aiPrivateInfo.toLowerCase().includes(q));
       return matchesCategory && matchesSearch;
     })
     .sort((a, b) => {

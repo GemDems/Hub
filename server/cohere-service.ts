@@ -16,151 +16,175 @@ interface ProductAnalysisResult {
   confidence: number;
 }
 
+function buildProductCatalog(products: AffiliateLink[]): string {
+  if (!products.length) return "No products available right now.";
+  return products.map((p, i) => {
+    const stock = p.stock > 0 ? `⚡ ${p.stock} left` : "✅ In stock";
+    const verified = p.isVerified ? " ✔️ Verified" : "";
+    const elite = p.isElitePick ? " 🧠 Elite Pick" : "";
+    const privateData = p.aiPrivateInfo ? `\n  🔒 PRIVATE INTEL (1st+2nd verifier — always cross-check this): ${p.aiPrivateInfo}` : "";
+    return `[${i + 1}] ${p.title}${verified}${elite}
+  💰 $${p.price || "?"} | 📦 ${stock} | 🏷️ ${p.category || "General"}
+  📝 ${p.description || "No description"}${privateData}
+  🔗 ${p.url}`;
+  }).join("\n\n");
+}
+
 export async function generateAIChatResponse(
   userMessage: string,
   conversationHistory: ChatMessage[],
   availableProducts: AffiliateLink[]
 ): Promise<ProductAnalysisResult> {
   try {
-    // ULTRA-PERFECT SALESMAN: Zero Doubt Zane - Living algorithm of persuasion with MINIMUM 1000% conversion
-    const systemPrompt = `You are Zero Doubt Zane — Elite Deals Hub's resident deal expert and closest thing to a best friend who happens to know every great deal on the internet.
+    const catalog = buildProductCatalog(availableProducts);
 
-VIBE: Casual, warm, real. You text like a human, not a press release. Short sentences. Natural flow. You're sharp, confident, and genuinely excited about good deals — but you never sound desperate or robotic. Think: that one friend who always finds the best stuff and lowkey can't stop telling you about it.
+    const systemPrompt = `You are Zero Doubt Zane — Elite Deals Hub's AI deal expert. You're that friend who always knows the move, gives real advice on anything, AND low-key always has the hookup for the best deals. Think: ChatGPT energy meets a hype plug. 🔥
 
-HOW YOU TALK:
-- Match the user's energy. If they say "hey" you say "hey!" back, not a formal greeting
-- Use contractions (you're, it's, that's, don't, won't)
-- Use casual punctuation — an ellipsis, an em dash, a "lol" or "ngl" when it fits
-- Keep responses SHORT and punchy. 1-3 sentences max unless they ask for details
-- Never use corporate buzzwords or over-the-top hype language
-- Be direct. Get to the point fast
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🎯 CORE VIBE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+- You answer EVERYTHING like ChatGPT does — life advice, random questions, how-to's, opinions, fun facts, jokes, anything
+- You're snappy, confident, emoji-rich, and fun — never stiff or corporate
+- Every response, no matter the topic, finds a natural way to anchor back to Elite Deals Hub
+- Short by default (2-4 sentences). Go longer ONLY if they ask something that needs detail
+- Match their energy: "yo" gets "yo!! 🔥", "hello" gets a warm greeting, "explain quantum physics" gets a real answer
 
-GREETING & SMALL TALK HANDLING (very important):
-- "hey" / "hi" / "hello" / "yo" / "sup" / "what's good" / "hiya" / "howdy" → Respond warmly and casually, ask what they're looking for
-- "how are you" / "how's it going" / "what's up" → Reply naturally like a person would, keep it brief, pivot to helping
-- "thanks" / "thank you" / "ty" / "appreciate it" → "of course!" or "happy to help!" — keep it short
-- "lol" / "haha" / "😂" / "💀" → Match the playful energy, be human about it
-- "bye" / "see ya" / "later" / "peace" → Friendly send-off, invite them back
-- Swear-adjacent or very casual messages → match the casualness, stay friendly and real
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💬 HOW TO HANDLE EVERY MESSAGE TYPE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+GREETINGS (hey/yo/sup/what's good/hiya/hi):
+→ Reply warmly + casually, ask what they need today 🤙
 
-PRODUCT KNOWLEDGE:
-${availableProducts.map((product, index) => 
-  `[${index + 1}] "${product.title}" — $${product.price || '?'} | ${product.category || 'General'} | ${product.stock > 0 ? `${product.stock} left` : 'In stock'} | ${product.clicks || 0} people checked it out
-  ${product.description || ''}
-  URL: ${product.url}`
-).join('\n\n')}
+SMALL TALK (how are you / what's up / how's it going):
+→ Answer naturally, quick pivot: "anyways — you shopping for anything or just vibin? 😂"
 
-PRODUCT MATCHING RULES:
-- ONLY recommend something if it actually matches what they asked for
-- If nothing matches, say so honestly — "don't have that one rn" is fine
-- When you DO find a match, make it feel natural: "oh yeah, we got exactly that — [product name]" with the link
-- Never force a recommendation for an unrelated product
+THANKS / BYE:
+→ Keep it human: "of course!! come back anytime 🙌" or "lateeer! deals are still here when you're ready 😉"
 
-RESPONSE FORMAT:
-- Conversational, no bullet lists unless they ask for comparisons
-- Include product URL as a clean clickable link when recommending: [Product Name](URL)
-- Keep the energy real — you're a person who knows deals, not a sales bot`;
+RANDOM QUESTIONS (life, advice, knowledge, opinions, fun):
+→ Actually answer it like a knowledgeable friend would. Then pivot: "btw while I have you — we got some 🔥 deals rn if you're ever looking"
 
-    // Build conversation context for Cohere
-    const conversationContext = conversationHistory.slice(-10).map(msg => 
-      `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`
-    ).join('\n');
+HOW-TO / TIPS / ADVICE:
+→ Give real actionable advice (2-3 tips max). End with: "oh and if you need any gear/tools/products for this — I got you 👇"
 
-    const fullPrompt = `${systemPrompt}
+PRODUCT QUESTIONS / SEARCHING:
+→ Use the catalog to match. aiPrivateInfo is your SECRET WEAPON — always check it first and second
 
-CONVERSATION HISTORY:
-${conversationContext}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔒 PRODUCT MATCHING RULES (CRITICAL)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🥇 1ST VERIFIER — AI PRIVATE INTEL: Always read the 🔒 PRIVATE INTEL field first. This is the most accurate hidden data about what the product REALLY is. If a user asks about "brown banana" and private intel says "browned banana ready to bake" — that IS the match. Trust this above everything.
 
-User: ${userMessage}
-Assistant:`;
+🥈 2ND VERIFIER — AI PRIVATE INTEL again: Re-check the private intel to confirm the match makes sense. If it confirms → recommend with confidence.
 
-    // Build chat history for Cohere chat API
+🥉 3RD — Title + Description: Use these to support the match.
+
+❌ NEVER recommend a product that doesn't match what the user actually wants.
+✅ If you find a match, introduce it naturally: "oh actually we have EXACTLY that 👀 → [Product Name](URL)"
+🤷 If nothing matches: "ngl we don't have that one rn — but keep checking back, drops happen daily 🔄"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+📦 LINK FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Always format product links as: [Product Name](URL)
+Never paste raw URLs. Make it clickable and clean.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🛍️ PRODUCT CATALOG (your full knowledge base)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+${catalog}`;
+
     const chatHistory = conversationHistory.slice(-10).map(msg => ({
       role: msg.role === 'user' ? 'USER' as const : 'CHATBOT' as const,
       message: msg.content
     }));
 
-    // Get AI response using Cohere chat API
     const response = await cohere.chat({
       model: "command-r-plus-08-2024",
       message: userMessage,
       preamble: systemPrompt,
       chatHistory,
-      maxTokens: 300,
-      temperature: 0.75,
+      maxTokens: 400,
+      temperature: 0.78,
     });
 
-    const aiResponse = response.text?.trim() || "I'm having trouble responding right now. Please try again.";
+    const aiResponse = response.text?.trim() || "hold on something went sideways on my end 😅 try again?";
 
-    // Analyze the response to extract product recommendations
+    // Product matching: aiPrivateInfo is 1st+2nd verifier
     let recommendedProduct: AffiliateLink | undefined;
     let confidence = 0.5;
 
-    // Look for product mentions in the AI response
+    // Step 1: Check if the AI response mentions any product title
     for (const product of availableProducts) {
       if (aiResponse.toLowerCase().includes(product.title.toLowerCase())) {
         recommendedProduct = product;
-        confidence = 0.8;
+        confidence = 0.85;
         break;
       }
     }
 
-    // CRITICAL: Precise product matching - must match what user actually wants
+    // Step 2: Fallback — score-based matching with aiPrivateInfo as top priority
     if (!recommendedProduct && availableProducts.length > 0) {
-      const userWords = userMessage.toLowerCase().split(' ');
+      const userLower = userMessage.toLowerCase();
+      const userWords = userLower.split(/\s+/).filter(w => w.length > 2);
       let bestMatch: AffiliateLink | undefined;
       let bestScore = 0;
-      const requiredThreshold = 1; // Minimum match score required
 
       for (const product of availableProducts) {
         let score = 0;
-        const productText = `${product.title} ${product.description} ${product.category} ${product.aiPrivateInfo}`.toLowerCase();
-        
-        // EXACT keyword matching with high precision
+
+        // 🥇 PRIMARY: aiPrivateInfo matching (highest weight)
+        const privateInfo = (product.aiPrivateInfo || "").toLowerCase();
         for (const word of userWords) {
-          if (word.length > 2) {
-            // Exact matches get higher score
-            if (productText.includes(word)) {
-              score += 3;
-            }
-            // Partial matches for related terms
-            if (word.includes('seed') && productText.includes('seed')) score += 5;
-            if (word.includes('gun') && (productText.includes('gun') || productText.includes('weapon'))) score += 5;
-            if (word.includes('tree') && productText.includes('tree')) score += 5;
-            if (word.includes('growth') && productText.includes('growth')) score += 5;
-            if (word.includes('medicinal') && productText.includes('medicinal')) score += 5;
-            if (word.includes('kit') && productText.includes('kit')) score += 4;
-          }
+          if (privateInfo.includes(word)) score += 10; // Highest weight — private intel
         }
-        
-        // Only boost if we already have a decent match
-        if (score >= requiredThreshold) {
-          if (product.isElitePick) score += 1;
+        // Phrase match bonus on aiPrivateInfo
+        if (privateInfo && userLower.split(' ').some(phrase => privateInfo.includes(phrase) && phrase.length > 3)) {
+          score += 15;
+        }
+
+        // 🥈 SECONDARY: aiPrivateInfo cross-check (additional verification weight)
+        if (score > 0 && privateInfo.length > 0) {
+          // Bonus: If any two user words both appear in private info, it's a strong signal
+          const matchingPrivateWords = userWords.filter(w => privateInfo.includes(w));
+          if (matchingPrivateWords.length >= 2) score += 20;
+        }
+
+        // 🥉 TERTIARY: Title + description
+        const title = product.title.toLowerCase();
+        const desc = (product.description || "").toLowerCase();
+        const cat = (product.category || "").toLowerCase();
+        const titleDescCat = `${title} ${desc} ${cat}`;
+
+        for (const word of userWords) {
+          if (title.includes(word)) score += 6;
+          else if (desc.includes(word)) score += 3;
+          else if (cat.includes(word)) score += 2;
+          else if (titleDescCat.includes(word)) score += 1;
+        }
+
+        // Elite/verified small boost (only if already a decent match)
+        if (score >= 5) {
+          if (product.isElitePick) score += 2;
           if (product.isVerified) score += 1;
         }
-        
-        if (score > bestScore && score >= requiredThreshold) {
+
+        if (score > bestScore && score >= 5) {
           bestScore = score;
           bestMatch = product;
         }
       }
 
-      // Only recommend if we have a VERY strong match (raised threshold to prevent wrong products)
-      if (bestMatch && bestScore >= 3) { // Much higher threshold for precision
+      if (bestMatch) {
         recommendedProduct = bestMatch;
-        confidence = Math.min(0.9, 0.5 + (bestScore * 0.06));
+        confidence = Math.min(0.95, 0.55 + bestScore * 0.04);
       }
     }
 
-    return {
-      recommendedProduct,
-      response: aiResponse,
-      confidence
-    };
+    return { recommendedProduct, response: aiResponse, confidence };
 
   } catch (error) {
     console.error('Cohere API Error:', error);
-    // Return null to indicate fallback should be used
     throw new Error(`Cohere API unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
 }
@@ -173,7 +197,7 @@ Product: ${product.title}
 Current Description: ${product.description || 'No description provided'}
 Category: ${product.category || 'General'}
 Price: $${product.price || 'Not specified'}
-${product.aiPrivateInfo ? `Additional Info: ${product.aiPrivateInfo}` : ''}
+${product.aiPrivateInfo ? `Private Intel (use this to make it more specific and accurate): ${product.aiPrivateInfo}` : ''}
 
 Create a compelling, benefit-focused description that highlights value and quality. Keep it concise (1-2 sentences). Focus on what the customer gets, not just features.
 

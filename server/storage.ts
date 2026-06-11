@@ -33,6 +33,8 @@ export interface IStorage {
   // User Ideas
   submitUserIdea(deviceId: string, idea: string): Promise<UserIdea>;
   getAllUserIdeas(): Promise<UserIdea[]>;
+  deleteAllUserIdeas(): Promise<void>;
+  deleteAllContactMessages(): Promise<void>;
   
   // AI Conversations
   saveAiConversation(conversation: InsertAiConversation): Promise<AiConversation>;
@@ -787,6 +789,14 @@ export class DatabaseStorage implements IStorage {
 
   async getAllReviews() {
     return db.select().from(reviews).orderBy(desc(reviews.createdAt));
+  }
+
+  async deleteAllUserIdeas(): Promise<void> {
+    await db.delete(userIdeas);
+  }
+
+  async deleteAllContactMessages(): Promise<void> {
+    await db.delete(contactMessages);
   }
 
   async submitContactMessage(name: string | undefined, message: string, deviceId: string | undefined): Promise<ContactMessage> {

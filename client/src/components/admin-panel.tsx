@@ -1141,10 +1141,33 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <TabsContent value="ideas">
               <Card>
                 <CardHeader>
-                  <CardTitle>User Ideas</CardTitle>
-                  <CardDescription>
-                    Product ideas submitted by users (max 2 words, one per device)
-                  </CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>User Ideas 💡</CardTitle>
+                      <CardDescription>
+                        Product ideas submitted by users (max 2 words, one per device)
+                      </CardDescription>
+                    </div>
+                    {userIdeas.length > 0 && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="flex items-center gap-1.5"
+                        onClick={async () => {
+                          if (!confirm(`🗑️ Delete ALL ${userIdeas.length} ideas? This can't be undone.`)) return;
+                          try {
+                            await apiRequest("DELETE", "/api/admin/user-ideas/all");
+                            refetchIdeas();
+                            toast({ title: "🧹 Cleared!", description: "All ideas deleted." });
+                          } catch {
+                            toast({ title: "Error", description: "Failed to delete all ideas", variant: "destructive" });
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Delete All
+                      </Button>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {userIdeas.length === 0 ? (
@@ -1210,13 +1233,36 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
             <TabsContent value="messages">
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <MessageSquare className="w-5 h-5 text-purple-600" />
-                    Contact Messages
-                  </CardTitle>
-                  <CardDescription>
-                    Messages submitted via the "Contact Us" button. Use AI Reply to generate a suggested response.
-                  </CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="flex items-center gap-2">
+                        <MessageSquare className="w-5 h-5 text-purple-600" />
+                        Contact Messages 📬
+                      </CardTitle>
+                      <CardDescription>
+                        Messages submitted via the "Contact Us" button. Use AI Reply to generate a suggested response.
+                      </CardDescription>
+                    </div>
+                    {contactMsgs.length > 0 && (
+                      <Button
+                        size="sm"
+                        variant="destructive"
+                        className="flex items-center gap-1.5"
+                        onClick={async () => {
+                          if (!confirm(`🗑️ Delete ALL ${contactMsgs.length} messages? This can't be undone.`)) return;
+                          try {
+                            await apiRequest("DELETE", "/api/contact/messages/all");
+                            refetchMsgs();
+                            toast({ title: "🧹 Cleared!", description: "All messages deleted." });
+                          } catch {
+                            toast({ title: "Error", description: "Failed to delete all messages", variant: "destructive" });
+                          }
+                        }}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" /> Delete All
+                      </Button>
+                    )}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {contactMsgs.length === 0 ? (
