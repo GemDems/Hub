@@ -1157,7 +1157,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                           if (!confirm(`🗑️ Delete ALL ${userIdeas.length} ideas? This can't be undone.`)) return;
                           try {
                             await apiRequest("DELETE", "/api/admin/user-ideas/all");
-                            refetchIdeas();
+                            queryClient.setQueryData(["/api/admin/user-ideas"], []);
                             toast({ title: "🧹 Cleared!", description: "All ideas deleted." });
                           } catch {
                             toast({ title: "Error", description: "Failed to delete all ideas", variant: "destructive" });
@@ -1252,7 +1252,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                           if (!confirm(`🗑️ Delete ALL ${contactMsgs.length} messages? This can't be undone.`)) return;
                           try {
                             await apiRequest("DELETE", "/api/contact/messages/all");
-                            refetchMsgs();
+                            queryClient.setQueryData(["/api/contact/messages"], []);
                             toast({ title: "🧹 Cleared!", description: "All messages deleted." });
                           } catch {
                             toast({ title: "Error", description: "Failed to delete all messages", variant: "destructive" });
