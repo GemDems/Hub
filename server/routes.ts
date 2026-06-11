@@ -540,6 +540,15 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
+  app.delete("/api/admin/user-ideas/reviewed", async (req, res) => {
+    try {
+      await storage.deleteAllReviewedUserIdeas();
+      res.json({ ok: true });
+    } catch (error) {
+      res.status(500).json({ message: "Failed to delete reviewed ideas" });
+    }
+  });
+
   app.put("/api/admin/user-ideas/:id/review", async (req, res) => {
     try {
       const id = parseInt(req.params.id);

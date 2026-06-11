@@ -1149,23 +1149,45 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                       </CardDescription>
                     </div>
                     {userIdeas.length > 0 && (
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        className="flex items-center gap-1.5"
-                        onClick={async () => {
-                          if (!confirm(`🗑️ Delete ALL ${userIdeas.length} ideas? This can't be undone.`)) return;
-                          try {
-                            await apiRequest("DELETE", "/api/admin/user-ideas/all");
-                            queryClient.setQueryData(["/api/admin/user-ideas"], []);
-                            toast({ title: "🧹 Cleared!", description: "All ideas deleted." });
-                          } catch {
-                            toast({ title: "Error", description: "Failed to delete all ideas", variant: "destructive" });
-                          }
-                        }}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" /> Delete All
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        {userIdeas.some((i: UserIdea) => i.isReviewed) && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="flex items-center gap-1.5 text-orange-600 border-orange-300 hover:bg-orange-50"
+                            onClick={async () => {
+                              const reviewedCount = userIdeas.filter((i: UserIdea) => i.isReviewed).length;
+                              if (!confirm(`🗑️ Delete ${reviewedCount} reviewed idea(s)? This can't be undone.`)) return;
+                              try {
+                                await apiRequest("DELETE", "/api/admin/user-ideas/reviewed");
+                                queryClient.setQueryData(["/api/admin/user-ideas"], userIdeas.filter((i: UserIdea) => !i.isReviewed));
+                                toast({ title: "🧹 Done!", description: "Reviewed ideas deleted." });
+                              } catch {
+                                toast({ title: "Error", description: "Failed to delete reviewed ideas", variant: "destructive" });
+                              }
+                            }}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" /> Delete Reviewed
+                          </Button>
+                        )}
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="flex items-center gap-1.5"
+                          onClick={async () => {
+                            if (!confirm(`🗑️ Delete ALL ${userIdeas.length} ideas? This can't be undone.`)) return;
+                            try {
+                              await apiRequest("DELETE", "/api/admin/user-ideas/all");
+                              queryClient.setQueryData(["/api/admin/user-ideas"], []);
+                              toast({ title: "🧹 Cleared!", description: "All ideas deleted." });
+                            } catch {
+                              toast({ title: "Error", description: "Failed to delete all ideas", variant: "destructive" });
+                            }
+                          }}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Delete All
+                        </Button>
+                      </div>
                     )}
                   </div>
                 </CardHeader>
