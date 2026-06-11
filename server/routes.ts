@@ -584,8 +584,17 @@ Transform now with maximum conversion power in minimal words:`;
         availableProducts
       );
 
+      // Safety net: if a product was matched but the response doesn't include the URL, append it
+      let finalResponse = aiResult.response;
+      if (aiResult.recommendedProduct) {
+        const exactUrl = aiResult.recommendedProduct.url;
+        if (!finalResponse.includes(exactUrl)) {
+          finalResponse += ` [${aiResult.recommendedProduct.title}](${exactUrl})`;
+        }
+      }
+
       res.json({
-        response: aiResult.response,
+        response: finalResponse,
         recommendedProduct: aiResult.recommendedProduct,
         confidence: aiResult.confidence,
         hasCohere: true

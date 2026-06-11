@@ -19,30 +19,17 @@ interface ChatPosition {
 export default function AIChatbot() {
   // Function to format message links - converts raw URLs to clean clickable links
   const formatMessageLinks = (content: string): string => {
-    // Pattern to match raw URLs like (https://example.com) or just https://example.com
-    const urlPattern = /(\(?)https?:\/\/[^\s\)]+(\)?)/g;
-    
-    return content.replace(urlPattern, (match, openParen, closeParen) => {
-      // Extract the actual URL without parentheses
-      let url = match.replace(/^\(/, '').replace(/\)$/, '');
-      
-      // Get product name from domain or use generic text
-      let linkText = 'Get This Deal';
-      
-      // Try to extract a meaningful name from the URL
-      try {
-        const domain = new URL(url).hostname.replace('www.', '');
-        const parts = domain.split('.');
-        if (parts.length > 0) {
-          linkText = parts[0].charAt(0).toUpperCase() + parts[0].slice(1);
-        }
-      } catch {
-        linkText = 'Get This Deal';
-      }
-      
-      // Return a clean HTML link
+    // Step 1: convert markdown links [text](url) → HTML, preserving exact URL
+    let result = content.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (_, linkText, url) => {
       return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${linkText} →</a>`;
     });
+
+    // Step 2: convert any remaining bare raw URLs (not already inside an <a> tag)
+    result = result.replace(/(?<!href=")(https?:\/\/[^\s<"]+)/g, (url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">Get This Deal →</a>`;
+    });
+
+    return result;
   };
 
   // Generate unique session ID for this tab
