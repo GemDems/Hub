@@ -53,23 +53,27 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const { data: allProducts = [] } = useQuery({
     queryKey: ["/api/admin/affiliate-links"],
     enabled: isAuthenticated,
+    refetchInterval: 5000,
   });
 
   const { data: drafts = [] } = useQuery({
     queryKey: ["/api/admin/drafts"],
     enabled: isAuthenticated,
+    refetchInterval: 5000,
   });
 
-  // Fetch user ideas
+  // Fetch user ideas — polls every 5s so any device submission appears instantly
   const { data: userIdeas = [], refetch: refetchIdeas } = useQuery<UserIdea[]>({
     queryKey: ["/api/admin/user-ideas"],
-    enabled: isAuthenticated && activeTab === "ideas",
+    enabled: isAuthenticated,
+    refetchInterval: 5000,
   });
 
-  // Fetch contact messages
+  // Fetch contact messages — polls every 5s so messages from any tab/device show up
   const { data: contactMsgs = [], refetch: refetchMsgs } = useQuery<any[]>({
     queryKey: ["/api/contact/messages"],
-    enabled: isAuthenticated && activeTab === "messages",
+    enabled: isAuthenticated,
+    refetchInterval: 5000,
   });
 
   const MSG_KEYWORDS: { keywords: string[]; response: string; unresolvable?: boolean }[] = [
