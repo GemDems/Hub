@@ -21,29 +21,30 @@ export default function LiveFeed() {
     const firsts = ['bri','kai','zo','ty','lex','nov','riv','len','ev','jax','cam','rei','tay','mar','sar','eli','ash','noa','mia','ren','cas','dex','cal','fia','neo','rue','bay','sky','ian','lys'];
     const mids   = ['an','en','ia','el','ar','on','ra','lyn','den','ven','ell','iss','or','ir','et','ey'];
     const lasts  = ['na','ton','ley','son','la','ren','xa','ros','wyn','belle','don','kay','zee','rie','lyn','ven','ell','ara'];
-    const applyCase = (s: string) => {
-      const r = Math.random();
-      if (r < 0.33) return s.toLowerCase();
-      if (r < 0.55) return s.toUpperCase();
-      return s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
-    };
-    const makeName = () => {
+    const isAllCaps = (s: string) => s.length > 1 && s === s.toUpperCase();
+
+    const makeName = (existingActivities: LiveActivity[]) => {
       const useThreeParts = Math.random() > 0.5;
       const raw = useThreeParts
         ? firsts[Math.floor(Math.random()*firsts.length)] + mids[Math.floor(Math.random()*mids.length)] + lasts[Math.floor(Math.random()*lasts.length)]
         : firsts[Math.floor(Math.random()*firsts.length)] + lasts[Math.floor(Math.random()*lasts.length)];
-      return applyCase(raw);
+
+      // Only allow all-caps if none of the currently visible names are already all-caps
+      const allCapsAlreadyVisible = existingActivities.some(a => isAllCaps(a.user));
+      const r = Math.random();
+      if (!allCapsAlreadyVisible && r < 0.22) return raw.toUpperCase();
+      return r < 0.5 ? raw.toLowerCase() : raw.charAt(0).toUpperCase() + raw.slice(1).toLowerCase();
     };
-    const names = Array.from({ length: 60 }, makeName);
+
     const locations = ['TX', 'CA', 'NY', 'FL', 'IL', 'PA', 'OH', 'GA', 'NC', 'MI'];
     const actions = ['claimed this deal', 'just purchased', 'grabbed this offer', 'secured this item'];
     const products = ['Premium Headphones', 'Smart Watch', 'Wireless Earbuds', 'Fitness Tracker', 'Phone Case'];
 
-    const generateActivity = (): LiveActivity => {
+    const generateActivity = (existing: LiveActivity[]): LiveActivity => {
       const showLocation = Math.random() > 0.5;
       return {
         id: Math.random().toString(36).substr(2, 9),
-        user: names[Math.floor(Math.random() * names.length)],
+        user: makeName(existing),
         location: showLocation ? locations[Math.floor(Math.random() * locations.length)] : '',
         action: actions[Math.floor(Math.random() * actions.length)],
         product: products[Math.floor(Math.random() * products.length)],
@@ -52,14 +53,19 @@ export default function LiveFeed() {
       };
     };
 
-    // Initialize with some activities
-    const initialActivities = Array.from({ length: 5 }, generateActivity);
+    // Build initial list one-by-one so each checks the previous entries
+    const initialActivities: LiveActivity[] = [];
+    for (let i = 0; i < 5; i++) {
+      initialActivities.push(generateActivity(initialActivities));
+    }
     setActivities(initialActivities);
 
     // Add new activity every 8-15 seconds
     const interval = setInterval(() => {
-      const newActivity = generateActivity();
-      setActivities(prev => [newActivity, ...prev.slice(0, 9)]); // Keep last 10
+      setActivities(prev => {
+        const newActivity = generateActivity(prev);
+        return [newActivity, ...prev.slice(0, 9)];
+      });
     }, Math.random() * 7000 + 8000); // 8-15 seconds
 
     return () => clearInterval(interval);
