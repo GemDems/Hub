@@ -5,7 +5,7 @@ let cohere: CohereClient | null = null;
 
 function getCohere(): CohereClient {
   if (!process.env.COHERE_API_KEY) {
-    throw new Error("COHERE_API_KEY is not set. Please add it to your Replit Secrets.");
+    throw new Error("COHERE_API_KEY not set");
   }
   if (!cohere) {
     cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
@@ -30,7 +30,7 @@ function buildProductCatalog(products: AffiliateLink[]): string {
     const stock = p.stock > 0 ? `⚡ ${p.stock} left` : "✅ In stock";
     const verified = p.isVerified ? " ✔️ Verified" : "";
     const elite = p.isElitePick ? " 🧠 Elite Pick" : "";
-    const privateData = p.aiPrivateInfo ? `\n  🔒 PRIVATE INTEL (1st+2nd verifier — always cross-check this): ${p.aiPrivateInfo}` : "";
+    const privateData = p.aiPrivateInfo ? `\n  🔒 PRIVATE INTEL: ${p.aiPrivateInfo}` : "";
     return `[${i + 1}] ${p.title}${verified}${elite}
   💰 $${p.price || "?"} | 📦 ${stock} | 🏷️ ${p.category || "General"}
   📝 ${p.description || "No description"}${privateData}
@@ -38,23 +38,132 @@ function buildProductCatalog(products: AffiliateLink[]): string {
   }).join("\n\n");
 }
 
+// ============================================================
+// BUILT-IN FALLBACK — runs when Cohere is unavailable/out of credits
+// ============================================================
+function scoreProduct(userMessage: string, product: AffiliateLink): number {
+  const userLower = userMessage.toLowerCase();
+  const userWords = userLower.split(/\s+/).filter(w => w.length > 2);
+  let score = 0;
+
+  const privateInfo = (product.aiPrivateInfo || "").toLowerCase();
+  for (const word of userWords) {
+    if (privateInfo.includes(word)) score += 10;
+  }
+  if (privateInfo && userWords.some(w => privateInfo.includes(w) && w.length > 3)) score += 15;
+  if (score > 0 && privateInfo.length > 0) {
+    const matching = userWords.filter(w => privateInfo.includes(w));
+    if (matching.length >= 2) score += 20;
+  }
+
+  const title = product.title.toLowerCase();
+  const desc = (product.description || "").toLowerCase();
+  const cat = (product.category || "").toLowerCase();
+  for (const word of userWords) {
+    if (title.includes(word)) score += 6;
+    else if (desc.includes(word)) score += 3;
+    else if (cat.includes(word)) score += 2;
+  }
+
+  if (score >= 5) {
+    if (product.isElitePick) score += 2;
+    if (product.isVerified) score += 1;
+  }
+  return score;
+}
+
+function generateBuiltInResponse(
+  userMessage: string,
+  products: AffiliateLink[]
+): ProductAnalysisResult {
+  const lower = userMessage.toLowerCase().trim();
+
+  // Greetings
+  const greetings = ["hey", "hi", "hello", "sup", "yo", "hiya", "what's up", "whats up", "howdy", "helo", "heya"];
+  if (greetings.some(g => lower === g || lower.startsWith(g + " ") || lower.startsWith(g + "!"))) {
+    const responses = [
+      "hey!! 👋 what you looking for today? i got some 🔥 deals locked and loaded",
+      "yo!! 🤙 what's good? ready to find you something 🔥 — what you need?",
+      "heyyy 👋 welcome to Elite Deals Hub! i'm Zane, your deal expert — what can i get for you today?",
+      "what's up!! 🔥 you came to the right place — drop what you're looking for and i got you 👇"
+    ];
+    return { response: responses[Math.floor(Math.random() * responses.length)], confidence: 0.5 };
+  }
+
+  // Thanks / bye
+  if (["thanks", "thank you", "thx", "ty", "bye", "later", "goodbye", "cya"].some(w => lower.includes(w))) {
+    const responses = [
+      "of course!! come back anytime 🙌 deals are always fresh here",
+      "anytime!! 🔥 you know where to find me when you need the next deal 😉",
+      "lateeer! 👋 deals are still here when you're ready 😉"
+    ];
+    return { response: responses[Math.floor(Math.random() * responses.length)], confidence: 0.5 };
+  }
+
+  // Product search — find best match
+  if (products.length > 0) {
+    let bestMatch: AffiliateLink | undefined;
+    let bestScore = 0;
+    for (const product of products) {
+      const s = scoreProduct(userMessage, product);
+      if (s > bestScore) { bestScore = s; bestMatch = product; }
+    }
+
+    if (bestMatch && bestScore >= 5) {
+      const price = bestMatch.price ? `$${bestMatch.price}` : "great price";
+      const verified = bestMatch.isVerified ? " ✔️ verified" : "";
+      const elite = bestMatch.isElitePick ? " 🧠 Elite Pick" : "";
+      const intros = [
+        `oh we ACTUALLY have exactly that 👀 →`,
+        `bro we got this one and it's 🔥 →`,
+        `say less — found it 👇`,
+        `you're in luck fr fr →`,
+        `okay okay i see you, check this out 👀 →`
+      ];
+      const intro = intros[Math.floor(Math.random() * intros.length)];
+      const stock = bestMatch.stock > 0 ? ` ⚡ only ${bestMatch.stock} left` : "";
+      const response = `${intro} [${bestMatch.title}](${bestMatch.url})${verified}${elite} — ${price}${stock} 🔥`;
+      return { recommendedProduct: bestMatch, response, confidence: Math.min(0.95, 0.55 + bestScore * 0.04) };
+    }
+
+    // No specific match — show top product
+    const topProduct = [...products].sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0];
+    const noMatchResponses = [
+      `ngl we don't have that exact one rn 😅 but our most popular deal right now is 🔥 → [${topProduct.title}](${topProduct.url}) — worth a look!`,
+      `hmm nothing exact for that rn, but this is what people are grabbing most → [${topProduct.title}](${topProduct.url}) 👀`,
+      `not seeing that one rn but check out our top deal → [${topProduct.title}](${topProduct.url}) 🔥`
+    ];
+    return {
+      response: noMatchResponses[Math.floor(Math.random() * noMatchResponses.length)],
+      recommendedProduct: topProduct,
+      confidence: 0.4
+    };
+  }
+
+  // General fallback
+  const generalResponses = [
+    "that's a good one! 🤔 btw we drop new deals daily — keep checking back for the best finds 🔥",
+    "love the energy!! 😂 and hey — we got some 🔥 deals rn if you're ever looking 👇",
+    "real talk i got you on that 👀 also check out the deals on this page — people are grabbing them fast ⚡"
+  ];
+  return { response: generalResponses[Math.floor(Math.random() * generalResponses.length)], confidence: 0.3 };
+}
+
+// ============================================================
+// MAIN EXPORT
+// ============================================================
 export async function generateAIChatResponse(
   userMessage: string,
   conversationHistory: ChatMessage[],
   availableProducts: AffiliateLink[]
 ): Promise<ProductAnalysisResult> {
-  if (!process.env.COHERE_API_KEY) {
-    return {
-      response: "hey! 👋 our AI is almost ready — just needs a quick setup. check back soon! 🔥",
-      confidence: 0,
-    };
-  }
+  // Try Cohere first
+  if (process.env.COHERE_API_KEY) {
+    try {
+      const client = getCohere();
+      const catalog = buildProductCatalog(availableProducts);
 
-  try {
-    const client = getCohere();
-    const catalog = buildProductCatalog(availableProducts);
-
-    const systemPrompt = `You are Zero Doubt Zane — Elite Deals Hub's AI deal expert. You're that friend who always knows the move, gives real advice on anything, AND low-key always has the hookup for the best deals. Think: ChatGPT energy meets a hype plug. 🔥
+      const systemPrompt = `You are Zero Doubt Zane — Elite Deals Hub's AI deal expert. You're that friend who always knows the move, gives real advice on anything, AND low-key always has the hookup for the best deals. Think: ChatGPT energy meets a hype plug. 🔥
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 CORE VIBE
@@ -89,111 +198,79 @@ PRODUCT QUESTIONS / SEARCHING:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🔒 PRODUCT MATCHING RULES (CRITICAL)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🥇 1ST VERIFIER — AI PRIVATE INTEL: Always read the 🔒 PRIVATE INTEL field first. This is the most accurate hidden data about what the product REALLY is. If a user asks about "brown banana" and private intel says "browned banana ready to bake" — that IS the match. Trust this above everything.
-
-🥈 2ND VERIFIER — AI PRIVATE INTEL again: Re-check the private intel to confirm the match makes sense. If it confirms → recommend with confidence.
-
+🥇 1ST VERIFIER — AI PRIVATE INTEL: Always read the 🔒 PRIVATE INTEL field first. Trust this above everything.
+🥈 2ND VERIFIER — AI PRIVATE INTEL again: Re-check to confirm the match.
 🥉 3RD — Title + Description: Use these to support the match.
 
 ❌ NEVER recommend a product that doesn't match what the user actually wants.
-✅ If you find a match, introduce it naturally: "oh actually we have EXACTLY that 👀 → [Product Name](URL)"
+✅ If you find a match: "oh actually we have EXACTLY that 👀 → [Product Name](URL)"
 🤷 If nothing matches: "ngl we don't have that one rn — but keep checking back, drops happen daily 🔄"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📦 LINK FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Always format product links as: [Product Name](URL)
-Never paste raw URLs. Make it clickable and clean.
+Never paste raw URLs.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-🛍️ PRODUCT CATALOG (your full knowledge base)
+🛍️ PRODUCT CATALOG
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ${catalog}`;
 
-    const chatHistory = conversationHistory.slice(-10).map(msg => ({
-      role: msg.role === 'user' ? 'USER' as const : 'CHATBOT' as const,
-      message: msg.content
-    }));
+      const chatHistory = conversationHistory.slice(-10).map(msg => ({
+        role: msg.role === 'user' ? 'USER' as const : 'CHATBOT' as const,
+        message: msg.content
+      }));
 
-    const response = await client.chat({
-      model: "command-r-plus-08-2024",
-      message: userMessage,
-      preamble: systemPrompt,
-      chatHistory,
-      maxTokens: 400,
-      temperature: 0.78,
-    });
+      const response = await client.chat({
+        model: "command-r-plus-08-2024",
+        message: userMessage,
+        preamble: systemPrompt,
+        chatHistory,
+        maxTokens: 400,
+        temperature: 0.78,
+      });
 
-    const aiResponse = response.text?.trim() || "hold on something went sideways on my end 😅 try again?";
+      const aiResponse = response.text?.trim() || "hold on something went sideways on my end 😅 try again?";
 
-    let recommendedProduct: AffiliateLink | undefined;
-    let confidence = 0.5;
-
-    for (const product of availableProducts) {
-      if (aiResponse.toLowerCase().includes(product.title.toLowerCase())) {
-        recommendedProduct = product;
-        confidence = 0.85;
-        break;
-      }
-    }
-
-    if (!recommendedProduct && availableProducts.length > 0) {
-      const userLower = userMessage.toLowerCase();
-      const userWords = userLower.split(/\s+/).filter(w => w.length > 2);
-      let bestMatch: AffiliateLink | undefined;
-      let bestScore = 0;
+      let recommendedProduct: AffiliateLink | undefined;
+      let confidence = 0.5;
 
       for (const product of availableProducts) {
-        let score = 0;
-
-        const privateInfo = (product.aiPrivateInfo || "").toLowerCase();
-        for (const word of userWords) {
-          if (privateInfo.includes(word)) score += 10;
-        }
-        if (privateInfo && userLower.split(' ').some(phrase => privateInfo.includes(phrase) && phrase.length > 3)) {
-          score += 15;
-        }
-
-        if (score > 0 && privateInfo.length > 0) {
-          const matchingPrivateWords = userWords.filter(w => privateInfo.includes(w));
-          if (matchingPrivateWords.length >= 2) score += 20;
-        }
-
-        const title = product.title.toLowerCase();
-        const desc = (product.description || "").toLowerCase();
-        const cat = (product.category || "").toLowerCase();
-        const titleDescCat = `${title} ${desc} ${cat}`;
-
-        for (const word of userWords) {
-          if (title.includes(word)) score += 6;
-          else if (desc.includes(word)) score += 3;
-          else if (cat.includes(word)) score += 2;
-          else if (titleDescCat.includes(word)) score += 1;
-        }
-
-        if (score >= 5) {
-          if (product.isElitePick) score += 2;
-          if (product.isVerified) score += 1;
-        }
-
-        if (score > bestScore && score >= 5) {
-          bestScore = score;
-          bestMatch = product;
+        if (aiResponse.toLowerCase().includes(product.title.toLowerCase())) {
+          recommendedProduct = product;
+          confidence = 0.85;
+          break;
         }
       }
 
-      if (bestMatch) {
-        recommendedProduct = bestMatch;
-        confidence = Math.min(0.95, 0.55 + bestScore * 0.04);
+      if (!recommendedProduct && availableProducts.length > 0) {
+        const userLower = userMessage.toLowerCase();
+        const userWords = userLower.split(/\s+/).filter(w => w.length > 2);
+        let bestMatch: AffiliateLink | undefined;
+        let bestScore = 0;
+
+        for (const product of availableProducts) {
+          const s = scoreProduct(userMessage, product);
+          if (s > bestScore && s >= 5) { bestScore = s; bestMatch = product; }
+        }
+
+        if (bestMatch) {
+          recommendedProduct = bestMatch;
+          confidence = Math.min(0.95, 0.55 + bestScore * 0.04);
+        }
       }
+
+      return { recommendedProduct, response: aiResponse, confidence };
+
+    } catch (error) {
+      console.error('Cohere unavailable, switching to built-in system:', (error as Error).message);
+      // Fall through to built-in system
     }
-
-    return { recommendedProduct, response: aiResponse, confidence };
-
-  } catch (error) {
-    console.error('Cohere API Error:', error);
-    throw new Error(`Cohere API unavailable: ${error instanceof Error ? error.message : 'Unknown error'}`);
   }
+
+  // Built-in fallback (runs when Cohere key missing OR Cohere fails/out of credits)
+  return generateBuiltInResponse(userMessage, availableProducts);
 }
 
 export async function enhanceProductDescription(product: AffiliateLink): Promise<string> {
@@ -209,9 +286,9 @@ Product: ${product.title}
 Current Description: ${product.description || 'No description provided'}
 Category: ${product.category || 'General'}
 Price: $${product.price || 'Not specified'}
-${product.aiPrivateInfo ? `Private Intel (use this to make it more specific and accurate): ${product.aiPrivateInfo}` : ''}
+${product.aiPrivateInfo ? `Private Intel: ${product.aiPrivateInfo}` : ''}
 
-Create a compelling, benefit-focused description that highlights value and quality. Keep it concise (1-2 sentences). Focus on what the customer gets, not just features.
+Create a compelling, benefit-focused description. Keep it concise (1-2 sentences).
 
 Enhanced Description:`;
 

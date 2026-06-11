@@ -1160,8 +1160,6 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                             variant="outline"
                             className="flex items-center gap-1.5 text-orange-600 border-orange-300 hover:bg-orange-50"
                             onClick={async () => {
-                              const reviewedCount = userIdeas.filter((i: UserIdea) => i.isReviewed).length;
-                              if (!confirm(`🗑️ Delete ${reviewedCount} reviewed idea(s)? This can't be undone.`)) return;
                               try {
                                 await apiRequest("DELETE", "/api/admin/user-ideas/reviewed");
                                 queryClient.setQueryData(["/api/admin/user-ideas"], userIdeas.filter((i: UserIdea) => !i.isReviewed));
@@ -1179,7 +1177,6 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                           variant="destructive"
                           className="flex items-center gap-1.5"
                           onClick={async () => {
-                            if (!confirm(`🗑️ Delete ALL ${userIdeas.length} ideas? This can't be undone.`)) return;
                             try {
                               await apiRequest("DELETE", "/api/admin/user-ideas/all");
                               queryClient.setQueryData(["/api/admin/user-ideas"], []);
@@ -1277,8 +1274,6 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                             variant="outline"
                             className="flex items-center gap-1.5 text-orange-600 border-orange-300 hover:bg-orange-50"
                             onClick={async () => {
-                              const resolvedCount = contactMsgs.filter((m: any) => m.isResolved).length;
-                              if (!confirm(`🗑️ Delete ${resolvedCount} resolved message(s)? This can't be undone.`)) return;
                               try {
                                 await apiRequest("DELETE", "/api/contact/messages/resolved");
                                 queryClient.setQueryData(["/api/contact/messages"], contactMsgs.filter((m: any) => !m.isResolved));
@@ -1296,7 +1291,6 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
                           variant="destructive"
                           className="flex items-center gap-1.5"
                           onClick={async () => {
-                            if (!confirm(`🗑️ Delete ALL ${contactMsgs.length} messages? This can't be undone.`)) return;
                             try {
                               await apiRequest("DELETE", "/api/contact/messages/all");
                               queryClient.setQueryData(["/api/contact/messages"], []);
