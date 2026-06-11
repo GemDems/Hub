@@ -1,9 +1,17 @@
 import { CohereClient } from "cohere-ai";
 import type { AffiliateLink } from "@shared/schema";
 
-const cohere = new CohereClient({
-  token: process.env.COHERE_API_KEY
-});
+let cohere: CohereClient | null = null;
+
+function getCohere(): CohereClient {
+  if (!process.env.COHERE_API_KEY) {
+    throw new Error("COHERE_API_KEY is not set. Please add it to your Replit Secrets.");
+  }
+  if (!cohere) {
+    cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
+  }
+  return cohere;
+}
 
 interface ChatMessage {
   role: 'system' | 'user' | 'assistant';
@@ -35,7 +43,15 @@ export async function generateAIChatResponse(
   conversationHistory: ChatMessage[],
   availableProducts: AffiliateLink[]
 ): Promise<ProductAnalysisResult> {
+  if (!process.env.COHERE_API_KEY) {
+    return {
+      response: "hey! 👋 our AI is almost ready — just needs a quick setup. check back soon! 🔥",
+      confidence: 0,
+    };
+  }
+
   try {
+    const client = getCohere();
     const catalog = buildProductCatalog(availableProducts);
 
     const systemPrompt = `You are Zero Doubt Zane — Elite Deals Hub's AI deal expert. You're that friend who always knows the move, gives real advice on anything, AND low-key always has the hookup for the best deals. Think: ChatGPT energy meets a hype plug. 🔥
@@ -99,7 +115,7 @@ ${catalog}`;
       message: msg.content
     }));
 
-    const response = await cohere.chat({
+    const response = await client.chat({
       model: "command-r-plus-08-2024",
       message: userMessage,
       preamble: systemPrompt,
@@ -110,11 +126,9 @@ ${catalog}`;
 
     const aiResponse = response.text?.trim() || "hold on something went sideways on my end 😅 try again?";
 
-    // Product matching: aiPrivateInfo is 1st+2nd verifier
     let recommendedProduct: AffiliateLink | undefined;
     let confidence = 0.5;
 
-    // Step 1: Check if the AI response mentions any product title
     for (const product of availableProducts) {
       if (aiResponse.toLowerCase().includes(product.title.toLowerCase())) {
         recommendedProduct = product;
@@ -123,7 +137,6 @@ ${catalog}`;
       }
     }
 
-    // Step 2: Fallback — score-based matching with aiPrivateInfo as top priority
     if (!recommendedProduct && availableProducts.length > 0) {
       const userLower = userMessage.toLowerCase();
       const userWords = userLower.split(/\s+/).filter(w => w.length > 2);
@@ -133,24 +146,19 @@ ${catalog}`;
       for (const product of availableProducts) {
         let score = 0;
 
-        // 🥇 PRIMARY: aiPrivateInfo matching (highest weight)
         const privateInfo = (product.aiPrivateInfo || "").toLowerCase();
         for (const word of userWords) {
-          if (privateInfo.includes(word)) score += 10; // Highest weight — private intel
+          if (privateInfo.includes(word)) score += 10;
         }
-        // Phrase match bonus on aiPrivateInfo
         if (privateInfo && userLower.split(' ').some(phrase => privateInfo.includes(phrase) && phrase.length > 3)) {
           score += 15;
         }
 
-        // 🥈 SECONDARY: aiPrivateInfo cross-check (additional verification weight)
         if (score > 0 && privateInfo.length > 0) {
-          // Bonus: If any two user words both appear in private info, it's a strong signal
           const matchingPrivateWords = userWords.filter(w => privateInfo.includes(w));
           if (matchingPrivateWords.length >= 2) score += 20;
         }
 
-        // 🥉 TERTIARY: Title + description
         const title = product.title.toLowerCase();
         const desc = (product.description || "").toLowerCase();
         const cat = (product.category || "").toLowerCase();
@@ -163,7 +171,6 @@ ${catalog}`;
           else if (titleDescCat.includes(word)) score += 1;
         }
 
-        // Elite/verified small boost (only if already a decent match)
         if (score >= 5) {
           if (product.isElitePick) score += 2;
           if (product.isVerified) score += 1;
@@ -190,7 +197,12 @@ ${catalog}`;
 }
 
 export async function enhanceProductDescription(product: AffiliateLink): Promise<string> {
+  if (!process.env.COHERE_API_KEY) {
+    return product.description || 'Quality product with great value.';
+  }
+
   try {
+    const client = getCohere();
     const prompt = `Enhance this product description to be more compelling and sales-focused while maintaining accuracy:
 
 Product: ${product.title}
@@ -203,7 +215,7 @@ Create a compelling, benefit-focused description that highlights value and quali
 
 Enhanced Description:`;
 
-    const response = await cohere.generate({
+    const response = await client.generate({
       model: "command-r-plus-08-2024",
       prompt: prompt,
       maxTokens: 150,
