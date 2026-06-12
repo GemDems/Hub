@@ -6,19 +6,22 @@ interface PhotoCarouselProps {
   images: string[];
   title: string;
   className?: string;
+  imageScale?: number;
 }
 
-export default function PhotoCarousel({ images, title, className = "" }: PhotoCarouselProps) {
+export default function PhotoCarousel({ images, title, className = "", imageScale = 1 }: PhotoCarouselProps) {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
-  // Filter out empty images
   const validImages = images.filter(img => img && img.trim());
-  
+  const scale = imageScale && imageScale > 0 ? imageScale : 1;
+  // On card hover, add a subtle extra zoom on top of the saved scale (max 10% extra)
+  const hoverBoost = isHovered ? Math.min(scale * 1.07, scale + 0.15) : scale;
+
   if (validImages.length === 0) {
-    // Return gradient background when no images
     return (
       <div className={`relative bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-xl ${className}`}>
         <div className="text-center px-4">
@@ -29,22 +32,29 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
     );
   }
 
-  // For single image, just show the image without carousel controls
   if (validImages.length === 1) {
     return (
-      <div className={`relative bg-white flex items-center justify-center ${className}`}>
+      <div
+        className={`relative bg-white flex items-center justify-center overflow-hidden ${className}`}
+        onMouseEnter={() => setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
         <img
           src={validImages[0]}
           alt={title}
-          className="w-full h-full object-contain"
+          style={{
+            width: "100%",
+            height: "100%",
+            objectFit: "contain",
+            transform: `scale(${hoverBoost})`,
+            transformOrigin: "center center",
+            transition: "transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)",
+          }}
           onError={(e) => {
-            // Fallback to gradient if image fails to load
             e.currentTarget.style.display = 'none';
             e.currentTarget.nextElementSibling?.classList.remove('hidden');
           }}
         />
-        
-        {/* Fallback gradient (hidden by default) */}
         <div className="hidden absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
           <div className="text-center">
             <div className="text-2xl mb-2">💎</div>
@@ -67,10 +77,9 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
     setTimeout(() => setIsTransitioning(false), 500);
   };
 
-  // Touch handlers for swipe functionality
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
-    setTouchEnd(0); // Reset touch end
+    setTouchEnd(0);
   };
 
   const handleTouchMove = (e: React.TouchEvent) => {
@@ -79,56 +88,50 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
 
   const handleTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
-    
     const distance = touchStart - touchEnd;
     const minSwipeDistance = 50;
-
-    if (distance > minSwipeDistance) {
-      nextImage(); // Swipe left - next image
-    } else if (distance < -minSwipeDistance) {
-      prevImage(); // Swipe right - previous image
-    }
-    
-    // Reset touch values
+    if (distance > minSwipeDistance) nextImage();
+    else if (distance < -minSwipeDistance) prevImage();
     setTouchStart(0);
     setTouchEnd(0);
   };
 
   return (
-    <div 
+    <div
       className={`relative overflow-hidden group bg-white flex items-center justify-center ${className} ${
         isTransitioning ? 'ring-2 ring-blue-400/50 ring-offset-2' : ''
       }`}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       style={{
-        background: isTransitioning ? 
-          'linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))' : 
-          'transparent',
+        background: isTransitioning
+          ? 'linear-gradient(45deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1))'
+          : 'transparent',
       }}
     >
-      {/* Main Image */}
       <img
         src={validImages[currentIndex]}
         alt={`${title} - Image ${currentIndex + 1}`}
-        className={`w-full h-full object-contain transition-all duration-500 ease-out transform ${
-          isTransitioning ? 'scale-105' : 'scale-100'
-        }`}
         style={{
-          transform: touchEnd && touchStart ? 
-            `translateX(${(touchStart - touchEnd) * 0.3}px) ${isTransitioning ? 'scale(1.05)' : 'scale(1)'}` : 
-            isTransitioning ? 'scale(1.05)' : 'scale(1)',
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          transform: touchEnd && touchStart
+            ? `translateX(${(touchStart - touchEnd) * 0.3}px) scale(${isTransitioning ? hoverBoost * 1.03 : hoverBoost})`
+            : `scale(${isTransitioning ? hoverBoost * 1.03 : hoverBoost})`,
+          transformOrigin: "center center",
+          transition: touchEnd && touchStart ? 'none' : 'transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1)',
           filter: touchEnd && Math.abs(touchStart - touchEnd) > 20 ? 'brightness(1.1)' : 'brightness(1)',
         }}
         onError={(e) => {
-          // Fallback to gradient if image fails to load
           e.currentTarget.style.display = 'none';
           e.currentTarget.nextElementSibling?.classList.remove('hidden');
         }}
       />
-      
-      {/* Fallback gradient (hidden by default) */}
+
       <div className="hidden absolute inset-0 bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-bold">
         <div className="text-center">
           <div className="text-2xl mb-2">💎</div>
@@ -136,40 +139,30 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
         </div>
       </div>
 
-      {/* Navigation Arrows - only show if multiple images */}
       {validImages.length > 1 && (
         <>
           <Button
             variant="ghost"
             size="sm"
             className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-1 h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 backdrop-blur-sm z-10"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              prevImage();
-            }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); prevImage(); }}
             onTouchStart={(e) => e.stopPropagation()}
             onTouchEnd={(e) => e.stopPropagation()}
           >
             <ChevronLeft className="w-4 h-4" />
           </Button>
-          
+
           <Button
             variant="ghost"
             size="sm"
             className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black/30 hover:bg-black/60 text-white p-1 h-8 w-8 opacity-0 group-hover:opacity-100 transition-all duration-300 hover:scale-110 backdrop-blur-sm z-10"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              nextImage();
-            }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); nextImage(); }}
             onTouchStart={(e) => e.stopPropagation()}
             onTouchEnd={(e) => e.stopPropagation()}
           >
             <ChevronRight className="w-4 h-4" />
           </Button>
 
-          {/* Image Indicators */}
           <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 flex space-x-2 opacity-0 group-hover:opacity-100 transition-all duration-300 z-10">
             {validImages.map((_, index) => (
               <button
@@ -177,11 +170,7 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
                 className={`w-2.5 h-2.5 rounded-full transition-all duration-300 hover:scale-125 ${
                   index === currentIndex ? 'bg-white shadow-lg' : 'bg-white/60 hover:bg-white/80'
                 }`}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  setCurrentIndex(index);
-                }}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setCurrentIndex(index); }}
                 onTouchStart={(e) => e.stopPropagation()}
                 onTouchEnd={(e) => e.stopPropagation()}
               />

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest } from "@/lib/queryClient";
-import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock, CheckCircle, XCircle, MessageSquare, Bot, MailOpen } from "lucide-react";
+import { Lock, Shield, Eye, EyeOff, Plus, Trash2, Upload, Image, FileText, Globe, Calendar, ExternalLink, Clock, CheckCircle, XCircle, MessageSquare, Bot, MailOpen, ZoomIn, ZoomOut, Maximize2, Sparkles, Move } from "lucide-react";
 import type { InsertAffiliateLink, AffiliateLink, UserIdea } from "@shared/schema";
 
 interface AdminPanelProps {
@@ -27,7 +27,7 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
   const [showPassword, setShowPassword] = useState(false);
   const [activeTab, setActiveTab] = useState<"create" | "drafts" | "manage" | "ideas" | "messages">("create");
   const [msgAiReplies, setMsgAiReplies] = useState<Record<number, string>>({});
-  const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean; isDraft?: boolean; scheduledPublishAt?: Date; scheduledDeleteAt?: Date }>({
+  const [formData, setFormData] = useState<InsertAffiliateLink & { isVerified?: boolean; isDraft?: boolean; scheduledPublishAt?: Date; scheduledDeleteAt?: Date; imageScale?: number }>({
     title: "",
     url: "",
     description: "",
@@ -40,7 +40,12 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
     scheduledPublishAt: undefined,
     scheduledDeleteAt: undefined,
     aiPrivateInfo: "",
+    imageScale: 1.0,
   });
+  const [previewDragOffset, setPreviewDragOffset] = useState({ x: 0, y: 0 });
+  const [isDraggingPreview, setIsDraggingPreview] = useState(false);
+  const [isSmartFitting, setIsSmartFitting] = useState(false);
+  const dragStartRef = useRef<{ x: number; y: number; ox: number; oy: number } | null>(null);
 
   const [schedulingProduct, setSchedulingProduct] = useState<{ id: number; title: string; type: 'publish' | 'delete' } | null>(null);
   const [scheduleDate, setScheduleDate] = useState<string>("");
@@ -437,7 +442,8 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       isVerified: formData.isVerified ? 1 : 0,
       isElitePick: formData.isElitePick ? 1 : 0,
       stock: formData.stock || 0,
-      aiPrivateInfo: formData.aiPrivateInfo || null
+      aiPrivateInfo: formData.aiPrivateInfo || null,
+      imageScale: formData.imageScale ?? 1.0,
     };
     createLinkMutation.mutate(submissionData);
   };
@@ -456,8 +462,86 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
       scheduledPublishAt: undefined,
       scheduledDeleteAt: undefined,
       aiPrivateInfo: "",
+      imageScale: 1.0,
     });
     setAdditionalImages([]);
+    setPreviewDragOffset({ x: 0, y: 0 });
+  };
+
+  const handleSmartFit = useCallback(() => {
+    const imgSrc = formData.imageUrl || additionalImages[0];
+    if (!imgSrc) return;
+    setIsSmartFitting(true);
+    const img = new window.Image();
+    if (!imgSrc.startsWith('data:')) img.crossOrigin = "anonymous";
+    img.onload = () => {
+      try {
+        const maxDim = 500;
+        const sc = Math.min(1, maxDim / Math.max(img.naturalWidth, img.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.floor(img.naturalWidth * sc);
+        canvas.height = Math.floor(img.naturalHeight * sc);
+        const ctx = canvas.getContext('2d');
+        if (!ctx) throw new Error('no ctx');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        let minX = canvas.width, maxX = 0, minY = canvas.height, maxY = 0;
+        for (let y = 0; y < canvas.height; y++) {
+          for (let x = 0; x < canvas.width; x++) {
+            const i = (y * canvas.width + x) * 4;
+            const a = data[i + 3];
+            const r = data[i], g = data[i + 1], b = data[i + 2];
+            if (a > 25 && !(r > 228 && g > 228 && b > 228)) {
+              if (x < minX) minX = x;
+              if (x > maxX) maxX = x;
+              if (y < minY) minY = y;
+              if (y > maxY) maxY = y;
+            }
+          }
+        }
+        if (maxX > minX && maxY > minY) {
+          const contentW = maxX - minX + 1;
+          const contentH = maxY - minY + 1;
+          const bestScale = Math.min(canvas.width / contentW, canvas.height / contentH) * 0.93;
+          const clamped = Math.round(Math.min(2.5, Math.max(0.5, bestScale)) * 100) / 100;
+          setFormData(prev => ({ ...prev, imageScale: clamped }));
+          setPreviewDragOffset({ x: 0, y: 0 });
+          toast({ title: "🤖 Smart Fit!", description: `Scale set to ${Math.round(clamped * 100)}% — image fills the card perfectly` });
+        } else {
+          setFormData(prev => ({ ...prev, imageScale: 1.0 }));
+          toast({ title: "✅ Smart Fit", description: "Image already fills the card nicely at 100%" });
+        }
+      } catch {
+        const aspect = img.naturalWidth / img.naturalHeight;
+        const cardAspect = 1.4;
+        const best = Math.min(2.0, Math.max(0.8, aspect > cardAspect ? cardAspect / aspect * 1.85 : 1.0));
+        const clamped = Math.round(best * 100) / 100;
+        setFormData(prev => ({ ...prev, imageScale: clamped }));
+        toast({ title: "🤖 Smart Fit!", description: `Scale optimized to ${Math.round(clamped * 100)}% from image dimensions` });
+      }
+      setIsSmartFitting(false);
+    };
+    img.onerror = () => setIsSmartFitting(false);
+    img.src = imgSrc;
+  }, [formData.imageUrl, additionalImages, toast]);
+
+  const handlePreviewDragStart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsDraggingPreview(true);
+    dragStartRef.current = { x: e.clientX, y: e.clientY, ox: previewDragOffset.x, oy: previewDragOffset.y };
+  };
+  const handlePreviewDragMove = (e: React.MouseEvent) => {
+    if (!isDraggingPreview || !dragStartRef.current) return;
+    const scale = formData.imageScale ?? 1;
+    const maxPan = Math.max(0, 80 * (scale - 1));
+    setPreviewDragOffset({
+      x: Math.max(-maxPan, Math.min(maxPan, dragStartRef.current.ox + (e.clientX - dragStartRef.current.x) / scale)),
+      y: Math.max(-maxPan, Math.min(maxPan, dragStartRef.current.oy + (e.clientY - dragStartRef.current.y) / scale)),
+    });
+  };
+  const handlePreviewDragEnd = () => {
+    setIsDraggingPreview(false);
+    dragStartRef.current = null;
   };
 
 
@@ -926,6 +1010,125 @@ export default function AdminPanel({ isOpen, onClose, onSuccess }: AdminPanelPro
               Add a URL link or upload from your camera roll/files
             </p>
           </div>
+
+          {/* ── Image Scale Studio ── */}
+          {(formData.imageUrl || additionalImages.some(u => u)) && (
+            <div className="border-2 border-blue-100 rounded-2xl p-4 bg-gradient-to-br from-blue-50 to-indigo-50">
+              <div className="flex items-center justify-between mb-3">
+                <Label className="text-sm font-bold flex items-center gap-2 text-indigo-800">
+                  <Maximize2 className="w-4 h-4" />
+                  Image Scale Studio
+                </Label>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-black text-white bg-gradient-to-r from-blue-600 to-indigo-600 px-2.5 py-1 rounded-full shadow-sm">
+                    {Math.round((formData.imageScale ?? 1) * 100)}%
+                  </span>
+                  <Button
+                    type="button"
+                    size="sm"
+                    onClick={handleSmartFit}
+                    disabled={isSmartFitting}
+                    className="text-xs h-7 bg-gradient-to-r from-violet-600 to-blue-600 text-white hover:from-violet-700 hover:to-blue-700 shadow-md"
+                  >
+                    <Sparkles className="w-3 h-3 mr-1" />
+                    {isSmartFitting ? "Analyzing…" : "AI Smart Fit"}
+                  </Button>
+                </div>
+              </div>
+
+              {/* Live Preview Box */}
+              <div
+                className="relative bg-white border-2 border-blue-200 rounded-xl overflow-hidden mx-auto shadow-inner select-none"
+                style={{
+                  width: "100%",
+                  maxWidth: 300,
+                  height: 210,
+                  cursor: isDraggingPreview ? "grabbing" : ((formData.imageScale ?? 1) > 1 ? "grab" : "default"),
+                }}
+                onMouseDown={handlePreviewDragStart}
+                onMouseMove={handlePreviewDragMove}
+                onMouseUp={handlePreviewDragEnd}
+                onMouseLeave={handlePreviewDragEnd}
+              >
+                <img
+                  src={formData.imageUrl || additionalImages[0]}
+                  alt="scale preview"
+                  draggable={false}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "contain",
+                    transform: `scale(${formData.imageScale ?? 1}) translate(${previewDragOffset.x}px, ${previewDragOffset.y}px)`,
+                    transformOrigin: "center center",
+                    transition: isDraggingPreview ? "none" : "transform 0.3s cubic-bezier(0.34,1.56,0.64,1)",
+                    pointerEvents: "none",
+                  }}
+                />
+                {/* Overlay badges */}
+                <div className="absolute bottom-2 right-2 bg-black/60 text-white text-[10px] font-bold rounded-full px-2 py-0.5 backdrop-blur-sm">
+                  {Math.round((formData.imageScale ?? 1) * 100)}%
+                </div>
+                {(formData.imageScale ?? 1) > 1 && (
+                  <div className="absolute top-2 left-2 bg-blue-600/80 text-white text-[10px] rounded-full px-2 py-0.5 flex items-center gap-1 backdrop-blur-sm">
+                    <Move className="w-2.5 h-2.5" /> drag to pan
+                  </div>
+                )}
+              </div>
+
+              {/* Zoom Slider */}
+              <div className="flex items-center gap-3 mt-3">
+                <button
+                  type="button"
+                  onClick={() => { setFormData(prev => ({ ...prev, imageScale: Math.max(0.5, (prev.imageScale ?? 1) - 0.05) })); setPreviewDragOffset({x:0,y:0}); }}
+                  className="p-1.5 rounded-lg bg-white border border-blue-200 hover:bg-blue-50 transition-colors shadow-sm"
+                >
+                  <ZoomOut className="w-4 h-4 text-blue-600" />
+                </button>
+                <input
+                  type="range"
+                  min="50"
+                  max="250"
+                  step="5"
+                  value={Math.round((formData.imageScale ?? 1) * 100)}
+                  onChange={(e) => {
+                    const v = parseInt(e.target.value) / 100;
+                    setFormData(prev => ({ ...prev, imageScale: v }));
+                    if (v <= 1) setPreviewDragOffset({ x: 0, y: 0 });
+                  }}
+                  className="flex-1 accent-indigo-600 h-2 rounded-full"
+                />
+                <button
+                  type="button"
+                  onClick={() => setFormData(prev => ({ ...prev, imageScale: Math.min(2.5, (prev.imageScale ?? 1) + 0.05) }))}
+                  className="p-1.5 rounded-lg bg-white border border-blue-200 hover:bg-blue-50 transition-colors shadow-sm"
+                >
+                  <ZoomIn className="w-4 h-4 text-blue-600" />
+                </button>
+              </div>
+
+              {/* Quick presets */}
+              <div className="flex gap-2 mt-2 justify-center flex-wrap">
+                {[0.75, 1.0, 1.25, 1.5, 1.75, 2.0].map(v => (
+                  <button
+                    key={v}
+                    type="button"
+                    onClick={() => { setFormData(prev => ({ ...prev, imageScale: v })); setPreviewDragOffset({x:0,y:0}); }}
+                    className={`text-[10px] font-bold px-2 py-0.5 rounded-full border transition-all ${
+                      Math.abs((formData.imageScale ?? 1) - v) < 0.03
+                        ? "bg-indigo-600 text-white border-indigo-600 shadow-md scale-110"
+                        : "bg-white text-gray-600 border-gray-200 hover:border-indigo-400 hover:text-indigo-600"
+                    }`}
+                  >
+                    {Math.round(v * 100)}%
+                  </button>
+                ))}
+              </div>
+
+              <p className="text-[10px] text-gray-400 mt-2 text-center">
+                Drag preview to pan • slider to zoom • AI Smart Fit auto-detects perfect scale
+              </p>
+            </div>
+          )}
 
           {/* Additional Images Section */}
           <div>
