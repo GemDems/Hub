@@ -270,13 +270,19 @@ export default function Home() {
               { name: "WSJ", src: "/logos/wsj.png", h: 32 },
               { name: "Bloomberg", src: "/logos/bloomberg.png", h: 28 },
             ].map((pub) => (
-              <img
+              <div
                 key={pub.name}
-                src={pub.src}
-                alt={pub.name}
-                style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block", filter: "grayscale(100%)", opacity: 0.55 }}
-                draggable={false}
-              />
+                className="logo-hover-wrap"
+                style={{ cursor: "default", display: "flex", alignItems: "center" }}
+              >
+                <img
+                  src={pub.src}
+                  alt={pub.name}
+                  className="logo-img"
+                  style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block" }}
+                  draggable={false}
+                />
+              </div>
             ))}
           </div>
         </div>

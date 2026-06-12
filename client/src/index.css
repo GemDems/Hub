@@ -58,6 +58,20 @@ img {
   pointer-events: none !important;
 }
 
+/* As Seen In logo hover — wrapper catches hover, img transitions to colour */
+.logo-hover-wrap {
+  pointer-events: auto !important;
+}
+.logo-hover-wrap .logo-img {
+  filter: grayscale(100%) opacity(0.55);
+  transition: filter 0.35s ease, transform 0.35s ease;
+  pointer-events: none !important;
+}
+.logo-hover-wrap:hover .logo-img {
+  filter: grayscale(0%) opacity(1);
+  transform: scale(1.08);
+}
+
 /* Re-enable selection only for actual input fields */
 input, textarea, [contenteditable="true"] {
   -webkit-user-select: text !important;
