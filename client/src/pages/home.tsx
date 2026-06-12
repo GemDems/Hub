@@ -257,33 +257,29 @@ export default function Home() {
         }}
       />
       <StatsBar />
-      {/* ── As Seen In ── */}
-      <div className="relative z-10 py-5 px-4 bg-white border-b border-gray-100">
-        <div className="max-w-5xl mx-auto">
-          <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">As Seen In</p>
-          <div className="flex items-center justify-center gap-10 flex-wrap">
-            {[
-              { name: "Forbes", src: "/logos/forbes.png", h: 28 },
-              { name: "CNN", src: "/logos/cnn.png", h: 34 },
-              { name: "Business Insider", src: "/logos/business-insider.png", h: 18 },
-              { name: "TechCrunch", src: "/logos/techcrunch.png", h: 32 },
-              { name: "WSJ", src: "/logos/wsj.png", h: 32 },
-              { name: "Bloomberg", src: "/logos/bloomberg.png", h: 28 },
-            ].map((pub) => (
-              <div
-                key={pub.name}
-                className="logo-hover-wrap"
-                style={{ cursor: "default", display: "flex", alignItems: "center" }}
-              >
+      {/* ── As Seen In ── (absolute overlay, takes no layout space) */}
+      <div style={{ position: "relative", height: 0, overflow: "visible", zIndex: 20 }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, opacity: 0.05, pointerEvents: "none", padding: "14px 16px" }}>
+          <div className="max-w-5xl mx-auto">
+            <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-300 mb-3">As Seen In</p>
+            <div className="flex items-center justify-center gap-10 flex-wrap">
+              {[
+                { name: "Forbes", src: "/logos/forbes.png", h: 26 },
+                { name: "CNN", src: "/logos/cnn.png", h: 30 },
+                { name: "Business Insider", src: "/logos/business-insider.png", h: 16 },
+                { name: "TechCrunch", src: "/logos/techcrunch.png", h: 28 },
+                { name: "WSJ", src: "/logos/wsj.png", h: 28 },
+                { name: "Bloomberg", src: "/logos/bloomberg.png", h: 26 },
+              ].map((pub) => (
                 <img
+                  key={pub.name}
                   src={pub.src}
                   alt={pub.name}
-                  className="logo-img"
-                  style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block" }}
+                  style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block", filter: "grayscale(100%)" }}
                   draggable={false}
                 />
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </div>
