@@ -258,8 +258,8 @@ export default function Home() {
       />
       <StatsBar />
       {/* ── As Seen In ── */}
-      <div className="absolute left-0 right-0 z-10 py-4 px-4 pointer-events-none">
-        <div className="max-w-5xl mx-auto opacity-[0.01]">
+      <div className="relative z-10 py-5 px-4 bg-white border-b border-gray-100">
+        <div className="max-w-5xl mx-auto">
           <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">As Seen In</p>
           <div className="flex items-center justify-center gap-10 flex-wrap">
             {[
