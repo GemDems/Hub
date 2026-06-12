@@ -263,18 +263,18 @@ export default function Home() {
           <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">As Seen In</p>
           <div className="flex items-center justify-center gap-10 flex-wrap">
             {[
-              { name: "Forbes", domain: "forbes.com", h: 30 },
-              { name: "CNN", domain: "cnn.com", h: 30 },
-              { name: "Business Insider", domain: "businessinsider.com", h: 30 },
-              { name: "TechCrunch", domain: "techcrunch.com", h: 30 },
-              { name: "WSJ", domain: "wsj.com", h: 30 },
-              { name: "Bloomberg", domain: "bloomberg.com", h: 30 },
+              { name: "Forbes", src: "/logos/forbes.png", h: 28 },
+              { name: "CNN", src: "/logos/cnn.png", h: 34 },
+              { name: "Business Insider", src: "/logos/business-insider.png", h: 18 },
+              { name: "TechCrunch", src: "/logos/techcrunch.png", h: 32 },
+              { name: "WSJ", src: "/logos/wsj.png", h: 32 },
+              { name: "Bloomberg", src: "/logos/bloomberg.png", h: 28 },
             ].map((pub) => (
               <img
                 key={pub.name}
-                src={`/api/logo/${pub.domain}`}
+                src={pub.src}
                 alt={pub.name}
-                style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block", filter: "grayscale(100%)", opacity: 0.6 }}
+                style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block", filter: "grayscale(100%)", opacity: 0.55 }}
                 draggable={false}
               />
             ))}
