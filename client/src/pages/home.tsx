@@ -262,32 +262,22 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">As Seen In</p>
           <div className="flex items-center justify-center gap-10 flex-wrap">
-            {/* Forbes */}
-            <svg height="22" viewBox="0 0 110 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
-              <text x="0" y="18" fontFamily="Georgia, 'Times New Roman', serif" fontWeight="700" fontStyle="italic" fontSize="22" fill="#222">Forbes</text>
-            </svg>
-            {/* CNN */}
-            <svg height="28" viewBox="0 0 72 28" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
-              <rect width="72" height="28" rx="3" fill="#cc0000"/>
-              <text x="8" y="21" fontFamily="Arial, Helvetica, sans-serif" fontWeight="900" fontSize="20" fill="white" letterSpacing="2">CNN</text>
-            </svg>
-            {/* Business Insider */}
-            <svg height="18" viewBox="0 0 170 18" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
-              <text x="0" y="15" fontFamily="Arial, Helvetica, sans-serif" fontWeight="900" fontSize="15" fill="#111" letterSpacing="0.5">BUSINESS INSIDER</text>
-            </svg>
-            {/* TechCrunch */}
-            <svg height="22" viewBox="0 0 130 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
-              <text x="0" y="18" fontFamily="Arial, Helvetica, sans-serif" fontWeight="900" fontSize="20" fill="#0d9a5e">Tech</text>
-              <text x="55" y="18" fontFamily="Arial, Helvetica, sans-serif" fontWeight="900" fontSize="20" fill="#222">Crunch</text>
-            </svg>
-            {/* WSJ */}
-            <svg height="22" viewBox="0 0 190 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
-              <text x="0" y="17" fontFamily="Georgia, 'Times New Roman', serif" fontWeight="700" fontSize="14" fill="#111" letterSpacing="0.3">THE WALL STREET JOURNAL.</text>
-            </svg>
-            {/* Bloomberg */}
-            <svg height="22" viewBox="0 0 130 22" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ opacity: 0.55 }}>
-              <text x="0" y="17" fontFamily="Arial, Helvetica, sans-serif" fontWeight="900" fontSize="18" fill="#111" letterSpacing="-0.5">Bloomberg</text>
-            </svg>
+            {[
+              { name: "Forbes", domain: "forbes.com", h: 30 },
+              { name: "CNN", domain: "cnn.com", h: 30 },
+              { name: "Business Insider", domain: "businessinsider.com", h: 30 },
+              { name: "TechCrunch", domain: "techcrunch.com", h: 30 },
+              { name: "WSJ", domain: "wsj.com", h: 30 },
+              { name: "Bloomberg", domain: "bloomberg.com", h: 30 },
+            ].map((pub) => (
+              <img
+                key={pub.name}
+                src={`/api/logo/${pub.domain}`}
+                alt={pub.name}
+                style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block", filter: "grayscale(100%)", opacity: 0.6 }}
+                draggable={false}
+              />
+            ))}
           </div>
         </div>
       </div>

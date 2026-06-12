@@ -162,6 +162,24 @@ Transform now with maximum conversion power in minimal words:`;
     }
   });
 
+  // Logo proxy — fetches real brand logos server-side (bypasses client sandbox restrictions)
+  app.get("/api/logo/:domain", async (req, res) => {
+    const { domain } = req.params;
+    const allowed = ["forbes.com","cnn.com","businessinsider.com","techcrunch.com","wsj.com","bloomberg.com"];
+    if (!allowed.includes(domain)) return res.status(400).end();
+    try {
+      const url = `https://logo.clearbit.com/${domain}`;
+      const response = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
+      if (!response.ok) return res.status(404).end();
+      const buf = await response.arrayBuffer();
+      res.set("Content-Type", response.headers.get("content-type") || "image/png");
+      res.set("Cache-Control", "public, max-age=86400");
+      res.send(Buffer.from(buf));
+    } catch {
+      res.status(502).end();
+    }
+  });
+
   // Get published affiliate links (public)
   app.get("/api/affiliate-links", async (req, res) => {
     try {
