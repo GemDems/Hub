@@ -293,159 +293,74 @@ export default function Home() {
           </Link>
         </div>
 
-        {/* ── Dark Navy Product Zone ── */}
-        <div style={{ background: "linear-gradient(160deg,#07101f 0%,#0b1730 50%,#091526 100%)", borderRadius: 20, padding: "28px 20px 32px", marginTop: 8, boxShadow: "0 8px 48px rgba(0,0,40,0.55), inset 0 1px 0 rgba(255,255,255,0.05)" }}>
-
-          {/* ── Feature 1: LIVE banner + freshness ── */}
-          <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center gap-1.5 bg-red-600/90 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg" style={{ animation: "pulse 2s infinite" }}>
-                <span className="w-2 h-2 bg-white rounded-full inline-block" style={{ animation: "pulse 1s infinite" }}></span>
-                LIVE DEALS
-              </span>
-              <span className="text-[11px] text-blue-300/80 font-medium">🕐 Updated moments ago · {affiliateLinks.length} deals active</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-green-400 inline-block" style={{ animation: "pulse 1.5s infinite" }}></span>
-              <span className="text-[11px] text-green-400 font-semibold">All deals verified & live</span>
-            </div>
-          </div>
-
-          {/* ── Feature 2: Real-time activity stats ── */}
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 mb-5 py-3 px-4 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-            {[
-              { icon: "🛒", stat: "2,847", label: "purchases today" },
-              { icon: "👁️", stat: "3,241", label: "watching now" },
-              { icon: "⭐", stat: "98.4%", label: "satisfaction rate" },
-              { icon: "🔄", stat: "Daily", label: "deal refresh" },
-            ].map(({ icon, stat, label }) => (
-              <div key={label} className="flex items-center gap-1.5">
-                <span className="text-sm">{icon}</span>
-                <span className="text-white font-bold text-sm">{stat}</span>
-                <span className="text-blue-300/70 text-xs">{label}</span>
+        {isLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="bg-white rounded-xl shadow-lg p-6 animate-pulse">
+                <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
+                <div className="h-6 bg-gray-200 rounded mb-2"></div>
+                <div className="h-4 bg-gray-200 rounded mb-4"></div>
+                <div className="h-12 bg-gray-200 rounded"></div>
               </div>
             ))}
           </div>
-
-          {/* ── Feature 3: Expert curator strip ── */}
-          <div className="flex items-center justify-center gap-3 mb-6 flex-wrap">
-            <div className="flex -space-x-2">
-              {["🧑‍💼","👩‍💻","🧑‍🔬","👨‍💼","👩‍🎓"].map((emoji, i) => (
-                <div key={i} className="w-7 h-7 rounded-full flex items-center justify-center text-xs border-2 border-[#0b1730]" style={{ background: `hsl(${210 + i*20},60%,30%)` }}>{emoji}</div>
-              ))}
-            </div>
-            <span className="text-blue-200 text-xs font-medium">Hand-picked by <strong className="text-white">12 deal experts</strong> · avg 4.9★ quality score</span>
+        ) : filteredAndSortedLinks.length === 0 ? (
+          <div className="text-center py-16">
+            {searchQuery ? (
+              <>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">
+                  No deals found for "{searchQuery}"
+                </h3>
+                <p className="text-gray-600 mb-6">
+                  Can't find what you're looking for? Let our AI assistant help you!
+                </p>
+                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
+                  <button
+                    onClick={() => {
+                      const chatButton = document.querySelector('[data-chat-button]') as HTMLButtonElement;
+                      if (chatButton) {
+                        chatButton.click();
+                        setTimeout(() => {
+                          const chatInput = document.querySelector('[data-chat-input]') as HTMLInputElement;
+                          if (chatInput) {
+                            chatInput.value = `I'm looking for "${searchQuery}"`;
+                            chatInput.focus();
+                          }
+                        }, 500);
+                      }
+                    }}
+                    className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-lg font-medium text-lg shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center gap-3"
+                  >
+                    🤖 Ask AI Assistant
+                  </button>
+                  <button onClick={() => setSearchQuery("")} className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
+                    Clear Search
+                  </button>
+                </div>
+                <p className="text-sm text-gray-500">Or try a different search term or browse our categories</p>
+              </>
+            ) : (
+              <>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">No deals available yet</h3>
+                <p className="text-gray-600 mb-8">Use Creator Mode to add your first affiliate link!</p>
+                <Button onClick={() => setShowAdmin(true)} className="bg-conversion-blue hover:bg-blue-700">
+                  Add Your First Deal
+                </Button>
+              </>
+            )}
           </div>
-
-          {/* ── THE PRODUCT GRID (cards unchanged) ── */}
-          {isLoading ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {[...Array(6)].map((_, i) => (
-                <div key={i} className="bg-white rounded-xl shadow-lg p-6 animate-pulse">
-                  <div className="h-48 bg-gray-200 rounded-lg mb-4"></div>
-                  <div className="h-6 bg-gray-200 rounded mb-2"></div>
-                  <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                  <div className="h-12 bg-gray-200 rounded"></div>
-                </div>
-              ))}
-            </div>
-          ) : filteredAndSortedLinks.length === 0 ? (
-            <div className="text-center py-16">
-              {searchQuery ? (
-                <>
-                  <h3 className="text-2xl font-semibold text-white mb-4">
-                    No deals found for "{searchQuery}"
-                  </h3>
-                  <p className="text-blue-200 mb-6">
-                    Can't find what you're looking for? Let our AI assistant help you!
-                  </p>
-                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-                    <button
-                      onClick={() => {
-                        const chatButton = document.querySelector('[data-chat-button]') as HTMLButtonElement;
-                        if (chatButton) {
-                          chatButton.click();
-                          setTimeout(() => {
-                            const chatInput = document.querySelector('[data-chat-input]') as HTMLInputElement;
-                            if (chatInput) {
-                              chatInput.value = `I'm looking for "${searchQuery}"`;
-                              chatInput.focus();
-                            }
-                          }, 500);
-                        }
-                      }}
-                      className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-4 rounded-lg font-medium text-lg shadow-lg transform transition-all duration-200 hover:scale-105 flex items-center gap-3"
-                    >
-                      🤖 Ask AI Assistant
-                    </button>
-                    <button onClick={() => setSearchQuery("")} className="bg-conversion-blue hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium">
-                      Clear Search
-                    </button>
-                  </div>
-                  <p className="text-sm text-blue-300/70">Or try a different search term or browse our categories</p>
-                </>
-              ) : (
-                <>
-                  <h3 className="text-2xl font-semibold text-white mb-4">No deals available yet</h3>
-                  <p className="text-blue-200 mb-8">Use Creator Mode to add your first affiliate link!</p>
-                  <Button onClick={() => setShowAdmin(true)} className="bg-conversion-blue hover:bg-blue-700">
-                    Add Your First Deal
-                  </Button>
-                </>
-              )}
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredAndSortedLinks.map((link, i) => (
-                <div key={link.id} data-product-card={i === 0 ? "first" : undefined}>
-                  <AffiliateCard link={link} />
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* ── Feature 4: Security trust badges ── */}
-          <div className="flex flex-wrap justify-center gap-4 mt-8 mb-4">
-            {[
-              { icon: "🔒", title: "SSL Encrypted", sub: "256-bit security" },
-              { icon: "🛡️", title: "Buyer Protected", sub: "Every purchase" },
-              { icon: "✅", title: "Verified Sellers", sub: "All vetted" },
-              { icon: "💳", title: "Safe Checkout", sub: "Bank-level" },
-            ].map(({ icon, title, sub }) => (
-              <div key={title} className="flex items-center gap-2 px-4 py-2.5 rounded-xl" style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)" }}>
-                <span className="text-xl">{icon}</span>
-                <div>
-                  <div className="text-white text-xs font-bold leading-tight">{title}</div>
-                  <div className="text-blue-300/70 text-[10px]">{sub}</div>
-                </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredAndSortedLinks.map((link, i) => (
+              <div
+                key={link.id}
+                data-product-card={i === 0 ? "first" : undefined}
+              >
+                <AffiliateCard link={link} />
               </div>
             ))}
           </div>
-
-          {/* ── Feature 5: Press mentions ── */}
-          <div className="text-center mb-4">
-            <p className="text-blue-400/60 text-[10px] uppercase tracking-widest font-semibold mb-2">As Featured In</p>
-            <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 items-center">
-              {["Forbes", "TechCrunch", "Business Insider", "CNN Money", "The Verge"].map(name => (
-                <span key={name} className="text-blue-200/40 text-sm font-bold tracking-wide">{name}</span>
-              ))}
-            </div>
-          </div>
-
-          {/* ── Feature 6: Triple guarantee bar ── */}
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-1 py-3 px-4 rounded-xl mb-2" style={{ background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.2)" }}>
-            {["✔ 30-Day Hassle-Free Returns", "✔ Free Expert Support", "✔ Best Price Guarantee"].map(text => (
-              <span key={text} className="text-green-400 text-xs font-semibold">{text}</span>
-            ))}
-          </div>
-
-          {/* ── Feature 7: Deal integrity footer ── */}
-          <div className="flex items-center justify-center gap-2 mt-3">
-            <span className="w-2 h-2 bg-green-400 rounded-full inline-block"></span>
-            <span className="text-blue-300/60 text-[10px]">All {affiliateLinks.length} deals audited today · 0 fraudulent listings found · Prices independently verified</span>
-          </div>
-
-        </div>
+        )}
       </main>
 
       <TrustIndicators />
