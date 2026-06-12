@@ -180,7 +180,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
           </div>
         ) : null}
 
-        <div className="relative">
+        <div className={`relative ${isElitePick ? 'mt-8' : 'mt-6'}`}>
           <div className="absolute top-3 left-3 z-10">
             <div className="bg-gradient-to-r from-urgency-red to-red-600 text-gray-900 text-xs font-bold px-3 py-1 rounded-full shadow-lg">
               {getCategoryEmoji(link.category || '')} BESTSELLER
