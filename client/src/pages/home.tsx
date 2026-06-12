@@ -193,8 +193,6 @@ export default function Home() {
           onClose={() => setStoryIndex(null)}
         />
       )}
-
-
       {/* ── WELCOME BACK NOTIFICATION ──────────────────────────────────── */}
       {showWelcomeBack && (
         <div className="fixed top-4 right-4 z-[9997] max-w-xs float-notif">
@@ -207,8 +205,6 @@ export default function Home() {
           </div>
         </div>
       )}
-
-
       {/* Category Dropdown Menu */}
       <div className={`fixed top-4 left-4 z-50 transition-all duration-1000 ${showScrollButton ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
         <div className="relative dropdown-container">
@@ -240,7 +236,6 @@ export default function Home() {
           )}
         </div>
       </div>
-
       {/* Invisible Admin Toggle */}
       <div className="fixed top-1 right-1 z-50">
         <Button
@@ -251,9 +246,7 @@ export default function Home() {
           <Settings className="w-2 h-2 opacity-0" />
         </Button>
       </div>
-
       <Header onSearch={setSearchQuery} />
-
       {/* Smooth color fade from dark header (#0d0f1a) to white page body */}
       <div
         style={{
@@ -263,12 +256,10 @@ export default function Home() {
           marginBottom: -1,
         }}
       />
-
       <StatsBar />
-
       {/* ── As Seen In ── */}
       <div className="bg-white border-b border-gray-100 py-4 px-4">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-5xl mx-auto opacity-[0.01]">
           <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">As Seen In</p>
           <div className="flex items-center justify-center gap-8 flex-wrap">
             {[
@@ -286,7 +277,6 @@ export default function Home() {
           </div>
         </div>
       </div>
-
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-6">
           <h2 className="font-extrabold text-4xl sm:text-5xl mb-2" style={{ color: "#00008B" }}>
@@ -383,24 +373,19 @@ export default function Home() {
           </div>
         )}
       </main>
-
       <TrustIndicators />
-
       <div className="bg-white pt-0 pb-10" data-section="leaderboard">
         <Leaderboard />
       </div>
-
       <div className="bg-gray-100 py-8 border-t" data-section="savings-progress">
         <div className="max-w-md mx-auto">
           <h2 className="text-center text-gray-500 text-xs mb-4 uppercase tracking-wider">Elite Access</h2>
           <ReferralSystem />
         </div>
       </div>
-
       <div className="bg-gray-900 py-16">
         <LiveFeed />
       </div>
-
       <div className="bg-gray-900 py-4">
         <div className="text-center">
           <button onClick={handleNewDropsClick} className="text-white text-sm mx-4 hover:text-blue-300 transition-colors underline">
@@ -416,7 +401,6 @@ export default function Home() {
           </button>
         </div>
       </div>
-
       <div className="bg-gradient-to-b from-gray-800 to-gray-900 py-8">
         <div className="text-center">
           <button
@@ -429,13 +413,11 @@ export default function Home() {
           <p className="text-white text-sm">Click for a random!</p>
         </div>
       </div>
-
       <div className="bg-gradient-to-b from-gray-800 to-gray-900 py-12">
         <div className="max-w-md mx-auto px-4">
           <IdeaSubmission />
         </div>
       </div>
-
       {/* Leave a Review popup — appears when user scrolls to bottom */}
       {showReviewPopup && !reviewDone && (
         <div className="fixed bottom-4 right-4 z-[9998] w-80 bg-white rounded-2xl shadow-2xl border border-gray-200 p-5 animate-in slide-in-from-bottom">
@@ -499,17 +481,13 @@ export default function Home() {
           )}
         </div>
       )}
-
       <AdminPanel
         isOpen={showAdmin}
         onClose={() => setShowAdmin(false)}
         onSuccess={() => { refetch(); setShowAdmin(false); }}
       />
-
       <AIChatbot />
-
       <WishlistSection />
-
       {/* Site footer */}
       <div className="mt-10 pb-6 text-center space-y-2">
         <div className="flex items-center justify-center gap-3 flex-wrap">
