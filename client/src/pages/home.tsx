@@ -259,7 +259,7 @@ export default function Home() {
       <StatsBar />
       {/* ── As Seen In ── (absolute overlay, takes no layout space) */}
       <div style={{ position: "relative", height: 0, overflow: "visible", zIndex: 20 }}>
-        <div style={{ position: "absolute", top: 0, left: 0, right: 0, opacity: 0.05, pointerEvents: "none", padding: "14px 16px" }}>
+        <div style={{ position: "absolute", top: 0, left: 0, right: 0, opacity: 0.011, pointerEvents: "none", padding: "14px 16px" }}>
           <div className="max-w-5xl mx-auto">
             <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-300 mb-3">As Seen In</p>
             <div className="flex items-center justify-center gap-10 flex-wrap">
