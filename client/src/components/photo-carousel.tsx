@@ -32,11 +32,11 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
   // For single image, just show the image without carousel controls
   if (validImages.length === 1) {
     return (
-      <div className={`relative ${className}`}>
+      <div className={`relative bg-white flex items-center justify-center ${className}`}>
         <img
           src={validImages[0]}
           alt={title}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-contain"
           onError={(e) => {
             // Fallback to gradient if image fails to load
             e.currentTarget.style.display = 'none';
@@ -96,7 +96,7 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
 
   return (
     <div 
-      className={`relative overflow-hidden group ${className} ${
+      className={`relative overflow-hidden group bg-white flex items-center justify-center ${className} ${
         isTransitioning ? 'ring-2 ring-blue-400/50 ring-offset-2' : ''
       }`}
       onTouchStart={handleTouchStart}
@@ -112,7 +112,7 @@ export default function PhotoCarousel({ images, title, className = "" }: PhotoCa
       <img
         src={validImages[currentIndex]}
         alt={`${title} - Image ${currentIndex + 1}`}
-        className={`w-full h-full object-cover transition-all duration-500 ease-out transform ${
+        className={`w-full h-full object-contain transition-all duration-500 ease-out transform ${
           isTransitioning ? 'scale-105' : 'scale-100'
         }`}
         style={{
