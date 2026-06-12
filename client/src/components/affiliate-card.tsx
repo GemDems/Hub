@@ -155,6 +155,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
   return (
     <>
       <Card className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 hover:scale-[1.02] border-2 border-gray-100 hover:border-conversion-blue/30 overflow-hidden group relative backdrop-blur-sm">
+        <div className="absolute inset-0 pointer-events-none z-50 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-2xl" style={{ backgroundColor: 'rgba(0,0,139,0.011)' }} />
 
         <div className="absolute top-2 right-2 z-30" style={{ opacity: 0, visibility: 'hidden' }}>
           <Button onClick={(e) => { e.stopPropagation(); setShowDeleteDialog(true); }} className="w-8 h-8 p-0 bg-transparent hover:bg-transparent border-0 shadow-none" title="Delete Product" style={{ opacity: 0, visibility: 'hidden' }}>
