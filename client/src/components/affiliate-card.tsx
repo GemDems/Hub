@@ -195,7 +195,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             </div>
           </div>
 
-          <PhotoCarousel images={allImages} title={link.title} className="w-full h-48" imageScale={link.imageScale ?? 1} />
+          <PhotoCarousel images={allImages} title={link.title} className="w-full h-48" />
         </div>
 
         <CardContent className="p-6 space-y-4">

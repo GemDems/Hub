@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, timestamp, boolean, real } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, timestamp, boolean } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
 
@@ -26,7 +26,6 @@ export const affiliateLinks = pgTable("affiliate_links", {
   scheduledDeleteAt: timestamp("scheduled_delete_at"), // When to auto-delete product
   // Private field for AI - not shown to users anywhere, only for AI analysis
   aiPrivateInfo: text("ai_private_info"),
-  imageScale: real("image_scale").default(1.0),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -146,7 +145,6 @@ export const insertAffiliateLinkSchema = z.object({
   scheduledPublishAt: z.date().optional().or(z.null()),
   scheduledDeleteAt: z.date().optional().or(z.null()),
   aiPrivateInfo: z.string().optional().or(z.null()),
-  imageScale: z.number().optional().default(1.0),
 });
 
 // Zod schemas for AI and SMS tables

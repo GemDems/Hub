@@ -328,8 +328,7 @@ Transform now with maximum conversion power in minimal words:`;
         isDraft: req.body.isDraft ? 1 : 0,
         scheduledPublishAt: req.body.scheduledPublishAt || null,
         scheduledDeleteAt: req.body.scheduledDeleteAt || null,
-        aiPrivateInfo: req.body.aiPrivateInfo || null,
-        imageScale: req.body.imageScale != null ? parseFloat(req.body.imageScale) : 1.0,
+        aiPrivateInfo: req.body.aiPrivateInfo || null, // AI Assistant Info from creator dashboard
       };
       
       console.log("Processed data:", JSON.stringify(linkData, null, 2));
