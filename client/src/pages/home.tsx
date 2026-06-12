@@ -266,6 +266,27 @@ export default function Home() {
 
       <StatsBar />
 
+      {/* ── As Seen In ── */}
+      <div className="bg-white border-b border-gray-100 py-4 px-4">
+        <div className="max-w-5xl mx-auto">
+          <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">As Seen In</p>
+          <div className="flex items-center justify-center gap-8 flex-wrap">
+            {[
+              { name: "Forbes", style: "font-black italic text-[#c8963e] text-xl tracking-tight" },
+              { name: "CNN", style: "font-black text-[#cc0000] text-xl tracking-widest" },
+              { name: "Business Insider", style: "font-black text-gray-900 text-sm tracking-tight uppercase" },
+              { name: "TechCrunch", style: "font-black text-[#0a7c3e] text-lg tracking-tight" },
+              { name: "The Wall Street Journal", style: "font-serif font-bold text-gray-900 text-sm tracking-tight" },
+              { name: "Bloomberg", style: "font-black text-gray-900 text-lg tracking-widest" },
+            ].map((pub) => (
+              <span key={pub.name} className={`opacity-60 hover:opacity-90 transition-opacity duration-300 select-none ${pub.style}`}>
+                {pub.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center mb-6">
           <h2 className="font-extrabold text-4xl sm:text-5xl mb-2" style={{ color: "#00008B" }}>

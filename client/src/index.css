@@ -592,6 +592,16 @@ input, textarea, [contenteditable="true"] {
   animation: trust-shimmer 3s linear infinite;
 }
 
+@keyframes ribbon-shimmer {
+  0% { transform: translateX(-100%); }
+  60%, 100% { transform: translateX(200%); }
+}
+
+@keyframes lock-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.75; transform: scale(1.12); }
+}
+
 /* Stock bar drain animation - visual depletion creates panic */
 @keyframes stock-drain {
   0% { width: 100%; }

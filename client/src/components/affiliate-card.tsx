@@ -289,6 +289,24 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
               <span>Secure • Verified • Instant access</span>
             </div>
 
+            {/* Secure checkout ribbon */}
+            <div className="relative overflow-hidden rounded-lg border border-green-300 bg-gradient-to-r from-green-50 via-emerald-50 to-green-50 px-3 py-2 flex items-center justify-center gap-2">
+              <div className="absolute inset-0 pointer-events-none" style={{
+                background: "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.55) 50%, transparent 60%)",
+                animation: "ribbon-shimmer 2.8s ease-in-out infinite",
+              }} />
+              <svg width="14" height="16" viewBox="0 0 14 16" fill="none" style={{ animation: "lock-pulse 2.8s ease-in-out infinite", flexShrink: 0 }}>
+                <rect x="2" y="7" width="10" height="8" rx="1.5" fill="#16a34a"/>
+                <path d="M4 7V5a3 3 0 0 1 6 0v2" stroke="#15803d" strokeWidth="1.5" strokeLinecap="round" fill="none"/>
+                <circle cx="7" cy="11" r="1.2" fill="white"/>
+              </svg>
+              <span className="text-[11px] font-semibold text-green-800 relative z-10 tracking-wide">Bank-Level Encrypted Checkout</span>
+              <svg width="10" height="10" viewBox="0 0 10 10" fill="none" style={{ flexShrink: 0 }}>
+                <circle cx="5" cy="5" r="4.5" fill="#16a34a"/>
+                <path d="M2.5 5l1.8 1.8L7.5 3.5" stroke="white" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </div>
+
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-green-50 border border-green-200 rounded-lg px-3 py-2 text-center relative overflow-hidden">
                 <div className="trust-shimmer absolute inset-0 pointer-events-none rounded-lg"></div>
