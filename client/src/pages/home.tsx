@@ -261,18 +261,22 @@ export default function Home() {
       <div className="absolute left-0 right-0 z-10 py-4 px-4 pointer-events-none">
         <div className="max-w-5xl mx-auto opacity-[0.01]">
           <p className="text-center text-[10px] font-semibold uppercase tracking-[0.2em] text-gray-400 mb-4">As Seen In</p>
-          <div className="flex items-center justify-center gap-8 flex-wrap">
+          <div className="flex items-center justify-center gap-10 flex-wrap">
             {[
-              { name: "Forbes", style: "font-black italic text-[#c8963e] text-xl tracking-tight" },
-              { name: "CNN", style: "font-black text-[#cc0000] text-xl tracking-widest" },
-              { name: "Business Insider", style: "font-black text-gray-900 text-sm tracking-tight uppercase" },
-              { name: "TechCrunch", style: "font-black text-[#0a7c3e] text-lg tracking-tight" },
-              { name: "The Wall Street Journal", style: "font-serif font-bold text-gray-900 text-sm tracking-tight" },
-              { name: "Bloomberg", style: "font-black text-gray-900 text-lg tracking-widest" },
+              { name: "Forbes", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/Forbes_logo.svg/320px-Forbes_logo.svg.png", h: 28 },
+              { name: "CNN", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/CNN.svg/200px-CNN.svg.png", h: 28 },
+              { name: "Business Insider", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e9/Business_Insider_Logo.svg/320px-Business_Insider_Logo.svg.png", h: 22 },
+              { name: "TechCrunch", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/TechCrunch_logo.svg/320px-TechCrunch_logo.svg.png", h: 24 },
+              { name: "WSJ", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/WSJ_Logo.svg/320px-WSJ_Logo.svg.png", h: 26 },
+              { name: "Bloomberg", url: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/New_bloomberg_logo.svg/320px-New_bloomberg_logo.svg.png", h: 24 },
             ].map((pub) => (
-              <span key={pub.name} className={`opacity-60 hover:opacity-90 transition-opacity duration-300 select-none ${pub.style}`}>
-                {pub.name}
-              </span>
+              <img
+                key={pub.name}
+                src={pub.url}
+                alt={pub.name}
+                style={{ height: pub.h, width: "auto", objectFit: "contain", display: "block" }}
+                draggable={false}
+              />
             ))}
           </div>
         </div>
