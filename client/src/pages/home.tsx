@@ -451,7 +451,7 @@ export default function Home() {
                 className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm mb-2 focus:outline-none focus:border-blue-400"
                 placeholder="Your name"
                 value={reviewName}
-                onChange={e => setReviewName(e.target.value)}
+                onChange={e => setReviewName(e.target.value.toLowerCase())}
                 maxLength={40}
               />
               <textarea
