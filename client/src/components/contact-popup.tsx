@@ -4,28 +4,28 @@ import { X, MessageCircle, Mail, Clock, Send, Sparkles } from "lucide-react";
 const AUTO_RESPONSES: { keywords: string[]; response: string }[] = [
   {
     keywords: ["refund", "money back", "return", "reimburse"],
-    response: "We totally understand 💛 Instead of a refund, we'd love to personally find you an even better deal. For direct assistance, reach us at elitedeals.edh@gmail.com — include a quick description and we'll make it right! 🎯",
+    response: "We totally understand 💛 Instead of a refund, we'd love to personally find you an even better deal. For direct assistance, reach us at elitedealshub.edh@gmail.com — include a quick description and we'll make it right! 🎯",
   },
   {
     keywords: ["scam", "fake", "fraud", "not real", "doesn't work"],
-    response: "Your trust means the world to us 🙏 Every deal we list is personally verified. Please reach out directly at elitedeals.edh@gmail.com with details of what happened — we investigate every report and respond personally. ✅",
+    response: "Your trust means the world to us 🙏 Every deal we list is personally verified. Please reach out directly at elitedealshub.edh@gmail.com with details of what happened — we investigate every report and respond personally. ✅",
   },
   {
     keywords: ["broken", "error", "bug", "not working", "issue", "problem", "glitch"],
-    response: "Ugh, tech gremlins! 😤 Please email us at elitedeals.edh@gmail.com with what happened and your device type — we'll get it sorted fast. Try a quick refresh in the meantime! ⚡",
+    response: "Ugh, tech gremlins! 😤 Please email us at elitedealshub.edh@gmail.com with what happened and your device type — we'll get it sorted fast. Try a quick refresh in the meantime! ⚡",
   },
   {
     keywords: ["cancel", "unsubscribe", "stop", "remove"],
-    response: "Totally respect that! 💙 You're always in full control here. For anything specific, reach us at elitedeals.edh@gmail.com — we'll handle it personally and promptly. 🌟",
+    response: "Totally respect that! 💙 You're always in full control here. For anything specific, reach us at elitedealshub.edh@gmail.com — we'll handle it personally and promptly. 🌟",
   },
   {
     keywords: ["help", "how", "what", "where", "explain"],
-    response: "Happy to help! 🙌 Browse deals on the main page, tap 'Get This Deal Now' to grab any offer, or use the AI chatbot for personalised picks. For anything else, email us directly at elitedeals.edh@gmail.com 😊",
+    response: "Happy to help! 🙌 Browse deals on the main page, tap 'Get This Deal Now' to grab any offer, or use the AI chatbot for personalised picks. For anything else, email us directly at elitedealshub.edh@gmail.com 😊",
   },
 ];
 
 const DEFAULT_RESPONSE =
-  "Thanks for reaching out! 💌 Please email us directly at elitedeals.edh@gmail.com — we read and personally respond to every message. Include any details so we can help you faster!";
+  "Thanks for reaching out! 💌 Please email us directly at elitedealshub.edh@gmail.com — we read and personally respond to every message. Include any details so we can help you faster!";
 
 function getAutoResponse(message: string): string | null {
   const lower = message.toLowerCase();
