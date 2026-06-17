@@ -9,7 +9,6 @@ import { ExternalLink, ShoppingCart, Users, Star, Clock, TrendingUp, Award, Aler
 import PhotoCarousel from "./photo-carousel";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
-import { playButtonClick } from "@/lib/audio-engine";
 import type { AffiliateLink } from "@shared/schema";
 
 interface AffiliateCardProps {
@@ -140,7 +139,6 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
 
   const handleClick = (e?: React.MouseEvent) => {
     e?.stopPropagation();
-    playButtonClick();
     const priceMatch = price.match(/\$?(\d+(?:,\d{3})*(?:\.\d{2})?)/);
     if (priceMatch && (window as any).updateSavingsProgress) {
       const amount = parseInt(priceMatch[1].replace(/,/g, ''));

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { playVrrReward, startAmbientHum } from "@/lib/audio-engine";
+import { startAmbientHum } from "@/lib/audio-engine";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -162,7 +162,6 @@ export default function Home() {
       // ── VRR gold progress bar logic ────────────────────────────────────────
       vrScrollsSince.current += 1;
       if (vrScrollsSince.current >= vrNextGap.current) {
-        playVrrReward();
         setVrFilled(prev => {
           const goForward = Math.random() < 0.62; // 62% forward, 38% back
           let delta: number;
