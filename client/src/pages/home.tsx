@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -31,6 +31,12 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [storyIndex, setStoryIndex] = useState<number | null>(null);
   const [sortByClicks, setSortByClicks] = useState(false);
+
+  // ── VRR gold progress bar ─────────────────────────────────────────────────
+  const [vrFilled, setVrFilled] = useState(0);
+  const [vrPulse, setVrPulse] = useState(false);
+  const vrScrollsSince = useRef(0);
+  const vrNextGap = useRef(Math.floor(Math.random() * 5) + 3); // 3–7
   const [showDropdown, setShowDropdown] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [timerCount, setTimerCount] = useState(5);
@@ -146,8 +152,20 @@ export default function Home() {
       if (nearBottom && !reviewDone && !showReviewPopup) {
         setShowReviewPopup(true);
       }
+
+      // ── VRR gold progress bar logic ────────────────────────────────────────
+      vrScrollsSince.current += 1;
+      if (vrScrollsSince.current >= vrNextGap.current) {
+        const docH = document.documentElement.scrollHeight - window.innerHeight;
+        const pct = docH > 0 ? Math.min(100, (scrollY / docH) * 100) : 0;
+        setVrFilled(pct);
+        setVrPulse(true);
+        setTimeout(() => setVrPulse(false), 700);
+        vrScrollsSince.current = 0;
+        vrNextGap.current = Math.floor(Math.random() * 6) + 3; // next reward: 3–8 scrolls away
+      }
     };
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, [showScrollButton, hasExpired, reviewDone, showReviewPopup]);
 
@@ -186,6 +204,27 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* ── VRR Gold Progress Bar ────────────────────────────────────────────── */}
+      <div
+        className="fixed top-0 left-0 right-0 pointer-events-none"
+        style={{ zIndex: 99999, height: 4 }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: `${vrFilled}%`,
+            background: "linear-gradient(90deg, #f59e0b, #fcd34d, #f97316, #fcd34d, #f59e0b)",
+            backgroundSize: "200% 100%",
+            opacity: vrPulse ? 0.18 : 0.01,
+            transition: vrPulse
+              ? "width 0.25s ease-out, opacity 0.08s ease-in"
+              : "width 0.15s linear, opacity 0.55s ease-out",
+            boxShadow: vrPulse ? "0 0 18px 6px rgba(251,191,36,0.55), 0 0 4px 1px rgba(251,191,36,0.9)" : "none",
+            animation: vrPulse ? "vrr-sweep 0.6s linear" : "none",
+          }}
+        />
+      </div>
+
       {storyIndex !== null && (
         <StoryViewer
           links={filteredAndSortedLinks}

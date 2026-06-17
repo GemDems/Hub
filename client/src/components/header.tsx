@@ -150,6 +150,31 @@ export default function Header({ onSearch }: HeaderProps) {
     return () => clearInterval(iv);
   }, []);
 
+  // ── Scroll → always drop viewers 100-200 ──────────────────────────────────
+  useEffect(() => {
+    let lastDrop = 0;
+    const handleScroll = () => {
+      const now = Date.now();
+      if (now - lastDrop < 320) return;
+      lastDrop = now;
+      const drop = Math.floor(Math.random() * 101) + 100;
+      setViewers(v => {
+        const next = Math.max(3000, v - drop);
+        try {
+          const stored = localStorage.getItem("edh_live_counts");
+          if (stored) {
+            const parsed = JSON.parse(stored);
+            parsed.viewers = next;
+            localStorage.setItem("edh_live_counts", JSON.stringify(parsed));
+          }
+        } catch {}
+        return next;
+      });
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <header style={{ background: "#0d0f1a" }} className="w-full overflow-hidden">
       {/* Flash sale ticker */}
