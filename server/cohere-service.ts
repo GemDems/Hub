@@ -126,16 +126,14 @@ function generateBuiltInResponse(
       return { recommendedProduct: bestMatch, response, confidence: Math.min(0.95, 0.55 + bestScore * 0.04) };
     }
 
-    // No specific match — show top product
-    const topProduct = [...products].sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0];
+    // No specific match — do NOT recommend a random product, just say we don't have it
     const noMatchResponses = [
-      `ngl we don't have that exact one rn 😅 but our most popular deal right now is 🔥 → [${topProduct.title}](${topProduct.url}) — worth a look!`,
-      `hmm nothing exact for that rn, but this is what people are grabbing most → [${topProduct.title}](${topProduct.url}) 👀`,
-      `not seeing that one rn but check out our top deal → [${topProduct.title}](${topProduct.url}) 🔥`
+      `hmm we don't have that one in stock rn 😅 keep checking back — new drops happen regularly 🔄`,
+      `ngl nothing in our current inventory matches that exactly 😅 — try asking about something else or check back for new deals 🔄`,
+      `can't find that specific item rn — but new deals get added regularly! anything else i can help you with? 🔍`
     ];
     return {
       response: noMatchResponses[Math.floor(Math.random() * noMatchResponses.length)],
-      recommendedProduct: topProduct,
       confidence: 0.4
     };
   }
@@ -164,6 +162,17 @@ export async function generateAIChatResponse(
       const catalog = buildProductCatalog(availableProducts);
 
       const systemPrompt = `You are Zero Doubt Zane — Elite Deals Hub's AI deal expert. You're that friend who always knows the move, gives real advice on anything, AND low-key always has the hookup for the best deals. Think: ChatGPT energy meets a hype plug. 🔥
+
+${availableProducts.length === 0 ? `
+🚨 CRITICAL — INVENTORY IS CURRENTLY EMPTY 🚨
+There are ZERO products in the catalog right now. This means:
+- Do NOT recommend any product, brand, or link of any kind
+- Do NOT make up or invent products
+- Do NOT mention example.com, amazon.com, or ANY URL
+- When asked about products: say "no deals are live right now — check back soon!"
+- You can still chat normally and answer general questions
+- NEVER output a URL or markdown link while inventory is empty
+` : ''}
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 🎯 CORE VIBE
@@ -267,14 +276,26 @@ ${catalog}`;
 
       if (hallucinated.length > 0) {
         console.warn('🚨 Brand filter triggered — AI mentioned external brands:', hallucinated);
-        // Replace the hallucinated response with a safe catalog-only reply
-        const top = [...availableProducts].sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0];
-        if (top) {
-          aiResponse = `ngl we don't carry that brand/product in our current catalog 😅 but check out what we DO have → [${top.title}](${top.url}) — people are grabbing this one fast 🔥`;
-        } else {
-          aiResponse = `that specific item isn't in our catalog rn 😅 keep checking back — new deals drop regularly! 🔄`;
-        }
+        // Replace the hallucinated response with a safe catalog-only reply — never link a product
+        aiResponse = `that specific brand/item isn't in our catalog rn 😅 we only carry what's listed here — keep checking back, new deals drop regularly! 🔄`;
       }
+      // ────────────────────────────────────────────────────────────────────
+
+      // ── FINAL URL SANITIZER ─────────────────────────────────────────────
+      // Strip any URL from the AI response that is NOT in the catalog.
+      // This prevents hallucinated/example.com links from leaking through.
+      const catalogUrls = new Set(availableProducts.map(p => p.url.toLowerCase().trim()));
+      aiResponse = aiResponse.replace(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/g, (match, text, url) => {
+        const urlKey = url.toLowerCase().trim();
+        if (catalogUrls.has(urlKey)) return match; // Allowed
+        console.warn('🚫 URL sanitizer removed hallucinated link:', url);
+        return text; // Keep the text, drop the link
+      });
+      aiResponse = aiResponse.replace(/(?<!\()https?:\/\/[^\s)>\]"]+/g, (url) => {
+        if (catalogUrls.has(url.toLowerCase().trim())) return url;
+        console.warn('🚫 URL sanitizer removed bare hallucinated URL:', url);
+        return '';
+      });
       // ────────────────────────────────────────────────────────────────────
 
       let recommendedProduct: AffiliateLink | undefined;

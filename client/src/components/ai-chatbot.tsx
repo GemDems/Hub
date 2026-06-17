@@ -214,63 +214,52 @@ export default function AIChatbot() {
       return "I don't see any products available in the creator dashboard right now. Please check back when new deals have been added!";
     }
 
+    // Helper: only recommend a product if it has real engagement (clicks > 0, elite, or verified)
+    const isReadyToRecommend = (p: any) =>
+      (p.clicks && p.clicks > 0) || p.isElitePick === 1 || p.isVerified === 1;
+
     // === PURE GENERIC QUESTIONS - SEPARATED FROM PRODUCT BROWSING ===
     if (lowerQuery.includes('popular') || lowerQuery.includes('trending') || lowerQuery.includes('hot') || 
         (lowerQuery.includes('what') && lowerQuery.includes('popular'))) {
-      console.log('🔥 Processing PURE generic "popular" question based on actual click counts');
+      // Only show products that have actual clicks or elite/verified status
+      const realProducts = affiliateLinks.filter(isReadyToRecommend)
+        .sort((a, b) => (b.clicks || 0) - (a.clicks || 0));
       
-      // Sort by ACTUAL click counts to show REAL most popular products
-      const clickedProducts = affiliateLinks
-        .filter(p => p.clicks && p.clicks > 0) // Only products with actual clicks
-        .sort((a, b) => (b.clicks || 0) - (a.clicks || 0)); // Highest clicks first
-      
-      // If no clicks yet, fall back to Elite picks, then any product
-      const elitePicks = affiliateLinks.filter(p => p.isElitePick === 1);
-      const topPick = clickedProducts.length > 0 ? clickedProducts[0] : 
-                     elitePicks.length > 0 ? elitePicks[0] : 
-                     affiliateLinks[0];
-      
-      if (topPick) {
-        const clickText = topPick.clicks > 0 ? `(${topPick.clicks} people clicked "Get Deal Now")` : '';
+      if (realProducts.length > 0) {
+        const topPick = realProducts[0];
         const eliteBadge = topPick.isElitePick === 1 ? '🧠 **Elite Brain Pick**' : '';
         const verifiedBadge = topPick.isVerified === 1 ? '✅' : '';
-        
-        setTimeout(() => {
-          setFoundProduct(topPick);
-          setShowPitchButton(true);
-        }, 100);
-
+        setTimeout(() => { setFoundProduct(topPick); setShowPitchButton(true); }, 100);
         const stockText = topPick.stock > 0 ? `Only ${topPick.stock} left! ` : '';
         return `Stop. Feel that? That's **${topPick.title}** ${eliteBadge} ${verifiedBadge} calling your name. ${stockText}This was destined for someone exactly like you. <a href="${topPick.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topPick.title} →</a>`;
       } else {
-        return "I'd love to show you what's popular, but no products are available right now. Check back when new deals are added!";
+        return "No deals are live right now — check back soon! New drops happen regularly 🔄";
       }
     }
 
     // === MORE GENERIC QUESTIONS - SEPARATED FROM PRODUCT SEARCHING ===
     if (lowerQuery.includes('what do you have') || lowerQuery.includes('what\'s available') || 
         (lowerQuery.includes('show me') && !lowerQuery.includes('specific'))) {
-      console.log('📋 Processing generic browsing question - AI has complete product knowledge');
       const categories = [...new Set(affiliateLinks.map(p => p.category).filter(Boolean))];
-      const topProduct = affiliateLinks.find(p => p.isElitePick === 1) || affiliateLinks[0];
-      setTimeout(() => { setFoundProduct(topProduct); setShowPitchButton(true); }, 100);
-      
-      // Enhanced product knowledge display
-      const description = topProduct.description ? ` ${topProduct.description.substring(0, 100)}` : '';
-      const stockInfo = topProduct.stock > 0 ? ` Only ${topProduct.stock} left!` : '';
-      
-      return `Wait... how do I know that about you? Because **${topProduct.title}** was made for someone exactly like you.${description}${stockInfo} This isn't a coincidence. <a href="${topProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topProduct.title} →</a>`;
+      const topProduct = affiliateLinks.find(p => p.isElitePick === 1 && isReadyToRecommend(p)) ||
+                         affiliateLinks.find(p => isReadyToRecommend(p));
+      if (topProduct) {
+        setTimeout(() => { setFoundProduct(topProduct); setShowPitchButton(true); }, 100);
+        const description = topProduct.description ? ` ${topProduct.description.substring(0, 100)}` : '';
+        const stockInfo = topProduct.stock > 0 ? ` Only ${topProduct.stock} left!` : '';
+        return `We've got some great deals live right now! Featured: **${topProduct.title}**${description}${stockInfo} <a href="${topProduct.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topProduct.title} →</a>`;
+      } else if (categories.length > 0) {
+        return `We have products in these categories: ${categories.join(', ')}. What are you looking for specifically?`;
+      } else {
+        return "No deals are live right now — new ones get added regularly! Check back soon 🔄";
+      }
     }
 
     // Handle "what's best" generic questions based on Elite picks and high clicks
     if ((lowerQuery.includes('best') || lowerQuery.includes('recommend')) && 
         !lowerQuery.includes('for') && !lowerQuery.includes('need')) {
-      console.log('🏆 Processing generic "best" question');
-      
-      const bestProducts = affiliateLinks
-        .filter(p => p.isElitePick === 1 || p.clicks > 3) // Elite or clicked products
+      const bestProducts = affiliateLinks.filter(isReadyToRecommend)
         .sort((a, b) => {
-          // Sort by Elite status first, then clicks
           if (a.isElitePick && !b.isElitePick) return -1;
           if (b.isElitePick && !a.isElitePick) return 1;
           return (b.clicks || 0) - (a.clicks || 0);
@@ -279,14 +268,10 @@ export default function AIChatbot() {
       if (bestProducts.length > 0) {
         const topBest = bestProducts[0];
         const eliteBadge = topBest.isElitePick === 1 ? '🧠 **Elite Brain Pick**' : '';
-        const clickText = topBest.clicks > 0 ? `(${topBest.clicks} people have chosen this)` : '';
-        
-        setTimeout(() => {
-          setFoundProduct(topBest);
-          setShowPitchButton(true);
-        }, 100);
-
-        return `**${topBest.title}** ${eliteBadge} - This isn't a purchase, it's a universal alignment between what you ARE and what you DESERVE. <a href="${topBest.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topBest.title} →</a>`;
+        setTimeout(() => { setFoundProduct(topBest); setShowPitchButton(true); }, 100);
+        return `**${topBest.title}** ${eliteBadge} — this one stands out right now. <a href="${topBest.url}" target="_blank" rel="noopener noreferrer" style="color: #3b82f6; font-weight: bold; text-decoration: underline;">${topBest.title} →</a>`;
+      } else {
+        return "No standout deals are live yet — check back soon for top picks! 🔄";
       }
     }
 
