@@ -75,7 +75,7 @@ export function startAmbientHum() {
 
     // ── 3. Master gain with crowd "breathing" LFO ──────────────────────────
     const masterGain = c.createGain();
-    masterGain.gain.value = 0.022; // ~65 dB psychoacoustic target
+    masterGain.gain.value = 0.004; // subliminal level
 
     blend.connect(masterGain);
     rawBlend.connect(masterGain);
