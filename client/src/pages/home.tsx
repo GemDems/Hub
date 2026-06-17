@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { startAmbientHum } from "@/lib/audio-engine";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -214,6 +215,16 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
 
+  // ── Ambient hum: start on first user interaction ──────────────────────────
+  useEffect(() => {
+    const start = () => startAmbientHum();
+    window.addEventListener('scroll', start, { once: true, passive: true });
+    window.addEventListener('click', start, { once: true });
+    return () => {
+      window.removeEventListener('scroll', start);
+      window.removeEventListener('click', start);
+    };
+  }, []);
 
   useEffect(() => {
     if (!searchQuery) return;

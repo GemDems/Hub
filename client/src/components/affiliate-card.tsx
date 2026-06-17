@@ -269,16 +269,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
             <Button
               onClick={(e) => handleClick(e)}
               disabled={trackClickMutation.isPending}
-              className={`w-full text-white font-bold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg relative overflow-hidden cta-heartbeat hover:brightness-110 hover:scale-[1.02] ${link.isVerified ? 'verified-glow-button' : ''}`}
-              style={{
-                background: trackClickMutation.isPending
-                  ? "#9ca3af"
-                  : "linear-gradient(135deg, #e53e3e, #f97316)",
-                boxShadow: trackClickMutation.isPending
-                  ? "none"
-                  : "0 4px 18px rgba(229,62,62,0.4)",
-                border: "none",
-              }}
+              className={`w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-300 shadow-lg relative overflow-hidden cta-heartbeat ${link.isVerified ? 'verified-glow-button' : ''}`}
             >
               <span className="relative z-10 flex items-center justify-center text-lg">
                 {trackClickMutation.isPending ? (
@@ -286,7 +277,7 @@ export default function AffiliateCard({ link }: AffiliateCardProps) {
                 ) : (
                   <>
                     <ShoppingCart className="w-5 h-5 mr-2" />
-                    Get This Deal Now
+                    Claim This Deal Now
                     <Zap className="w-5 h-5 ml-2" />
                   </>
                 )}

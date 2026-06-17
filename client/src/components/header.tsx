@@ -228,20 +228,16 @@ export default function Header({ onSearch }: HeaderProps) {
         </div>
         <h1 className="font-extrabold leading-none tracking-tight text-white" style={{ fontSize: "clamp(52px,9vw,88px)", letterSpacing: "-0.02em" }}>
           ELITE<br />
-          <span style={{ color: "#3b82f6" }}>DEALS</span>
+          <span style={{ color: "#00008B" }}>DEALS</span>
         </h1>
-        {/* Value clarity — what it is + who it's for */}
-        <div className="mt-3 text-base font-semibold" style={{ color: "#e5e7eb" }}>
-          Hand-picked affiliate deals for smart shoppers who refuse to overpay
-        </div>
-        <div className="mt-1 text-sm" style={{ color: "#9ca3af" }}>
-          Every link verified · Real prices · No memberships required
+        <div className="mt-2 text-sm font-normal tracking-[0.2em]" style={{ color: "#9ca3af" }}>
+          PREMIUM MARKETPLACE
         </div>
         {/* Trust pills */}
         <div className="flex flex-wrap justify-center gap-2 mt-5 max-w-lg mx-auto">
-          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(251,191,36,0.1)", borderColor: "rgba(251,191,36,0.3)", color: "#fbbf24" }}>⭐ 4.9/5 Rating</span>
-          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.3)", color: "#22c55e" }}>✅ Verified Deals</span>
-          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(96,165,250,0.1)", borderColor: "rgba(96,165,250,0.3)", color: "#60a5fa" }}>🔒 Secure & Free</span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(251,191,36,0.1)", borderColor: "rgba(251,191,36,0.3)", color: "#fbbf24" }}></span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.3)", color: "#22c55e" }}></span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(96,165,250,0.1)", borderColor: "rgba(96,165,250,0.3)", color: "#60a5fa" }}></span>
         </div>
       </div>
       {/* Stats grid */}
