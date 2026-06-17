@@ -281,23 +281,22 @@ export default function Header({ onSearch }: HeaderProps) {
         </div>
         <div className="text-xs mb-6" style={{ color: "#6b7280" }}>by our members this month alone</div>
         <button
-          className="text-white text-lg font-bold px-14 py-5 rounded-full cursor-pointer transition-all hover:scale-105 hover:brightness-110"
+          className="text-white text-lg font-bold px-14 py-5 rounded-full cursor-pointer transition-transform hover:scale-105"
           style={{
-            background: "linear-gradient(135deg,#e53e3e,#f97316)",
+            background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
             border: "none",
-            boxShadow: "0 4px 24px rgba(229,62,62,0.45)",
             animation: "ctapulse 2.5s infinite",
             letterSpacing: "0.02em"
           }}
           onClick={() => {
-            const el = document.querySelector('[data-section="products"]') as HTMLElement;
-            el?.scrollIntoView({ behavior: "smooth" });
+            const chatBtn = document.querySelector('[data-chat-button]') as HTMLElement;
+            if (chatBtn) chatBtn.click();
           }}
         >
-          🔥 Browse Today's Deals →
+          CLAIM MY EXCLUSIVE ACCESS →
         </button>
         <div className="mt-3 text-xs" style={{ color: "#6b7280" }}>
-          <span style={{ color: "#4ade80" }}>98.7%</span> of members saved more than they expected &nbsp;|&nbsp; Always free to browse
+          <span style={{ color: "#4ade80" }}>98.7%</span> of members got more than they expected &nbsp;|&nbsp; No credit card required to start
         </div>
       </div>
       {/* Guarantee */}
