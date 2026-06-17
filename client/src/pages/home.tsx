@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { playVrrReward, startAmbientHum, isMuted, setMuted as setAudioMuted } from "@/lib/audio-engine";
+import { playVrrReward, startAmbientHum } from "@/lib/audio-engine";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -32,14 +32,6 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [storyIndex, setStoryIndex] = useState<number | null>(null);
   const [sortByClicks, setSortByClicks] = useState(false);
-
-  // ── Audio mute toggle ─────────────────────────────────────────────────────
-  const [audioMuted, setAudioMutedState] = useState(() => isMuted());
-  const toggleMute = () => {
-    const next = !audioMuted;
-    setAudioMuted(next);
-    setAudioMutedState(next);
-  };
 
   // ── VRR gold progress bar ─────────────────────────────────────────────────
   const [vrFilled, setVrFilled] = useState(0);
@@ -589,15 +581,6 @@ export default function Home() {
       />
       <AIChatbot />
       <WishlistSection />
-      {/* ── Audio mute toggle ──────────────────────────────────────────────── */}
-      <button
-        onClick={toggleMute}
-        title={audioMuted ? "Unmute audio" : "Mute audio"}
-        className="fixed bottom-20 left-4 z-[9997] w-9 h-9 rounded-full flex items-center justify-center transition-all hover:scale-110 active:scale-95"
-        style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(6px)", border: "1px solid rgba(255,255,255,0.15)", fontSize: 16 }}
-      >
-        {audioMuted ? "🔇" : "🔊"}
-      </button>
       {/* Site footer */}
       <div className="mt-10 pb-6 text-center space-y-2">
         <div className="flex items-center justify-center gap-3 flex-wrap">

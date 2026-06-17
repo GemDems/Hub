@@ -1,7 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { MapPin, Clock, Zap } from "lucide-react";
-import { playPurchaseChime } from "@/lib/audio-engine";
 
 interface LiveActivity {
   id: string;
@@ -78,7 +77,6 @@ export default function LiveFeed() {
     const interval = setInterval(() => {
       setActivities(prev => {
         const newActivity = generateActivity(prev);
-        if (isVisibleRef.current) playPurchaseChime();
         return [newActivity, ...prev.slice(0, 9)];
       });
     }, Math.random() * 7000 + 8000); // 8-15 seconds

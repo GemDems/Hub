@@ -71,7 +71,7 @@ export function playVrrReward() {
       osc.frequency.value = freq;
       const t = c.currentTime + i * 0.14;
       gain.gain.setValueAtTime(0, t);
-      gain.gain.linearRampToValueAtTime(0.055, t + 0.03);
+      gain.gain.linearRampToValueAtTime(0.012, t + 0.03);
       gain.gain.exponentialRampToValueAtTime(0.001, t + 0.28);
       osc.start(t);
       osc.stop(t + 0.30);
