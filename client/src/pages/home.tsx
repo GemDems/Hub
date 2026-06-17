@@ -161,9 +161,17 @@ export default function Home() {
       // ── VRR gold progress bar logic ────────────────────────────────────────
       vrScrollsSince.current += 1;
       if (vrScrollsSince.current >= vrNextGap.current) {
-        const docH = document.documentElement.scrollHeight - window.innerHeight;
-        const pct = docH > 0 ? Math.min(100, (scrollY / docH) * 100) : 0;
-        setVrFilled(pct);
+        setVrFilled(prev => {
+          const goForward = Math.random() < 0.62; // 62% forward, 38% back
+          let delta: number;
+          if (goForward) {
+            delta = Math.random() * 10 + 5; // +5 to +15
+          } else {
+            delta = -(Math.random() * 9 + 4); // -4 to -13
+          }
+          // Hard cap: 2%–87% — never reaches the end, never empties
+          return Math.min(87, Math.max(2, prev + delta));
+        });
         setVrPulse(true);
         setTimeout(() => setVrPulse(false), 700);
         vrScrollsSince.current = 0;
