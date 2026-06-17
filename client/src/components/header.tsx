@@ -228,16 +228,20 @@ export default function Header({ onSearch }: HeaderProps) {
         </div>
         <h1 className="font-extrabold leading-none tracking-tight text-white" style={{ fontSize: "clamp(52px,9vw,88px)", letterSpacing: "-0.02em" }}>
           ELITE<br />
-          <span style={{ color: "#00008B" }}>DEALS</span>
+          <span style={{ color: "#3b82f6" }}>DEALS</span>
         </h1>
-        <div className="mt-2 text-sm font-normal tracking-[0.2em]" style={{ color: "#9ca3af" }}>
-          PREMIUM MARKETPLACE
+        {/* Value clarity — what it is + who it's for */}
+        <div className="mt-3 text-base font-semibold" style={{ color: "#e5e7eb" }}>
+          Hand-picked affiliate deals for smart shoppers who refuse to overpay
+        </div>
+        <div className="mt-1 text-sm" style={{ color: "#9ca3af" }}>
+          Every link verified · Real prices · No memberships required
         </div>
         {/* Trust pills */}
         <div className="flex flex-wrap justify-center gap-2 mt-5 max-w-lg mx-auto">
-          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(251,191,36,0.1)", borderColor: "rgba(251,191,36,0.3)", color: "#fbbf24" }}></span>
-          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.3)", color: "#22c55e" }}></span>
-          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(96,165,250,0.1)", borderColor: "rgba(96,165,250,0.3)", color: "#60a5fa" }}></span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(251,191,36,0.1)", borderColor: "rgba(251,191,36,0.3)", color: "#fbbf24" }}>⭐ 4.9/5 Rating</span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(34,197,94,0.1)", borderColor: "rgba(34,197,94,0.3)", color: "#22c55e" }}>✅ Verified Deals</span>
+          <span className="px-3.5 py-1 rounded-full text-xs font-semibold border" style={{ background: "rgba(96,165,250,0.1)", borderColor: "rgba(96,165,250,0.3)", color: "#60a5fa" }}>🔒 Secure & Free</span>
         </div>
       </div>
       {/* Stats grid */}
@@ -281,22 +285,23 @@ export default function Header({ onSearch }: HeaderProps) {
         </div>
         <div className="text-xs mb-6" style={{ color: "#6b7280" }}>by our members this month alone</div>
         <button
-          className="text-white text-lg font-bold px-14 py-5 rounded-full cursor-pointer transition-transform hover:scale-105"
+          className="text-white text-lg font-bold px-14 py-5 rounded-full cursor-pointer transition-all hover:scale-105 hover:brightness-110"
           style={{
-            background: "linear-gradient(135deg,#7c3aed,#4f46e5)",
+            background: "linear-gradient(135deg,#e53e3e,#f97316)",
             border: "none",
+            boxShadow: "0 4px 24px rgba(229,62,62,0.45)",
             animation: "ctapulse 2.5s infinite",
             letterSpacing: "0.02em"
           }}
           onClick={() => {
-            const chatBtn = document.querySelector('[data-chat-button]') as HTMLElement;
-            if (chatBtn) chatBtn.click();
+            const el = document.querySelector('[data-section="products"]') as HTMLElement;
+            el?.scrollIntoView({ behavior: "smooth" });
           }}
         >
-          CLAIM MY EXCLUSIVE ACCESS →
+          🔥 Browse Today's Deals →
         </button>
         <div className="mt-3 text-xs" style={{ color: "#6b7280" }}>
-          <span style={{ color: "#4ade80" }}>98.7%</span> of members got more than they expected &nbsp;|&nbsp; No credit card required to start
+          <span style={{ color: "#4ade80" }}>98.7%</span> of members saved more than they expected &nbsp;|&nbsp; Always free to browse
         </div>
       </div>
       {/* Guarantee */}
