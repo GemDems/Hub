@@ -1,6 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { MapPin, Clock, Zap } from "lucide-react";
+import { playPurchaseChime } from "@/lib/audio-engine";
 
 interface LiveActivity {
   id: string;
@@ -14,6 +15,19 @@ interface LiveActivity {
 
 export default function LiveFeed() {
   const [activities, setActivities] = useState<LiveActivity[]>([]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const isVisibleRef = useRef(false);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
+      { threshold: 0.3 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
 
   // Generate realistic activity feed
   useEffect(() => {
@@ -64,6 +78,7 @@ export default function LiveFeed() {
     const interval = setInterval(() => {
       setActivities(prev => {
         const newActivity = generateActivity(prev);
+        if (isVisibleRef.current) playPurchaseChime();
         return [newActivity, ...prev.slice(0, 9)];
       });
     }, Math.random() * 7000 + 8000); // 8-15 seconds
@@ -72,7 +87,7 @@ export default function LiveFeed() {
   }, []);
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto p-6" ref={containerRef}>
       <Card className="p-6 bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200">
         <div className="flex items-center gap-2 mb-4">
           <Zap className="w-5 h-5 text-conversion-blue animate-pulse" />
