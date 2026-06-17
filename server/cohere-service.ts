@@ -106,8 +106,17 @@ function generateBuiltInResponse(
     let bestScore = 0;
     for (const product of products) {
       const s = scoreProduct(userMessage, product);
-      if (s > bestScore) { bestScore = s; bestMatch = product; }
+      if (s > bestScore) { bestMatch = product; bestScore = s; }
     }
+
+    // Detect general browsing / recommendation intent
+    const browseIntent = [
+      "recommend", "what do you have", "show me", "what's good", "whats good",
+      "what's hot", "anything good", "best deal", "top deal", "popular", "most popular",
+      "what should i", "surprise me", "what's new", "anything", "browse", "hot right now",
+      "what you got", "give me something", "help me find", "what's trending"
+    ];
+    const isGeneralBrowse = browseIntent.some(phrase => lower.includes(phrase));
 
     if (bestMatch && bestScore >= 5) {
       const price = bestMatch.price ? `$${bestMatch.price}` : "great price";
@@ -126,11 +135,31 @@ function generateBuiltInResponse(
       return { recommendedProduct: bestMatch, response, confidence: Math.min(0.95, 0.55 + bestScore * 0.04) };
     }
 
-    // No specific match — do NOT recommend a random product, just say we don't have it
+    // General browse intent — push the best product we have (elite pick first, then verified, then any)
+    if (isGeneralBrowse) {
+      const top = products.find(p => p.isElitePick) || products.find(p => p.isVerified) || products[0];
+      const price = top.price ? `$${top.price}` : "great price";
+      const stock = top.stock > 0 ? ` ⚡ only ${top.stock} left` : "";
+      const elite = top.isElitePick ? " 🧠 Elite Pick" : "";
+      const browseIntros = [
+        `okay our hottest one rn is this 👇`,
+        `people are grabbing this one like crazy rn →`,
+        `if i had to pick one for you right now, it's this 🔥`,
+        `this one's been moving fast — check it out 👀`,
+        `ngl this is the move rn →`
+      ];
+      const intro = browseIntros[Math.floor(Math.random() * browseIntros.length)];
+      const response = `${intro} [${top.title}](${top.url})${elite} — ${price}${stock} 🔥 want me to find something more specific?`;
+      return { recommendedProduct: top, response, confidence: 0.75 };
+    }
+
+    // Specific search but no match — nudge toward what we DO have
+    const top = products.find(p => p.isElitePick) || products[0];
+    const nudge = top ? ` while you're here — our hottest deal rn is [${top.title}](${top.url}) 🔥` : "";
     const noMatchResponses = [
-      `hmm we don't have that one in stock rn 😅 keep checking back — new drops happen regularly 🔄`,
-      `ngl nothing in our current inventory matches that exactly 😅 — try asking about something else or check back for new deals 🔄`,
-      `can't find that specific item rn — but new deals get added regularly! anything else i can help you with? 🔍`
+      `hmm we don't have that one in stock rn 😅${nudge}`,
+      `ngl nothing in our current inventory matches that exactly 😅${nudge}`,
+      `can't find that specific item rn — new deals drop regularly!${nudge}`
     ];
     return {
       response: noMatchResponses[Math.floor(Math.random() * noMatchResponses.length)],

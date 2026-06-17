@@ -14,6 +14,7 @@
 let ctx: AudioContext | null = null;
 let running = false;
 let nodes: AudioNode[] = [];
+let swellTimers: number[] = [];
 
 // Pink noise coefficients (Paul Kellet)
 let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
@@ -75,7 +76,7 @@ export function startAmbientHum() {
 
     // ── 3. Master gain with crowd "breathing" LFO ──────────────────────────
     const masterGain = c.createGain();
-    masterGain.gain.value = 0.004; // subliminal level
+    masterGain.gain.value = 0.007; // low baseline — subliminal
 
     blend.connect(masterGain);
     rawBlend.connect(masterGain);
@@ -101,12 +102,31 @@ export function startAmbientHum() {
 
     masterGain.connect(c.destination);
 
+    // ── 5. Rare crowd swell — randomly every 45–90 s ───────────────────────
+    // Briefly lifts gain to ~0.025 then fades back, mimicking a crowd surge
+    const scheduleNextSwell = () => {
+      const delay = (45 + Math.random() * 45) * 1000;
+      const timer = window.setTimeout(() => {
+        if (!running) return;
+        const now = c.currentTime;
+        masterGain.gain.cancelScheduledValues(now);
+        masterGain.gain.setValueAtTime(masterGain.gain.value, now);
+        masterGain.gain.linearRampToValueAtTime(0.025, now + 2.5);   // swell up
+        masterGain.gain.linearRampToValueAtTime(0.007, now + 7.0);   // fade back
+        scheduleNextSwell();
+      }, delay);
+      swellTimers.push(timer);
+    };
+    scheduleNextSwell();
+
     nodes = [noiseNode, bp1, bp2, bp3, blend, rawBlend, masterGain, lfo, lfoGain, rumble, rumbleGain];
   } catch {}
 }
 
 export function stopAmbientHum() {
   running = false;
+  swellTimers.forEach(t => window.clearTimeout(t));
+  swellTimers = [];
   nodes.forEach(n => { try { n.disconnect(); } catch {} });
   nodes = [];
 }
