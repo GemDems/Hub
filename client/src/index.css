@@ -2,50 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ── DARK MODE ──────────────────────────────────────────────────────────── */
-.dark body, .dark html {
-  background-color: #04060f !important;
-}
-.dark .bg-white,
-.dark [class*="bg-white"] {
-  background-color: #0b0f1e !important;
-}
-.dark [class*="bg-gray-50"],
-.dark [class*="bg-gray-100"] {
-  background-color: #080c18 !important;
-}
-.dark [class*="bg-blue-50"],
-.dark [class*="bg-purple-50"],
-.dark [class*="bg-indigo-50"] {
-  background-color: #0d1128 !important;
-}
-.dark [class*="text-gray-900"],
-.dark [class*="text-gray-800"],
-.dark [class*="text-gray-700"] {
-  color: #c8d0f0 !important;
-}
-.dark [class*="text-gray-600"],
-.dark [class*="text-gray-500"] {
-  color: #8891b8 !important;
-}
-.dark [class*="border-gray-200"],
-.dark [class*="border-gray-300"] {
-  border-color: rgba(80,90,150,0.25) !important;
-}
-/* Cards & panels */
-.dark .card-base,
-.dark [class*="shadow"] {
-  box-shadow: 0 2px 20px rgba(0,0,30,0.6) !important;
-}
-/* Inputs in dark mode */
-.dark input:not([type="range"]),
-.dark textarea,
-.dark select {
-  background-color: #111827 !important;
-  color: #d1d5db !important;
-  border-color: rgba(99,102,241,0.3) !important;
-}
-
 /* ======== COPY-PASTE PROTECTION - ALL PLATFORMS & DEVICES ======== */
 /* Disable text selection across entire site */
 * {
