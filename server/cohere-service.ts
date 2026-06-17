@@ -207,6 +207,15 @@ PRODUCT QUESTIONS / SEARCHING:
 🤷 If nothing matches: "ngl we don't have that one rn — but keep checking back, drops happen daily 🔄"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🚫 ABSOLUTE PRODUCT RULES — NEVER BREAK THESE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+🔴 RULE #1 — CATALOG ONLY: You ONLY know about products listed in the PRODUCT CATALOG below. That is your ENTIRE product universe. Nothing else exists.
+🔴 RULE #2 — NO EXTERNAL BRANDS: NEVER mention, suggest, compare, or reference any product name, brand, or company that is NOT in the catalog. This means ZERO mentions of Samsung, Apple, iPhone, Sony, Nike, Adidas, Google, Amazon products, LG, Dyson, or ANY other brand not listed below — not even as examples or comparisons.
+🔴 RULE #3 — NO HALLUCINATION: Do NOT invent or imagine products. If the user asks for something that isn't in the catalog, tell them honestly that it's not available right now. Do NOT describe what such a product would be like.
+🔴 RULE #4 — STRICT SOURCE: Every single product you mention MUST have its exact URL from the catalog. If you can't find the URL in the catalog, do NOT mention that product.
+🔴 RULE #5 — NO EXTERNAL ADVICE: When answering general questions (tips, how-to, etc.), do NOT recommend external tools, apps, products, or services by name. Keep advice generic or tie it back to what's in the catalog.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 📦 LINK FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 Always format product links as: [Product Name](URL)
@@ -228,10 +237,45 @@ ${catalog}`;
         preamble: systemPrompt,
         chatHistory,
         maxTokens: 400,
-        temperature: 0.78,
+        temperature: 0.55,
       });
 
-      const aiResponse = response.text?.trim() || "hold on something went sideways on my end 😅 try again?";
+      let aiResponse = response.text?.trim() || "hold on something went sideways on my end 😅 try again?";
+
+      // ── SERVER-SIDE BRAND FILTER ─────────────────────────────────────────
+      // Build a set of all words that appear in the actual catalog so we can
+      // detect external brand names the AI hallucinated.
+      const catalogText = availableProducts.map(p =>
+        `${p.title} ${p.description || ''} ${p.category || ''} ${p.aiPrivateInfo || ''}`
+      ).join(' ').toLowerCase();
+
+      const externalBrands = [
+        'samsung', 'apple', 'iphone', 'ipad', 'macbook', 'airpods',
+        'sony', 'lg', 'google', 'pixel', 'android', 'oneplus',
+        'nokia', 'motorola', 'huawei', 'xiaomi', 'oppo', 'vivo',
+        'nike', 'adidas', 'puma', 'reebok', 'under armour',
+        'dyson', 'bose', 'jbl', 'beats', 'sennheiser', 'logitech',
+        'microsoft', 'xbox', 'playstation', 'nintendo', 'amazon',
+        'fitbit', 'garmin', 'gopro', 'canon', 'nikon', 'lenovo',
+        'dell', 'hp ', 'asus', 'acer', 'razer', 'corsair'
+      ];
+
+      const responseLower = aiResponse.toLowerCase();
+      const hallucinated = externalBrands.filter(brand =>
+        responseLower.includes(brand) && !catalogText.includes(brand)
+      );
+
+      if (hallucinated.length > 0) {
+        console.warn('🚨 Brand filter triggered — AI mentioned external brands:', hallucinated);
+        // Replace the hallucinated response with a safe catalog-only reply
+        const top = [...availableProducts].sort((a, b) => (b.clicks || 0) - (a.clicks || 0))[0];
+        if (top) {
+          aiResponse = `ngl we don't carry that brand/product in our current catalog 😅 but check out what we DO have → [${top.title}](${top.url}) — people are grabbing this one fast 🔥`;
+        } else {
+          aiResponse = `that specific item isn't in our catalog rn 😅 keep checking back — new deals drop regularly! 🔄`;
+        }
+      }
+      // ────────────────────────────────────────────────────────────────────
 
       let recommendedProduct: AffiliateLink | undefined;
       let confidence = 0.5;
@@ -245,8 +289,6 @@ ${catalog}`;
       }
 
       if (!recommendedProduct && availableProducts.length > 0) {
-        const userLower = userMessage.toLowerCase();
-        const userWords = userLower.split(/\s+/).filter(w => w.length > 2);
         let bestMatch: AffiliateLink | undefined;
         let bestScore = 0;
 
