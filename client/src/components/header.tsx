@@ -34,17 +34,30 @@ export default function Header({ onSearch }: HeaderProps) {
     const ONE_HOUR = 60 * 60 * 1000;
     const stored = localStorage.getItem("edh_live_counts");
     if (stored) {
-      const { viewers, orders, resetAt } = JSON.parse(stored);
-      // If within the hour window, apply a 6–7% refresh drop
-      if (Date.now() - resetAt < ONE_HOUR) {
-        const dropPct = 0.06 + Math.random() * 0.01; // 6–7%
-        const newViewers = Math.max(1000, Math.round(viewers * (1 - dropPct)));
-        localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: newViewers, orders, resetAt }));
-        return { viewers: newViewers, orders, resetAt };
-      }
+      try {
+        const { viewers, orders, resetAt } = JSON.parse(stored);
+        if (Date.now() - resetAt < ONE_HOUR) {
+          // Only drop 10% of the time; 90% of the time keep or bump up
+          let newViewers: number;
+          if (Math.random() < 0.10) {
+            // Rare drop — small dip, but NEVER below 3,000
+            const dropPct = 0.02 + Math.random() * 0.03; // 2–5% drop
+            newViewers = Math.max(3000, Math.round(viewers * (1 - dropPct)));
+          } else if (Math.random() < 0.15) {
+            // Occasional big jump (15% of non-drop refreshes)
+            newViewers = viewers + Math.floor(Math.random() * 400) + 150;
+          } else {
+            // Normal: tiny creep upward
+            newViewers = viewers + Math.floor(Math.random() * 40) + 5;
+          }
+          newViewers = Math.max(3000, newViewers);
+          localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: newViewers, orders, resetAt }));
+          return { viewers: newViewers, orders, resetAt };
+        }
+      } catch { /* corrupt storage — fall through */ }
     }
-    // Hourly reset: fresh base under 7,000
-    const base = Math.floor(Math.random() * 4000) + 2500; // 2,500–6,499
+    // Hourly reset: fresh base 3,000–7,500
+    const base = Math.floor(Math.random() * 4500) + 3000;
     const counts = { viewers: base, orders: Math.floor(base * 0.35), resetAt: Date.now() };
     localStorage.setItem("edh_live_counts", JSON.stringify(counts));
     return counts;
@@ -89,14 +102,16 @@ export default function Header({ onSearch }: HeaderProps) {
     const checkReset = () => {
       const stored = localStorage.getItem("edh_live_counts");
       if (!stored) return;
-      const { resetAt } = JSON.parse(stored);
-      if (Date.now() - resetAt >= ONE_HOUR) {
-        const base = Math.floor(Math.random() * 4000) + 2500; // 2,500–6,499
-        const newOrders = Math.floor(base * 0.35);
-        localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: base, orders: newOrders, resetAt: Date.now() }));
-        setViewers(base);
-        setOrders(newOrders);
-      }
+      try {
+        const { resetAt } = JSON.parse(stored);
+        if (Date.now() - resetAt >= ONE_HOUR) {
+          const base = Math.floor(Math.random() * 4500) + 3000; // 3,000–7,500
+          const newOrders = Math.floor(base * 0.35);
+          localStorage.setItem("edh_live_counts", JSON.stringify({ viewers: base, orders: newOrders, resetAt: Date.now() }));
+          setViewers(base);
+          setOrders(newOrders);
+        }
+      } catch { /* ignore */ }
     };
 
     let tickCount = 0;
@@ -105,16 +120,24 @@ export default function Header({ onSearch }: HeaderProps) {
       tickCount++;
       checkReset();
 
-      const isBigJump = tickCount % (Math.floor(Math.random() * 4) + 6) === 0;
+      // Big jump ~15% of ticks, tiny drop ~5% of ticks, rest creep up
+      const rand = Math.random();
+      const isBigJump = rand < 0.15;
+      const isDrop    = rand > 0.95; // only 5% of ticks can drop
 
       setViewers(v => {
-        const bump = isBigJump
-          ? Math.floor(Math.random() * 60) + 20
-          : Math.floor(Math.random() * 3) + 1;
-        const next = v + bump;
+        let next: number;
+        if (isBigJump) {
+          next = v + Math.floor(Math.random() * 200) + 80; // +80–279
+        } else if (isDrop) {
+          next = v - (Math.floor(Math.random() * 30) + 10); // -10–39
+        } else {
+          next = v + Math.floor(Math.random() * 15) + 1; // +1–15
+        }
+        next = Math.max(3000, next); // FLOOR: never below 3,000
         setOrders(o => {
           const obump = isBigJump
-            ? Math.floor(Math.random() * 12) + 4
+            ? Math.floor(Math.random() * 20) + 8
             : (Math.random() < 0.65 ? 1 : 0);
           const onext = o + obump;
           save(next, onext);
