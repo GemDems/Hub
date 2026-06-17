@@ -258,7 +258,7 @@ export default function Header({ onSearch }: HeaderProps) {
           <div className="text-3xl flex-shrink-0 mt-0.5">🏅</div>
           <div>
             <div className="text-sm font-bold mb-1" style={{ color: "#fbbf24" }}>100% Satisfaction Guarantee</div>
-            <div className="text-xs leading-relaxed" style={{ color: "#9ca3af" }}>Not happy? We'll make it right — If the deal isn't real, I'll personally find you a better one — or send it to you for free. We're so confident in Elite Deals that we take on all the risk so you don't have to. —elitedeals.edh@gmail.com</div>
+            <div className="text-xs leading-relaxed" style={{ color: "#9ca3af" }}>Not happy? We'll make it right — If the deal isn't real, I'll personally find you a better one — or send it to you for free. We're so confident in Elite Deals that we take on all the risk so you don't have to. —elitedealshub.edh@gmail.com</div>
           </div>
         </div>
       </div>
