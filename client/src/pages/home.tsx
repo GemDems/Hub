@@ -37,6 +37,11 @@ export default function Home() {
   const [vrPulse, setVrPulse] = useState(false);
   const vrScrollsSince = useRef(0);
   const vrNextGap = useRef(Math.floor(Math.random() * 5) + 3); // 3–7
+
+  // ── VRR dark-blue card overlay ────────────────────────────────────────────
+  const [vrCardOpacity, setVrCardOpacity] = useState(0.01);
+  const vrCardScrollsSince = useRef(0);
+  const vrCardNextGap = useRef(Math.floor(Math.random() * 6) + 3); // 3–8
   const [showDropdown, setShowDropdown] = useState(false);
   const [showScrollButton, setShowScrollButton] = useState(false);
   const [timerCount, setTimerCount] = useState(5);
@@ -162,7 +167,17 @@ export default function Home() {
         setVrPulse(true);
         setTimeout(() => setVrPulse(false), 700);
         vrScrollsSince.current = 0;
-        vrNextGap.current = Math.floor(Math.random() * 6) + 3; // next reward: 3–8 scrolls away
+        vrNextGap.current = Math.floor(Math.random() * 6) + 3;
+      }
+
+      // ── VRR dark-blue card overlay logic ───────────────────────────────────
+      vrCardScrollsSince.current += 1;
+      if (vrCardScrollsSince.current >= vrCardNextGap.current) {
+        // Random opacity between 0.010 and 0.019 (1%–1.9%)
+        const newOp = Math.round((0.01 + Math.random() * 0.009) * 1000) / 1000;
+        setVrCardOpacity(newOp);
+        vrCardScrollsSince.current = 0;
+        vrCardNextGap.current = Math.floor(Math.random() * 6) + 3; // 3–8 scrolls until next shift
       }
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -406,15 +421,27 @@ export default function Home() {
             )}
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredAndSortedLinks.map((link, i) => (
-              <div
-                key={link.id}
-                data-product-card={i === 0 ? "first" : undefined}
-              >
-                <AffiliateCard link={link} />
-              </div>
-            ))}
+          <div className="relative">
+            {/* VRR dark-blue tint overlay — 1%–1.9% opacity, shifts on variable scroll gaps */}
+            <div
+              className="absolute inset-0 rounded-xl pointer-events-none"
+              style={{
+                background: "#00008B",
+                opacity: vrCardOpacity,
+                transition: "opacity 1.2s ease-in-out",
+                zIndex: 1,
+              }}
+            />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative" style={{ zIndex: 2 }}>
+              {filteredAndSortedLinks.map((link, i) => (
+                <div
+                  key={link.id}
+                  data-product-card={i === 0 ? "first" : undefined}
+                >
+                  <AffiliateCard link={link} />
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </main>
