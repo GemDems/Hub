@@ -157,7 +157,7 @@ export default function Header({ onSearch }: HeaderProps) {
       const now = Date.now();
       if (now - lastDrop < 320) return;
       lastDrop = now;
-      const drop = Math.floor(Math.random() * 101) + 100;
+      const drop = Math.floor(Math.random() * 10) + 1;
       setViewers(v => {
         const next = Math.max(3000, v - drop);
         try {
