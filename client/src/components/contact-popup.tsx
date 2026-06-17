@@ -82,7 +82,6 @@ export default function ContactPopup() {
         <MessageCircle className="w-3.5 h-3.5" />
         Contact Us
       </button>
-
       {open && (
         <div
           className="fixed inset-0 z-50 flex items-end justify-center pb-6 px-4"
@@ -119,7 +118,7 @@ export default function ContactPopup() {
 
               <div className="flex items-center gap-2 text-xs" style={{ color: "#6b7280" }}>
                 <Mail className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#60a5fa" }} />
-                <span>elitedeals.edh@gmail.com</span>
+                <span>elitedealshub.edh@gmail.com</span>
               </div>
               <div className="flex items-center gap-2 text-xs" style={{ color: "#6b7280" }}>
                 <Clock className="w-3.5 h-3.5 flex-shrink-0" style={{ color: "#a78bfa" }} />
