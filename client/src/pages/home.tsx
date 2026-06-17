@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { startAmbientHum } from "@/lib/audio-engine";
+import { startAmbientHum, startBeat } from "@/lib/audio-engine";
+import SideMenu from "@/components/side-menu";
 import { useQuery } from "@tanstack/react-query";
 import type { AffiliateLink } from "@shared/schema";
 import Header from "@/components/header";
@@ -32,6 +33,22 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [storyIndex, setStoryIndex] = useState<number | null>(null);
   const [sortByClicks, setSortByClicks] = useState(false);
+
+  // ── Dark mode ─────────────────────────────────────────────────────────────
+  const [darkMode, setDarkMode] = useState(() => localStorage.getItem("edh_dark") === "1");
+  const toggleDark = () => {
+    setDarkMode(prev => {
+      const next = !prev;
+      if (next) document.documentElement.classList.add("dark");
+      else      document.documentElement.classList.remove("dark");
+      try { localStorage.setItem("edh_dark", next ? "1" : "0"); } catch {}
+      return next;
+    });
+  };
+  useEffect(() => {
+    if (darkMode) document.documentElement.classList.add("dark");
+    else          document.documentElement.classList.remove("dark");
+  }, []);
 
   // ── VRR gold progress bar ─────────────────────────────────────────────────
   const [vrFilled, setVrFilled] = useState(0);
@@ -215,9 +232,9 @@ export default function Home() {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showDropdown]);
 
-  // ── Ambient hum: start on first user interaction ──────────────────────────
+  // ── Ambient hum + beat: start on first user interaction ───────────────────
   useEffect(() => {
-    const start = () => startAmbientHum();
+    const start = () => { startAmbientHum(); startBeat(); };
     window.addEventListener('scroll', start, { once: true, passive: true });
     window.addEventListener('click', start, { once: true });
     return () => {
@@ -580,6 +597,7 @@ export default function Home() {
       />
       <AIChatbot />
       <WishlistSection />
+      <SideMenu darkMode={darkMode} onToggleDark={toggleDark} />
       {/* Site footer */}
       <div className="mt-10 pb-6 text-center space-y-2">
         <div className="flex items-center justify-center gap-3 flex-wrap">
