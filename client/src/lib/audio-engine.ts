@@ -76,7 +76,7 @@ export function startAmbientHum() {
 
     // ── 3. Master gain with crowd "breathing" LFO ──────────────────────────
     const masterGain = c.createGain();
-    masterGain.gain.value = 0.007; // low baseline — subliminal
+    masterGain.gain.value = 0.002; // barely-there baseline
 
     blend.connect(masterGain);
     rawBlend.connect(masterGain);
@@ -111,8 +111,8 @@ export function startAmbientHum() {
         const now = c.currentTime;
         masterGain.gain.cancelScheduledValues(now);
         masterGain.gain.setValueAtTime(masterGain.gain.value, now);
-        masterGain.gain.linearRampToValueAtTime(0.025, now + 2.5);   // swell up
-        masterGain.gain.linearRampToValueAtTime(0.007, now + 7.0);   // fade back
+        masterGain.gain.linearRampToValueAtTime(0.007, now + 2.5);   // swell up
+        masterGain.gain.linearRampToValueAtTime(0.002, now + 7.0);   // fade back
         scheduleNextSwell();
       }, delay);
       swellTimers.push(timer);
